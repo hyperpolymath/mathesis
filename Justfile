@@ -713,3 +713,17 @@ uncloak:
     else
         echo "Use 'ls -a' to view dotfiles on this OS."
     fi
+
+# ── mathesis: estate maths catalogue ──────────────────────────────────────
+
+# Re-run the proof census over data/repos.jsonl and regenerate the catalogue
+census:
+    bash scripts/census/run-census.sh
+
+# Regenerate catalogue/catalogue.adoc from the committed census data
+catalogue:
+    bash scripts/census/generate-catalogue.sh data data/template-paths.txt > catalogue/catalogue.adoc
+
+# Fail if the committed catalogue does not match the committed census data
+catalogue-check:
+    bash scripts/census/generate-catalogue.sh data data/template-paths.txt | diff -u catalogue/catalogue.adoc -

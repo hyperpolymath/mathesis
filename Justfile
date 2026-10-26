@@ -716,7 +716,7 @@ uncloak:
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
 
-# Re-run the proof census over docs/catalogue/census/repos.jsonl and regenerate the catalogue
+# Re-run the proof census over docs/catalogue/census/repos.json and regenerate the catalogue
 census:
     bash scripts/census/run-census.sh
 

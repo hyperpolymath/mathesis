@@ -20,14 +20,14 @@ in Rocq and Lean). The working method is the proof-craft skill.
 [cols="1,3"]
 |===
 |`docs/catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
-|`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.jsonl` (one row of counts per repository, no file paths), `repos.jsonl` (the census input), `unreachable.jsonl` and `template-paths.txt`. Each JSONL file is I-JSON/JCS, one object per line.
+|`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.json` (one row of counts per repository, no file paths), `repos.json` (the census input), `unreachable.json` and `template-paths.txt`. Each `.json` file is one I-JSON/JCS array.
 |`scripts/census/` |`run-census.sh` (whole census), `census-repo.sh` (one repo), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
 |`Justfile` |`just census`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
 |===
 
 == How the census works
 
-. *List repositories.* `docs/catalogue/census/repos.jsonl` is the input. Agent sessions build
+. *List repositories.* `docs/catalogue/census/repos.json` is the input. Agent sessions build
   it with the Claude Code remote `list_repos` tool, because the GitHub API is
   not reachable from them.
 . *List proof files cheaply.* Each repository is cloned blobless with
@@ -54,7 +54,7 @@ The first census covered 476 repositories:
   the end of the catalogue, among them `cut-calculus`.
 * *Possibly missing:* the listing returned only repositories pushed since
   2026-09-15, so older, untouched repos may be absent. Add them to
-  `docs/catalogue/census/repos.jsonl` and rerun.
+  `docs/catalogue/census/repos.json` and rerun.
 * *Theory or engineering* is a heuristic: more Agda, Lean, Rocq or Isabelle
   files than Idris2 or SPARK files reads as theory. Confirm each row against
   PROOF-POLICY.

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fold the raw, path-level census into one row per repository.
 #
-# Usage: build-rows.sh RAW_DIR TEMPLATE_PATHS > catalogue-rows.jsonl
+# Usage: build-rows.sh RAW_DIR TEMPLATE_PATHS > catalogue-rows.json
 #   RAW_DIR         files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl
 #                   (written by census-repo.sh + summarise.sh; not committed)
 #   TEMPLATE_PATHS  one path per line: proof files the RSR template ships,
@@ -61,4 +61,5 @@ awk -F'\t' '
 | jq -RcS 'split("\t") | {class:.[0], repo:.[1], own_files:(.[2]|tonumber),
     fixture_files:(.[3]|tonumber), provers:.[4], declarations:(.[5]|tonumber),
     holes:(.[6]|tonumber), axioms:(.[7]|tonumber), unsafe:(.[8]|tonumber),
-    policy:(.[9]|tonumber), status_doc:.[10]}'
+    policy:(.[9]|tonumber), status_doc:.[10]}' \
+| jq -cS -s .

@@ -4,20 +4,31 @@
 #
 # Usage: run-census.sh [REPO_LIST]
 #   REPO_LIST: one OWNER/REPO per line. Default: every non-fork repo in
-#   data/repos.jsonl. Refresh data/repos.jsonl first when repos are added; the
-#   GitHub listing is not scriptable from agent sessions, so it is an input.
+#   docs/catalogue/census/repos.jsonl. Refresh that file first when repos are
+#   added; the GitHub listing is not scriptable from agent sessions, so it is
+#   an input.
+#
+# Raw, path-level output (clones, per-file rows, summary.md) goes to
+# MATHESIS_WORK (default: a fresh temporary directory) and is not committed.
+# Only the per-repo rows and the rendered catalogue are written into the repo.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
-data=${MATHESIS_DATA:-$here/../../data}
-list=${1:-}
-if [ -z "$list" ]; then
-  list=$(mktemp); trap 'rm -f "$list"' EXIT
-  jq -r 'select(.fork|not) | .full_name | select(test("/awesome-")|not)' "$data/repos.jsonl" > "$list"
+census=$here/../../docs/catalogue/census
+work=${MATHESIS_WORK:-$(mktemp -d)}
+mkdir -p "$work"
+cp "$census/repos.jsonl" "$work/repos.jsonl"
+if [ -n "${1:-}" ]; then
+  cp "$1" "$work/census-list.txt"
+else
+  jq -r 'select(.fork|not) | .full_name | select(test("/awesome-")|not)' "$census/repos.jsonl" > "$work/census-list.txt"
 fi
-rm -rf "$data/out"
+list=$work/census-list.txt
+rm -rf "$work/out"
 while IFS= read -r repo; do
-  [ -n "$repo" ] && MATHESIS_DATA=$data bash "$here/census-repo.sh" "$repo" || true
+  [ -n "$repo" ] && MATHESIS_DATA=$work bash "$here/census-repo.sh" "$repo" || true
 done < "$list"
-MATHESIS_DATA=$data bash "$here/summarise.sh"
-bash "$here/generate-catalogue.sh" "$data" "$data/template-paths.txt" > "$here/../../catalogue/catalogue.adoc"
-rm -rf "$data/out" "$data/clones"
+MATHESIS_DATA=$work bash "$here/summarise.sh"
+cp "$work/unreachable.jsonl" "$census/unreachable.jsonl"
+bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$census/catalogue-rows.jsonl"
+bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
+echo "raw census kept in $work"

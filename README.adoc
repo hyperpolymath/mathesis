@@ -19,16 +19,15 @@ in Rocq and Lean). The working method is the proof-craft skill.
 
 [cols="1,3"]
 |===
-|`catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
-|`data/` |The census it is built from. Each `*.jsonl` file has one sorted-key JSON object per line.
-|`data/summary.md` |The census summary, including the per-repo table with declaration counts.
-|`scripts/census/` |`run-census.sh` (whole census), `census-repo.sh` (one repo), `summarise.sh`, `generate-catalogue.sh`, and proof-craft's `proof-holes.sh`.
+|`docs/catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
+|`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.jsonl` (one row of counts per repository, no file paths), `repos.jsonl` (the census input), `unreachable.jsonl` and `template-paths.txt`. Each JSONL file is I-JSON/JCS, one object per line.
+|`scripts/census/` |`run-census.sh` (whole census), `census-repo.sh` (one repo), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
 |`Justfile` |`just census`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
 |===
 
 == How the census works
 
-. *List repositories.* `data/repos.jsonl` is the input. Agent sessions build
+. *List repositories.* `docs/catalogue/census/repos.jsonl` is the input. Agent sessions build
   it with the Claude Code remote `list_repos` tool, because the GitHub API is
   not reachable from them.
 . *List proof files cheaply.* Each repository is cloned blobless with
@@ -40,8 +39,9 @@ in Rocq and Lean). The working method is the proof-craft skill.
   inventories holes, axioms, disabled checkers and policy breaches
   (`holes.jsonl`).
 . *Set the template aside.* Files the RSR template ships
-  (`data/template-paths.txt`) are boilerplate wherever they appear. The
+  (`docs/catalogue/census/template-paths.txt`) are boilerplate wherever they appear. The
   catalogue counts only a repo's *own* files.
+. *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
 
 == Reading the catalogue (first pass, 2026-10-26)
 
@@ -54,14 +54,14 @@ The first census covered 476 repositories:
   the end of the catalogue, among them `cut-calculus`.
 * *Possibly missing:* the listing returned only repositories pushed since
   2026-09-15, so older, untouched repos may be absent. Add them to
-  `data/repos.jsonl` and rerun.
+  `docs/catalogue/census/repos.jsonl` and rerun.
 * *Theory or engineering* is a heuristic: more Agda, Lean, Rocq or Isabelle
   files than Idris2 or SPARK files reads as theory. Confirm each row against
   PROOF-POLICY.
 * *Hole, axiom, unsafe and policy counts* are textual candidates, not kernel
   verdicts. The kernel is the authority. `import Mathlib` shows under
   policy.
-* *Declaration counts* in `data/summary.md` overcount Agda and Idris2:
+* *Declaration counts* overcount Agda and Idris2:
   every column-0 type signature counts, helpers included.
 * *Older template copies* survive as "own" files in some repos: for example
   asdf-tool-plugins, whose plugins each carry a stubbed `Layout.idr`.

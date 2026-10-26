@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MPL-2.0
 set -uo pipefail
-M=${MATHESIS_DATA:-$(cd "$(dirname "$0")/../.." && pwd)/data}
+M=${MATHESIS_DATA:?set MATHESIS_DATA to the census work directory}
 cd "$M" || exit 1
 cat_sorted() { find out -name "*.$1.jsonl" -print0 | sort -z | xargs -0 cat 2>/dev/null | jq -cS . ; }
 cat_sorted files > files.jsonl

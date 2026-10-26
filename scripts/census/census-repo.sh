@@ -4,7 +4,7 @@
 # Writes per-repo outputs into $BASE/out/<owner>__<repo>.{files,decls,holes,agdaopts,status,unreach}.jsonl
 set -uo pipefail
 FN=$1
-BASE=${MATHESIS_DATA:-$(cd "$(dirname "$0")/../.." && pwd)/data}
+BASE=${MATHESIS_DATA:?set MATHESIS_DATA to the census work directory}
 HOLES=$(cd "$(dirname "$0")" && pwd)/proof-holes.sh
 KEY=${FN/\//__}
 D=$BASE/clones/$KEY

@@ -716,14 +716,14 @@ uncloak:
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
 
-# Re-run the proof census over data/repos.jsonl and regenerate the catalogue
+# Re-run the proof census over docs/catalogue/census/repos.jsonl and regenerate the catalogue
 census:
     bash scripts/census/run-census.sh
 
-# Regenerate catalogue/catalogue.adoc from the committed census data
+# Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
-    bash scripts/census/generate-catalogue.sh data data/template-paths.txt > catalogue/catalogue.adoc
+    bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc
 
-# Fail if the committed catalogue does not match the committed census data
+# Fail if the committed catalogue does not match the committed census rows
 catalogue-check:
-    bash scripts/census/generate-catalogue.sh data data/template-paths.txt | diff -u catalogue/catalogue.adoc -
+    bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -

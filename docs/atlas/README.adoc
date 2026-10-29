@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: MPL-2.0
+= Mathesis discovery atlas — census-backed first slice
+
+This is a *generated, read-only directory of proof-source repositories*, not yet a
+complete alphabetic mathematical concept atlas. It derives from the existing
+239-row `docs/catalogue/census/catalogue-rows.json` snapshot and never alters
+or reclassifies the source census. A–Z means repository-name order, not a claim
+that these are all the mathematical concepts relevant to the estate.
+
+The first views are A–Z repositories, theory-versus-engineering census class,
+and owner/organisation grouping. `index.json` is machine-readable. The CLI
+supports source discovery and a bounded context pack suitable for agents.
+
+Run with Bun: `bun scripts/atlas/census-atlas.mjs build`, `check`,
+`find idris2` or `context idris2`.
+
+Proof declarations, axioms and holes are *counts found by the original census*.
+They are not kernel-check receipts; source files are not included in the
+summarised rows, so this atlas must not invent per-theorem names, evidence,
+proof status, assumptions, equivalence, or independent verification.
+The next slice requires a separately reviewed, source-anchored claims registry.
+No private-source records are added or published by this generator.

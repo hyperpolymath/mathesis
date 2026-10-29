@@ -727,3 +727,14 @@ catalogue:
 # Fail if the committed catalogue does not match the committed census rows
 catalogue-check:
     bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
+
+# Mathesis read-only census discovery views and agent retrieval
+atlas-build:
+    bun scripts/atlas/census-atlas.mjs build
+
+atlas-check:
+    bun scripts/atlas/census-atlas.mjs check
+    bun test tests/atlas/census-atlas.test.mjs
+
+atlas-find query:
+    bun scripts/atlas/census-atlas.mjs find "{{query}}"

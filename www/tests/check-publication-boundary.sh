@@ -108,7 +108,7 @@ DECL="$WWW/schemas/publishable-paths.txt"
 if [ ! -f "$DECL" ]; then
     bad "schemas/publishable-paths.txt missing"
 else
-    declared="$(grep -v '^#' "$DECL" | grep -v '^[[:space:]]*$' | sort)"
+    declared="$(grep -v '^#' "$DECL" | grep -v '^[[:space:]]*$' | LC_ALL=C sort)"
     expected="$(printf 'www/.well-known/\nwww/public/')"
     if [ "$declared" = "$expected" ]; then
         ok "publishable-paths.txt declares exactly www/public/ + www/.well-known/"

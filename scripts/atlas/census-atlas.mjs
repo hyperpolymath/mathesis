@@ -10,9 +10,14 @@ const validClass=new Set(['theory','engineering']);
 const clean=s=>String(s).replaceAll('|',String.raw`\|`).replaceAll('\n',' ');
 // RFC 8785 key ordering is ECMAScript UTF-16 code-unit ordering; JSON.stringify
 // supplies ECMAScript primitive number/string formatting. Inputs are parsed JSON.
+function compareUtf16(a,b){
+  if(a<b)return -1;
+  if(a>b)return 1;
+  return 0;
+}
 function jcs(v){
   if(Array.isArray(v))return '['+v.map(jcs).join(',')+']';
-  if(v!==null&&typeof v==='object')return '{'+Object.keys(v).sort((a,b)=>a<b?-1:a>b?1:0).map(k=>JSON.stringify(k)+':'+jcs(v[k])).join(',')+'}';
+  if(v!==null&&typeof v==='object')return '{'+Object.keys(v).sort(compareUtf16).map(k=>JSON.stringify(k)+':'+jcs(v[k])).join(',')+'}';
   return JSON.stringify(v);
 }
 const order=(a,b)=>a.localeCompare(b,'en',{sensitivity:'base'});

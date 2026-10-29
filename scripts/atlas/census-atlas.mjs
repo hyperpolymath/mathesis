@@ -2,6 +2,7 @@
 // A read-only discovery layer over the existing census. No proof-verification claims.
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
+import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const rowsFile=path.join(root,'docs/catalogue/census/catalogue-rows.json');
@@ -48,7 +49,10 @@ export function render(rows){
   const classes=header+'= Census classifications\n\n'+[...validClass].map(c=>`== ${c}\n\n${ordered.filter(r=>r.class===c).map(line).join('\n')}\n`).join('\n');
   const owners=[...new Set(ordered.map(r=>r.repo.split('/')[0]))].sort(order);
   const estates=header+'= Estate organisation view\n\n'+owners.map(owner=>`== ${owner}\n\n${ordered.filter(r=>r.repo.startsWith(owner+'/')).map(line).join('\n')}\n`).join('\n');
-  const index=JSON.stringify({schema:'mathesis.census-atlas/0.1',source:'docs/catalogue/census/catalogue-rows.json',verification:'not_asserted',count:ordered.length,records:ordered},null,2)+'\n';
+  const payload=JSON.stringify({schema:'mathesis.census-atlas/0.1',source:'docs/catalogue/census/catalogue-rows.json',verification:'not_asserted',count:ordered.length,records:ordered});
+  const result=spawnSync(process.execPath,[path.join(root,'scripts/ijson-jcs-cli.js'),'canon'],{input:payload,encoding:'utf8'});
+  if(result.status!==0)throw Error('JCS canonicalisation failed: '+(result.stderr||''));
+  const index=result.stdout+'\n';
   return {'az.adoc':az,'classes.adoc':classes,'organisations.adoc':estates,'index.json':index};
 }
 async function main(){const [cmd,...args]=process.argv.slice(2);const rows=validate(JSON.parse(await readFile(rowsFile,'utf8')));validateVisibility(rows,JSON.parse(await readFile(path.join(root,'docs/catalogue/census/repos.json'),'utf8')));const views=render(rows);

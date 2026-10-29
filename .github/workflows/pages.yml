@@ -4,9 +4,9 @@
 # Replaces the orphan one-off Pages deployment with a reproducible build.
 name: GitHub Pages
 
+# Publishing is opt-in until the mathematical atlas is ready.
+# Do not deploy template-generated content on every main push.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

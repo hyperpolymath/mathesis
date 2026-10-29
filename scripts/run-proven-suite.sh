@@ -183,7 +183,11 @@ fi
 
 # ── Tier 5: Benchmark regression gate (optional --bench) ─────────────────────
 if [ "$RUN_BENCH" -eq 1 ]; then
-  if ! command -v jq >/dev/null 2>&1; then
+  # The template benchmark measures template scaffolding, removed by repo-init.
+  # It is not a meaningful regression baseline for a minted application.
+  if [ "${GITHUB_REPOSITORY:-}" != "hyperpolymath/rsr-template-repo" ] && [ ! -d archetypes ]; then
+    printf '==> [proven-suite] Template benchmark: not applicable to a minted repository\n'
+  elif ! command -v jq >/dev/null 2>&1; then
     printf '    INERT/SETUP (2): jq required for --bench regression gate\n' >&2
     setup_failures=$((setup_failures + 1))
   elif require_file benches/template_bench.sh && require_file scripts/check-bench-regression.sh && require_file benches/baseline.json; then

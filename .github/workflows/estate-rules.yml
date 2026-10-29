@@ -116,6 +116,8 @@ jobs:
       # closing advice. A fresh mint of main aborted on 2026-10-20 and nothing
       # here noticed. uuidgen is util-linux; installed only if the image lacks it.
       - name: Use-this-template mint end to end
+        # This tests the generator as a template, not an already-minted child.
+        if: github.event.repository.name == 'rsr-template-repo'
         run: |
           command -v uuidgen >/dev/null || { sudo apt-get update -q && sudo apt-get install -y -q uuid-runtime; }
           bash tests/e2e/use_template_mint_test.sh

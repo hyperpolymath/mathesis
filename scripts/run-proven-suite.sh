@@ -185,7 +185,7 @@ fi
 if [ "$RUN_BENCH" -eq 1 ]; then
   # The template benchmark measures template scaffolding, removed by repo-init.
   # It is not a meaningful regression baseline for a minted application.
-  if [ "${GITHUB_WORKSPACE:-}" = "$PWD" ] && [ "${GITHUB_REPOSITORY:-}" != "hyperpolymath/rsr-template-repo" ] && [ ! -d archetypes ]; then
+  if [[ "${GITHUB_WORKSPACE:-}" == "$PWD" && "${GITHUB_REPOSITORY:-}" != "hyperpolymath/rsr-template-repo" && ! -d archetypes ]]; then
     printf '==> [proven-suite] Template benchmark: not applicable to a minted repository\n'
   elif ! command -v jq >/dev/null 2>&1; then
     printf '    INERT/SETUP (2): jq required for --bench regression gate\n' >&2

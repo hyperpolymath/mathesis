@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// {{PROJECT}} FFI Implementation
+// MATHESIS FFI Implementation
 //
 // This module implements the C-compatible FFI declared in src/abi/Foreign.idr
 // All types and layouts must match the Idris2 ABI definitions.
@@ -10,7 +10,7 @@ const std = @import("std");
 
 // Version information (keep in sync with project)
 const VERSION = "0.1.0";
-const BUILD_INFO = "{{PROJECT}} built with Zig " ++ @import("builtin").zig_version_string;
+const BUILD_INFO = "MATHESIS built with Zig " ++ @import("builtin").zig_version_string;
 
 /// Thread-local error storage
 threadlocal var last_error: ?[]const u8 = null;
@@ -62,7 +62,7 @@ pub const Handle = struct {
 
 /// Initialize the library
 /// Returns a handle, or null on failure
-export fn {{project}}_init() ?*Handle {
+export fn mathesis_init() ?*Handle {
     const allocator = std.heap.c_allocator;
 
     const handle = allocator.create(Handle) catch {
@@ -81,7 +81,7 @@ export fn {{project}}_init() ?*Handle {
 }
 
 /// Free the library handle
-export fn {{project}}_free(handle: ?*Handle) void {
+export fn mathesis_free(handle: ?*Handle) void {
     const h = handle orelse return;
     const allocator = h.allocator;
 
@@ -97,7 +97,7 @@ export fn {{project}}_free(handle: ?*Handle) void {
 //==============================================================================
 
 /// Process data (example operation)
-export fn {{project}}_process(handle: ?*Handle, input: u32) Result {
+export fn mathesis_process(handle: ?*Handle, input: u32) Result {
     const h = handle orelse {
         setError("Null handle");
         return .null_pointer;
@@ -121,9 +121,9 @@ export fn {{project}}_process(handle: ?*Handle, input: u32) Result {
 
 /// Get a string result (example)
 /// Return a NUL-terminated "Example result" owned by the caller; free it with
-/// `{{project}}_free_string`. Return null and set the thread-local error for a
+/// `mathesis_free_string`. Return null and set the thread-local error for a
 /// null or uninitialized handle, or allocation failure. Clear the error on success.
-export fn {{project}}_get_string(handle: ?*Handle) ?[*:0]const u8 {
+export fn mathesis_get_string(handle: ?*Handle) ?[*:0]const u8 {
     const h = handle orelse {
         setError("Null handle");
         return null;
@@ -145,7 +145,7 @@ export fn {{project}}_get_string(handle: ?*Handle) ?[*:0]const u8 {
 }
 
 /// Free a string allocated by the library
-export fn {{project}}_free_string(str: ?[*:0]const u8) void {
+export fn mathesis_free_string(str: ?[*:0]const u8) void {
     const s = str orelse return;
     const allocator = std.heap.c_allocator;
 
@@ -158,7 +158,7 @@ export fn {{project}}_free_string(str: ?[*:0]const u8) void {
 //==============================================================================
 
 /// Process an array of data
-export fn {{project}}_process_array(
+export fn mathesis_process_array(
     handle: ?*Handle,
     buffer: ?[*]const u8,
     len: u32,
@@ -195,8 +195,8 @@ export fn {{project}}_process_array(
 /// Get the last error message.
 /// Return an allocated NUL-terminated copy of the current thread's error, or
 /// null if no error is set or allocation fails. Leave the stored error unchanged.
-/// Caller must free a non-null returned string with `{{project}}_free_string`.
-export fn {{project}}_last_error() ?[*:0]const u8 {
+/// Caller must free a non-null returned string with `mathesis_free_string`.
+export fn mathesis_last_error() ?[*:0]const u8 {
     const err = last_error orelse return null;
 
     const allocator = std.heap.c_allocator;
@@ -209,12 +209,12 @@ export fn {{project}}_last_error() ?[*:0]const u8 {
 //==============================================================================
 
 /// Get the library version
-export fn {{project}}_version() [*:0]const u8 {
+export fn mathesis_version() [*:0]const u8 {
     return VERSION.ptr;
 }
 
 /// Get build information
-export fn {{project}}_build_info() [*:0]const u8 {
+export fn mathesis_build_info() [*:0]const u8 {
     return BUILD_INFO.ptr;
 }
 
@@ -226,7 +226,7 @@ export fn {{project}}_build_info() [*:0]const u8 {
 pub const Callback = *const fn (u64, u32) callconv(.c) u32;
 
 /// Register a callback
-export fn {{project}}_register_callback(
+export fn mathesis_register_callback(
     handle: ?*Handle,
     callback: ?Callback,
 ) Result {
@@ -257,7 +257,7 @@ export fn {{project}}_register_callback(
 //==============================================================================
 
 /// Check if handle is initialized
-export fn {{project}}_is_initialized(handle: ?*Handle) u32 {
+export fn mathesis_is_initialized(handle: ?*Handle) u32 {
     const h = handle orelse return 0;
     return if (h.initialized) 1 else 0;
 }
@@ -267,27 +267,27 @@ export fn {{project}}_is_initialized(handle: ?*Handle) u32 {
 //==============================================================================
 
 test "lifecycle" {
-    const handle = {{project}}_init() orelse return error.InitFailed;
-    defer {{project}}_free(handle);
+    const handle = mathesis_init() orelse return error.InitFailed;
+    defer mathesis_free(handle);
 
-    try std.testing.expect({{project}}_is_initialized(handle) == 1);
+    try std.testing.expect(mathesis_is_initialized(handle) == 1);
 
-    const str = {{project}}_get_string(handle) orelse return error.StringFailed;
-    defer {{project}}_free_string(str);
+    const str = mathesis_get_string(handle) orelse return error.StringFailed;
+    defer mathesis_free_string(str);
     try std.testing.expectEqualStrings("Example result", std.mem.span(str));
 }
 
 test "error handling" {
-    const result = {{project}}_process(null, 0);
+    const result = mathesis_process(null, 0);
     try std.testing.expectEqual(Result.null_pointer, result);
 
-    const err = {{project}}_last_error();
-    defer {{project}}_free_string(err);
+    const err = mathesis_last_error();
+    defer mathesis_free_string(err);
     try std.testing.expect(err != null);
 }
 
 test "version" {
-    const ver = {{project}}_version();
+    const ver = mathesis_version();
     const ver_str = std.mem.span(ver);
     try std.testing.expectEqualStrings(VERSION, ver_str);
 }

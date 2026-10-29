@@ -21,7 +21,7 @@
     # ──────────────────────────────────────────────────────────────────────
     # Primary application service
     # ──────────────────────────────────────────────────────────────────────
-    "mathesis": {
+    mathesis: {
       build: {
         context: "..",
         dockerfile: "build/container/Containerfile",
@@ -74,7 +74,7 @@
         "rokur-audit:/var/log/rokur",
       ],
       depends_on: {
-        "mathesis": {
+        mathesis: {
           condition: "service_healthy",
         },
       },
@@ -128,7 +128,7 @@
     },
   },
   volumes: {
-    "mathesis-data": null,
+    mathesis-data: null,
     rokur-audit: null,
   },
 }

@@ -25,14 +25,14 @@
 * `hyperpolymath/asdf-tool-plugins` — engineering; 567 own proof files, 11340 detected declarations; provers: idris2 567
 * `hyperpolymath/atoma` — theory; 21 own proof files, 127 detected declarations; provers: agda 4, idris2 3, smt-atp 14
 * `hyperpolymath/atsiser` — engineering; 9 own proof files, 137 detected declarations; provers: idris2 9
+* `metadatastician/authority-watch` — engineering; 3 own proof files, 13 detected declarations; provers: idris2 3
 * `hyperpolymath/autoformal-fidelity` — theory; 4 own proof files, 7 detected declarations; provers: agda 4
 * `hyperpolymath/Axiom.jl` — engineering; 11 own proof files, 131 detected declarations; provers: idris2 11
-* `metadatastician/authority-watch` — engineering; 3 own proof files, 13 detected declarations; provers: idris2 3
 
 == B
 
-* `catachresis-colloquium/befunge93-vault-cracker` — engineering; 5 own proof files, 36 detected declarations; provers: idris2 5
 * `hyperpolymath/bebop-ffi` — engineering; 4 own proof files, 29 detected declarations; provers: idris2 4
+* `catachresis-colloquium/befunge93-vault-cracker` — engineering; 5 own proof files, 36 detected declarations; provers: idris2 5
 * `hyperpolymath/betlang` — engineering; 14 own proof files, 95 detected declarations; provers: lean 3, idris2 11
 * `hyperpolymath/betlangiser` — engineering; 9 own proof files, 173 detected declarations; provers: idris2 9
 * `hyperpolymath/bitfuckit` — engineering; 39 own proof files, 0 detected declarations; provers: spark 37, other 2
@@ -40,24 +40,28 @@
 * `hyperpolymath/boinc-boinc` — theory; 8 own proof files, 46 detected declarations; provers: lean 8
 * `hyperpolymath/boj-server` — engineering; 26 own proof files, 421 detected declarations; provers: idris2 19, tla 6, alloy 1
 * `hyperpolymath/boj-server-cartridges` — engineering; 184 own proof files, 1500 detected declarations; provers: idris2 184
+* `metadatastician/bowtie-workbench` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/BowtieRisk.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/bqniser` — engineering; 9 own proof files, 132 detected declarations; provers: idris2 9
-* `metadatastician/bowtie-workbench` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `metadatastician/burble` — engineering; 12 own proof files, 127 detected declarations; provers: idris2 12
 
 == C
 
+* `metadatastician/cadastra` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/candy-crash` — engineering; 1 own proof files, 5 detected declarations; provers: idris2 1
+* `metadatastician/cerro-torre` — engineering; 85 own proof files, 91 detected declarations; provers: idris2 8, spark 75, other 2
 * `hyperpolymath/chapeliser` — engineering; 9 own proof files, 136 detected declarations; provers: idris2 9
 * `hyperpolymath/checky-monkey` — engineering; 3 own proof files, 33 detected declarations; provers: idris2 3
 * `hyperpolymath/choreographic-types` — theory; 25 own proof files, 178 detected declarations; provers: agda 25
 * `hyperpolymath/cicd-squabbler` — engineering; 3 own proof files, 0 detected declarations; provers: spark 2, other 1
 * `hyperpolymath/civic-connect` — engineering; 13 own proof files, 46 detected declarations; provers: idris2 4, spark 8, other 1
+* `metadatastician/cleave` — engineering; 12 own proof files, 38 detected declarations; provers: idris2 12
 * `hyperpolymath/Cliodynamics.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/Cliometrics.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/cloud-sync-tuner` — engineering; 4 own proof files, 0 detected declarations; provers: spark 3, other 1
 * `hyperpolymath/cloudguard-cli` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/cloudguard-server` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
+* `metadatastician/common-signal` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/CompositionalCounts.jl` — theory; 10 own proof files, 184 detected declarations; provers: agda 10
 * `hyperpolymath/CompositionalDA.jl` — theory; 11 own proof files, 51 detected declarations; provers: agda 11
 * `hyperpolymath/conative-gating` — engineering; 4 own proof files, 23 detected declarations; provers: idris2 4
@@ -66,10 +70,6 @@
 * `hyperpolymath/contractiles` — engineering; 36 own proof files, 0 detected declarations; provers: spark 34, other 2
 * `hyperpolymath/cookie-rebound` — engineering; 3 own proof files, 83 detected declarations; provers: idris2 3
 * `hyperpolymath/czech-file-knife` — engineering; 3 own proof files, 0 detected declarations; provers: spark 2, other 1
-* `metadatastician/cadastra` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
-* `metadatastician/cerro-torre` — engineering; 85 own proof files, 91 detected declarations; provers: idris2 8, spark 75, other 2
-* `metadatastician/cleave` — engineering; 12 own proof files, 38 detected declarations; provers: idris2 12
-* `metadatastician/common-signal` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 
 == D
 
@@ -84,18 +84,18 @@
 
 == E
 
-* `catachresis-colloquium/enaction-engine` — engineering; 6 own proof files, 95 detected declarations; provers: idris2 6
-* `catachresis-colloquium/enterglide-ncc-137-k` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
-* `catachresis-colloquium/evil-weevil` — engineering; 4 own proof files, 124 detected declarations; provers: idris2 4
 * `hyperpolymath/echidna` — engineering; 167 own proof files, 1885 detected declarations; provers: agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/echidnabot` — theory; 7 own proof files, 63 detected declarations; provers: lean 2, rocq 2, idris2 3
 * `hyperpolymath/echo-types` — theory; 148 own proof files, 1467 detected declarations; provers: agda 148
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
 * `hyperpolymath/eclexiaiser` — engineering; 9 own proof files, 121 detected declarations; provers: idris2 9
+* `catachresis-colloquium/enaction-engine` — engineering; 6 own proof files, 95 detected declarations; provers: idris2 6
+* `catachresis-colloquium/enterglide-ncc-137-k` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
 * `hyperpolymath/ephapax` — engineering; 43 own proof files, 635 detected declarations; provers: rocq 19, idris2 24
 * `hyperpolymath/ephapaxiser` — engineering; 9 own proof files, 133 detected declarations; provers: idris2 9
 * `hyperpolymath/epistemic-types` — theory; 37 own proof files, 320 detected declarations; provers: agda 37
 * `hyperpolymath/error-lang` — engineering; 5 own proof files, 57 detected declarations; provers: idris2 5
+* `catachresis-colloquium/evil-weevil` — engineering; 4 own proof files, 124 detected declarations; provers: idris2 4
 * `hyperpolymath/ExactCounts.jl` — theory; 15 own proof files, 236 detected declarations; provers: agda 15
 * `hyperpolymath/ExactTests.jl` — theory; 9 own proof files, 44 detected declarations; provers: agda 9
 * `hyperpolymath/explicit-trust-plane` — engineering; 3 own proof files, 47 detected declarations; provers: idris2 3
@@ -106,10 +106,10 @@
 * `hyperpolymath/ffmpeg-ffi` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/fireflag` — engineering; 10 own proof files, 156 detected declarations; provers: idris2 10
 * `hyperpolymath/firmboot` — theory; 38 own proof files, 409 detected declarations; provers: agda 19, lean 19
+* `metadatastician/first-post` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/flatracoon` — engineering; 14 own proof files, 47 detected declarations; provers: idris2 3, spark 9, other 2
 * `hyperpolymath/formatrix-docs` — engineering; 11 own proof files, 0 detected declarations; provers: spark 10, other 1
 * `hyperpolymath/futharkiser` — engineering; 9 own proof files, 136 detected declarations; provers: idris2 9
-* `metadatastician/first-post` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 
 == G
 
@@ -131,21 +131,21 @@
 * `hyperpolymath/hpm-http-client-rsr` — engineering; 3 own proof files, 17 detected declarations; provers: idris2 3
 * `hyperpolymath/hpm-json-rsr` — engineering; 3 own proof files, 26 detected declarations; provers: idris2 3
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
+* `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
 * `hyperpolymath/hypatia` — engineering; 42 own proof files, 448 detected declarations; provers: agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
-* `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
 
 == I
 
-* `catachresis-colloquium/IDApTIK` — engineering; 9 own proof files, 120 detected declarations; provers: idris2 9
 * `hyperpolymath/i-human` — engineering; 3 own proof files, 47 detected declarations; provers: idris2 3
+* `catachresis-colloquium/IDApTIK` — engineering; 9 own proof files, 120 detected declarations; provers: idris2 9
 * `hyperpolymath/ideas-to-alphas` — engineering; 4 own proof files, 77 detected declarations; provers: idris2 4
 * `hyperpolymath/idrisiser` — engineering; 9 own proof files, 122 detected declarations; provers: idris2 9
+* `metadatastician/insolvency-tycoon` — engineering; 6 own proof files, 25 detected declarations; provers: idris2 6
 * `hyperpolymath/intsoc-transactor` — engineering; 3 own proof files, 59 detected declarations; provers: idris2 3
 * `hyperpolymath/invariant-path` — theory; 1 own proof files, 8 detected declarations; provers: agda 1
 * `hyperpolymath/ipfs-overlay` — engineering; 5 own proof files, 17 detected declarations; provers: idris2 5
 * `hyperpolymath/iseriser` — engineering; 18 own proof files, 254 detected declarations; provers: idris2 18
-* `metadatastician/insolvency-tycoon` — engineering; 6 own proof files, 25 detected declarations; provers: idris2 6
 
 == J
 
@@ -169,21 +169,21 @@
 * `hyperpolymath/laminar` — engineering; 1 own proof files, 6 detected declarations; provers: idris2 1
 * `hyperpolymath/laniakea` — engineering; 8 own proof files, 32 detected declarations; provers: idris2 7, alloy 1
 * `hyperpolymath/launch-scaffolder` — engineering; 2 own proof files, 1 detected declarations; provers: idris2 2
+* `metadatastician/lintel` — theory; 6 own proof files, 58 detected declarations; provers: agda 6
 * `hyperpolymath/lithoglyph` — theory; 13 own proof files, 264 detected declarations; provers: lean 8, idris2 5
 * `hyperpolymath/lol` — engineering; 18 own proof files, 314 detected declarations; provers: agda 3, idris2 15
 * `hyperpolymath/lustreiser` — engineering; 9 own proof files, 141 detected declarations; provers: idris2 9
-* `metadatastician/lintel` — theory; 6 own proof files, 58 detected declarations; provers: agda 6
 
 == M
 
-* `catachresis-colloquium/megadog` — theory; 3 own proof files, 25 detected declarations; provers: lean 3
 * `hyperpolymath/maa-framework` — engineering; 9 own proof files, 11 detected declarations; provers: agda 3, spark 4, other 2
 * `hyperpolymath/marches` — theory; 15 own proof files, 161 detected declarations; provers: lean 15
+* `metadatastician/marid` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
+* `catachresis-colloquium/megadog` — theory; 3 own proof files, 25 detected declarations; provers: lean 3
+* `metadatastician/MetaManifold-Evidence` — theory; 13 own proof files, 70 detected declarations; provers: agda 13
 * `hyperpolymath/modshells` — engineering; 12 own proof files, 0 detected declarations; provers: spark 9, other 3
 * `hyperpolymath/my-lang` — theory; 25 own proof files, 617 detected declarations; provers: rocq 16, idris2 9
 * `hyperpolymath/mylangiser` — engineering; 9 own proof files, 135 detected declarations; provers: idris2 9
-* `metadatastician/marid` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
-* `metadatastician/MetaManifold-Evidence` — theory; 13 own proof files, 70 detected declarations; provers: agda 13
 
 == N
 
@@ -207,11 +207,7 @@
 
 == P
 
-* `catachresis-colloquium/planer-1` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
-* `catachresis-colloquium/pong-ping` — engineering; 2 own proof files, 13 detected declarations; provers: idris2 2
-* `catachresis-colloquium/pow-the-game` — engineering; 4 own proof files, 14 detected declarations; provers: idris2 4
-* `catachresis-colloquium/project-ovine` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
-* `catachresis-colloquium/proof-of-work` — engineering; 4 own proof files, 46 detected declarations; provers: idris2 4
+* `metadatastician/paint-type` — engineering; 51 own proof files, 991 detected declarations; provers: agda 2, lean 1, idris2 42, tla 6
 * `hyperpolymath/palimpsest-license` — theory; 5 own proof files, 3 detected declarations; provers: agda 5
 * `hyperpolymath/panic-attack` — engineering; 6 own proof files, 46 detected declarations; provers: idris2 6
 * `hyperpolymath/panll` — engineering; 12 own proof files, 125 detected declarations; provers: idris2 12
@@ -219,20 +215,24 @@
 * `hyperpolymath/patallm-gallery` — engineering; 4 own proof files, 113 detected declarations; provers: idris2 4
 * `hyperpolymath/patch-bridge` — engineering; 3 own proof files, 8 detected declarations; provers: idris2 3
 * `hyperpolymath/phantom-metal-taste` — engineering; 2 own proof files, 9 detected declarations; provers: tla 2
+* `metadatastician/phi-LAM` — engineering; 11 own proof files, 199 detected declarations; provers: lean 5, idris2 6
 * `hyperpolymath/phronesis` — theory; 12 own proof files, 140 detected declarations; provers: agda 3, lean 3, rocq 1, idris2 2, tla 3
 * `hyperpolymath/phronesiser` — engineering; 9 own proof files, 155 detected declarations; provers: idris2 9
 * `hyperpolymath/pimcore-fortress` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
+* `catachresis-colloquium/planer-1` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
 * `hyperpolymath/polyglot-formalisms-elixir` — engineering; 1 own proof files, 5 detected declarations; provers: idris2 1
 * `hyperpolymath/polyglot-i18n` — engineering; 11 own proof files, 0 detected declarations; provers: spark 10, other 1
+* `catachresis-colloquium/pong-ping` — engineering; 2 own proof files, 13 detected declarations; provers: idris2 2
 * `hyperpolymath/ponyiser` — engineering; 9 own proof files, 137 detected declarations; provers: idris2 9
+* `catachresis-colloquium/pow-the-game` — engineering; 4 own proof files, 14 detected declarations; provers: idris2 4
 * `hyperpolymath/presswerk` — engineering; 6 own proof files, 76 detected declarations; provers: idris2 6
+* `metadatastician/proglanging-languages` — engineering; 1 own proof files, 1 detected declarations; provers: idris2 1
+* `catachresis-colloquium/project-ovine` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
+* `catachresis-colloquium/proof-of-work` — engineering; 4 own proof files, 46 detected declarations; provers: idris2 4
 * `hyperpolymath/protocol-squisher` — theory; 42 own proof files, 365 detected declarations; provers: agda 10, lean 4, rocq 4, isabelle 2, idris2 12, tla 6, smt-atp 4
 * `hyperpolymath/proven` — engineering; 967 own proof files, 11166 detected declarations; provers: lean 14, idris2 906, spark 42, tla 1, other 4
 * `hyperpolymath/proven-servers` — engineering; 1097 own proof files, 6242 detected declarations; provers: idris2 899, spark 197, other 1
 * `hyperpolymath/proven-tests-and-benches` — engineering; 72 own proof files, 857 detected declarations; provers: idris2 72
-* `metadatastician/paint-type` — engineering; 51 own proof files, 991 detected declarations; provers: agda 2, lean 1, idris2 42, tla 6
-* `metadatastician/phi-LAM` — engineering; 11 own proof files, 199 detected declarations; provers: lean 5, idris2 6
-* `metadatastician/proglanging-languages` — engineering; 1 own proof files, 1 detected declarations; provers: idris2 1
 
 == Q
 
@@ -252,29 +252,29 @@
 
 == S
 
-* `catachresis-colloquium/sr71-blackglider` — engineering; 2 own proof files, 21 detected declarations; provers: idris2 2
-* `catachresis-colloquium/stealth-glider-ecosystem` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
 * `hyperpolymath/secret-types` — theory; 16 own proof files, 67 detected declarations; provers: agda 16
+* `metadatastician/selur` — engineering; 2 own proof files, 23 detected declarations; provers: idris2 2
 * `hyperpolymath/session-sentinel` — engineering; 6 own proof files, 117 detected declarations; provers: idris2 6
+* `metadatastician/sim-public-relations` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/SMTLib.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/smtp-notify-action` — engineering; 6 own proof files, 101 detected declarations; provers: idris2 6
 * `hyperpolymath/snifs` — theory; 3 own proof files, 43 detected declarations; provers: agda 2, idris2 1
 * `hyperpolymath/somethings-fishy` — engineering; 7 own proof files, 0 detected declarations; provers: spark 6, other 1
+* `catachresis-colloquium/sr71-blackglider` — engineering; 2 own proof files, 21 detected declarations; provers: idris2 2
 * `hyperpolymath/ssg-collection` — engineering; 23 own proof files, 108 detected declarations; provers: lean 1, idris2 6, spark 13, other 3
-* `hyperpolymath/stateful-artefacts` — engineering; 4 own proof files, 23 detected declarations; provers: idris2 2, tla 2
-* `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4
-* `hyperpolymath/system-et` — theory; 21 own proof files, 164 detected declarations; provers: lean 21
-* `metadatastician/selur` — engineering; 2 own proof files, 23 detected declarations; provers: idris2 2
-* `metadatastician/sim-public-relations` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `metadatastician/standards` — engineering; 1 own proof files, 22 detected declarations; provers: idris2 1
 * `metadatastician/stapeln` — engineering; 19 own proof files, 294 detected declarations; provers: idris2 18, alloy 1
+* `hyperpolymath/stateful-artefacts` — engineering; 4 own proof files, 23 detected declarations; provers: idris2 2, tla 2
+* `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4
+* `catachresis-colloquium/stealth-glider-ecosystem` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
+* `hyperpolymath/system-et` — theory; 21 own proof files, 164 detected declarations; provers: lean 21
 
 == T
 
+* `hyperpolymath/tangle` — theory; 3 own proof files, 61 detected declarations; provers: lean 3
 * `catachresis-colloquium/tardis-rule-disruption` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
 * `catachresis-colloquium/the-nash-equilibrium` — engineering; 3 own proof files, 59 detected declarations; provers: idris2 3
 * `catachresis-colloquium/thejeffparadox` — engineering; 6 own proof files, 0 detected declarations; provers: spark 5, other 1
-* `hyperpolymath/tangle` — theory; 3 own proof files, 61 detected declarations; provers: lean 3
 * `hyperpolymath/thunderbird-template-reloaded` — engineering; 10 own proof files, 74 detected declarations; provers: idris2 10
 * `hyperpolymath/tlaiser` — engineering; 9 own proof files, 181 detected declarations; provers: idris2 9
 * `hyperpolymath/tree-navigator` — engineering; 16 own proof files, 0 detected declarations; provers: spark 15, other 1
@@ -287,11 +287,11 @@
 
 == U
 
-* `catachresis-colloquium/universal-modding-studio` — engineering; 29 own proof files, 254 detected declarations; provers: idris2 25, spark 3, other 1
 * `hyperpolymath/ubicity` — engineering; 7 own proof files, 76 detected declarations; provers: idris2 7
 * `hyperpolymath/unified-dataset-vocab` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/universal-chat-extractor` — engineering; 12 own proof files, 110 detected declarations; provers: idris2 12
 * `hyperpolymath/universal-extension-format` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
+* `catachresis-colloquium/universal-modding-studio` — engineering; 29 own proof files, 254 detected declarations; provers: idris2 25, spark 3, other 1
 * `hyperpolymath/universal-project-manager` — engineering; 3 own proof files, 47 detected declarations; provers: idris2 3
 
 == V
@@ -303,8 +303,8 @@
 * `hyperpolymath/verisimiser` — engineering; 12 own proof files, 208 detected declarations; provers: idris2 12
 * `hyperpolymath/vexometer` — engineering; 42 own proof files, 104 detected declarations; provers: idris2 10, spark 29, other 3
 * `hyperpolymath/volumod` — engineering; 3 own proof files, 58 detected declarations; provers: idris2 3
-* `hyperpolymath/voyage-enterprise-decision-system` — engineering; 3 own proof files, 33 detected declarations; provers: idris2 3
 * `metadatastician/vordr` — engineering; 23 own proof files, 122 detected declarations; provers: idris2 10, spark 12, other 1
+* `hyperpolymath/voyage-enterprise-decision-system` — engineering; 3 own proof files, 33 detected declarations; provers: idris2 3
 
 == W
 
@@ -317,7 +317,7 @@
 
 == Z
 
+* `metadatastician/ZenodoDeposits.jl` — theory; 3 own proof files, 53 detected declarations; provers: agda 3
 * `hyperpolymath/zerostep` — theory; 1 own proof files, 16 detected declarations; provers: isabelle 1
 * `hyperpolymath/zerotier-k8s-link` — engineering; 12 own proof files, 110 detected declarations; provers: idris2 12
 * `hyperpolymath/zotero-tools` — theory; 15 own proof files, 94 detected declarations; provers: lean 9, idris2 3, tla 3
-* `metadatastician/ZenodoDeposits.jl` — theory; 3 own proof files, 53 detected declarations; provers: agda 3

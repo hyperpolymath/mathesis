@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 [project]
-name = "{{REPO}}"
+name = "mathesis"
 
 [[functions]]
 name = "build"

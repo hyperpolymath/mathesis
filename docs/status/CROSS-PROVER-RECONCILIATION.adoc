@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Cross-prover proof reconciliation — working policy
+:revdate: 2026-11-01
+:toc:
+:sectnums:
+
+== Scope and authority
+
+This is a *research and verification policy*, not a claim that proofs across
+languages have already been reconciled. Mathesis indexes proof evidence and
+relationships; it does not become the authoritative proof kernel for its
+independent source repositories. ECHIDNA is the intended longer-term
+reconciliation automation, not an already complete cross-prover translator.
+
+Maintain a source theorem's statement, premises, universe/type discipline,
+prover version, module, revision and proof assumptions before porting it.
+Preserve existing Idris2, Coq and Lean gates during migration. If a proof
+cannot be translated faithfully, create an independent Agda proof of an
+explicitly compared statement. An Agda proof of a *weaker* proposition never
+silently replaces the original theorem.
+
+== Canonical Agda gate
+
+Use the documented Agda CLI spelling, with capital K:
+
+[source,shell]
+----
+agda --safe --without-K --cubical-compatible <Module.agda>
+----
+
+Agda's manual specifies `--without-K`; `--cubical-compatible` implies
+it but does **not** activate full `--cubical` support. This policy
+requires all three flags explicitly at checked entrypoints and CI.
+File-level OPTIONS pragmas may reinforce but not replace the command.
+Pin/record a compatible Agda and standard-library pair for each corpus.
+Imported libraries must satisfy the applicable safe / without-K /
+cubical-compatible compatibility requirements. Do not bypass a failing
+import with `--allow-unsolved-metas`, `--type-in-type`, `postulate`
+or unsafe compiler switches.
+
+A module dependent on genuinely full Cubical Agda must be recorded
+as an explicit proof-profile exception for review; do not claim it
+passed the default profile. A failed migration remains *unreconciled*,
+rather than being hidden, skipped or relabelled `PROVEN`.
+
+In this repo `scripts/check-proofs.sh agda` is the manifest-coverage
+hard gate; `just proof-check-agda` invokes it. Its command is the
+canonical source for local and CI checks.
+
+== Independent Coq and Lean inspection
+
+Coq and Lean independently check statements or explicitly specified
+witness translations where there is a trustworthy conversion. Neither
+kernel automatically verifies arbitrary Agda terms, and equal theorem
+names do not establish semantic agreement.
+
+For every claimed cross-prover correspondence, record:
+
+* a stable theorem identifier and owning repository;
+* the exact *proposition and premises* in each prover (including any
+  translation of equality, quotients, guardedness, universe levels,
+  modalities, partiality and effects);
+* the revision, prover version, library dependencies, build command
+  and observed CI/runner result for each;
+* whether the relation is `same-statement`, `refinement`,
+  `conditional-transport`, `countermodel` or `unassessed`;
+* the *bridge justification* (theorem, checked translation or
+  explicit semantic comparison) plus any unproved side conditions;
+* whether the result is model-level only, runtime-refined or
+  externally warranted. A type-checked proof is not independent
+  evidence about physical reality.
+
+The strongest possible status requires both a justified correspondence
+and independently verified targets; two successful local builds alone
+do not satisfy it.
+
+== Status vocabulary (never collapse)
+
+[cols="2,4",options="header"]
+|===
+|Status |Meaning
+|NOT-INVENTORIED |The theorem and exact statement have not been recovered
+|INVENTORIED |Original claim, source and dependencies located, without fresh compilation evidence
+|AGDA-PENDING |Translation/reproof proposed; full Agda command has not succeeded
+|AGDA-VERIFIED |Exact Agda artefact checked with the policy flags at a recorded revision
+|COQ-CHECKED |Corresponding Coq module checked, but cross-prover equivalence NOT implied
+|LEAN-CHECKED |Corresponding Lean module checked, but cross-prover equivalence NOT implied
+|BRIDGE-PENDING |Both sides may compile, but proposition correspondence or side conditions are unproved
+|RECONCILED |All stated targets checked and the declared correspondence obligation discharged
+|COUNTEREXAMPLE |A soundly evidenced mismatch, inconsistency or refuting instance
+|QUARANTINED |Known failure kept visible with issue, reason and a recheck path
+|===
+
+A proof can have multiple statuses: a successful independent proof is
+not inherently a verified Agda–Lean–Coq bridge. Use separate fields
+when publishing a machine-readable register.
+
+== Source-anchored first reconciliation targets
+
+[cols="2,3,3",options="header"]
+|===
+|Owner |Already checked in reconnaissance |Next task, not an established result
+|VCL-UT |The current proof corpus is Idris2; VCL-UT has distinct safety, transition and epistemic obligations |Inventory exact Idris propositions and port/reprove the smallest soundness lemma before any claim of 3-prover agreement
+|Kategoria |The alpha route includes Idris2 parametric polymorphism demos; multiple type mechanisms are independently scoped |Choose the concrete theorem and theory; do not translate a feature checklist into a purported theorem
+|nextgen-typing / Echo |Agda `Verification.agda` imports Echo; historical modules use `--safe --without-K` |Recheck compatible Echo and stdlib under all three policy flags; record mismatches
+|trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
+|Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
+|ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
+|===
+
+Existing proof statuses in these repos are historical evidence, not
+automatic proof of compliance with the new mode. Do not make all
+repos depend on Mathesis or ECHIDNA to build their local proofs.
+
+== Graduation / rollout
+
+. Update direct Agda entrypoints and CI commands *in each owning repo*.
+. Recheck first-party modules and all imported dependencies under the
+  new invocation. Record errors without weakening the gate.
+. Inventory a theorem and obtain a full-mode Agda receipt.
+. Reprove or inspect the corresponding proposition in Lean and Coq.
+. Prove/validate the bridge (or label it `BRIDGE-PENDING`).
+. Add the receipt and unresolved proof assumptions to the registry.
+. Only later automate the reconciliation with ECHIDNA.
+
+The central register below is currently a *todo list*: **no new
+full-mode runs or cross-prover reconciliations were observed during
+this policy edit**. CI must supply the evidence before any result
+is relabelled.
+
+== Register format (initially not reconciled)
+
+[cols="2,2,2,2,3",options="header"]
+|===
+|Owner |Candidate |Agda |Coq / Lean |Correspondence
+|Mathesis |Properties example |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|VCL-UT |L0–L10 / transition corpus |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
+|nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|===
+
+References:
+https://agda.readthedocs.io/en/v2.7.0.1/language/cubical-compatible.html[Agda cubical-compatible];
+https://github.com/hyperpolymath/vcl-ut[owned VCL-UT gate];
+https://github.com/hyperpolymath/kategoria[Kategoria];
+https://github.com/hyperpolymath/echidna[ECHIDNA].

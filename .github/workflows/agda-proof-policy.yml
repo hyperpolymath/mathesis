@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: MPL-2.0
+# Focused Agda proof policy gate. Does not silently skip missing provers.
+name: Agda Proof Policy Gate
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-proofs.sh'
+      - 'verification/proofs/agda/**'
+      - '.github/workflows/agda-proof-policy.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/check-proofs.sh'
+      - 'verification/proofs/agda/**'
+      - '.github/workflows/agda-proof-policy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agda-policy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: Agda safe / without-K / cubical-compatible
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Agda and standard library
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends agda agda-stdlib
+          agda --version
+          # Ubuntu's agda-stdlib package supplies sources but may not ship
+          # a discoverable .agda-lib descriptor. Use dpkg's file manifest
+          # to locate its root, then register a descriptor explicitly.
+          stdlib_root="$(dpkg -L agda-stdlib | sed -n 's@/Data/Nat[.]agda$@@p' | head -n 1)"
+          test -n "$stdlib_root" && test -f "$stdlib_root/Data/Nat.agda"
+          # Agda 2.6.x writes .agdai interfaces beside imported sources.
+          # Distro /usr/share is read-only to CI's runner user; copy the
+          # pinned distro library to a writable temp tree, never sudo agda.
+          cp -a "$stdlib_root" "$RUNNER_TEMP/agda-stdlib-writable"
+          stdlib_root="$RUNNER_TEMP/agda-stdlib-writable"
+          stdlib="$RUNNER_TEMP/standard-library.agda-lib"
+          printf 'name: standard-library\ninclude: %s\n' "$stdlib_root" > "$stdlib"
+          mkdir -p "$HOME/.agda"
+          printf '%s\n' "$stdlib" > "$HOME/.agda/libraries"
+          printf 'standard-library\n' > "$HOME/.agda/defaults"
+
+      - name: Run manifest-driven Agda proof gate
+        run: bash scripts/check-proofs.sh agda

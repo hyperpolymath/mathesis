@@ -40,8 +40,13 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends agda agda-stdlib
           agda --version
-          stdlib="$(find /usr/share -name standard-library.agda-lib -print -quit)"
-          test -n "$stdlib" || { echo "FATAL: standard-library.agda-lib not found"; exit 1; }
+          # Ubuntu's agda-stdlib package supplies sources but may not ship
+          # a discoverable .agda-lib descriptor. Use dpkg's file manifest
+          # to locate its root, then register a descriptor explicitly.
+          stdlib_root="$(dpkg -L agda-stdlib | sed -n 's#\\(.*\\)/Data/Nat\\.agda$#\\1#p' | head -n 1)"
+          test -n "$stdlib_root" && test -f "$stdlib_root/Data/Nat.agda"
+          stdlib="$RUNNER_TEMP/standard-library.agda-lib"
+          printf 'name: standard-library\\ninclude: %s\\n' "$stdlib_root" > "$stdlib" || { echo "FATAL: standard-library.agda-lib not found"; exit 1; }
           mkdir -p "$HOME/.agda"
           printf '%s\n' "$stdlib" > "$HOME/.agda/libraries"
           printf 'standard-library\n' > "$HOME/.agda/defaults"

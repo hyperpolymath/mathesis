@@ -1,79 +1,66 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <6759885+hyperpolymath@users.noreply.github.com>
-= Architecture — Mathesis
-:revdate: 2026-MM-DD
+= Mathesis architecture — implemented boundaries
+:revdate: 2026-11-01
 
-== System overview
+== Purpose
 
-One paragraph: what this project does and what it does not do. State the
-*invariant* — the property that, if violated, would make the whole project
-pointless. Future maintainers will read this paragraph first.
+Mathesis is the estate's mathematical source-discovery and proof-orientation index. It is *not* a theorem prover, a universal proof-status authority, or a replacement for the mathematics in individual repositories. The linked source repository, pinned revision and actual proof checker determine the status of a theorem; Mathesis cannot infer that status from a file count or a passing badge.
 
-== Component diagram
+== Implemented data flow
 
-Replace this section with an ASCII or Mermaid diagram. Keep it under 20
-lines — anything bigger belongs in `architecture/`.
-
-[source]
+[source,text]
 ----
-+------------------+      +------------------+
-|   Component A    | ---> |   Component B    |
-+------------------+      +------------------+
-         |
-         v
-+------------------+
-|   Component C    |
-+------------------+
+Repository census input (docs/catalogue/census/repos.json)
+  -> scripts/census/ (source and prover-file discovery)
+  -> corpus counts, holes/unsafe candidates, reachability observations
+  -> docs/catalogue/census/catalogue-rows.json
+  -> generated docs/catalogue/catalogue.adoc
+  -> scripts/atlas/census-atlas.mjs
+  -> docs/atlas/generated/ (A-Z, class, owner; index.json)
+  -> lookup and bounded context-pack commands
 ----
 
-== Data flow
+The census counts and classifies observed files. It does not establish that Agda, Rocq, Lean, Idris2, SPARK or other proofs have passed. The atlas is generated from the census rows; it does not invent theorem identities, independent witnesses or semantic equivalences. Private or unreachable sources must not be treated as having no mathematics, and private metadata must not be published.
 
-For each external input, describe:
+== Sources of authority
 
-* **Source**: where it comes from.
-* **Validation**: what guarantees we enforce on entry.
-* **Transformation**: high-level processing stages.
-* **Sink**: where the result goes.
-
-== Key invariants
-
-Enumerate the load-bearing invariants of the system. Each should have:
-
-. A one-line statement.
-. The code location(s) that enforce it.
-. The failure mode if the invariant is violated.
-
-Example:
-
-[cols="1,2,2,2", options="header"]
+[cols="1,3",options="header"]
 |===
-| # | Invariant | Enforced at | Failure mode
+| Question | Owning source
 
-| 1
-| All HTTP requests carry a valid `X-Request-ID`.
-| `src/request_id.rs`
-| Logs become unjoinable; correlation breaks.
+| Proof policy and accepted checking discipline
+| https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[canonical standards PROOF-POLICY]
 
-| 2
-| The output buffer is always flushed before exit.
-| `src/main.rs:88-92` (Drop impl)
-| Last ~16KB of log lost on crash.
+| Mathematical claims and formal witnesses
+| Home mathematical repository at a concrete revision, with actual proof-checker outputs and assumptions
+
+| Census and derived atlas views
+| link:../catalogue/catalogue.adoc[Mathesis census] and link:../atlas/README.adoc[atlas declaration of scope]
+
+| General test evidence and fixture requirements
+| https://github.com/hyperpolymath/proven-tests-and-benches[proven-tests-and-benches] and the canonical estate testing policy
+
+| Repository paths and intended shape
+| link:architecture/REPOSITORY-MAP.adoc[generated repository map]
+
+| Proposed future architecture
+| link:proposals/estate-mathematical-architecture.adoc[unratified design brief]
 |===
 
-== Dependencies
+See link:standards/README.adoc[the authority map] for migration and conflict rules.
 
-* **Internal**: list other hyperpolymath repos this depends on.
-* **External**: SHA-pinned (see `Cargo.lock` / `.lock` / etc.).
-* **Build-time**: tools required to build (just, , cargo, …).
+== Explicitly not implemented by this document
 
-== Out of scope
+A theorem-level registry with verified cross-prover translations; automatic proof correspondence; causal/semantic identity of theorems across forks; a mandatory database architecture; full-estate incremental rescanning; or an agent write-back system are *not* established merely by this architecture description. They remain independently reviewable proposals requiring evidence and acceptance tests.
 
-Explicit non-goals. Things we deliberately do *not* do, with a one-line
-reason for each. This section saves more time than the rest combined.
+== Invariants and failure conditions
 
-== See also
+* *No source, no theorem certification.* A file containing a prover language is a discovery result, not a successful verification receipt.
+* *No authority duplication.* A local Mathesis proposal cannot revise `metadatastician/standards` policy.
+* *No invisible drift.* A generated atlas must be reproducible from its indexed census input and named script.
+* *No false negatives from inaccessible sources.* Unreachable and private observations remain marked unknown, not empty.
+* *No source loss through indexing.* Aggregating counts is a declared lossy view; it must never be mistaken for evidence identifying a particular theorem.
 
-* link:./usage.adoc[Usage] — consumer perspective.
-* link:./contributing.adoc[Contributing] — developer setup.
-* link:./decisions/[ADRs] — historical record of why this shape.
+== Related
+
+link:../README.adoc[Mathesis README] · link:atlas/README.adoc[Atlas] · link:standards/README.adoc[Standards pointer] · link:architecture/REPOSITORY-MAP.adoc[Repository map].

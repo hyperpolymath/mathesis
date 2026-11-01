@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
 = Mathesis authority routing: policy, proofs, and evidence
 
 Mathesis is a discovery and proof-orientation system, not a second estate standards authority. This directory is an index of the standards that govern its work, not a copied policy tree.

@@ -1,48 +1,8 @@
-= Architecture
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Architecture — Mathesis (compatibility pointer)
 
-== Overview
+This path previously contained a generic RSR scaffold architecture description. The maintained Mathesis-specific description is link:architecture.adoc[docs/architecture.adoc]. It distinguishes the implemented proof census and generated atlas from proposed theorem-level indexing and verification.
 
-This repository follows a modular, maintainable architecture designed for clarity, scalability, and long-term sustainability.
+For actual paths consult link:architecture/REPOSITORY-MAP.adoc[the generated repository map]. For estate-wide proof policy use link:standards/README.adoc[the canonical standards routing guide]. The original longer design brief is now link:proposals/estate-mathematical-architecture.adoc[an explicitly unratified proposal].
 
-== Directory Structure
-
-[source]
-----
-.
-├── src/           # Source code
-├── tests/        # Test suites
-├── docs/         # Documentation
-├── scripts/      # Utility scripts
-├── config/       # Configuration files
-├── LICENSE       # License file
-├── LICENSES/     # Full license texts
-└── README.adoc   # Project documentation
-----
-
-== Design Principles
-
-* *Separation of Concerns*: Each module has a single responsibility
-* *Testability*: Code is written to be easily testable
-* *Documentation*: All public APIs are documented
-* *Configuration*: Environment-specific settings are externalized
-
-== Dependencies
-
-* External dependencies are minimized and clearly declared
-* Version pinning is used for reproducibility
-
-== Security Considerations
-
-* Sensitive data is never committed to the repository
-* Secrets are managed through environment variables or secure vaults
-* Regular dependency audits are performed
-
-== Maintainability
-
-* Code follows consistent style guidelines
-* Pull requests require review and CI checks
-* Issues and discussions are tracked transparently
-
----
-
-_Last updated: 2026-07-18_
+The path is retained for old references; it is not a second architecture authority.

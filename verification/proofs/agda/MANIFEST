@@ -1,4 +1,4 @@
 # Agda proof manifest — read by scripts/check-proofs.sh agda
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
-# Ground-truthed 2026-07-17 with agda (agda --safe).
-verification/proofs/agda|Properties.agda|gated| compiles under `agda --safe`
+# Prior check (2026-07-17): agda --safe only; full 2026-11 policy pending CI.
+verification/proofs/agda|Properties.agda|gated| previously checked under `agda --safe`; new full-mode recheck pending

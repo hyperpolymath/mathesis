@@ -35,7 +35,7 @@ The census counts and classifies observed files. It does not establish that Agda
 | Home mathematical repository at a concrete revision, with actual proof-checker outputs and assumptions
 
 | Census and derived atlas views
-| link:../catalogue/catalogue.adoc[Mathesis census] and link:../atlas/README.adoc[atlas declaration of scope]
+| link:catalogue/catalogue.adoc[Mathesis census] and link:atlas/README.adoc[atlas declaration of scope]
 
 | General test evidence and fixture requirements
 | https://github.com/hyperpolymath/proven-tests-and-benches[proven-tests-and-benches] and the canonical estate testing policy

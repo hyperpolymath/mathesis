@@ -1,26 +1,9 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-= Mathesis standards and architectural authority
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
+= Mathesis standards directory
 
-Mathesis is a discovery and proof-orientation system, not a second estate standards authority. This directory is an index of the standards that govern its work, not a copied policy tree.
+This directory is *not* a second copy of the estate standards.
 
-== Authority by responsibility
+Read link:AUTHORITY.adoc[the authority routing guide] for the boundary between Mathesis proposals and the canonical https://github.com/metadatastician/standards[estate standards], plus the ownership of proof and test evidence.
 
-* *Estate-wide proof and verification policy*: https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[metadatastician/standards — PROOF-POLICY]. This owns the permitted trust classes, proof languages, and requirements for proof claims. Follow the standards repo's own versioning and pinned revision when verifying a historical result.
-* *Estate-wide test policy*: https://github.com/metadatastician/standards/tree/main/3-practice/testing-and-benchmarking[testing and benchmarking] and https://github.com/metadatastician/standards/blob/main/3-practice/ZIGZAG-TESTING.adoc[Zigzag testing].
-* *Repository-local mathematical architecture*: link:../atlas/README.adoc[Mathesis atlas], link:../catalogue/catalogue.adoc[existing proof census], and link:../../README.adoc[Mathesis README]. Mathesis may propose proof-index schemas and navigation views; a proposed ranking never becomes estate policy by appearing here.
-* *Individual theorem truth and proof obligations*: the theorem's home repository, its exact source revision and its kernel-check receipts. A census row, index, file count, or interpreted dependency is not a proof.
-* *Implementation assurance*: https://github.com/hyperpolymath/proven-tests-and-benches[proven-tests-and-benches] owns reusable test evidence and fixture doctrine; https://github.com/hyperpolymath/cicd-suite[cicd-suite] owns executable assurance gates. The status of a CI job is not automatically a theorem verification result.
-
-== Distinguish proposals from decisions
-
-The root link:../proposals/estate-mathematical-architecture.adoc[estate-mathematical-architecture] is an *unratified architecture brief*, preserved for provenance. In particular, its proposed proof grades, indexing/storage design, and implementation stages are not replacements for the canonical PROOF-POLICY or for the current census implementation.
-
-The generic RSR architecture files under `docs/` reflect template lineage and should not be treated as independent Mathesis standards. If local documentation and estate policy disagree, record the conflict, the source revisions, and the required decision; do not silently make either one authoritative.
-
-== Evidence contract
-
-A discoverable proof record should eventually state: theorem identity and meaning; home repository and commit; checker and version; invocation and safe-mode options; assumptions and trusted base; completed, failed, skipped or unavailable verification status; source receipts; and whether a purported cross-system witness is independently checked or merely proposed. Never infer missing fields from a green badge.
-
-A2ML was retired for new estate-wide declarations in favour of DEED and current canonical formats. Historical .a2ml records may remain as archival evidence, not as an excuse to create new competing canonical files.
-
-This document is a routing guide, not a modification of any upstream rule.
+Mathematical claims and formal proof receipts remain in the source repositories. The local mathematical census and atlas are indexes, not standards or certificates.

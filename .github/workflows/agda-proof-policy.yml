@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: MPL-2.0
+# Focused Agda proof policy gate. Does not silently skip missing provers.
+name: Agda Proof Policy Gate
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/check-proofs.sh'
+      - 'verification/proofs/agda/**'
+      - '.github/workflows/agda-proof-policy.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/check-proofs.sh'
+      - 'verification/proofs/agda/**'
+      - '.github/workflows/agda-proof-policy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agda-policy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: Agda safe / without-K / cubical-compatible
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Agda and standard library
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends agda agda-stdlib
+          agda --version
+          stdlib="$(find /usr/share -name standard-library.agda-lib -print -quit)"
+          test -n "$stdlib" || { echo "FATAL: standard-library.agda-lib not found"; exit 1; }
+          mkdir -p "$HOME/.agda"
+          printf '%s\n' "$stdlib" > "$HOME/.agda/libraries"
+          printf 'standard-library\n' > "$HOME/.agda/defaults"
+
+      - name: Run manifest-driven Agda proof gate
+        run: bash scripts/check-proofs.sh agda

@@ -11,9 +11,18 @@ Proofs stay in their home repositories. mathesis points at them. Later it
 will also hold the Agda sources for theory that has no other natural home.
 
 The rules for where a proof *should* live are not here: they are
-`standards/3-practice/PROOF-POLICY.adoc` (Creusot for Rust, SPARK for Ada,
+https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[the canonical standards/3-practice/PROOF-POLICY.adoc] (Creusot for Rust, SPARK for Ada,
 Idris2 for APIs, ABIs and engineering properties, Agda for theory rechecked
 in Rocq and Lean). The working method is the proof-craft skill.
+
+== Where authority lives
+
+* link:docs/standards/README.adoc[Standards and authority map] — estate proof policy, proof/test evidence ownership, and Mathesis's limits.
+* link:docs/atlas/README.adoc[Discovery atlas] — the current generated, read-only first slice (repository index, not theorem-level certification).
+* link:docs/proposals/estate-mathematical-architecture.adoc[Estate mathematical architecture proposal] — the original long-term design brief, preserved but *not ratified*. Its proposed proof grades do not override the standards policy.
+* link:docs/architecture/REPOSITORY-MAP.adoc[Generated repository map] — current path inventory, not the mathematical architecture specification.
+
+Mathesis references proofs in their home repositories. A census row or a green CI badge does not independently verify a theorem. Pin claims to source commits, checker versions, assumptions and verification receipts; report missing or inaccessible evidence explicitly.
 
 == What is here
 
@@ -76,8 +85,7 @@ The first census covered 476 repositories:
 * Theorem-level rows for the theory repos: statement, Agda source, Rocq
   leg, Lean leg, route.
 * A scheduled CI job that reruns the census and fails on catalogue drift.
-* A deed (`mathesis_chora.deed`) once the repo is instantiated from the RSR
-  template.
+* Reconcile the existing `mathesis_chora.deed` with the current estate conventions; it is already present, not a future placeholder.
 
 == Licence
 

@@ -1,3 +1,14 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Estate-wide Mathematical Knowledge Architecture — working proposal
+
+Status: *unratified architectural brief*. Preserved from the former Mathesis root file `estate-mathematical-architecture` for discoverability and historical provenance. It is not the adopted architecture, a verified implementation plan, or a source of estate-wide proof grades.
+
+The controlling estate proof policy lives at https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[PROOF-POLICY]. Mathesis's live census and first atlas slice are described in link:../../README.adoc[the README] and link:../atlas/README.adoc[the atlas README]. In particular, any conflicting grade definitions, tool flags, integration claims, or proposed storage arrangements below require explicit review, not silent adoption.
+
+== Original working brief (preserved)
+
+[literal]
+....
 MATHESIS — Estate-wide Mathematical Knowledge Architecture
 
 Mission
@@ -135,3 +146,4 @@ Do not build a new theorem prover or a custom graph database unless strictly req
 Produce a substantial report detailing the current limitations, the recommended schema, the exact relationship to tools like gv-clade-index and AXLE, a phased roadmap, and the execution results of the Dogfooding experiments.
 
 Finish with a clear answer to: What can a completely unfamiliar mathematical researcher or coding agent now discover, verify, and understand using Mathesis that they could not reliably discover before?
+....

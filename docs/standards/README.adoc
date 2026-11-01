@@ -1,3 +1,9 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= Standards Unit
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
+= Mathesis standards directory
+
+This directory is *not* a second copy of the estate standards.
+
+Read link:AUTHORITY.adoc[the authority routing guide] for the boundary between Mathesis proposals and the canonical https://github.com/metadatastician/standards[estate standards], plus the ownership of proof and test evidence.
+
+Mathematical claims and formal proof receipts remain in the source repositories. The local mathematical census and atlas are indexes, not standards or certificates.

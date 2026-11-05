@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 = Cross-prover proof reconciliation — working policy
-:revdate: 2026-11-01
+:revdate: 2026-11-05
 :toc:
 :sectnums:
 
@@ -94,6 +94,15 @@ do not satisfy it.
 A proof can have multiple statuses: a successful independent proof is
 not inherently a verified Agda–Lean–Coq bridge. Use separate fields
 when publishing a machine-readable register.
+
+These statuses are *correspondence states*. A theorem's *Proof Witness
+Grade* (`PWG-3`, `PWG-2i`, `PWG-2ii`, `PWG-1`) is a separate field, derived
+from these states and the kernel receipts. Its rules are in
+https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc#proof-witness-grades[PROOF-POLICY §8].
+A recheck leg raises the grade only once it is `RECONCILED`. A
+`COQ-CHECKED`, `LEAN-CHECKED` or `BRIDGE-PENDING` leg does not raise it.
+Never write a grade into a status field, and never write a status into the
+grade field.
 
 == Source-anchored first reconciliation targets
 

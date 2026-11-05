@@ -5,6 +5,63 @@ Status: *unratified architectural brief*. Preserved from the former Mathesis roo
 
 The controlling estate proof policy lives at https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[PROOF-POLICY]. Mathesis's live census and first atlas slice are described in link:../../README.adoc[the README] and link:../atlas/README.adoc[the atlas README]. In particular, any conflicting grade definitions, tool flags, integration claims, or proposed storage arrangements below require explicit review, not silent adoption.
 
+[IMPORTANT]
+.§5 grades superseded: Proof Witness Grades (owner ruling 2026-11-04)
+====
+The grade ladder in §5–§6 below was adopted as estate policy, with
+corrections, as *Proof Witness Grades* (PWG) in
+https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc#proof-witness-grades[PROOF-POLICY §8]
+(standards#1410, which closes mathesis#11). That section governs. The text
+below is kept unedited as provenance. Read it with this map:
+
+[cols="1,1,3",options="header"]
+|===
+|Brief |Policy |What changed
+
+|Grade 3
+|`PWG-3`
+|The flags must be in force *and* recorded under the canonical
+`agda --safe --without-K --cubical-compatible` (PROOF-POLICY §2.1).
+`--erasure` is not part of it. Full `--cubical` needs the separately
+reviewed proof profile of §2.1.
+
+|Grade 2i
+|`PWG-2i`
+|One recheck leg (Rocq or Lean) counts. A leg counts only when it is
+kernel-checked *and* its statement correspondence is `RECONCILED` (§2.2),
+whether it was transported or re-proved. A rung is not a discharge: the
+theorem still owes the second leg.
+
+|Grade 2ii
+|`PWG-2ii`
+|Both of the policy's legs, Rocq *and* Lean, count. A non-DTT witness, such
+as Isabelle/HOL, is the separate tag `+foundation-diverse`. It is no
+longer the condition for 2ii, and it never stands in for a leg.
+
+|Grade 1
+|`PWG-1`
+|Claim-gated. It needs a current receipt from a pinned, headless,
+isolated checker for every witness, at the exact source commit. AXLE,
+`isabelle server` and coq-lsp are examples, not requirements. Any
+"verified" or "machine-checked through …" claim needs these receipts, and
+a regression drops the grade.
+
+|§6 `Superseded` / `Regressed`
+|Receipt lineage
+|Recorded on the receipt as `state: superseded\|regressed`, with the
+reason. The status vocabulary stays closed.
+
+|§6 "no percentages"
+|Census rule
+|Grade counts are published with their denominator, with the lower and
+`ungraded` rungs named. Never as a percentage.
+|===
+
+Always write the `PWG-` prefix. Mathesis also uses "grade" for its
+per-verb coaptation grades (`.machine_readable/coaptation/`), and the
+estate uses it for CRG, TRG, ARG and FRG. None of those is a PWG.
+====
+
 == Original working brief (preserved)
 
 [literal]

@@ -6,6 +6,17 @@
 
 Initial development phase.
 
+=== Applied Systems (2026-11-07)
+
+* Added the owner-requested `applied-systems/` area for reusable applications,
+  beginning with accounting, finance, decision science and organisational design.
+* Seeded an exploratory accountability-based management-accounting design,
+  decision record, event map and shared evidence/type-assurance guidance.
+* No private case data, executable model, empirical validation or formal proof
+  is claimed by this documentation contribution.
+* Next: define a minimal data schema and a synthetic worked implementation;
+  allocate and record proof obligations when executable work begins.
+
 == Milestones
 
 === v0.1.0 - Foundation

@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Accounting
+
+Reusable accounting research and management decision methods.
+
+Start with link:accountability-based-management-accounting/README.adoc[Accountability-based management accounting]
+and its link:accountability-based-management-accounting/decision-record.adoc[decision record].
+The initial design keeps financial accounts, management cost views, service
+commitments and outcome evidence distinguishable and reconcilable.

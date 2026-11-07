@@ -1,0 +1,21 @@
+%% SPDX-License-Identifier: CC-BY-SA-4.0
+flowchart TD
+    A[Commitments and service floors] --> B[Feasible intervention choices]
+    B --> C[Recruitment or retention activity]
+    C --> D[People joining or remaining]
+    D --> E[Receipts over time]
+    D --> F[Support workload]
+    F --> G{Capacity and service floors met?}
+    G -->|Yes| H[Service outcomes]
+    G -->|No| I[Delay, unmet needs and workload pressure]
+    I --> J[Possible departures and reduced participation]
+    J --> E
+    E --> K[Cash available for support]
+    K --> G
+    H --> L[Possible future retention]
+    L --> D
+    B --> M[Implementation and ongoing costs]
+    M --> K
+    N[Observed evidence and missing information] --> B
+    H --> N
+    I --> N

@@ -1,0 +1,82 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Accountability-based management accounting
+:toc:
+
+Status: exploratory design, 2026-11-07. This is a management-accounting research
+programme, not a claim of compliance with a financial-reporting standard.
+
+== Decision purpose
+
+Connect a commitment to the resources used, the people affected, the intended
+benefit, possible harm and the evidence for what actually happened. Support
+decisions that remove avoidable harm and improve useful outcomes without
+concealing unmet obligations or transferring costs to unpaid labour.
+
+The core record is a decision or intervention linked to events and accounting
+entries. A fine-grained transaction is useful evidence, but finer allocation
+does not make a cost estimate causally exact.
+
+== Distinct views
+
+. Financial accounting: preserve ledger entries and the applicable recognition,
+  measurement and disclosure rules. Reconcile management totals to the ledger.
+. Resource use: transactions, activities, operational drivers, supplied capacity
+  and unused capacity, with allocation rules made explicit.
+. Incremental decisions: additional cash receipts, cash costs, opportunity costs
+  and constraints relative to a defined counterfactual.
+. Full costs: direct costs, support capacity and attributed common costs; explain
+  the allocation basis and avoid treating an allocation as an avoidable saving.
+. Accountability: commitments, service outcomes, affected groups, owners,
+  evidence quality, review dates and unresolved harm.
+
+These are views of linked evidence, not amounts to add together indiscriminately.
+Time-driven or activity-based costs, driver-based planning and bottleneck
+analysis answer different questions. Any transaction-level costing approach
+must expose the assumptions behind distributed overhead.
+
+== Minimal mathematical design
+
+Let x describe an intervention and s a scenario. Let C_t(x,s) be cash at period
+t, H_t(x,s) required support hours and K_t(s) available support hours. Let O(x,s)
+be a vector of service and mission outcomes rather than an unexplained money
+score. Compare feasible interventions under explicit priorities, for example:
+
+[source,text]
+----
+C_t = C_(t-1) + cash receipts_t - cash payments_t
+C_t >= agreed cash floor_t
+H_t <= K_t
+service outcomes >= agreed service floors
+entitlements and implementation constraints are satisfied
+----
+
+Missing opening cash makes the cash feasibility verdict unknown. An attractive
+annual result cannot override an unfunded payment date or unavailable staff.
+Do not invent shadow prices for rights, dignity or service quality. Where
+trade-offs cannot be legitimately combined, show the separate objectives and
+the feasible alternatives.
+
+== Mechanisms, uncertainty and learning
+
+The link:event-map.mmd[event map] is a proposed causal structure. Each arrow needs
+evidence, a lag and possible confounders. Feedback can be helpful or harmful:
+growth can fund support, while excessive workload can impair service and future
+retention. Model both before treating recruitment as unconstrained income.
+
+Use uncertainty analysis to identify which missing observations could change a
+decision. Measure those first when the expected value of better information
+exceeds the measurement cost. Expected-value calculations require defensible
+probabilities; otherwise report scenario bounds and unresolved uncertainty.
+
+Validation should distinguish arithmetic checks, reconciliation, empirical
+calibration and formal proofs. Passing one does not establish the others.
+
+== Initial deliverables
+
+* link:decision-record.adoc[Editable decision record].
+* link:event-map.mmd[Event and feedback map].
+* link:../../finance/README.adoc[Liquidity and cohort economics methods].
+* link:../../methods/evidence-and-assumptions.adoc[Evidence and assumption conventions].
+
+Open work: define a reusable data schema, demonstrate a small synthetic model,
+evaluate causal assumptions, and specify which invariants merit formal proof.

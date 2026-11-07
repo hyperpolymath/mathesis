@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Evidence and assumptions
+
+Every material input needs a description, unit, period, source, owner, evidence
+status, last verification date and dependencies. Use independent fields for
+evidence quality and access classification: public does not mean verified;
+private does not mean true.
+
+[cols="1,3",options="header"]
+|===
+|Evidence status |Meaning
+|Verified observation |Checked against an identified source for a stated date and definition.
+|Reported |Attributed to a person or document; not independently established.
+|Estimate |Derived by a stated method, with uncertainty and limitations.
+|Illustrative |Invented to explore behaviour; not evidence about an organisation.
+|Missing |Required information is unavailable. Leave the value blank, not zero.
+|===
+
+Separate historical accounting results, current cash, contractual commitments,
+service promises and prospective scenarios. Reconcile totals without converting
+one category into another. Preserve contradictory evidence and revisions.
+
+For each dependency record its direction, lag and basis: an accounting identity,
+a mechanical rule, an empirical association or a causal hypothesis. An event map
+does not establish causation. Shared drivers and feedback may require joint
+scenarios; independently varying every input can create impossible cases.
+
+Maintain an assumption register beside the model. A changed assumption should
+identify the results and decisions that need review. Report ranges only where
+their interpretation is specified; a stress scenario is not a probability.

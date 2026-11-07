@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Decision record template
+
+Status: unfilled template. Blank means unanswered.
+
+[cols="1,3",options="header"]
+|===
+|Field |Working entry
+|Decision and accountable owner |
+|Decision deadline and review date |
+|People affected and consultation needed |
+|Commitments and service floors |
+|Current problem, with source and evidence status |
+|Options, including the baseline |
+|Expected benefits and possible harms, by affected group |
+|Cash timing and minimum cash balance |
+|Incremental costs, full costs and allocation basis |
+|Required workload and available capacity |
+|Key dependencies, feedback and time lags |
+|Legal, employment, governance and cultural constraints to verify |
+|Assumptions, missing inputs and most valuable next measurement |
+|Stop, adapt and scale conditions |
+|Decision, reasons, dissent and authorisation |
+|Observed results and next review |
+|===
+
+Link each important assertion to its source or label it as an estimate,
+illustration or unresolved claim. Do not record an unverified entitlement
+interpretation as a settled rule, or a budget assumption as an observed saving.

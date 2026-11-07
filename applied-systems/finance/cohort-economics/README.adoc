@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Cohort economics and support capacity
+
+Track each recruitment cohort separately. If cohort j has L_j eligible contacts
+and conversion c_j, initial joiners N_j = L_j c_j. If retention per period is
+r_j, active members after k renewal opportunities are N_j r_j^k. Define the
+period and the first renewal date explicitly; four-week retention is not annual
+retention. Do not apply retention before it can occur.
+
+Cash receipts follow the actual billing and collection schedule, including
+discounts, arrears, refunds and payment costs. Support hours follow active
+members, onboarding needs and case intensity. Shared staff have finite capacity;
+volunteer time is a resource even when it is not a cash payment.
+
+Compare three views: incremental cash, a disclosed full-cost allocation and
+capacity feasibility. Adding an allocated salary charge to the same salary
+already counted as a direct cost is double counting. Removing an allocation
+does not save cash unless the underlying payment changes.
+
+For a deliberately simplified steady-state example, fixed period costs F,
+collected revenue p per active member and avoidable support cost v imply
+N_break_even = F/(p-v), only when p > v. This is not a substitute for a dated
+cohort model. Startup expenditure, phased conversion, support capacity steps and
+retention can materially change cumulative payback.
+
+Sensitivity analysis should report conversion, renewal retention and workload
+together with minimum cash, the period of cumulative payback (if reached),
+full-cost result and capacity excess. Do not call an infeasible workload case
+viable merely because its financial column is positive.

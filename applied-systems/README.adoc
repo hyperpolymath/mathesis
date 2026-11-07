@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Applied Systems
+:toc:
+
+A home for applying mathematical ideas to decisions, organisations and designed
+systems. Modelling is one activity here, alongside measurement, intervention
+design, implementation and evaluation. Type theory is one source of useful
+ideas; the scope is not restricted to it or to business.
+
+This area contains reusable methods, research designs and explicitly synthetic
+examples. It is readable source material with no additional file encryption.
+Organisation-specific papers, accounts, correspondence, personal information and
+working datasets belong in their own appropriately protected repositories.
+Do not copy a private case here merely by changing its name.
+
+== Start here
+
+[cols="1,3",options="header"]
+|===
+|Area |Purpose
+|link:accounting/README.adoc[Accounting] |Accountability-based management accounting; commitments, resources, outcomes and reconciliation.
+|link:finance/README.adoc[Finance] |Liquidity, cohort economics, full costs and scenario analysis.
+|link:decision-science/README.adoc[Decision science] |Event chains, uncertainty and the value of additional information.
+|link:organisational-design/README.adoc[Organisational design] |Capacity, role design, service safeguards and implementation constraints.
+|link:methods/evidence-and-assumptions.adoc[Evidence and assumptions] |Shared conventions for status, provenance, units and uncertainty.
+|link:methods/types-and-assurance.adoc[Types and assurance] |Research questions connecting types to reliable applied models.
+|===
+
+== How a project grows here
+
+. State the decision, affected people, commitments and constraints.
+. Separate observations, assumptions, estimates and unanswered questions.
+. Specify a small model, its units, dependencies and failure conditions.
+. Use a synthetic example before connecting any protected real-world case.
+. Compare interventions, including timing, workload and distribution of effects.
+. Record what was tested and what remains unproven.
+
+The initial management-accounting material is a proposed design, not an adopted
+accounting standard or a validated causal theory. Accounting recognition rules
+remain with the applicable reporting framework. Proofs and implementations with
+an established home remain there; Mathesis links to their evidence rather than
+duplicating it or upgrading its assurance status.
+
+Before public reuse, review text, filenames, figures, document metadata and Git
+history for case-specific information and third-party rights. Public examples
+must be synthetic by construction or separately cleared for publication.

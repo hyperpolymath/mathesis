@@ -63,6 +63,7 @@ mise.lock                  # makes "latest" concrete: version + per-platform che
 www/                       # site-operations bundle; canonical .well-known/ lives at www/.well-known/ (issue #53)
 .machine_readable/          # manifests, contractiles, policies. Renamed back from machine-readable/ 2026-09-17 by owner ruling, for one canonical spelling estate-wide (census at the 2026-08 divergence: 48 dotted vs 9 hyphenated — the majority was already dotted). See docs/governance/TEMPLATE-LINEAGE-AUDIT.adoc
 docs/                      # human documentation
+applied-systems/           # owner-requested reusable applications area (2026-11-07)
 build/                     # build orchestration: just/ phase modules, container/, docs-seed/, templates/, guix.scm (canon 1.2.1 guix-primary template_ref = "build/")
 ci/                        # .gitlab-ci.yml + .pre-commit-config.yaml; ci/README.adoc records the out-of-band GitLab project setting these require
 scripts/                   # repo helper scripts

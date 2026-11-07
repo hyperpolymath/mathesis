@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Finance
+
+* link:liquidity/README.adoc[Liquidity]: dated cash movements and a rolling forecast.
+* link:cohort-economics/README.adoc[Cohort economics]: conversion, retention,
+  support workload, full costs and payback.
+
+Cash feasibility, annual accounting results and long-run economic viability
+are separate questions. Report all three with their assumptions and periods.

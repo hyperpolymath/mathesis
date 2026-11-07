@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Organisational design
+
+Reusable work on roles, workload, participation, service delivery and change.
+Model what people can sustainably do, not just what an organisational chart
+assigns to them. Distinguish nominal headcount from available skilled capacity,
+and paid hours from volunteer contributions.
+
+For each proposed change, identify affected roles, dependencies, transition
+costs, implementation time, decision authority and consultation requirements.
+Legal and employment constraints require jurisdiction- and date-specific
+verification; no particular legal conclusion is supplied here.
+
+Service quality, entitlements, trust and participation belong in the decision
+record. Avoid assuming that reducing staffing or suppressing demand eliminates
+the underlying work or obligation. This directory is a research area, not a
+recommendation to restructure any particular organisation.

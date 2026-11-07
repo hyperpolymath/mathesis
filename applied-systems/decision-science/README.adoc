@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Decision science
+
+This area is reserved for reusable methods linking event chains, uncertainty,
+measurement and action. Initial questions are which assumptions drive a
+decision, how events interact over time, and what information is worth collecting.
+
+A proposed dependency is a hypothesis until supported. Record whether an edge
+is an identity, a mechanical rule, an association or a causal claim. Account for
+common causes and feedback when constructing combined stress scenarios.
+
+Value-of-information analysis compares the expected decision benefit of better
+information with its cost and delay. It needs an explicit decision set and a
+defensible uncertainty model; use robust scenario comparisons when these are
+not yet available. This directory currently contains design guidance, not an
+implemented optimiser or a validated probabilistic model.

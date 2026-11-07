@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Types and assurance in applied systems
+
+Potential applications of type-theory work include preventing category errors
+between cash and accruals, periods and currencies, observed and illustrative
+values, restricted and available funds, and commitments and recognised
+liabilities. These are design opportunities, not established proofs.
+
+A model can carry provenance and evidence status with each value. Operations
+could require compatible units and periods, preserve dependence information and
+refuse to turn a missing value into a number. A decision result could state the
+assumptions and evidence on which it depends.
+
+Research questions:
+
+* Which distinctions should be enforced by types, and which require runtime or
+  organisational review?
+* Can scenario composition preserve cash reconciliation and avoid double counting?
+* How can revisions invalidate dependent conclusions without erasing history?
+* What assurance connects a checked mathematical model to a deployed spreadsheet
+  or program and its real-world inputs?
+
+Formal proofs cannot establish the truth of unverified inputs or the adequacy
+of a causal model. Keep proof obligations and receipts separate from empirical
+validation. Follow the estate's canonical proof policy for any implementation;
+for first-party Rust, explicitly allocate Creusot/Pearlite implementation
+contracts and complementary Verus obligations, recording inapplicable or pending
+work. This initial contribution contains no executable implementation or proof.

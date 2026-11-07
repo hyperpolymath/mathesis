@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Liquidity and short-horizon forecasting
+
+A rolling 13-week forecast needs reconciled opening available cash, restrictions
+on funds, dated receipts and payments, commitments, arrears, available facilities
+and an approved minimum cash floor. Historical accounts cannot substitute for
+current bank balances or payment dates.
+
+[source,text]
+----
+closing_cash[w] = opening_cash[w] + receipts[w] - payments[w]
+opening_cash[w+1] = closing_cash[w]
+gap = max(0, max_w(cash_floor[w] - closing_cash[w]))
+----
+
+Count borrowing only when available on the needed date and record its repayment
+and cost. Separate restricted money from amounts usable for ordinary payments.
+Leave missing amounts blank and display incomplete coverage; do not calculate a
+definitive minimum balance from a partially populated schedule.
+
+Keep the observed/current-input forecast separate from illustrative stress
+tests. Test receipt delays, collection losses, gaps in rental income and benefit
+uptake jointly where dependencies justify it. Distinguish an early-warning
+threshold, a breach of an agreed buffer and inability to meet a payment.
+
+Any longer-term initiative must show its first-quarter funding requirement
+alongside its later payoff. Reconcile forecast to actual cash weekly and record
+whether variances reflect amount, timing, missing commitments or model error.

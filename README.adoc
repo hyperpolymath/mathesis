@@ -26,6 +26,11 @@ Mathesis references proofs in their home repositories. A census row or a green C
 
 == What is here
 
+link:applied-systems/README.adoc[Applied Systems] holds reusable applications of
+mathematical ideas to decisions, organisations and designed systems, starting
+with accounting and finance. It contains methods and synthetic examples;
+organisation-specific working material belongs in separate protected repositories.
+
 [cols="1,3"]
 |===
 |`docs/catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.

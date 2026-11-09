@@ -30,12 +30,16 @@ cat > "$raw/repos-with-status.jsonl" <<'J'
 J
 
 rows=$(bash "$ROOT/scripts/census/build-rows.sh" "$raw" "$raw/template.txt")
-doc() { jq -r --arg r "$1" '.[] | select(.repo == $r) | .status_doc' <<< "$rows"; }
+doc() {
+  local repo="$1"
+  jq -r --arg r "$repo" '.[] | select(.repo == $r) | .status_doc' <<< "$rows"
+}
 fail=0
 expect() {
-  local got; got=$(doc "$1")
-  if [ "$got" = "$2" ]; then echo "PASS: $1 -> ${2:-<none>}"
-  else echo "FAIL: $1 -> '$got', expected '${2:-}'"; fail=1; fi
+  local repo="$1" want="$2" got
+  got=$(doc "$repo")
+  if [[ "$got" == "$want" ]]; then echo "PASS: $repo -> ${want:-<none>}"
+  else echo "FAIL: $repo -> '$got', expected '$want'"; fail=1; fi
 }
 expect o/both            docs/status/PROOF-STATUS.adoc
 expect o/needs-only      docs/status/PROOF-NEEDS.adoc

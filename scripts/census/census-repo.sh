@@ -25,7 +25,8 @@ fi
 git -C "$D" ls-tree -r --name-only HEAD > "$O.tree" 2>/dev/null || true
 if ! [ -s "$O.tree" ]; then rm -rf "$D" "$O.tree"; exit 0; fi
 
-# proof-status docs
+# proof-status docs: list every match; build-rows.sh picks one per repo, in
+# the order PROOF-STATUS > PROOF-NEEDS > proof-debt
 grep -iE '(^|/)(PROOF-STATUS[^/]*|PROOF-NEEDS[^/]*|proof-debt[^/]*)$' "$O.tree" \
   | jq -RcS --arg r "$FN" '{path:., repo:$r}' > "$O.status.jsonl"
 

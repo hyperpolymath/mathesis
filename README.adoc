@@ -55,6 +55,10 @@ organisation-specific working material belongs in separate protected repositorie
 . *Set the template aside.* Files the RSR template ships
   (`docs/catalogue/census/template-paths.txt`) are boilerplate wherever they appear. The
   catalogue counts only a repo's *own* files.
+. *Pick one proof-status doc.* Every `PROOF-STATUS*`, `PROOF-NEEDS*` and
+  `proof-debt*` file is listed; a row names one, in that order: the status
+  ledger first, then the owed obligations, then a debt register. Within one
+  kind the bytewise-first path wins.
 . *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
 
 == Reading the catalogue (first pass, 2026-10-26)
@@ -66,6 +70,10 @@ The first census covered 476 repositories:
   boilerplate is set aside.
 * *Unreached:* 37 private repositories could not be cloned and are listed at
   the end of the catalogue, among them `cut-calculus`.
+* *Rerun, 2026-11-09:* the same 476-repository input. 276 have proof files and
+  244 have their own; 36 could not be cloned (`contractiles-a2-lab` now can).
+  The catalogue is current as of this rerun; the figures in this list are the
+  first pass.
 * *Possibly missing:* the listing returned only repositories pushed since
   2026-09-15, so older, untouched repos may be absent. Add them to
   `docs/catalogue/census/repos.json` and rerun.

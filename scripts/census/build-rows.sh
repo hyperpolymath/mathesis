@@ -37,7 +37,20 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# One status doc per repo. census-repo.sh lists every match; the row keeps the
+# first in this order, so the choice does not depend on where a file sits:
+#   0  PROOF-STATUS*  the current-status ledger (what is proved, with receipts)
+#   1  PROOF-NEEDS*   the list of obligations still owed
+#   2  proof-debt*    a debt register
+# Names match case-insensitively, as census-repo.sh lists them. Paths within
+# one rank sort bytewise (LC_ALL=C), so the choice is locale-independent.
+jq -r '(.path | split("/") | last | ascii_downcase) as $b
+  | (if ($b | startswith("proof-status")) then 0
+     elif ($b | startswith("proof-needs")) then 1
+     elif ($b | startswith("proof-debt")) then 2
+     else 3 end) as $rank
+  | "\(.repo)\t\($rank)\t\(.path)"' "$R/repos-with-status.jsonl" \
+| LC_ALL=C sort -t$'\t' -k1,1 -k2,2n -k3,3 | cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

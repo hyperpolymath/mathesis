@@ -20,7 +20,8 @@
 | *Total* | *7* | *0* | *0* | *0* | *7*
 |===
 
-*Overall*: 0% proven
+*Overall*: 0 of 7 tracked obligations proven. (Counts, not a percentage:
+PROOF-POLICY §8 grades are derived from receipts and are never flattened.)
 
 == Proofs Done
 

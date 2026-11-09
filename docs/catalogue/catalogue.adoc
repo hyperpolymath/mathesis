@@ -60,11 +60,11 @@ verdicts.
 
 |https://github.com/hyperpolymath/JuliaPackageSpitter.jl[hyperpolymath/JuliaPackageSpitter.jl] |17 |12 |agda 17 |83 |1 |1 |1 |1 |`PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |17 |0 |lean 17 |198 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |16 |3 |agda 16 |67 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
-
-|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |15 |0 |lean 15 |161 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/zotero-tools[hyperpolymath/zotero-tools] |15 |0 |lean 9, idris2 3, tla 3 |94 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

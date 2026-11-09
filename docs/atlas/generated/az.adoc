@@ -70,6 +70,7 @@
 * `hyperpolymath/continuation-mesh` — engineering; 5 own proof files, 15 detected declarations; provers: idris2 5
 * `hyperpolymath/contractiles` — engineering; 36 own proof files, 0 detected declarations; provers: spark 34, other 2
 * `hyperpolymath/cookie-rebound` — engineering; 3 own proof files, 83 detected declarations; provers: idris2 3
+* `catachresis-colloquium/cytoville` — engineering; 1 own proof files, 2 detected declarations; provers: idris2 1
 * `hyperpolymath/czech-file-knife` — engineering; 3 own proof files, 0 detected declarations; provers: spark 2, other 1
 
 == D
@@ -234,6 +235,8 @@
 * `catachresis-colloquium/proof-of-work` — engineering; 4 own proof files, 46 detected declarations; provers: idris2 4
 * `hyperpolymath/protocol-squisher` — theory; 42 own proof files, 365 detected declarations; provers: agda 10, lean 4, rocq 4, isabelle 2, idris2 12, tla 6, smt-atp 4
 * `hyperpolymath/proven` — engineering; 967 own proof files, 11166 detected declarations; provers: lean 14, idris2 906, spark 42, tla 1, other 4
+* `hyperpolymath/proven-cicd` — engineering; 6 own proof files, 46 detected declarations; provers: idris2 6
+* `hyperpolymath/proven-cicd-and-workflows` — engineering; 3 own proof files, 37 detected declarations; provers: idris2 3
 * `hyperpolymath/proven-servers` — engineering; 1097 own proof files, 6242 detected declarations; provers: idris2 899, spark 197, other 1
 * `hyperpolymath/proven-tests-and-benches` — engineering; 75 own proof files, 891 detected declarations; provers: idris2 75
 

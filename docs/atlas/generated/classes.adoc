@@ -59,6 +59,7 @@
 == engineering
 
 * `catachresis-colloquium/befunge93-vault-cracker` — engineering; 5 own proof files, 36 detected declarations; provers: idris2 5
+* `catachresis-colloquium/cytoville` — engineering; 1 own proof files, 2 detected declarations; provers: idris2 1
 * `catachresis-colloquium/enaction-engine` — engineering; 6 own proof files, 95 detected declarations; provers: idris2 6
 * `catachresis-colloquium/enterglide-ncc-137-k` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
 * `catachresis-colloquium/evil-weevil` — engineering; 4 own proof files, 124 detected declarations; provers: idris2 4
@@ -192,6 +193,8 @@
 * `hyperpolymath/ponyiser` — engineering; 9 own proof files, 137 detected declarations; provers: idris2 9
 * `hyperpolymath/presswerk` — engineering; 6 own proof files, 76 detected declarations; provers: idris2 6
 * `hyperpolymath/proven` — engineering; 967 own proof files, 11166 detected declarations; provers: lean 14, idris2 906, spark 42, tla 1, other 4
+* `hyperpolymath/proven-cicd` — engineering; 6 own proof files, 46 detected declarations; provers: idris2 6
+* `hyperpolymath/proven-cicd-and-workflows` — engineering; 3 own proof files, 37 detected declarations; provers: idris2 3
 * `hyperpolymath/proven-servers` — engineering; 1097 own proof files, 6242 detected declarations; provers: idris2 899, spark 197, other 1
 * `hyperpolymath/proven-tests-and-benches` — engineering; 75 own proof files, 891 detected declarations; provers: idris2 75
 * `hyperpolymath/quandledb` — engineering; 5 own proof files, 36 detected declarations; provers: agda 1, idris2 1, tla 3

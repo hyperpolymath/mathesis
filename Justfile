@@ -738,3 +738,13 @@ atlas-check:
 
 atlas-find query:
     bun scripts/atlas/census-atlas.mjs find "{{query}}"
+
+# Theorem-level claims registry (ADR 0004): fetch each pinned receipt, derive
+# Proof Witness Grades, and write docs/registry/registry.adoc
+registry:
+    bun scripts/registry/claims-registry.mjs build
+
+# Fail if the committed registry view is stale or a receipt overstates its grade
+registry-check:
+    bun scripts/registry/claims-registry.mjs check
+    bun test tests/registry/claims-registry.test.mjs

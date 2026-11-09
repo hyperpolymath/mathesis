@@ -14,6 +14,8 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 census=$here/../../docs/catalogue/census
+source "$here/snapshot.sh"
+snapshot_lock
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
 jq -c '.[]' "$census/repos.json" > "$work/repos.jsonl"
@@ -28,8 +30,10 @@ while IFS= read -r repo; do
   [ -n "$repo" ] && MATHESIS_DATA=$work bash "$here/census-repo.sh" "$repo" || true
 done < "$list"
 MATHESIS_DATA=$work bash "$here/summarise.sh"
-jq -cS -s . "$work/unreachable.jsonl" > "$census/unreachable.json"
-rm -f "$census/refreshed.json"  # a full run supersedes every refresh-rows.sh row
-bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$census/catalogue-rows.json"
-bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
+snapshot_stage
+jq -cS -s . "$work/unreachable.jsonl" > "$stage/census/unreachable.json"
+bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$stage/census/catalogue-rows.json"
+# Only the staged snapshot loses provenance; failures leave the live copy intact.
+rm -f "$stage/census/refreshed.json"
+snapshot_publish
 echo "raw census kept in $work"

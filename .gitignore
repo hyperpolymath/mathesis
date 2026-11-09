@@ -144,3 +144,7 @@ verification/proofs/coq/.*.aux
 # Agda compiled proof artifacts
 verification/proofs/agda/*.agdai
 
+
+# Census publication lock and interrupted staging snapshots
+/docs/.catalogue.lock
+/docs/.catalogue-stage.*/

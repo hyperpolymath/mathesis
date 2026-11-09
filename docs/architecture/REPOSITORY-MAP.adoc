@@ -197,22 +197,15 @@ predecessors did.
 
 == Declared structure not yet filled
 
-These directories currently hold only a stub `README.adoc` and a level
-manifest. That is deliberate. They declare the shape a repository minted
+These directories currently hold only a stub `README.adoc` or `.gitkeep`.
+That is deliberate. They declare the shape a repository minted
 from this template is expected to grow into; they are *intended
 structure, not abandoned work*. Add content, or delete the directory in
 your own repo - but do not read their emptiness as neglect here.
 
 [cols="1"]
 |===
-| `.machine_readable/bot_directives/`
-| `.machine_readable/descriptiles/anchors/`
 | `.machine_readable/scripts/verification/`
-| `applied-systems/decision-science/`
-| `applied-systems/finance/`
-| `applied-systems/finance/cohort-economics/`
-| `applied-systems/finance/liquidity/`
-| `applied-systems/organisational-design/`
 | `docs/governance/audit/`
 | `docs/governance/audit/compliance/`
 | `docs/governance/audit/effects/`
@@ -237,14 +230,9 @@ your own repo - but do not read their emptiness as neglect here.
 | `docs/theory/ontologies/`
 | `docs/theory/other/`
 | `docs/theory/socio-technical/`
-| `docs/whitepapers/`
 | `docs/whitepapers/academic/`
 | `docs/whitepapers/industry/`
-| `docs/whitepapers/outreach/`
 | `examples/`
-| `features/boj-server/`
-| `features/panic-attacker/`
-| `src/aspects/`
 | `src/aspects/integrity/`
 | `src/aspects/observability/`
 | `src/aspects/security/`
@@ -255,7 +243,6 @@ your own repo - but do not read their emptiness as neglect here.
 | `src/errors/`
 | `src/interface/generated/`
 | `src/interface/generated/abi/`
-| `tests/fuzz/`
 | `verification/benchmarks/`
 | `verification/coverage/`
 | `verification/fuzzing/`

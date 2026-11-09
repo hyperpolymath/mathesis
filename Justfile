@@ -726,11 +726,11 @@ census-refresh +repos:
 
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
-    bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc
+    bash scripts/census/check-catalogue.sh --write
 
 # Fail if the committed catalogue does not match the committed census rows
 catalogue-check:
-    bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
+    bash scripts/census/check-catalogue.sh
 
 # Mathesis read-only census discovery views and agent retrieval
 atlas-build:

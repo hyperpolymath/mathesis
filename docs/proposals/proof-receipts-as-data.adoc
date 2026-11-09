@@ -20,9 +20,11 @@ source. Mathesis can then compute grades instead of transcribing them.
   behind, by construction. The current page has to explain which run covers
   which bytes.
 * *Mathesis* lists januskey from the 2026-10-26 census as `engineering`, with 11
-  own files and 5 fixtures. Neither fact is current: januskey now has four Agda
-  theory roots, Rocq and Lean recheck legs for one theorem, and 9 Agda fixtures.
-  The census cannot see grades at all.
+  own files and 5 fixtures. Neither fact is current: as of 2026-11-09 januskey
+  has four Agda theory roots and 7 Agda fixtures. T-1 has Rocq and Lean recheck
+  legs on `main`, and the legs for its other four theory theorems are in an
+  open pull request (branch `claude/vibrant-cori-lirqrr`). The census cannot
+  see grades at all.
 * *standards* already holds the grade *rules* as data
   (`3-practice/proof-witness-grades.k9.ncl`: labels, order, leg-counting rules,
   waiver caps). It has no schema for the *records* the rules apply to.
@@ -142,10 +144,10 @@ apart, which §8.4.2's "derived, not asserted" exists to prevent.
 Each experiment has a pass condition stated in advance. The januskey pilot is
 E1 to E4.
 
-. *E1 — round trip.* Write januskey's ledger from the current
-  `PROOF-GRADES.adoc` (five theorems). Compute the grades from the CI receipts
-  of one `main` commit. Pass: the computed census equals the page's (`PWG-3` 4,
-  `PWG-2ii` 1).
+. *E1 — round trip.* Write januskey's ledger from `PROOF-GRADES.adoc` at
+  one `main` commit (five theorems). Compute the grades from the CI receipts
+  of that commit. Pass: the computed census equals the page's census at that
+  commit (at the time of writing, `PWG-2ii` 5 once the receipt is recorded).
 . *E2 — drift is caught.* Mark T-1's Lean leg `BRIDGE-PENDING`. Pass: T-1
   computes as `PWG-2i`, and the gate fails because the page still says
   `PWG-2ii`.

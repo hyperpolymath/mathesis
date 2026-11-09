@@ -35,8 +35,8 @@ organisation-specific working material belongs in separate protected repositorie
 |===
 |`docs/catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
 |`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.json` (one row of counts per repository, no file paths), `repos.json` (the census input), `unreachable.json` and `template-paths.txt`. Each `.json` file is one I-JSON/JCS array.
-|`scripts/census/` |`run-census.sh` (whole census), `census-repo.sh` (one repo), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
-|`Justfile` |`just census`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
+|`scripts/census/` |`run-census.sh` (whole census), `census-repo.sh` (one repo), `refresh-repo.sh` (one repo into the committed rows), `template-blobs.sh` (every blob the template shipped), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
+|`Justfile` |`just census`, `just census-repo OWNER/REPO` (re-census one repository and splice its row in), `just template-blobs CLONE`, `just census-test`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
 |===
 
 == How the census works
@@ -52,9 +52,15 @@ organisation-specific working material belongs in separate protected repositorie
   declaration names go to `decls.jsonl`, and proof-craft's `proof-holes.sh`
   inventories holes, axioms, disabled checkers and policy breaches
   (`holes.jsonl`).
-. *Set the template aside.* Files the RSR template ships
-  (`docs/catalogue/census/template-paths.txt`) are boilerplate wherever they appear. The
-  catalogue counts only a repo's *own* files.
+. *Set the template aside.* A file is template boilerplate when its path is
+  one the RSR template ships (`docs/catalogue/census/template-paths.txt`) *and*
+  its git blob is a version the template actually shipped
+  (`docs/catalogue/census/template-blobs.txt`, built from the template's full
+  history by `scripts/census/template-blobs.sh`). A repo that customised a
+  template file, as the template asks it to do with its ABI, keeps that file
+  as its own. Rows from a census run before 2026-11-09 were set aside by path
+  alone, so a customised template file is missing from them until the next
+  full census. The catalogue counts only a repo's *own* files.
 . *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
 
 == Reading the catalogue (first pass, 2026-10-26)

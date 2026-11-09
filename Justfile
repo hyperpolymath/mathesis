@@ -720,6 +720,18 @@ uncloak:
 census:
     bash scripts/census/run-census.sh
 
+# Re-census one repository and splice its row into the committed catalogue
+census-repo repo:
+    bash scripts/census/refresh-repo.sh "{{repo}}"
+
+# Rebuild template-blobs.txt from a full-history clone of rsr-template-repo
+template-blobs template_clone:
+    bash scripts/census/template-blobs.sh "{{template_clone}}" docs/catalogue/census/template-paths.txt > docs/catalogue/census/template-blobs.txt
+
+# Census build-rows regression test
+census-test:
+    bash tests/census/build_rows_test.sh
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc

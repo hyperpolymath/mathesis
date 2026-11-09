@@ -115,8 +115,12 @@ while IFS= read -r p; do
   echo "$p" >> "$O.keep"
 done < "$O.co"
 
+# blob: the git object id of the file at HEAD, read from the tree (no content
+# fetch). build-rows.sh compares it with template-blobs.txt to tell a
+# customised template file from template boilerplate.
 while IFS= read -r p; do
-  jq -cnS --arg e "$(ext_of "$p")" --arg p "$p" --arg r "$FN" '{ext:$e,path:$p,repo:$r}'
+  b=$(git -C "$D" rev-parse "HEAD:$p" 2>/dev/null || true)
+  jq -cnS --arg e "$(ext_of "$p")" --arg p "$p" --arg r "$FN" --arg b "$b" '{blob:$b,ext:$e,path:$p,repo:$r}'
 done < "$O.keep" > "$O.files.jsonl"
 
 # declarations: emit TSV prover\tkind\tline\tname\tfile then convert

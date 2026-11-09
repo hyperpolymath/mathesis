@@ -461,6 +461,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/phantom-metal-taste[hyperpolymath/phantom-metal-taste] |2 |0 |tla 2 |9 |0 |0 |0 |0 |—
 
+|https://github.com/hyperpolymath/recon-silly-ation[hyperpolymath/recon-silly-ation] |2 |0 |idris2 2 |23 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+
 |https://github.com/metadatastician/selur[metadatastician/selur] |2 |0 |idris2 2 |23 |4 |0 |0 |0 |—
 
 |https://github.com/catachresis-colloquium/enterglide-ncc-137-k[catachresis-colloquium/enterglide-ncc-137-k] |1 |0 |idris2 1 |13 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`

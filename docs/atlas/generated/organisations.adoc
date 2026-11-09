@@ -176,6 +176,7 @@
 * `hyperpolymath/quandledb` — engineering; 5 own proof files, 36 detected declarations; provers: agda 1, idris2 1, tla 3
 * `hyperpolymath/quintessence` — engineering; 4 own proof files, 20 detected declarations; provers: idris2 2, tla 2
 * `hyperpolymath/raze-tui` — engineering; 22 own proof files, 59 detected declarations; provers: idris2 3, spark 18, other 1
+* `hyperpolymath/recon-silly-ation` — engineering; 2 own proof files, 23 detected declarations; provers: idris2 2
 * `hyperpolymath/reposystem` — engineering; 16 own proof files, 7 detected declarations; provers: idris2 1, spark 13, other 2
 * `hyperpolymath/residual-evidence-types` — theory; 27 own proof files, 328 detected declarations; provers: agda 27
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1

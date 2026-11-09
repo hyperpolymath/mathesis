@@ -75,6 +75,10 @@ The first census covered 476 repositories:
 * *Hole, axiom, unsafe and policy counts* are textual candidates, not kernel
   verdicts. The kernel is the authority. `import Mathlib` shows under
   policy.
+* *Status document*: the first of a PROOF-STATUS file, a proof-debt file, a
+  PROOF-NEEDS file. Rows from the 2026-10-26 census were picked by path, so
+  some point at PROOF-NEEDS where a PROOF-STATUS exists; the next census
+  corrects them.
 * *Declaration counts* overcount Agda and Idris2:
   every column-0 type signature counts, helpers included.
 * *Older template copies* survive as "own" files in some repos: for example

@@ -19,7 +19,7 @@ R=$1 T=$2
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t)' "$T" - \
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t)' "$T" - \
 | awk -F'\t' 'BEGIN{OFS="\t"} {
     e=$3; p="other"
     if (e ~ /agda/) p="agda"; else if (e ~ /idr|ipkg/) p="idris2"
@@ -32,12 +32,20 @@ jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
     print $1, p, fx }' > "$tmp/cls.tsv"
 
 jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
 
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# One status document per repository, by kind before path: a PROOF-STATUS
+# file is the ledger (PROOF-POLICY §8.5), proof-debt the escape-hatch record,
+# PROOF-NEEDS the to-do list. Sorting by path alone picked
+# docs/status/PROOF-NEEDS.adoc over docs/status/PROOF-STATUS.adoc.
+jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" \
+| awk -F'\t' 'BEGIN{OFS="\t"} { b=toupper($2); sub(/.*\//, "", b)
+    k = (b ~ /^PROOF-STATUS/) ? 0 : (b ~ /^PROOF-DEBT/) ? 1 : 2
+    print $1, k, $2 }' \
+| sort -t$'\t' -k1,1 -k2,2n -k3,3 | cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

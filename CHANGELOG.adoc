@@ -10,6 +10,17 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* Census rows: `scripts/census/build-rows.sh` picked a repository's status
+  document by path order, so `docs/status/PROOF-NEEDS.adoc` won over
+  `docs/status/PROOF-STATUS.adoc` (resource-algebra's row points at its
+  to-do list, not its ledger). It now takes a PROOF-STATUS file first, then a
+  proof-debt file, then PROOF-NEEDS. The committed rows change at the next
+  census run.
+* `build-rows.sh` read the template list with awk's `NR==FNR`, which is also
+  true of every line when that list is empty, so an empty list silently
+  dropped every row. It keys on the file name now.
+  `tests/census/status_doc_rank_test.sh` covers both and runs in
+  `proven-tests.yml`.
 * `repo-init` minting a repository created with GitHub's "Use this
   template" (measured on metadatastician/lintel, 2026-10-14):
 ** provenance recorded the CHILD's own HEAD as the template commit. The

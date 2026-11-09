@@ -147,7 +147,7 @@ is relabelled.
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|resource-algebra |The 20 Agda-`PROVEN` theory rows (core, Loss, MaxPlus, HWM, MinMax, morphisms, separations) |AGDA-PENDING: the canonical-profile gate and receipt step are in resource-algebra#18; no receipt yet |Re-proved by hand in Rocq and Lean, no Mathlib, axiom-free; statement correspondence recorded; Dedukti transport to Rocq recorded `unavailable`; CI receipts pending in the same PR |BRIDGE-PENDING
+|resource-algebra |The 20 Agda-`PROVEN` theory rows (core, Loss, MaxPlus, HWM, MinMax, morphisms, separations) |AGDA-VERIFIED: CI run 42629220745 on 9f175cc, §2.1 profile |COQ-CHECKED and LEAN-CHECKED in the same run: re-proved by hand, no Mathlib, axiom-free; Dedukti transport to Rocq recorded `unavailable` |RECONCILED per the owner's PROOF-STATUS (statements compared, residual differences recorded); the owner derives `PWG-2ii` for these 20 rows. All of it is in resource-algebra#18, not yet merged
 |===
 
 The owning repository's proof-status file is authoritative for each row:

@@ -48,13 +48,21 @@ organisation-specific working material belongs in separate protected repositorie
   `--no-checkout`, and its file names are filtered by prover extension:
   Agda, Idris2, Lean, Rocq, Isabelle, TLA+, Dedukti/Lambdapi, SMT-LIB, TPTP,
   SPARK, Why3, F*, Dafny and Alloy.
+  Ada counts as SPARK only when it opts in: an `.ads`/`.adb` file is kept
+  if it contains `SPARK_Mode` or the repository has a configuration pragma
+  file (`.adc`) that sets it, and a `.gpr` is kept only when the repository
+  has some `SPARK_Mode`. Until 2026-11-09 every Ada file in a repository
+  with a `.gpr` counted, which listed plain Ada as SPARK.
 . *Read only the proof files.* Only those files are checked out. Top-level
   declaration names go to `decls.jsonl`, and proof-craft's `proof-holes.sh`
   inventories holes, axioms, disabled checkers and policy breaches
   (`holes.jsonl`).
 . *Set the template aside.* Files the RSR template ships
   (`docs/catalogue/census/template-paths.txt`) are boilerplate wherever they appear. The
-  catalogue counts only a repo's *own* files.
+  catalogue counts only a repo's *own* files. The template itself is the
+  exception: `hyperpolymath/rsr-template-repo` is catalogued with its own
+  files, because they are the origin and not a copy. Until 2026-11-09 they
+  were set aside there too, so the template's proofs were catalogued nowhere.
 . *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
 
 == Reading the catalogue (first pass, 2026-10-26)

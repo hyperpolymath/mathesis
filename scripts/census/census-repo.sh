@@ -30,7 +30,7 @@ grep -iE '(^|/)(PROOF-STATUS[^/]*|PROOF-NEEDS[^/]*|proof-debt[^/]*)$' "$O.tree" 
   | jq -RcS --arg r "$FN" '{path:., repo:$r}' > "$O.status.jsonl"
 
 # candidate paths
-grep -E '\.(agda|lagda|lagda\.md|idr|lidr|ipkg|lean|v|thy|tla|cfg|dk|lp|smt2|tptp|p|ads|adb|mlw|fst|dfy|als|gpr)$|(^|/)(\.?lean-toolchain|lakefile\.lean|lakefile\.toml|_CoqProject|dune|dune-project)$|\.agda-lib$' "$O.tree" > "$O.cand"
+grep -E '\.(agda|lagda|lagda\.md|idr|lidr|ipkg|lean|v|thy|tla|cfg|dk|lp|smt2|tptp|p|ads|adb|adc|mlw|fst|dfy|als|gpr)$|(^|/)(\.?lean-toolchain|lakefile\.lean|lakefile\.toml|_CoqProject|dune|dune-project)$|\.agda-lib$' "$O.tree" > "$O.cand"
 if ! [ -s "$O.cand" ]; then rm -rf "$D"; rm -f "$O.tree" "$O.cand"; [ -s "$O.status.jsonl" ] || rm -f "$O.status.jsonl"; exit 0; fi
 
 # .cfg only if a .tla sits in the same directory; dune only if .v exists
@@ -62,11 +62,18 @@ if [ $ROCQ = 0 ] && [ $HASV = 1 ]; then
     done < <(grep -E '\.v$' "$O.co")
   fi
 fi
-# SPARK repo-level gate
-SPARK=0
-grep -qE '\.gpr$' "$O.cand" && SPARK=1
-if [ $SPARK = 0 ]; then
-  while IFS= read -r p; do grep -qi 'SPARK_Mode' "$D/$p" 2>/dev/null && { SPARK=1; break; }; done < <(grep -E '\.(ads|adb)$' "$O.co")
+# SPARK gate. An Ada file is a SPARK proof file only when SPARK analysis is
+# switched on for it: the file itself carries SPARK_Mode, or a configuration-
+# pragma file (.adc) switches it on for the whole project. A .gpr proves
+# nothing on its own: every Ada project has one. (Until 2026-11-09 a .gpr alone
+# made every .ads/.adb in the repository count as SPARK.)
+SPARK_GLOBAL=0
+while IFS= read -r p; do
+  grep -qi 'SPARK_Mode' "$D/$p" 2>/dev/null && { SPARK_GLOBAL=1; break; }
+done < <(grep -E '\.adc$' "$O.co")
+SPARK_ANY=$SPARK_GLOBAL
+if [ $SPARK_ANY = 0 ]; then
+  while IFS= read -r p; do grep -qi 'SPARK_Mode' "$D/$p" 2>/dev/null && { SPARK_ANY=1; break; }; done < <(grep -E '\.(ads|adb)$' "$O.co")
 fi
 
 prover_of() {
@@ -81,7 +88,7 @@ prover_of() {
     *.lp) echo lambdapi ;;
     *.smt2) echo smtlib ;;
     *.tptp|*.p) echo tptp ;;
-    *.ads|*.adb|*.gpr) echo spark ;;
+    *.ads|*.adb|*.adc|*.gpr) echo spark ;;
     *.mlw) echo why3 ;;
     *.fst) echo fstar ;;
     *.dfy) echo dafny ;;
@@ -108,7 +115,9 @@ while IFS= read -r p; do
       [ $ROCQ = 1 ] || continue
       # skip obvious Verilog
       if grep -qE '^\s*endmodule' "$f" 2>/dev/null && ! grep -qE '^\s*(Require|From|Theorem|Lemma|Definition|Inductive)' "$f"; then continue; fi ;;
-    *.ads|*.adb|*.gpr) [ $SPARK = 1 ] || continue ;;
+    *.ads|*.adb) [ $SPARK_GLOBAL = 1 ] || grep -qi 'SPARK_Mode' "$f" 2>/dev/null || continue ;;
+    *.adc) grep -qi 'SPARK_Mode' "$f" 2>/dev/null || continue ;;
+    *.gpr) [ $SPARK_ANY = 1 ] || continue ;;
     *.p) grep -qE '^\s*(fof|cnf|tff|thf|include)\(' "$f" 2>/dev/null || continue ;;
     *.lp) grep -qE '^\s*(symbol|require|rule|constant|injective|opaque)\b' "$f" 2>/dev/null || continue ;;
   esac

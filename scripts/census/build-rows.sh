@@ -10,7 +10,8 @@
 #
 # Rows carry counts only, never file paths, so the committed data neither
 # grows with the estate's file trees nor repeats other repositories' paths.
-# A repo's "own" files are those not on the template list; files under
+# A repo's "own" files are those not on the template list, except in the
+# template itself (hyperpolymath/rsr-template-repo), which owns them; files under
 # tests/, fixtures/, corpus/, benches/ count as fixtures. "theory" is a
 # first-pass heuristic: more Agda/Lean/Rocq/Isabelle files than Idris2/SPARK
 # files. A human confirms each row.
@@ -19,14 +20,14 @@ R=$1 T=$2
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t)' "$T" - \
+| awk -F'\t' -v home="hyperpolymath/rsr-template-repo" 'NR==FNR{t[$1]=1;next} !(($2 in t) && $1 != home)' "$T" - \
 | awk -F'\t' 'BEGIN{OFS="\t"} {
     e=$3; p="other"
     if (e ~ /agda/) p="agda"; else if (e ~ /idr|ipkg/) p="idris2"
     else if (e ~ /lean|lakefile/) p="lean"; else if (e == "v" || e ~ /CoqProject/) p="rocq"
     else if (e == "thy") p="isabelle"; else if (e == "tla" || e == "cfg") p="tla"
     else if (e == "dk" || e == "lp") p="dedukti"; else if (e ~ /smt2|tptp/ || e == "p") p="smt-atp"
-    else if (e ~ /ad[sb]/) p="spark"; else if (e == "mlw") p="why3"
+    else if (e ~ /ad[sbc]/) p="spark"; else if (e == "mlw") p="why3"
     else if (e == "fst") p="fstar"; else if (e == "dfy") p="dafny"; else if (e == "als") p="alloy"
     fx = ($2 ~ /(^|\/)(tests?|fixtures?|corpus|corpus_fixtures|benches|benchmarks?)\//) ? 1 : 0
     print $1, p, fx }' > "$tmp/cls.tsv"

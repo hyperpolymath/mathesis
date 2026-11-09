@@ -33,10 +33,10 @@ jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
     print $1, p, fx }' > "$tmp/cls.tsv"
 
 jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
+| awk -F'\t' -v home="hyperpolymath/rsr-template-repo" 'NR==FNR{t[$1]=1;next} !(($2 in t) && $1 != home){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
 
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
+| awk -F'\t' -v home="hyperpolymath/rsr-template-repo" 'NR==FNR{t[$1]=1;next} !(($2 in t) && $1 != home){print $1}' "$T" - > "$tmp/decls.tsv"
 
 jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 

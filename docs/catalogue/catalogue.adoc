@@ -20,9 +20,13 @@ verdicts.
 |===
 |Repository |Own files |Fixtures |Provers (files) |Declarations |Holes |Axioms |Unsafe |Policy |Proof-status doc
 
-|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |148 |0 |agda 148 |1467 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |960 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |996 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/epistemic-types[hyperpolymath/epistemic-types] |60 |28 |agda 60 |513 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/affinescript[hyperpolymath/affinescript] |54 |0 |agda 23, lean 1, rocq 21, idris2 9 |568 |9 |1 |0 |0 |`docs/PROOF-NEEDS.adoc`
 
@@ -34,37 +38,43 @@ verdicts.
 
 |https://github.com/hyperpolymath/firmboot[hyperpolymath/firmboot] |38 |0 |agda 19, lean 19 |409 |0 |1 |0 |0 |—
 
-|https://github.com/hyperpolymath/epistemic-types[hyperpolymath/epistemic-types] |37 |14 |agda 37 |320 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/trope-checker[hyperpolymath/trope-checker] |38 |0 |agda 10, lean 12, idris2 16 |514 |0 |0 |0 |1 |`docs/proof-debt.adoc`
 
-|https://github.com/hyperpolymath/trope-checker[hyperpolymath/trope-checker] |37 |0 |agda 10, lean 11, idris2 16 |492 |10 |0 |0 |1 |`docs/proof-debt.adoc`
+|https://github.com/hyperpolymath/residual-evidence-types[hyperpolymath/residual-evidence-types] |37 |23 |agda 37 |391 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+
+|https://github.com/hyperpolymath/choreographic-types[hyperpolymath/choreographic-types] |34 |10 |agda 34 |214 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/arghda-core[hyperpolymath/arghda-core] |32 |32 |agda 13, lean 2, rocq 4, isabelle 4, idris2 7, smt-atp 2 |15 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |28 |0 |lean 19, isabelle 9 |540 |5 |0 |0 |0 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/residual-evidence-types[hyperpolymath/residual-evidence-types] |27 |13 |agda 27 |328 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
-
-|https://github.com/hyperpolymath/choreographic-types[hyperpolymath/choreographic-types] |25 |6 |agda 25 |178 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
-
 |https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |22 |12 |agda 22 |271 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |22 |12 |agda 22 |273 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/atoma[hyperpolymath/atoma] |21 |0 |agda 4, idris2 3, smt-atp 14 |127 |0 |0 |0 |4 |`docs/status/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |21 |5 |agda 21 |91 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |21 |0 |lean 21 |164 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/occupancy-types[hyperpolymath/occupancy-types] |19 |2 |agda 8, lean 5, idris2 6 |76 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/occupancy-types[hyperpolymath/occupancy-types] |20 |2 |agda 8, lean 6, idris2 6 |90 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/wokelang[hyperpolymath/wokelang] |18 |0 |lean 7, rocq 3, idris2 8 |418 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/JuliaPackageSpitter.jl[hyperpolymath/JuliaPackageSpitter.jl] |17 |12 |agda 17 |83 |1 |1 |1 |1 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/JuliaPackageSpitter.jl[hyperpolymath/JuliaPackageSpitter.jl] |17 |12 |agda 17 |87 |1 |1 |1 |1 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |16 |3 |agda 16 |67 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |17 |9 |agda 9, idris2 8 |193 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |17 |0 |lean 17 |198 |0 |0 |0 |0 |—
+
+|https://github.com/hyperpolymath/nextgen-typing[hyperpolymath/nextgen-typing] |16 |11 |agda 3, lean 6, rocq 7 |118 |6 |0 |0 |0 |`PROOF-NEEDS.adoc`
+
+|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |16 |7 |agda 10, idris2 1, tla 5 |203 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |15 |0 |agda 15 |63 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
 
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
 
-|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |15 |0 |lean 15 |161 |0 |0 |0 |0 |—
+|https://github.com/hyperpolymath/jtv-lang[hyperpolymath/jtv-lang] |15 |0 |agda 5, lean 9, idris2 1 |287 |0 |0 |0 |0 |`verification/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/zotero-tools[hyperpolymath/zotero-tools] |15 |0 |lean 9, idris2 3, tla 3 |94 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -72,31 +82,23 @@ verdicts.
 
 |https://github.com/metadatastician/MetaManifold-Evidence[metadatastician/MetaManifold-Evidence] |13 |0 |agda 13 |70 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/phronesis[hyperpolymath/phronesis] |12 |0 |agda 3, lean 3, rocq 1, idris2 2, tla 3 |140 |3 |0 |0 |2 |—
+|https://github.com/metadatastician/lintel[metadatastician/lintel] |13 |9 |agda 13 |80 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |11 |0 |agda 11 |51 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
+|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |12 |0 |agda 2, lean 4, rocq 3, idris2 3 |82 |6 |0 |0 |0 |`docs/PROOF-STATUS.adoc`
+
+|https://github.com/hyperpolymath/phronesis[hyperpolymath/phronesis] |12 |0 |agda 3, lean 3, rocq 1, idris2 2, tla 3 |140 |3 |0 |0 |2 |—
 
 |https://github.com/hyperpolymath/eclexia[hyperpolymath/eclexia] |11 |0 |agda 1, rocq 6, idris2 4 |218 |0 |5 |0 |1 |`docs/proof-debt.adoc`
 
 |https://github.com/hyperpolymath/CompositionalCounts.jl[hyperpolymath/CompositionalCounts.jl] |10 |0 |agda 10 |184 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/jtv-lang[hyperpolymath/jtv-lang] |10 |0 |lean 9, idris2 1 |225 |0 |0 |0 |0 |—
-
 |https://github.com/hyperpolymath/ExactTests.jl[hyperpolymath/ExactTests.jl] |9 |0 |agda 9 |44 |0 |1 |0 |1 |—
 
-|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |9 |3 |agda 5, idris2 1, tla 3 |108 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
-
 |https://github.com/hyperpolymath/boinc-boinc[hyperpolymath/boinc-boinc] |8 |0 |lean 8 |46 |1 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`docs/proof-debt.adoc`
-
-|https://github.com/hyperpolymath/gitbot-fleet[hyperpolymath/gitbot-fleet] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/kitchenspeak[hyperpolymath/kitchenspeak] |6 |0 |agda 5, idris2 1 |82 |0 |4 |0 |1 |`docs/proof-debt.adoc`
 
 |https://github.com/hyperpolymath/neurophone[hyperpolymath/neurophone] |6 |0 |lean 3, tla 2, dafny 1 |19 |0 |0 |0 |6 |—
-
-|https://github.com/metadatastician/lintel[metadatastician/lintel] |6 |4 |agda 6 |58 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/palimpsest-license[hyperpolymath/palimpsest-license] |5 |4 |agda 5 |3 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -106,17 +108,17 @@ verdicts.
 
 |https://github.com/catachresis-colloquium/megadog[catachresis-colloquium/megadog] |3 |0 |lean 3 |25 |0 |0 |0 |3 |—
 
-|https://github.com/hyperpolymath/nextgen-typing[hyperpolymath/nextgen-typing] |3 |0 |agda 3 |16 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
 |https://github.com/hyperpolymath/snifs[hyperpolymath/snifs] |3 |0 |agda 2, idris2 1 |43 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/tangle[hyperpolymath/tangle] |3 |0 |lean 3 |61 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/metadatastician/ZenodoDeposits.jl[metadatastician/ZenodoDeposits.jl] |3 |0 |agda 3 |53 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/proof-burrower[hyperpolymath/proof-burrower] |2 |0 |agda 2 |31 |0 |0 |0 |0 |`docs/proof-debt.adoc`
+
 |https://github.com/hyperpolymath/ResidualEvidenceTypes.jl[hyperpolymath/ResidualEvidenceTypes.jl] |1 |1 |agda 1 |1 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/invariant-path[hyperpolymath/invariant-path] |1 |0 |agda 1 |8 |0 |0 |0 |0 |—
+|https://github.com/hyperpolymath/invariant-path[hyperpolymath/invariant-path] |1 |0 |agda 1 |16 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/zerostep[hyperpolymath/zerostep] |1 |0 |isabelle 1 |16 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 |===
@@ -137,13 +139,13 @@ verdicts.
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |167 |21 |agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1885 |4 |1 |4 |23 |`docs/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1945 |4 |1 |4 |26 |`docs/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/ambientops[hyperpolymath/ambientops] |102 |1 |idris2 39, spark 58, other 5 |777 |39 |0 |8 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/metadatastician/cerro-torre[metadatastician/cerro-torre] |85 |1 |idris2 8, spark 75, other 2 |91 |18 |0 |69 |0 |—
 
-|https://github.com/hyperpolymath/proven-tests-and-benches[hyperpolymath/proven-tests-and-benches] |72 |27 |idris2 72 |857 |0 |0 |0 |0 |—
+|https://github.com/hyperpolymath/proven-tests-and-benches[hyperpolymath/proven-tests-and-benches] |75 |29 |idris2 75 |891 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/trigger[hyperpolymath/trigger] |64 |20 |agda 2, idris2 5, spark 56, other 1 |165 |0 |13 |0 |0 |—
 
@@ -153,11 +155,11 @@ verdicts.
 
 |https://github.com/hyperpolymath/ochrance[hyperpolymath/ochrance] |48 |8 |idris2 48 |404 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |46 |12 |idris2 46 |850 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |48 |14 |idris2 48 |870 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |43 |0 |rocq 19, idris2 24 |635 |15 |0 |1 |0 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |44 |0 |rocq 20, idris2 24 |654 |6 |0 |1 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |42 |11 |agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1 |448 |3 |1 |0 |1 |`docs/proof-debt.adoc`
+|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |43 |11 |agda 2, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1 |480 |3 |1 |0 |1 |`docs/proof-debt.adoc`
 
 |https://github.com/hyperpolymath/vexometer[hyperpolymath/vexometer] |42 |6 |idris2 10, spark 29, other 3 |104 |3 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -176,6 +178,8 @@ verdicts.
 |https://github.com/hyperpolymath/boj-server[hyperpolymath/boj-server] |26 |0 |idris2 19, tla 6, alloy 1 |421 |4 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/julia-ecosystem[hyperpolymath/julia-ecosystem] |25 |0 |idris2 25 |399 |15 |0 |0 |0 |`PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/atoma[hyperpolymath/atoma] |24 |0 |agda 4, idris2 4, smt-atp 16 |128 |0 |0 |0 |4 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/nextgen-databases[hyperpolymath/nextgen-databases] |24 |3 |idris2 24 |279 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -209,6 +213,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/ochrance-framework[hyperpolymath/ochrance-framework] |14 |0 |idris2 14 |123 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/panll[hyperpolymath/panll] |14 |6 |idris2 12, tla 2 |126 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
+
 |https://github.com/hyperpolymath/civic-connect[hyperpolymath/civic-connect] |13 |0 |idris2 4, spark 8, other 1 |46 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/docudactyl[hyperpolymath/docudactyl] |13 |0 |idris2 7, spark 5, other 1 |223 |0 |0 |0 |0 |—
@@ -218,8 +224,6 @@ verdicts.
 |https://github.com/hyperpolymath/robodog-defensive-systems-lab[hyperpolymath/robodog-defensive-systems-lab] |13 |0 |idris2 6, spark 6, other 1 |64 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/modshells[hyperpolymath/modshells] |12 |2 |spark 9, other 3 |0 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/panll[hyperpolymath/panll] |12 |6 |idris2 12 |125 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/universal-chat-extractor[hyperpolymath/universal-chat-extractor] |12 |9 |idris2 12 |110 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -237,8 +241,6 @@ verdicts.
 
 |https://github.com/hyperpolymath/formatrix-docs[hyperpolymath/formatrix-docs] |11 |0 |spark 10, other 1 |0 |0 |0 |0 |0 |`PROOF-NEEDS.md`
 
-|https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |11 |5 |agda 3, idris2 8 |142 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
 |https://github.com/hyperpolymath/polyglot-i18n[hyperpolymath/polyglot-i18n] |11 |0 |spark 10, other 1 |0 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/typedqliser[hyperpolymath/typedqliser] |11 |0 |idris2 11 |155 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
@@ -246,6 +248,8 @@ verdicts.
 |https://github.com/metadatastician/phi-LAM[metadatastician/phi-LAM] |11 |0 |lean 5, idris2 6 |199 |0 |4 |0 |0 |—
 
 |https://github.com/hyperpolymath/fireflag[hyperpolymath/fireflag] |10 |0 |idris2 10 |156 |0 |0 |0 |0 |`PROOF-NEEDS.md`
+
+|https://github.com/hyperpolymath/gitbot-fleet[hyperpolymath/gitbot-fleet] |10 |3 |lean 2, rocq 2, idris2 6 |63 |6 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/thunderbird-template-reloaded[hyperpolymath/thunderbird-template-reloaded] |10 |9 |idris2 10 |74 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -405,6 +409,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/cicd-squabbler[hyperpolymath/cicd-squabbler] |3 |0 |spark 2, other 1 |0 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/cicd-suite[hyperpolymath/cicd-suite] |3 |0 |idris2 3 |37 |0 |0 |0 |0 |—
+
 |https://github.com/hyperpolymath/cloudguard-cli[hyperpolymath/cloudguard-cli] |3 |0 |idris2 3 |60 |3 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/cloudguard-server[hyperpolymath/cloudguard-server] |3 |0 |idris2 3 |60 |3 |0 |0 |0 |—
@@ -435,6 +441,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/pimcore-fortress[hyperpolymath/pimcore-fortress] |3 |0 |idris2 3 |60 |3 |0 |0 |0 |—
 
+|https://github.com/hyperpolymath/unified-api-adapter[hyperpolymath/unified-api-adapter] |3 |0 |idris2 3 |28 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+
 |https://github.com/hyperpolymath/unified-dataset-vocab[hyperpolymath/unified-dataset-vocab] |3 |0 |idris2 3 |60 |3 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/universal-extension-format[hyperpolymath/universal-extension-format] |3 |0 |idris2 3 |60 |3 |0 |0 |0 |—
@@ -460,6 +468,8 @@ verdicts.
 |https://github.com/hyperpolymath/nextgen-language-evangeliser[hyperpolymath/nextgen-language-evangeliser] |2 |0 |idris2 2 |15 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/phantom-metal-taste[hyperpolymath/phantom-metal-taste] |2 |0 |tla 2 |9 |0 |0 |0 |0 |—
+
+|https://github.com/hyperpolymath/zig-dnssec[hyperpolymath/zig-dnssec] |2 |0 |idris2 2 |15 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/metadatastician/selur[metadatastician/selur] |2 |0 |idris2 2 |23 |4 |0 |0 |0 |—
 

@@ -25,9 +25,9 @@ set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 census=$here/../../docs/catalogue/census
 merge=false
-if [ "${1:-}" = --merge ]; then
+if [[ "${1:-}" == --merge ]]; then
   merge=true; shift
-  [ -n "${1:-}" ] || { echo "run-census.sh --merge needs a REPO_LIST" >&2; exit 2; }
+  [[ -n "${1:-}" ]] || { echo "run-census.sh --merge needs a REPO_LIST" >&2; exit 2; }
 fi
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
@@ -50,7 +50,7 @@ bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$work/catalog
 jq -cS -s --arg d "$today" 'map(. + {census_date: $d}) | sort_by(.repo)' "$work/heads.jsonl" > "$work/provenance.json"
 
 if $merge; then
-  [ -f "$census/provenance.json" ] || echo '[]' > "$census/provenance.json"
+  [[ -f "$census/provenance.json" ]] || echo '[]' > "$census/provenance.json"
   for f in catalogue-rows provenance; do
     bash "$here/merge-rows.sh" --sorted "$census/$f.json" "$work/$f.json" "$list" > "$work/$f.merged.json"
     mv "$work/$f.merged.json" "$census/$f.json"

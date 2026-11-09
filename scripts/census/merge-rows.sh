@@ -23,8 +23,8 @@
 # .repo, a duplicate repo in either input, or an empty SCOPE is an error.
 set -euo pipefail
 sorted=false
-if [ "${1:-}" = --sorted ]; then sorted=true; shift; fi
-[ $# -eq 3 ] || { echo "usage: merge-rows.sh [--sorted] COMMITTED NEW SCOPE" >&2; exit 2; }
+if [[ "${1:-}" == --sorted ]]; then sorted=true; shift; fi
+[[ $# -eq 3 ]] || { echo "usage: merge-rows.sh [--sorted] COMMITTED NEW SCOPE" >&2; exit 2; }
 committed=$1 new=$2 scope=$3
 
 jq -n --argjson sorted "$sorted" \

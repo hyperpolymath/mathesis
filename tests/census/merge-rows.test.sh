@@ -9,8 +9,14 @@ t=$(mktemp -d); trap 'rm -rf "$t"' EXIT
 pass=0 fail=0
 ok()  { pass=$((pass+1)); echo "ok   - $1"; }
 bad() { fail=$((fail+1)); echo "FAIL - $1"; }
-expect_eq() { if [ "$2" = "$3" ]; then ok "$1"; else bad "$1"; echo "  expected: $3"; echo "  got:      $2"; fi; }
-expect_fail() { if bash "$M" "${@:2}" > /dev/null 2>&1; then bad "$1 (exit 0, expected failure)"; else ok "$1"; fi; }
+expect_eq() {
+  local name=$1 got=$2 want=$3
+  if [[ "$got" == "$want" ]]; then ok "$name"; else bad "$name"; echo "  expected: $want"; echo "  got:      $got"; fi
+}
+expect_fail() {
+  local name=$1; shift
+  if bash "$M" "$@" > /dev/null 2>&1; then bad "$name (exit 0, expected failure)"; else ok "$name"; fi
+}
 
 echo '[{"n":1,"repo":"o/a"},{"n":1,"repo":"o/b"},{"n":1,"repo":"o/c"}]' > "$t/c.json"
 printf 'o/b\n' > "$t/s-b"
@@ -65,4 +71,4 @@ expect_fail "rejects a missing input file" --sorted "$t/nope.json" "$t/n.json" "
 expect_fail "rejects the wrong argument count" --sorted "$t/c.json" "$t/n.json"
 
 echo "merge-rows: $pass passed, $fail failed"
-[ "$fail" -eq 0 ]
+[[ "$fail" -eq 0 ]]

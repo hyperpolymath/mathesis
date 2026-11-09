@@ -194,7 +194,7 @@
 * `hyperpolymath/quandledb` — engineering; 5 own proof files, 36 detected declarations; provers: agda 1, idris2 1, tla 3
 * `hyperpolymath/quintessence` — engineering; 4 own proof files, 20 detected declarations; provers: idris2 2, tla 2
 * `hyperpolymath/raze-tui` — engineering; 22 own proof files, 59 detected declarations; provers: idris2 3, spark 18, other 1
-* `hyperpolymath/recon-silly-ation` — engineering; 2 own proof files, 23 detected declarations; provers: idris2 2
+* `hyperpolymath/recon-silly-ation` — engineering; 2 own proof files, 25 detected declarations; provers: idris2 2
 * `hyperpolymath/reposystem` — engineering; 16 own proof files, 7 detected declarations; provers: idris2 1, spark 13, other 2
 * `hyperpolymath/resource-record-fluctuator` — engineering; 32 own proof files, 0 detected declarations; provers: spark 31, other 1
 * `hyperpolymath/robodog-defensive-systems-lab` — engineering; 13 own proof files, 64 detected declarations; provers: idris2 6, spark 6, other 1

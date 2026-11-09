@@ -15,7 +15,7 @@ corroboration.
 
 The plan these rows come from is
 https://github.com/metadatastician/standards/blob/main/docs/ULTRAPLAN-ECHIDNA-PROOF-ROUTE-2026-11-04.adoc[the echidna proof-route ultraplan]
-(ladder rows in brackets; v0.2.3 is metadatastician/standards#1434).
+(ladder rows in brackets; v0.2.4 is metadatastician/standards#1434).
 
 == Theory theorems
 
@@ -38,7 +38,7 @@ reviewed and both legs are `RECONCILED`.
 CI job is hyperpolymath/echidnabot#195.
 
 |Token order and weakest-step meet; level monotonicity (row 2)
-|Undecided: decision D-10
+|hyperpolymath/mathesis (owner ruling D-10, 2026-11-09); no Agda source yet
 |`open`
 |`ungraded`
 |None
@@ -51,7 +51,7 @@ dependents (row 7)
 |None for this statement. The Idris2 transcription is below.
 
 |Status fold is a join on the token lattice (row 12)
-|Undecided: decision D-10
+|hyperpolymath/mathesis (owner ruling D-10, 2026-11-09); no Agda source yet
 |`open`
 |`ungraded`
 |None

@@ -91,7 +91,9 @@ The first census covered 476 repositories:
   a pointer, not an obligation. Its theorems are `ungraded`. That repository's
   `pushed_at` in `repos.json` is its head commit's time (`89be534`), not a
   value read from the listing, because the listing covers only repositories
-  the estate owns.
+  the estate owns. When `repos.json` is rebuilt from that listing, carry
+  such manually registered third-party entries into the new file before
+  running the census, or their rows drop out of the catalogue.
 
 == Next steps
 

@@ -222,6 +222,10 @@
 * `hyperpolymath/zerotier-k8s-link` — engineering; 12 own proof files, 110 detected declarations; provers: idris2 12
 * `hyperpolymath/zotero-tools` — theory; 15 own proof files, 94 detected declarations; provers: lean 9, idris2 3, tla 3
 
+== JoshuaJewell
+
+* `JoshuaJewell/MetaManifold-WebUI` — theory; 6 own proof files, 57 detected declarations; provers: agda 6
+
 == metadatastician
 
 * `metadatastician/_pathroot` — engineering; 34 own proof files, 70 detected declarations; provers: idris2 5, spark 25, other 4

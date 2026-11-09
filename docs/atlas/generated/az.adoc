@@ -181,6 +181,7 @@
 * `metadatastician/marid` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `catachresis-colloquium/megadog` — theory; 3 own proof files, 25 detected declarations; provers: lean 3
 * `metadatastician/MetaManifold-Evidence` — theory; 13 own proof files, 70 detected declarations; provers: agda 13
+* `JoshuaJewell/MetaManifold-WebUI` — theory; 6 own proof files, 57 detected declarations; provers: agda 6
 * `hyperpolymath/modshells` — engineering; 12 own proof files, 0 detected declarations; provers: spark 9, other 3
 * `hyperpolymath/my-lang` — theory; 25 own proof files, 617 detected declarations; provers: rocq 16, idris2 9
 * `hyperpolymath/mylangiser` — engineering; 9 own proof files, 135 detected declarations; provers: idris2 9

@@ -1,0 +1,183 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Proof receipts as data — proposal
+:toc: preamble
+
+Status: *proposed, not adopted* (2026-11-09). This proposal asks for a decision
+before anything is built. It changes no gate, schema or catalogue row.
+
+PROOF-POLICY §8.4 says a Proof Witness Grade is *derived from receipts, never
+asserted*, and §8.5 says Mathesis may catalogue grades by deriving them from the
+home repository's receipts. Today no repository's grades can be derived:
+receipts exist only as prose and CI logs, and Mathesis indexes repositories, not
+theorems. This proposal makes the inputs to a grade machine-readable at their
+source. Mathesis can then compute grades instead of transcribing them.
+`hyperpolymath/januskey` is the pilot.
+
+== The gap, measured
+
+* *januskey* records its grades in `docs/theory/PROOF-GRADES.adoc`, which is
+  prose. Each merge that touches a proof or a gate leaves the page one receipt
+  behind, by construction. The current page has to explain which run covers
+  which bytes.
+* *Mathesis* lists januskey from the 2026-10-26 census as `engineering`, with 11
+  own files and 5 fixtures. Neither fact is current: januskey now has four Agda
+  theory roots, Rocq and Lean recheck legs for one theorem, and 9 Agda fixtures.
+  The census cannot see grades at all.
+* *standards* already holds the grade *rules* as data
+  (`3-practice/proof-witness-grades.k9.ncl`: labels, order, leg-counting rules,
+  waiver caps). It has no schema for the *records* the rules apply to.
+
+== Proposal
+
+Four layers, each owned where PROOF-POLICY already puts ownership.
+
+[cols="1,2,3",options="header"]
+|===
+| Layer | Owner | What it is
+
+| 1. Schemas
+| `standards`, beside `proof-witness-grades.k9.ncl`
+| Two k9 Kennel contracts: `proof-ledger` (one record per theory theorem) and
+  `proof-receipt` (one record per checker run). Data only, versioned, pinned by
+  commit as §7 requires.
+
+| 2. Ledger
+| the home repository
+| A committed `I-JSON/JCS` JSON Lines file, one record per theorem: the id, the
+  exact statement, and its legs. Each leg gives the prover, route, §5 token,
+  §2.2 state, artefact (`file::name`) and a pointer to its recorded statement
+  comparison.
+
+| 3. Receipts
+| the home repository's CI
+| Each proof job writes one receipt line per witness. A receipt has §8.2's
+  fields: checker, version, invocation, input digest (SHA-256 of the import
+  cone), result, axioms, source repository and 40-character commit, plus the run
+  id. CI uploads the receipts as a workflow artifact with a build-provenance
+  attestation.
+
+| 4. Derivation
+| one implementation, used twice
+| A deterministic grade computer reads the ledger, the receipts and the pinned
+  rules file and prints each theorem's grade. The home repository's gate runs
+  it, and fails when a document claims more than it computes. Mathesis runs the
+  same computer to build theorem rows. It never assigns a grade.
+|===
+
+What the computer does is fixed by `proof-witness-grades.k9.ncl` and nothing
+else:
+
+* A leg counts only with a status token in `leg_counts_when.status_tokens`,
+  the state `RECONCILED`, a route in `leg_counts_when.routes`, and a `current`
+  receipt whose input digest matches the bytes at the commit being graded.
+* The grade is the highest rung whose `requires` all hold.
+* A receipt for different bytes, or from an older commit, is not current
+  (§8.4.4): the grade falls back, and the receipt is reported `superseded` or
+  `regressed`.
+
+== Choices, with alternatives
+
+Ratings follow the owner's ordering: most elegant and correct first, then most
+dependable and secure.
+
+*Ledger format.*
+
+[cols="1,1,1,3",options="header"]
+|===
+| Option | Elegance / correctness | Dependability / security | Notes
+
+| A. `I-JSON/JCS` JSON Lines (recommended)
+| high
+| high
+| D306 already rules every estate `.jsonl` I-JSON/JCS, and `ijson-jcs` gates it.
+  Readable by `jq`, Bun and Rust with no evaluator. One line per theorem keeps
+  diffs reviewable.
+
+| B. A clause of the repository's chora deed
+| medium
+| high
+| The deed holds repository *facts*. A per-theorem list with statements would
+  swell the identity record and couple every proof change to it.
+
+| C. k9 Nickel data in the home repository
+| high
+| medium
+| Typed at authoring time, but every consumer then needs a Nickel evaluator.
+  The contracts belong in `standards`, the instances need not be Nickel.
+|===
+
+*Receipt transport.*
+
+[cols="1,1,1,3",options="header"]
+|===
+| Option | Elegance / correctness | Dependability / security | Notes
+
+| A. CI artifact with build-provenance attestation (recommended)
+| high
+| high
+| Receipts stay tied to the run that produced them. The attestation lets a
+  consumer verify origin without trusting a file in the tree. It needs one
+  more locked action (`actions/attest-build-provenance`) and `id-token: write`
+  on that job only.
+
+| B. A bot commits receipts back to the repository
+| medium
+| low
+| Every green run becomes a commit. It needs a write token, and a receipt in the
+  tree is self-asserted.
+
+| C. Parse the CI log or step summary
+| low
+| low
+| No new action, but log formats drift and nothing authenticates the content.
+|===
+
+*Where the computer lives.* `standards`, next to the rules it implements, as a
+small Rust or Bun tool. Both the home-repository gate and Mathesis pin it by
+commit. The alternative, a copy in each repository, would let the copies drift
+apart, which §8.4.2's "derived, not asserted" exists to prevent.
+
+== Experiments before adoption
+
+Each experiment has a pass condition stated in advance. The januskey pilot is
+E1 to E4.
+
+. *E1 — round trip.* Write januskey's ledger from the current
+  `PROOF-GRADES.adoc` (five theorems). Compute the grades from the CI receipts
+  of one `main` commit. Pass: the computed census equals the page's (`PWG-3` 4,
+  `PWG-2ii` 1).
+. *E2 — drift is caught.* Mark T-1's Lean leg `BRIDGE-PENDING`. Pass: T-1
+  computes as `PWG-2i`, and the gate fails because the page still says
+  `PWG-2ii`.
+. *E3 — regression drops the grade.* On a scratch branch, break the Rocq leg.
+  Pass: no current Rocq receipt exists, T-1 computes as `PWG-2i`, and the old
+  receipt reports `regressed`.
+. *E4 — stale bytes.* Edit a comment in a graded module without re-running CI.
+  Pass: the input digest no longer matches, and the receipt reports not
+  current.
+. *E5 — Mathesis ingestion.* Mathesis reads januskey's ledger and the receipt
+  artifact at a pinned commit, and writes theorem rows. Pass: the rows match
+  E1, and a repository with no ledger shows as "no ledger", not as zero.
+. *E6 — second producer.* Repeat E1 on `resource-algebra` or `echo-types`.
+  Pass: no schema change needed.
+
+== What this does not do
+
+* It does not move any grade. Today's grades stay as recorded until E1 shows the
+  computer agrees with them.
+* It does not change the status or correspondence vocabularies (§5, §2.2).
+* It does not make Mathesis an authority. The home repository still owns the
+  theorem and its evidence, and Mathesis only recomputes.
+* It does not cover engineering proofs (Idris2, Creusot, Verus, SPARK), which
+  §8.1 keeps off the ladder. The same receipt schema could serve them later
+  without a grade.
+
+== Decisions needed
+
+. Adopt layers 1 to 4 as above, or a subset (for example, ledger and computer
+  without attestation).
+. Ledger format A, B or C.
+. Receipt transport A, B or C.
+. Whether the computer is Rust or Bun. Both are permitted. Rust matches the
+  estate's preference for tools, and Bun matches Mathesis's existing atlas
+  tooling.

@@ -20,6 +20,7 @@ in Rocq and Lean). The working method is the proof-craft skill.
 * link:docs/standards/README.adoc[Standards and authority map] — estate proof policy, proof/test evidence ownership, and Mathesis's limits.
 * link:docs/atlas/README.adoc[Discovery atlas] — the current generated, read-only first slice (repository index, not theorem-level certification).
 * link:docs/proposals/estate-mathematical-architecture.adoc[Estate mathematical architecture proposal] — the original long-term design brief, preserved but *not ratified*. Its proposed proof grades do not override the standards policy.
+* link:docs/proposals/proof-receipts-as-data.adoc[Proof receipts as data] — proposed, not adopted: machine-readable proof ledgers and CI receipts in home repositories, so Mathesis can derive Proof Witness Grades instead of transcribing them.
 * link:docs/architecture/REPOSITORY-MAP.adoc[Generated repository map] — current path inventory, not the mathematical architecture specification.
 
 Mathesis references proofs in their home repositories. A census row or a green CI badge does not independently verify a theorem. Pin claims to source commits, checker versions, assumptions and verification receipts; report missing or inaccessible evidence explicitly.

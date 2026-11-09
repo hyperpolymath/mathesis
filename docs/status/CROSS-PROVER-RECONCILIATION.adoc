@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 = Cross-prover proof reconciliation — working policy
-:revdate: 2026-11-05
+:revdate: 2026-11-09
 :toc:
 :sectnums:
 
@@ -139,6 +139,19 @@ is relabelled.
 
 == Register format (initially not reconciled)
 
+First populated rows (2026-11-09): the squeakwell recovery ladder, from
+https://github.com/hyperpolymath/squeakwell[squeakwell] `PROOF-STATUS.adoc`
+(which holds the per-rung receipts: Coq 8.18.0, Agda 2.7.0.1 with pinned
+libraries, Lean 4.35.0). Statuses below are *correspondence states*; the Agda
+and Coq legs were checked in one local session and the owning repositories'
+CI must confirm them on merge (verisimdb#350, tropical-types#67, the echo-types
+PR). None of these rows is RECONCILED: the Agda↔Rocq relation for the merge
+laws is a refinement (pointwise vs. function equality), not same-statement.
+The catalogue in `docs/catalogue/` is census-generated from `main` and will
+pick up the new files when the census is rerun after those PRs merge; it is
+not hand-edited here.
+
+
 [cols="2,2,2,2,3",options="header"]
 |===
 |Owner |Candidate |Agda |Coq / Lean |Correspondence
@@ -147,6 +160,10 @@ is relabelled.
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|squeakwell (R3, R9 merge laws) |Partial sections: guarded fill inflationary / not monotone; resolve-parametric merge comm/assoc/idem |AGDA-VERIFIED (echo-types `EchoPartialSection.agda`, Agda 2.7.0.1, pinned stdlib/absolute-zero, 2026-11-09 local run) |COQ-CHECKED (verisimdb `formal/Recovery.v`, Coq 8.18.0; `functional_extensionality_dep` whitelisted) |BRIDGE-PENDING — refinement: Agda states the laws pointwise, Rocq as function equalities under funext; no checked translation yet
+|squeakwell (R8 narrowing) |Fibre of a pairing = intersection of fibres; `narrow-shrinks` on `FiberSize-fin` |AGDA-VERIFIED (echo-types `EchoFibreIntersection.agda`, same run) |NOT-INVENTORIED (no Rocq/Lean statement) |n/a — single-prover theorem
+|squeakwell (R10 progress / termination) |Lexicographic progress on the (missing-count, conflict-count) pair; nine-round fixpoint; `winner_some`, `conflict_refl` explicit |AGDA-PENDING (not stated; needs the finite octad) |COQ-CHECKED (`Recovery.v`: `step_progress`, `iter_9_fixpoint`) |BRIDGE-PENDING
+|squeakwell (R5–R7 tropical) |`weightedResidueMeasure`; hub ceiling under `OneTop` (refuted at MaxPlus); `reachGrade` monotone in matrix and observed set |AGDA-PENDING (not stated) |LEAN-CHECKED (tropical-types `Resource/HubCeiling.lean`, Lean 4.35.0; axioms propext/Quot.sound only) |BRIDGE-PENDING
 |===
 
 References:

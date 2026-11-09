@@ -720,6 +720,10 @@ uncloak:
 census:
     bash scripts/census/run-census.sh
 
+# Re-list every blob the RSR template has shipped at its template paths, in any commit
+template-blobs:
+    bash scripts/census/template-blobs.sh docs/catalogue/census/template-paths.txt > docs/catalogue/census/template-blobs.tsv
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc

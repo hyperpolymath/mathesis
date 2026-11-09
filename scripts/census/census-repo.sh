@@ -115,8 +115,11 @@ while IFS= read -r p; do
   echo "$p" >> "$O.keep"
 done < "$O.co"
 
+# The blob id lets build-rows.sh tell a template file from a repository's own
+# rewrite of it at the same path (see template-blobs.sh).
 while IFS= read -r p; do
-  jq -cnS --arg e "$(ext_of "$p")" --arg p "$p" --arg r "$FN" '{ext:$e,path:$p,repo:$r}'
+  b=$(git -C "$D" rev-parse "HEAD:$p" 2>/dev/null || true)
+  jq -cnS --arg b "$b" --arg e "$(ext_of "$p")" --arg p "$p" --arg r "$FN" '{blob:$b,ext:$e,path:$p,repo:$r}'
 done < "$O.keep" > "$O.files.jsonl"
 
 # declarations: emit TSV prover\tkind\tline\tname\tfile then convert

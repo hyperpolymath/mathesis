@@ -359,6 +359,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/quandledb[hyperpolymath/quandledb] |5 |0 |agda 1, idris2 1, tla 3 |36 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/zig-dnssec[hyperpolymath/zig-dnssec] |5 |0 |idris2 5 |60 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+
 |https://github.com/catachresis-colloquium/evil-weevil[catachresis-colloquium/evil-weevil] |4 |0 |idris2 4 |124 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/catachresis-colloquium/pow-the-game[catachresis-colloquium/pow-the-game] |4 |0 |idris2 4 |14 |0 |0 |0 |0 |—

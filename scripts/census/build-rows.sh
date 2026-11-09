@@ -2,15 +2,20 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fold the raw, path-level census into one row per repository.
 #
-# Usage: build-rows.sh RAW_DIR TEMPLATE_PATHS > catalogue-rows.json
-#   RAW_DIR         files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl
-#                   (written by census-repo.sh + summarise.sh; not committed)
-#   TEMPLATE_PATHS  one path per line: proof files the RSR template ships,
-#                   which are boilerplate wherever they appear
+# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.json
+#   RAW_DIR   files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl
+#             (written by census-repo.sh + summarise.sh; not committed)
+#   TEMPLATE  template-blobs.tsv: "path<TAB>blob" for every blob the RSR template
+#             has had at a proof-file path (template-blobs.sh). A file is
+#             template boilerplate only when its own (path, blob) is listed, so
+#             a repository that rewrote a template file in place is credited
+#             with it. A plain path list (the old template-paths.txt) still
+#             works, and so do raw rows without a blob: both fall back to
+#             matching by path alone.
 #
 # Rows carry counts only, never file paths, so the committed data neither
 # grows with the estate's file trees nor repeats other repositories' paths.
-# A repo's "own" files are those not on the template list; files under
+# A repo's "own" files are those that are not template boilerplate; files under
 # tests/, fixtures/, corpus/, benches/ count as fixtures. "theory" is a
 # first-pass heuristic: more Agda/Lean/Rocq/Isabelle files than Idris2/SPARK
 # files. A human confirms each row.
@@ -18,8 +23,13 @@ set -euo pipefail
 R=$1 T=$2
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
-jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t)' "$T" - \
+# Split files into template boilerplate ($tmp/template.tsv: repo, path) and the
+# repository's own files (passed on).
+jq -r '[.repo,.path,.ext,(.blob // "")]|@tsv' "$R/files.jsonl" \
+| awk -F'\t' -v TM="$tmp/template.tsv" '
+    NR==FNR { tp[$1]=1; if (NF >= 2 && $2 != "") { tb[$1 "\t" $2]=1; nb++ }; next }
+    { tmpl = ($4 != "" && nb > 0) ? (($2 "\t" $4) in tb) : ($2 in tp)
+      if (tmpl) print $1 "\t" $2 > TM; else print }' "$T" - \
 | awk -F'\t' 'BEGIN{OFS="\t"} {
     e=$3; p="other"
     if (e ~ /agda/) p="agda"; else if (e ~ /idr|ipkg/) p="idris2"
@@ -31,11 +41,12 @@ jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
     fx = ($2 ~ /(^|\/)(tests?|fixtures?|corpus|corpus_fixtures|benches|benchmarks?)\//) ? 1 : 0
     print $1, p, fx }' > "$tmp/cls.tsv"
 
+touch "$tmp/template.tsv"
 jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
+| awk -F'\t' 'NR==FNR{t[$1 "\t" $2]=1;next} !(($1 "\t" $2) in t){print $1"\t"$3}' "$tmp/template.tsv" - > "$tmp/holes.tsv"
 
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
+| awk -F'\t' 'NR==FNR{t[$1 "\t" $2]=1;next} !(($1 "\t" $2) in t){print $1}' "$tmp/template.tsv" - > "$tmp/decls.tsv"
 
 jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 

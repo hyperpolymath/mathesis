@@ -10,6 +10,14 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* Proof census: template boilerplate is matched by path and git blob, not path
+  alone (`scripts/census/template-blobs.sh`, `just template-blobs`,
+  `docs/catalogue/census/template-blobs.tsv`). A repository that rewrote a
+  template proof file in place is now credited with it. `census-repo.sh`
+  records each file's blob, and `build-rows.sh` falls back to path matching for
+  raw rows without one.
+* Catalogue: row for hyperpolymath/zig-dnssec (main at `1bcb82a`), the first
+  built with content matching.
 * `repo-init` minting a repository created with GitHub's "Use this
   template" (measured on metadatastician/lintel, 2026-10-14):
 ** provenance recorded the CHILD's own HEAD as the template commit. The

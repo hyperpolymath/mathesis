@@ -181,6 +181,18 @@ while IFS='~' read -r lang globs comment class marker re; do
   done >>"$OUT"
 done <<<"$RULES"
 
+# Idris2: a top-level signature with no clauses is accepted and treated as a
+# postulate, even under %default total (checked with Idris2 0.8.0), so it is
+# an axiom candidate. FFI signatures after %foreign/%extern are not reported.
+UNDEF_AWK="$(cd "$(dirname "$0")" && pwd)/idris2-undefined.awk"
+[ -d "$MIRROR/idris2" ] || { mkdir -p "$MIRROR/idris2"; mirror idris2 "*.idr,*.lidr"; }
+while IFS= read -r m; do
+  f="$DIR/${m#"$MIRROR/idris2"/}"
+  awk -f "$UNDEF_AWK" "$m" | while IFS=$'\t' read -r n name; do
+    emit idris2 axiom "undefined declaration" "${f#"$DIR"/}" "$n" "$(sed -n "${n}p" "$f" | sed 's/^[[:space:]]*//' | cut -c1-200)"
+  done
+done < <(find "$MIRROR/idris2" -type f -name '*.idr') >>"$OUT"
+
 # Agda: every non-fixture module should be checked under --safe.
 while IFS= read -r f; do
   grep -qE 'OPTIONS[^#]*--safe' "$f" || emit agda policy "no --safe" "${f#"$DIR"/}" 1 "file does not set {-# OPTIONS --safe #-}" >>"$OUT"

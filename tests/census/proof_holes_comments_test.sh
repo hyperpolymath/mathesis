@@ -14,7 +14,7 @@ printf '%s\n' 'Require Import Arith.' '(* comment *) Lemma a : False. Admitted.'
 printf '%s\n' '{-# OPTIONS --safe --type-in-type #-}' 'module B where' '{- postulate q {- n -} -}' \
   'postulate p : Set -- postulate r' '{-# TERMINATING #-}' 'f = {! !}' > "$F/B.agda"
 printf '%s\n' 'module C' '%default partial' '{- believe_me -}' 'x = believe_me 3 -- believe_me' \
-  '||| believe_me in doc' > "$F/C.idr"
+  '||| believe_me in doc' '0 postulated : Void' '%foreign "C:f,libc"' 'export' 'ffi : Int -> Int' 'infixl 5 `snoc`' 'snoc : Nat -> Nat -> Nat' 'a `snoc` b = a' > "$F/C.idr"
 printf '%s\n' 'theorem t : False := by sorry' '/- sorry' ' axiom a : False -/' 'axiom b : False' \
   'def s := "sorry"' > "$F/D.lean"
 printf '%s\n' '/* #[trusted] */' '#[trusted]' 'fn f() { creusot::x; }' > "$F/E.rs"
@@ -32,6 +32,7 @@ B.agda:5 TERMINATING
 B.agda:6 {! !}
 C.idr:2 %default partial
 C.idr:4 believe_me
+C.idr:6 undefined declaration
 D.lean:1 sorry
 D.lean:4 axiom
 E.rs:2 #[trusted]
@@ -45,4 +46,4 @@ if [ "$got" != "$want" ]; then
   exit 1
 fi
 bash "$SCAN" "$F" >/dev/null && { echo "FAIL: --fail-on hole passed although holes exist"; exit 1; }
-echo "PASS: 14 markers in code reported, comment and string decoys skipped"
+echo "PASS: 15 markers in code reported, comment and string decoys skipped"

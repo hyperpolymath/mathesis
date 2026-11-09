@@ -16,7 +16,7 @@ verdicts.
 
 Rows re-run since the full census:
 
-* 2026-11-09: hyperpolymath/absolute-zero, hyperpolymath/anytype, hyperpolymath/choreographic-types, hyperpolymath/echo-types, hyperpolymath/ephapax, hyperpolymath/epistemic-types, hyperpolymath/januskey, hyperpolymath/occupancy-types, hyperpolymath/residual-evidence-types, hyperpolymath/secret-types, hyperpolymath/tropical-types, hyperpolymath/typed-wasm, hyperpolymath/typell. Re-run with census-repo.sh after proof-holes.sh began blanking comments and strings before matching; only these repositories were in the refreshing session scope. Other rows are from the earlier full census and may still count markers that appear only in comments.
+* 2026-11-09: hyperpolymath/absolute-zero, hyperpolymath/anytype, hyperpolymath/choreographic-types, hyperpolymath/echo-types, hyperpolymath/ephapax, hyperpolymath/epistemic-types, hyperpolymath/januskey, hyperpolymath/occupancy-types, hyperpolymath/residual-evidence-types, hyperpolymath/secret-types, hyperpolymath/tropical-types, hyperpolymath/typed-wasm, hyperpolymath/typell. Re-run with census-repo.sh after proof-holes.sh began blanking comments and strings before matching and reporting Idris2 signatures that have no clauses (Idris2 treats them as postulates); only these repositories were in the refreshing session scope. Other rows are from the earlier full census and may still count markers that appear only in comments, and do not yet count undefined Idris2 declarations.
 
 == Theory
 
@@ -161,7 +161,7 @@ Rows re-run since the full census:
 
 |https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |48 |14 |idris2 48 |870 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |44 |0 |rocq 20, idris2 24 |654 |0 |0 |1 |0 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |44 |0 |rocq 20, idris2 24 |654 |0 |12 |1 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |42 |11 |agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1 |448 |3 |1 |0 |1 |`docs/proof-debt.adoc`
 

@@ -37,7 +37,22 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# One pointer per repo, chosen by PRECEDENCE, not alphabetically. PROOF-POLICY
+# §8.5 puts a theorem's Proof Witness Grade in "its home repository's
+# proof-status file", so that file is the one the catalogue should point at.
+# Plain `sort` put docs/proof-debt.adoc ahead of docs/status/PROOF-STATUS.adoc
+# and PROOF-NEEDS ahead of PROOF-STATUS, so every repository carrying more than
+# one of them pointed at the wrong file: the debt ledger or the list of what is
+# owed, instead of the record of what is proved.
+jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" \
+| awk -F'\t' 'BEGIN{OFS="\t"} {
+    r = 3
+    if ($2 ~ /PROOF-STATUS/)      r = 0
+    else if ($2 ~ /PROOF-NEEDS/)  r = 1
+    else if ($2 ~ /proof-debt/)   r = 2
+    print $1, r, $2 }' \
+| sort -t"$(printf '\t')" -k1,1 -k2,2n \
+| cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

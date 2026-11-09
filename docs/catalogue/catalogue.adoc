@@ -34,7 +34,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/firmboot[hyperpolymath/firmboot] |38 |0 |agda 19, lean 19 |409 |0 |1 |0 |0 |—
 
-|https://github.com/hyperpolymath/trope-checker[hyperpolymath/trope-checker] |38 |0 |agda 10, lean 12, idris2 16 |514 |0 |0 |0 |1 |`docs/proof-debt.adoc`
+|https://github.com/hyperpolymath/trope-checker[hyperpolymath/trope-checker] |38 |0 |agda 10, lean 12, idris2 16 |514 |0 |0 |0 |1 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/epistemic-types[hyperpolymath/epistemic-types] |37 |14 |agda 37 |320 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
@@ -479,9 +479,9 @@ verdicts.
 
 |https://github.com/hyperpolymath/dictask[hyperpolymath/dictask] |1 |0 |idris2 1 |17 |2 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/haec[hyperpolymath/haec] |1 |0 |idris2 1 |0 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/haec[hyperpolymath/haec] |1 |0 |idris2 1 |0 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/hermeneia[hyperpolymath/hermeneia] |1 |0 |idris2 1 |0 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/hermeneia[hyperpolymath/hermeneia] |1 |0 |idris2 1 |0 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/laminar[hyperpolymath/laminar] |1 |0 |idris2 1 |6 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

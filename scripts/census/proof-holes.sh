@@ -14,8 +14,14 @@
 #
 # This is a textual scan: it finds candidates, it does not decide them. A
 # kernel-level audit (#print axioms, Print Assumptions, gnatprove report,
-# agda --safe) is the authority; see references/ledger.md. Whole-line comments
-# are skipped; markers inside block comments or strings may still be reported.
+# agda --safe) is the authority; see references/ledger.md. Each file is scanned
+# with its comments blanked out (nested block comments, line comments, and
+# string literals where the language has a simple string syntax), so prose
+# that mentions a marker is not reported. Agda/Idris pragmas are kept.
+#
+# Local change in hyperpolymath/mathesis (2026-11-09): the comment-blanking
+# pass is not yet in the proof-craft skill this file was copied from; carry
+# it back there.
 #
 # Exit: 0 clean at the chosen --fail-on level (default: hole), 1 otherwise,
 # 2 usage error.
@@ -40,6 +46,8 @@ EXCLUDE=(--exclude-dir=.git --exclude-dir=target --exclude-dir=_build --exclude-
 for d in "${EXTRA_EX[@]}"; do EXCLUDE+=(--exclude-dir="$d"); done
 
 # rule: lang~include-globs~comment-regex~class~marker~PCRE
+# (comment-regex is kept for the rule format; comments are now blanked by
+# strip_comments before matching, so it is no longer consulted.)
 RULES=$(cat <<'EOF'
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~axiom~postulate~^\s*postulate\b
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~hole~{! !}~\{!
@@ -89,14 +97,84 @@ emit() { # lang class marker file line text
         '{lang:$lang,class:$class,marker:$marker,file:$file,line:$line,text:$text}'
 }
 
-OUT=$(mktemp); trap 'rm -f "$OUT"' EXIT
+OUT=$(mktemp); MIRROR=$(mktemp -d); trap 'rm -rf "$OUT" "$MIRROR"' EXIT
+
+# Comment syntax per language: block-open block-close line-comment
+# second-line-comment kept-pragma-opener string-style ("-" = none).
+syntax() {
+  case "$1" in
+    rocq) echo '(* *) - - - dq' ;;
+    isabelle) echo '(* *) - - - -' ;;
+    agda) echo '{- -} -- - {-# bs' ;;
+    idris2) echo '{- -} -- ||| {-# bs' ;;
+    lean) echo '/- -/ -- - - bs' ;;
+    creusot) echo '/* */ // - - bs' ;;
+    spark) echo '- - -- - - dq' ;;
+    dedukti) echo '(; ;) // - - -' ;;
+  esac
+}
+strip_comments() { # lang file -> stdout
+  read -r bo bc lc lc2 keep str <<<"$(syntax "$1")"
+  for v in bo bc lc lc2 keep str; do [ "${!v}" = - ] && printf -v "$v" ''; done
+  awk -v bo="$bo" -v bc="$bc" -v lc="$lc" -v lc2="$lc2" -v keep="$keep" -v str="$str" '
+  # Blank out comments (and, where str is set, string literals) while keeping
+  # every newline, so line numbers and the code on each line stay put.
+  # Variables: bo/bc block-comment open/close (nested), lc line-comment
+  # prefix (empty for none), lc2 a second line prefix, keep a block opener
+  # that is *not* a comment (Agda/Idris pragmas "{-#", closed by "#-}"),
+  # str = "bs" (backslash escapes), "dq" (doubled quote) or "" (none).
+  BEGIN { depth = 0; instr = 0; inkeep = 0 }
+  {
+    out = ""; n = length($0); i = 1
+    while (i <= n) {
+      c = substr($0, i, 1)
+      if (instr) {
+        if (str == "bs" && c == "\\") { out = out "  "; i += 2; continue }
+        if (c == "\"") {
+          if (str == "dq" && substr($0, i + 1, 1) == "\"") { out = out "  "; i += 2; continue }
+          instr = 0; out = out c; i++; continue
+        }
+        out = out " "; i++; continue
+      }
+      if (depth > 0) {
+        if (substr($0, i, length(bo)) == bo) { depth++; out = out sprintf("%*s", length(bo), ""); i += length(bo); continue }
+        if (substr($0, i, length(bc)) == bc) { depth--; out = out sprintf("%*s", length(bc), ""); i += length(bc); continue }
+        out = out " "; i++; continue
+      }
+      if (inkeep) {
+        if (substr($0, i, 3) == "#-}") { inkeep = 0; out = out "#-}"; i += 3; continue }
+        out = out c; i++; continue
+      }
+      if (keep != "" && substr($0, i, length(keep)) == keep) { inkeep = 1; out = out keep; i += length(keep); continue }
+      if (bo != "" && substr($0, i, length(bo)) == bo) { depth = 1; out = out sprintf("%*s", length(bo), ""); i += length(bo); continue }
+      if (lc != "" && substr($0, i, length(lc)) == lc) break
+      if (lc2 != "" && substr($0, i, length(lc2)) == lc2) break
+      if (str != "" && c == "\"") { instr = 1; out = out c; i++; continue }
+      out = out c; i++
+    }
+    print out
+  }
+  ' "$2"
+}
+PRUNE=(.git target _build build .lake node_modules deps vendor "${EXTRA_EX[@]}")
+mirror() { # lang globs -> fills $MIRROR/<lang>/ with comment-blanked copies
+  local lang=$1 g names=() pr=()
+  IFS=',' read -ra gl <<<"$2"; for g in "${gl[@]}"; do names+=(-o -name "$g"); done
+  for g in "${PRUNE[@]}"; do pr+=(-o -name "$g"); done
+  find "$DIR" \( "${pr[@]:1}" \) -prune -o -type f \( "${names[@]:1}" \) -print 2>/dev/null |
+  while IFS= read -r src; do
+    rel=${src#"$DIR"/}; mkdir -p "$MIRROR/$lang/$(dirname "$rel")"
+    strip_comments "$lang" "$src" > "$MIRROR/$lang/$rel"
+  done
+}
 while IFS='~' read -r lang globs comment class marker re; do
   [ -z "$lang" ] && continue
   inc=(); IFS=',' read -ra gl <<<"$globs"; for g in "${gl[@]}"; do inc+=(--include="$g"); done
   # Rocq shares .v with V and Verilog; only scan .v files that look like Rocq.
-  grep -rnPI "${EXCLUDE[@]}" "${inc[@]}" -e "$re" "$DIR" 2>/dev/null | while IFS= read -r hit; do
-    f=${hit%%:*}; rest=${hit#*:}; n=${rest%%:*}; txt=${rest#*:}
-    printf '%s\n' "$txt" | grep -qP -- "$comment" && continue
+  [ -d "$MIRROR/$lang" ] || { mkdir -p "$MIRROR/$lang"; mirror "$lang" "$globs"; }
+  grep -rnPI "${inc[@]}" -e "$re" "$MIRROR/$lang" 2>/dev/null | while IFS= read -r hit; do
+    m=${hit%%:*}; rest=${hit#*:}; n=${rest%%:*}
+    f="$DIR/${m#"$MIRROR/$lang"/}"; txt=$(sed -n "${n}p" "$f")
     if [ "$lang" = rocq ] && ! grep -qE '^\s*(Require|From|Theorem|Lemma|Definition|Inductive|Proof\.)' "$f"; then continue; fi
     if [ "$lang" = creusot ] && ! grep -qE 'creusot|pearlite|#\[\s*(requires|ensures)' "$f"; then continue; fi
     emit "$lang" "$class" "$marker" "${f#"$DIR"/}" "$n" "$(printf '%s' "$txt" | sed 's/^\s*//' | cut -c1-200)"

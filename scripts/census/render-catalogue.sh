@@ -9,6 +9,13 @@
 set -euo pipefail
 C=$1
 
+refreshes() { # partial re-runs since the full census, if any
+  [ -s "$C/refreshes.json" ] || return 0
+  echo 'Rows re-run since the full census:'
+  echo
+  jq -r '.[] | "* \(.date): \(.repos | join(", ")). \(.note)"' "$C/refreshes.json"
+}
+
 table() { # $1 = class
   echo '[cols="3,1,1,4,1,1,1,1,1,3",options="header"]'
   echo '|==='
@@ -37,6 +44,8 @@ Declarations are top-level names found by keyword and signature rules, so
 Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts
 come from proof-craft's \`proof-holes.sh\`: textual candidates, not kernel
 verdicts.
+
+$(refreshes)
 
 == Theory
 

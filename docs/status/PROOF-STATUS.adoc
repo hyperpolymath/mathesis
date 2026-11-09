@@ -158,6 +158,31 @@ Agda2Dedukti encoding of Agda depends on rewrite rules, so the pinned
 exporters have no route into either target, and §2 falls back to
 re-proof.
 
+|Dedukti check (supplementary)
+|`BLOCKED`. It would not count toward the grade in any case; only the
+Rocq and Lean legs do (§8).
+
+* Translator: Agda2Dedukti `c7c7d67`, on its Agda fork `to_dk` at
+  `b026db1` (Agda 2.6.3 pre-release). Both were built with GHC 9.4.7 and
+  a Hackage index pinned to 2022-05-31.
+* Build patch: one line in the fork's `Reduce/Fast.hs` (no `MonadFail`
+  instance for `ST`), the same fix upstream Agda later made.
+* Build check: the build translates all 39 of the translator's own
+  mode-1 test files.
+* Flags: the fork predates `--cubical-compatible`. The translated copy
+  therefore differs from the source only in its `OPTIONS` line, which
+  reads `--safe --without-K`.
+* Failure: Agda checks that copy, and then translation fails on
+  `Monotone.reach-mono` with "Expected a unrestricted argument, but found
+  an erased argument". `--no-forcing` does not help.
+* Minimal reproducer, seven lines: a function inside a parameterised
+  module that matches on an indexed type declared in the same module.
+  The same definitions at top level translate.
+
+So no `.dk` file for THY-1 has been checked. Lifting `Monotone` and
+`Cargo` to top-level definitions would avoid the limitation, but it
+would check a restated copy rather than this file.
+
 |Statement correspondence (§2.2)
 |Compared by reading, item by item. Each target restates every Agda
 definition with the same parameters, constructors and fields, and states

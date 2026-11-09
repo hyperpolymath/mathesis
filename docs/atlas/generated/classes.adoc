@@ -14,7 +14,7 @@
 * `hyperpolymath/choreographic-types` — theory; 25 own proof files, 178 detected declarations; provers: agda 25
 * `hyperpolymath/CompositionalCounts.jl` — theory; 10 own proof files, 184 detected declarations; provers: agda 10
 * `hyperpolymath/CompositionalDA.jl` — theory; 11 own proof files, 51 detected declarations; provers: agda 11
-* `hyperpolymath/echidnabot` — theory; 7 own proof files, 63 detected declarations; provers: lean 2, rocq 2, idris2 3
+* `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
 * `hyperpolymath/echo-types` — theory; 148 own proof files, 1467 detected declarations; provers: agda 148
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
 * `hyperpolymath/epistemic-types` — theory; 37 own proof files, 320 detected declarations; provers: agda 37
@@ -142,7 +142,7 @@
 * `hyperpolymath/hpm-json-rsr` — engineering; 3 own proof files, 26 detected declarations; provers: idris2 3
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
-* `hyperpolymath/hypatia` — engineering; 42 own proof files, 448 detected declarations; provers: agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
+* `hyperpolymath/hypatia` — engineering; 43 own proof files, 480 detected declarations; provers: agda 2, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
 * `hyperpolymath/i-human` — engineering; 3 own proof files, 47 detected declarations; provers: idris2 3
 * `hyperpolymath/ideas-to-alphas` — engineering; 4 own proof files, 77 detected declarations; provers: idris2 4
 * `hyperpolymath/idrisiser` — engineering; 9 own proof files, 122 detected declarations; provers: idris2 9

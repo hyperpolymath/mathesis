@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= The echidna proof route: theorems, receipts and grades (2026-11-09)
+:toc:
+
+This is a dated, source-anchored record of the proofs the echidna proof route
+rests on. It is *not* a claims registry: the atlas README leaves that design
+open. Each theorem lives in its home repository, which owns its statement,
+receipts and status (PROOF-POLICY §2.2, §8.5). This page points at them. The
+Proof Witness Grades (PWG) below are derived from those receipts, not
+assigned here.
+
+An agent drafted this record and the statement comparison it cites. Neither
+has been reviewed by the owner yet, so neither counts as independent
+corroboration.
+
+The plan these rows come from is
+https://github.com/metadatastician/standards/blob/main/docs/ULTRAPLAN-ECHIDNA-PROOF-ROUTE-2026-11-04.adoc[the echidna proof-route ultraplan]
+(ladder rows in brackets; v0.2.3 is metadatastician/standards#1434).
+
+== Theory theorems
+
+Census: 4 theory theorems in this route. `PWG-1`: 0. `PWG-2ii`: 0.
+`PWG-2i`: 0. `PWG-3`: 1. `ungraded`: 3, all planned with no Agda source yet.
+
+[cols="2,2,3,2,3",options="header"]
+|===
+|Theorem |Home |Legs: §5 token, §2.2 state |Derived PWG |Receipts
+
+|Receipt boundary, T-RECEIPT: a warrant token does not give its claim
+without a soundness map; no unconditional reflection exists (feeds rows 4-5)
+|hyperpolymath/echidnabot, `docs/PROOF-STATUS.adoc`
+|Agda `proven`. Lean `proven`, re-proved, `BRIDGE-PENDING`. Rocq `proven`,
+re-proved, `BRIDGE-PENDING`. No axioms in any leg.
+|`PWG-3`. It would become `PWG-2ii` once the drafted statement comparison is
+reviewed and both legs are `RECONCILED`.
+|Agda 2.8.0.2 (§2.1 profile), Lean 4.35.0, Coq 8.18.0, at echidnabot
+`1443adfabb98a9e0daea562bc8dbe764442c14cc`; agent session. The per-commit
+CI job is hyperpolymath/echidnabot#195.
+
+|Token order and weakest-step meet; level monotonicity (row 2)
+|Undecided: decision D-10
+|`open`
+|`ungraded`
+|None
+
+|Retraction never raises a level; name-wise retraction kills exactly its
+dependents (row 7)
+|hyperpolymath/residual-evidence-types (Agda source of `Revision.agda`)
+|`open` for the stated theorem
+|`ungraded`
+|None for this statement. The Idris2 transcription is below.
+
+|Status fold is a join on the token lattice (row 12)
+|Undecided: decision D-10
+|`open`
+|`ungraded`
+|None
+|===
+
+== Engineering proofs (not graded, PROOF-POLICY §8.1)
+
+[cols="2,2,2,3",options="header"]
+|===
+|Proof |Home |Token |Receipt
+
+|`Verdict.idr`: `Sound` only from a confirming prover re-check; level
+"sound" only with a witness
+|hyperpolymath/hypatia, `verification/PROOF-STATUS.adoc`
+|`proven` (Idris2); correspondence with epistemic-types `Warrant.agda` is
+`argued`
+|Idris2 v0.7.0, `verify-proofs.yml` run 42559874988 at
+`c639c465e9bbbd01522f1eae12ac98a071afac13`, with accept and reject fixtures
+
+|`Retraction.idr`: retraction as a thinning; a finding survives through a
+token
+|hyperpolymath/hypatia
+|`proven` (Idris2); correspondence with residual-evidence-types is `argued`.
+It retracts one occurrence by position, while the runtime retracts by name
+(ladder row 7).
+|Same run
+
+|echidnabot GraphQL gate, E-AUTH-SCOPE, E-AUTH-ROLE, E-AUTH-GUARD,
+E-RATE-BOUND (row 15)
+|hyperpolymath/echidnabot, `docs/PROOF-STATUS.adoc`
+|`open` under Creusot/Pearlite and Verus (§1.2)
+|Tests only, which are not proof receipts
+|===
+
+== Census corrections made with this record
+
+* The catalogue rows for echidnabot and hypatia were refreshed from a census
+  of those two repositories on 2026-11-09. echidnabot now shows its Agda,
+  Lean and Rocq theory files.
+* `scripts/census/build-rows.sh` chose whichever status document sorted
+  first, so hypatia was listed under `docs/proof-debt.adoc`. It now prefers
+  a `PROOF-STATUS` file, then `PROOF-NEEDS`, then `proof-debt`, so hypatia's
+  CI-checked `verification/PROOF-STATUS.adoc` is the one shown. Other rows
+  pick up this rule at the next full census.
+* echidnabot's class is still the heuristic `theory`, from its file counts.
+  Most of its proof files are prover fixtures (PROOF-POLICY §3); one
+  theorem is real theory.

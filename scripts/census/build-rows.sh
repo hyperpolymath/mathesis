@@ -42,7 +42,13 @@ jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }
   FILENAME ~ /decls\.tsv$/  { d[$1]++; next }
-  FILENAME ~ /status\.tsv$/ { if (!($1 in st)) st[$1]=$2; next }
+  # A repo with several status documents is listed under its proof-status
+  # ledger first, then its needs file, then its debt file; within one kind
+  # the first path in sort order wins.
+  FILENAME ~ /status\.tsv$/ {
+    k = ($2 ~ /(^|\/)PROOF-STATUS[^\/]*$/) ? 1 : ($2 ~ /(^|\/)PROOF-NEEDS[^\/]*$/) ? 2 : 3
+    if (!($1 in st) || k < sk[$1]) { st[$1]=$2; sk[$1]=k }
+    next }
   { n[$1]++; if ($3) fx[$1]++; pc[$1" "$2]++
     if ($2 ~ /agda|lean|rocq|isabelle/) th[$1]++; if ($2 ~ /idris2|spark/) en[$1]++ }
   END {

@@ -85,7 +85,7 @@
 == E
 
 * `hyperpolymath/echidna` — engineering; 167 own proof files, 1885 detected declarations; provers: agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
-* `hyperpolymath/echidnabot` — theory; 7 own proof files, 63 detected declarations; provers: lean 2, rocq 2, idris2 3
+* `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
 * `hyperpolymath/echo-types` — theory; 148 own proof files, 1467 detected declarations; provers: agda 148
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
 * `hyperpolymath/eclexiaiser` — engineering; 9 own proof files, 121 detected declarations; provers: idris2 9
@@ -133,7 +133,7 @@
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
 * `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
-* `hyperpolymath/hypatia` — engineering; 42 own proof files, 448 detected declarations; provers: agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
+* `hyperpolymath/hypatia` — engineering; 43 own proof files, 480 detected declarations; provers: agda 2, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
 
 == I
 

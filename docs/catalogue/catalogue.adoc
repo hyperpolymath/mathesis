@@ -72,6 +72,8 @@ verdicts.
 
 |https://github.com/metadatastician/MetaManifold-Evidence[metadatastician/MetaManifold-Evidence] |13 |0 |agda 13 |70 |0 |0 |0 |0 |—
 
+|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |12 |0 |agda 2, lean 4, rocq 3, idris2 3 |82 |6 |0 |0 |0 |`docs/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/phronesis[hyperpolymath/phronesis] |12 |0 |agda 3, lean 3, rocq 1, idris2 2, tla 3 |140 |3 |0 |0 |2 |—
 
 |https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |11 |0 |agda 11 |51 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
@@ -87,8 +89,6 @@ verdicts.
 |https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |9 |3 |agda 5, idris2 1, tla 3 |108 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/boinc-boinc[hyperpolymath/boinc-boinc] |8 |0 |lean 8 |46 |1 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`docs/proof-debt.adoc`
 
 |https://github.com/hyperpolymath/gitbot-fleet[hyperpolymath/gitbot-fleet] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -157,7 +157,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |43 |0 |rocq 19, idris2 24 |635 |15 |0 |1 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |42 |11 |agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1 |448 |3 |1 |0 |1 |`docs/proof-debt.adoc`
+|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |43 |11 |agda 2, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1 |480 |3 |1 |0 |1 |`verification/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/vexometer[hyperpolymath/vexometer] |42 |6 |idris2 10, spark 29, other 3 |104 |3 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

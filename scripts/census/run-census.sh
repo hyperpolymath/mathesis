@@ -29,6 +29,7 @@ while IFS= read -r repo; do
 done < "$list"
 MATHESIS_DATA=$work bash "$here/summarise.sh"
 jq -cS -s . "$work/unreachable.jsonl" > "$census/unreachable.json"
+rm -f "$census/refreshed.json"  # a full run supersedes every refresh-rows.sh row
 bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$census/catalogue-rows.json"
 bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
 echo "raw census kept in $work"

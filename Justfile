@@ -720,6 +720,10 @@ uncloak:
 census:
     bash scripts/census/run-census.sh
 
+# Re-census only the named repositories (OWNER/REPO ...) and splice their rows in
+census-refresh +repos:
+    bash scripts/census/refresh-rows.sh {{repos}}
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc

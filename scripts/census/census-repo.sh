@@ -23,6 +23,7 @@ if [ $rc -ne 0 ]; then
 fi
 
 git -C "$D" ls-tree -r --name-only HEAD > "$O.tree" 2>/dev/null || true
+git -C "$D" rev-parse HEAD > "$O.head" 2>/dev/null || true
 if ! [ -s "$O.tree" ]; then rm -rf "$D" "$O.tree"; exit 0; fi
 
 # proof-status docs

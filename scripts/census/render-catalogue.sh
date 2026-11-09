@@ -53,3 +53,15 @@ session):
 
 $(jq -r '.[] | "* " + .repo' "$C/unreachable.json")
 EOF
+
+if [ -s "$C/refreshed.json" ] && [ "$(jq length "$C/refreshed.json")" -gt 0 ]; then
+cat <<EOF
+
+== Refreshed since the full census
+
+These rows were re-taken by \`scripts/census/refresh-rows.sh\` after the last
+full census, so they are newer than every other row:
+
+$(jq -r '.[] | "* \u0060\(.repo)\u0060, \(.refreshed), commit \u0060\(.commit[0:12])\u0060"' "$C/refreshed.json")
+EOF
+fi

@@ -79,9 +79,9 @@
 * `hyperpolymath/dictask` — engineering; 1 own proof files, 17 detected declarations; provers: idris2 1
 * `hyperpolymath/docmatrix` — engineering; 11 own proof files, 0 detected declarations; provers: spark 10, other 1
 * `hyperpolymath/docudactyl` — engineering; 13 own proof files, 223 detected declarations; provers: idris2 7, spark 5, other 1
-* `hyperpolymath/echidna` — engineering; 167 own proof files, 1885 detected declarations; provers: agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
-* `hyperpolymath/echidnabot` — theory; 7 own proof files, 63 detected declarations; provers: lean 2, rocq 2, idris2 3
-* `hyperpolymath/echo-types` — theory; 148 own proof files, 1467 detected declarations; provers: agda 148
+* `hyperpolymath/echidna` — engineering; 170 own proof files, 1945 detected declarations; provers: agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
+* `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
+* `hyperpolymath/echo-types` — theory; 161 own proof files, 1676 detected declarations; provers: agda 161
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
 * `hyperpolymath/eclexiaiser` — engineering; 9 own proof files, 121 detected declarations; provers: idris2 9
 * `hyperpolymath/ephapax` — engineering; 43 own proof files, 635 detected declarations; provers: rocq 19, idris2 24
@@ -154,6 +154,7 @@
 * `hyperpolymath/ochrance` — engineering; 48 own proof files, 404 detected declarations; provers: idris2 48
 * `hyperpolymath/ochrance-framework` — engineering; 14 own proof files, 123 detected declarations; provers: idris2 14
 * `hyperpolymath/odds-and-sods-package-manager` — engineering; 4 own proof files, 41 detected declarations; provers: idris2 4
+* `hyperpolymath/ordinal-notation` — theory; 78 own proof files, 618 detected declarations; provers: agda 78
 * `hyperpolymath/otpiser` — engineering; 9 own proof files, 157 detected declarations; provers: idris2 9
 * `hyperpolymath/palimpsest-license` — theory; 5 own proof files, 3 detected declarations; provers: agda 5
 * `hyperpolymath/panic-attack` — engineering; 6 own proof files, 46 detected declarations; provers: idris2 6
@@ -169,6 +170,7 @@
 * `hyperpolymath/polyglot-i18n` — engineering; 11 own proof files, 0 detected declarations; provers: spark 10, other 1
 * `hyperpolymath/ponyiser` — engineering; 9 own proof files, 137 detected declarations; provers: idris2 9
 * `hyperpolymath/presswerk` — engineering; 6 own proof files, 76 detected declarations; provers: idris2 6
+* `hyperpolymath/proof-burrower` — theory; 2 own proof files, 31 detected declarations; provers: agda 2
 * `hyperpolymath/protocol-squisher` — theory; 42 own proof files, 365 detected declarations; provers: agda 10, lean 4, rocq 4, isabelle 2, idris2 12, tla 6, smt-atp 4
 * `hyperpolymath/proven` — engineering; 967 own proof files, 11166 detected declarations; provers: lean 14, idris2 906, spark 42, tla 1, other 4
 * `hyperpolymath/proven-servers` — engineering; 1097 own proof files, 6242 detected declarations; provers: idris2 899, spark 197, other 1

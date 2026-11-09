@@ -20,7 +20,9 @@ verdicts.
 |===
 |Repository |Own files |Fixtures |Provers (files) |Declarations |Holes |Axioms |Unsafe |Policy |Proof-status doc
 
-|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |148 |0 |agda 148 |1467 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
+
+|https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |960 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
 
@@ -72,6 +74,8 @@ verdicts.
 
 |https://github.com/metadatastician/MetaManifold-Evidence[metadatastician/MetaManifold-Evidence] |13 |0 |agda 13 |70 |0 |0 |0 |0 |—
 
+|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |12 |0 |agda 2, lean 4, rocq 3, idris2 3 |82 |6 |0 |0 |0 |`docs/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/phronesis[hyperpolymath/phronesis] |12 |0 |agda 3, lean 3, rocq 1, idris2 2, tla 3 |140 |3 |0 |0 |2 |—
 
 |https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |11 |0 |agda 11 |51 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
@@ -87,8 +91,6 @@ verdicts.
 |https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |9 |3 |agda 5, idris2 1, tla 3 |108 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/boinc-boinc[hyperpolymath/boinc-boinc] |8 |0 |lean 8 |46 |1 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/echidnabot[hyperpolymath/echidnabot] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`docs/proof-debt.adoc`
 
 |https://github.com/hyperpolymath/gitbot-fleet[hyperpolymath/gitbot-fleet] |7 |0 |lean 2, rocq 2, idris2 3 |63 |6 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -114,6 +116,8 @@ verdicts.
 
 |https://github.com/metadatastician/ZenodoDeposits.jl[metadatastician/ZenodoDeposits.jl] |3 |0 |agda 3 |53 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/proof-burrower[hyperpolymath/proof-burrower] |2 |0 |agda 2 |31 |0 |0 |0 |0 |`docs/proof-debt.adoc`
+
 |https://github.com/hyperpolymath/ResidualEvidenceTypes.jl[hyperpolymath/ResidualEvidenceTypes.jl] |1 |1 |agda 1 |1 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/invariant-path[hyperpolymath/invariant-path] |1 |0 |agda 1 |8 |0 |0 |0 |0 |—
@@ -137,7 +141,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |167 |21 |agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1885 |4 |1 |4 |23 |`docs/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1945 |4 |1 |4 |26 |`docs/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/ambientops[hyperpolymath/ambientops] |102 |1 |idris2 39, spark 58, other 5 |777 |39 |0 |8 |0 |`PROOF-NEEDS.adoc`
 
@@ -548,3 +552,14 @@ session):
 * hyperpolymath/tools
 * hyperpolymath/typefix-zero
 * hyperpolymath/vex-tools
+
+== Refreshed since the full census
+
+These rows were re-taken by `scripts/census/refresh-rows.sh` after the last
+full census, so they are newer than every other row:
+
+* `hyperpolymath/echidna`, 2026-11-09, commit `2ab7574ae1e5`
+* `hyperpolymath/echidnabot`, 2026-11-09, commit `1443adfabb98`
+* `hyperpolymath/echo-types`, 2026-11-09, commit `ccec4d79866e`
+* `hyperpolymath/ordinal-notation`, 2026-11-09, commit `53ff6255e848`
+* `hyperpolymath/proof-burrower`, 2026-11-09, commit `7a5ab74e0d47`

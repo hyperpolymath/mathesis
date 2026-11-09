@@ -68,6 +68,72 @@
 | TP-2 | Public API type safety | TP | Lean4 | P2 | 4h
 |===
 
+== Theory theorems
+
+Recorded as `standards/3-practice/PROOF-POLICY.adoc` §8.5 asks
+(`metadatastician/standards` at `9bdf864cc7f2c8e24b4df84bf00d04158eee3ad5`).
+A grade is derived from the receipts below and falls if they stop
+reproducing (§8.4).
+
+=== THY-1: reachability is monotone under additive features
+
+[cols="1,3"]
+|===
+|Statement
+|In a dependency graph whose edges are guarded by features closed under
+Horn rules, and by an arbitrary per-target condition, a node unreachable
+with every feature requested is unreachable under any request, on each
+target (`Cargo.absent-under-all-features`). The general form is
+`Monotone.reach-mono`: reachability over a monotone family of edge sets
+is monotone.
+
+|Source
+|`verification/proofs/agda/FeatureReachability.agda`
+
+|Why
+|It justifies the rule in `standards` `docs/UPSTREAM-DEPENDENCY-WATCH.adoc`
+to run `cargo tree --target all --workspace --all-features` and read a
+missing crate as missing from every build.
+
+|`pwg`
+|`3`
+
+|`foundation_diverse`
+|`false`
+
+|Agda leg
+|`PROVEN`. Receipt:
+
+* Checker: Agda 2.6.3, the Ubuntu 24.04 `agda` package that
+  `agda-proof-policy.yml` installs.
+* Invocation: `agda --safe --without-K --cubical-compatible
+  FeatureReachability.agda` from `verification/proofs/agda`; also
+  `scripts/check-proofs.sh agda`, which passes.
+* Source: `f68b78d6ceb8d3c83f96f5ab8e57779442a8834f`; file SHA-256
+  `4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564`.
+* Import cone: the module alone. It imports nothing, the standard
+  library included, and contains no postulate (comment-aware scan).
+  `--safe` refuses postulates.
+* Negative controls, all rejected: a planted postulate, a planted false
+  claim, a non-terminating definition, and a `reach-mono` that skips the
+  monotonicity step.
+* Axioms: none.
+* Receipt state: current. It is a local run; no CI receipt yet.
+
+|Rocq leg
+|`OPEN`
+
+|Lean leg
+|`OPEN`
+
+|Applying it to Cargo
+|`ASSUMED`: Cargo's resolver activates exactly the modelled edges.
+Features unify by union, no feature removes a dependency, and the version
+graph is the one fixed in `Cargo.lock`. Under resolver 2, build and dev
+dependency units unify features separately, and the theorem applies to
+each unit's graph.
+|===
+
 == Verification Commands
 
 [source,bash]

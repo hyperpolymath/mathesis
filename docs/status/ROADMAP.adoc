@@ -17,6 +17,15 @@ Initial development phase.
 * Next: define a minimal data schema and a synthetic worked implementation;
   allocate and record proof obligations when executable work begins.
 
+=== First theory theorem (2026-11-09)
+
+* THY-1, `verification/proofs/agda/FeatureReachability.agda`: reachability
+  in a dependency graph is monotone under additive features. It backs the
+  `--all-features` rule in the standards upstream dependency watch. `PWG-3`,
+  recorded in `docs/status/PROOF-STATUS.adoc`.
+* Next: the Rocq and Lean rechecks (transported through Dedukti, or
+  re-proved), which would raise it to `PWG-2ii`.
+
 == Milestones
 
 === v0.1.0 - Foundation

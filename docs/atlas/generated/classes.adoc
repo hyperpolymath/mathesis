@@ -35,6 +35,7 @@
 * `hyperpolymath/occupancy-types` — theory; 19 own proof files, 76 detected declarations; provers: agda 8, lean 5, idris2 6
 * `hyperpolymath/palimpsest-license` — theory; 5 own proof files, 3 detected declarations; provers: agda 5
 * `hyperpolymath/phronesis` — theory; 12 own proof files, 140 detected declarations; provers: agda 3, lean 3, rocq 1, idris2 2, tla 3
+* `hyperpolymath/proof-burrower` — theory; 2 own proof files, 31 detected declarations; provers: agda 2
 * `hyperpolymath/protocol-squisher` — theory; 42 own proof files, 365 detected declarations; provers: agda 10, lean 4, rocq 4, isabelle 2, idris2 12, tla 6, smt-atp 4
 * `hyperpolymath/residual-evidence-types` — theory; 27 own proof files, 328 detected declarations; provers: agda 27
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1
@@ -119,7 +120,7 @@
 * `hyperpolymath/dictask` — engineering; 1 own proof files, 17 detected declarations; provers: idris2 1
 * `hyperpolymath/docmatrix` — engineering; 11 own proof files, 0 detected declarations; provers: spark 10, other 1
 * `hyperpolymath/docudactyl` — engineering; 13 own proof files, 223 detected declarations; provers: idris2 7, spark 5, other 1
-* `hyperpolymath/echidna` — engineering; 167 own proof files, 1885 detected declarations; provers: agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
+* `hyperpolymath/echidna` — engineering; 170 own proof files, 1945 detected declarations; provers: agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/eclexiaiser` — engineering; 9 own proof files, 121 detected declarations; provers: idris2 9
 * `hyperpolymath/ephapax` — engineering; 43 own proof files, 635 detected declarations; provers: rocq 19, idris2 24
 * `hyperpolymath/ephapaxiser` — engineering; 9 own proof files, 133 detected declarations; provers: idris2 9

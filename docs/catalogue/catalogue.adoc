@@ -62,6 +62,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |16 |3 |agda 16 |67 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
+|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |16 |7 |agda 10, idris2 1, tla 5 |203 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
 
 |https://github.com/hyperpolymath/marches[hyperpolymath/marches] |15 |0 |lean 15 |161 |0 |0 |0 |0 |—
@@ -83,8 +85,6 @@ verdicts.
 |https://github.com/hyperpolymath/jtv-lang[hyperpolymath/jtv-lang] |10 |0 |lean 9, idris2 1 |225 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/ExactTests.jl[hyperpolymath/ExactTests.jl] |9 |0 |agda 9 |44 |0 |1 |0 |1 |—
-
-|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |9 |3 |agda 5, idris2 1, tla 3 |108 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/boinc-boinc[hyperpolymath/boinc-boinc] |8 |0 |lean 8 |46 |1 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

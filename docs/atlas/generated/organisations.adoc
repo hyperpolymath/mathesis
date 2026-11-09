@@ -235,7 +235,7 @@
 * `metadatastician/first-post` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `metadatastician/gossamer` — engineering; 62 own proof files, 1868 detected declarations; provers: idris2 53, tla 9
 * `metadatastician/groove` — engineering; 19 own proof files, 185 detected declarations; provers: idris2 19
-* `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
+* `metadatastician/hvn-dehallucinator` — theory; 16 own proof files, 203 detected declarations; provers: agda 10, idris2 1, tla 5
 * `metadatastician/insolvency-tycoon` — engineering; 6 own proof files, 25 detected declarations; provers: idris2 6
 * `metadatastician/lintel` — theory; 6 own proof files, 58 detected declarations; provers: agda 6
 * `metadatastician/marid` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1

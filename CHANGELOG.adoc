@@ -10,6 +10,16 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* The census picked a repository's status document by alphabetical order, so a
+  template-era `PROOF-NEEDS.adoc` was chosen over the real ledger beside it.
+  `scripts/census/build-rows.sh` now prefers `PROOF-STATUS`, then
+  `PROOF-NEEDS`, then `proof-debt`. Rows already committed change only when
+  they are rebuilt.
+* The `metadatastician/hvn-dehallucinator` row is rebuilt from that
+  repository's `main` at `f2f31f7`, 2026-11-09 (16 own proof files, was 9; status
+  document `docs/status/PROOF-STATUS.adoc`). The other rows are still the
+  2026-10-26 census.
+
 * `repo-init` minting a repository created with GitHub's "Use this
   template" (measured on metadatastician/lintel, 2026-10-14):
 ** provenance recorded the CHILD's own HEAD as the template commit. The

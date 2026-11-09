@@ -50,7 +50,7 @@
 * `hyperpolymath/wokelang` — theory; 18 own proof files, 418 detected declarations; provers: lean 7, rocq 3, idris2 8
 * `hyperpolymath/zerostep` — theory; 1 own proof files, 16 detected declarations; provers: isabelle 1
 * `hyperpolymath/zotero-tools` — theory; 15 own proof files, 94 detected declarations; provers: lean 9, idris2 3, tla 3
-* `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
+* `metadatastician/hvn-dehallucinator` — theory; 16 own proof files, 203 detected declarations; provers: agda 10, idris2 1, tla 5
 * `metadatastician/lintel` — theory; 6 own proof files, 58 detected declarations; provers: agda 6
 * `metadatastician/MetaManifold-Evidence` — theory; 13 own proof files, 70 detected declarations; provers: agda 13
 * `metadatastician/ZenodoDeposits.jl` — theory; 3 own proof files, 53 detected declarations; provers: agda 3

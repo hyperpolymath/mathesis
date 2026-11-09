@@ -131,7 +131,7 @@
 * `hyperpolymath/hpm-http-client-rsr` — engineering; 3 own proof files, 17 detected declarations; provers: idris2 3
 * `hyperpolymath/hpm-json-rsr` — engineering; 3 own proof files, 26 detected declarations; provers: idris2 3
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
-* `metadatastician/hvn-dehallucinator` — theory; 9 own proof files, 108 detected declarations; provers: agda 5, idris2 1, tla 3
+* `metadatastician/hvn-dehallucinator` — theory; 16 own proof files, 203 detected declarations; provers: agda 10, idris2 1, tla 5
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
 * `hyperpolymath/hypatia` — engineering; 42 own proof files, 448 detected declarations; provers: agda 1, lean 7, rocq 1, idris2 29, spark 1, tla 2, other 1
 

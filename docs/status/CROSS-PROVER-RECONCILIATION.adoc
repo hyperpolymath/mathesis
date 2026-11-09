@@ -180,9 +180,13 @@ Smoke.agda typecheck (--safe --without-K --cubical-compatible)`. The flags in
 force were already §2.1-conformant; what was missing was the *record*, because
 every written-up result said `--safe --without-K` only and §2.1 declassifies
 prior successes under that profile. The mathematics did not change.
-|`PWG-2i` / `PWG-2ii` / `PWG-1` |0 |Unreachable from that tree: no Rocq
-development exists in the repository at all, so the ladder has a missing rung
-independent of any Agda work.
+|`PWG-2i` / `PWG-2ii` / `PWG-1` |0 |Unreachable, but not all for the same reason.
+`PWG-2i` needs only *one* counting leg (§8.2), so a reconciled Lean recheck would
+suffice without Rocq — except that trope-checker's Lean leg is target-only
+evidence under §3, hence `BRIDGE-PENDING`, and the owner's 2026-11-09 ruling makes
+Lean a generator rather than a leg, so it will not become one. `PWG-2ii` and
+`PWG-1` additionally require the Rocq leg, and no Rocq development exists in that
+repository at all.
 |`ungraded` |7 |Three ways, and the split is the useful part. Three are Lean-only
 with no Agda source (§8.1): the O1-carrier atom factorisation, tier-2 membership,
 and the (B′) tropical factorisation. Three are Idris2-only, and an engineering

@@ -46,10 +46,15 @@ jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 # owed, instead of the record of what is proved.
 jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" \
 | awk -F'\t' 'BEGIN{OFS="\t"} {
+    # Rank the BASENAME, case-insensitively. Matching the whole path would rank a
+    # debt ledger that happens to sit under a PROOF-STATUS/ directory as if it
+    # were the proof-status file, and the catalogue would point at the wrong one.
+    name = tolower($2)
+    sub(/^.*\//, "", name)
     r = 3
-    if ($2 ~ /PROOF-STATUS/)      r = 0
-    else if ($2 ~ /PROOF-NEEDS/)  r = 1
-    else if ($2 ~ /proof-debt/)   r = 2
+    if (name ~ /^proof-status/)      r = 0
+    else if (name ~ /^proof-needs/)  r = 1
+    else if (name ~ /^proof-debt/)   r = 2
     print $1, r, $2 }' \
 | sort -t"$(printf '\t')" -k1,1 -k2,2n \
 | cut -f1,3 > "$tmp/status.tsv"

@@ -159,32 +159,70 @@ evidence." What follows is a catalogue entry only; the authority is
 `hyperpolymath/trope-checker`, `docs/status/PROOF-STATUS.adoc`.
 
 As of 2026-11-09, trope-checker carries the estate's first §8.5 PWG record, and
-its two theory groups now sit on different rungs:
+it is a *generated* one: `verification/pwg.json` holds evidence only — per
+obligation, each leg's route, its §5 token, its §2.2 state and its receipts — and
+`scripts/pwg-derive.sh` is the only thing that turns that into a grade. A `pwg`
+key in the ledger is a gate failure, which is how §8.4 rule 2 stops being
+aspirational. `scripts/pwg-check.sh` re-derives and fails on drift, and
+`scripts/test-gate-falsifiability.sh` carries canaries proving the gate can fail,
+including two that change only the derived grade.
 
-* *Theorem B* — `PWG-3`. It read `ungraded` earlier the same day, for want of a
-  *receipt* rather than a proof: the flags in force already were the §2.1
-  invocation (`proofs.yml:167`, `build/just/proofs.just:87,212` all pass
-  `--cubical-compatible`), but every recorded result there was written up as
-  `--safe --without-K` only, and §2.1 declassifies prior successes under that
-  profile. Dispatching `proofs.yml` on `main` supplied the missing record — run
-  42623339243 at `c0eb4f1`, green, with the Agda version and standard-library pin
-  in the workflow and the §1.1 import cone in the proof-status file. The
-  mathematics did not change; the estate's record of it did.
-* *The Lean-witnessed results* — `ungraded` for want of an Agda *source* (§8.1).
-  The Lean leg is target-only evidence under §3, so `BRIDGE-PENDING`, and the
-  Mathlib dependency means it could not count even once an Agda source existed.
-  No dispatch fixes this one.
+The derived census, read from that repository (never computed here):
 
-`PWG-3` is not a discharge (§8.4 rule 1). Theorem B still owes both recheck legs,
-and so does every other theory result in the stack.
+[cols="2,1,4",options="header"]
+|===
+|Rung |Count |What the rung means here
+
+|`PWG-3` |17 |A kernel-checked Agda witness with a complete §8.2 receipt at the
+current commit, and no counting recheck leg. Earned on 2026-11-09 by dispatching
+`proofs.yml` on `main`: run 42623339243 at `c0eb4f1`, log ending `PASS: All.agda +
+Smoke.agda typecheck (--safe --without-K --cubical-compatible)`. The flags in
+force were already §2.1-conformant; what was missing was the *record*, because
+every written-up result said `--safe --without-K` only and §2.1 declassifies
+prior successes under that profile. The mathematics did not change.
+|`PWG-2i` / `PWG-2ii` / `PWG-1` |0 |Unreachable from that tree: no Rocq
+development exists in the repository at all, so the ladder has a missing rung
+independent of any Agda work.
+|`ungraded` |7 |Three ways, and the split is the useful part. Three are Lean-only
+with no Agda source (§8.1): the O1-carrier atom factorisation, tier-2 membership,
+and the (B′) tropical factorisation. Three are Idris2-only, and an engineering
+restatement is not a leg (§8.1): HC-4 coherence, exact-lowering grade soundness,
+T-Sub soundness. One is the retention order, whose Agda leg proves reflexivity but
+not transitivity or decidability, so its Agda token is `OPEN`.
+|===
+
+Denominator 24 theory obligations. Verdict soundness is reclassified engineering
+and is off the ladder entirely (§8.1), so it is not in that count.
+
+`PWG-3` is not a discharge (§8.4 rule 1). All seventeen still owe both recheck
+legs, and so does every other theory result in the stack.
+
+Owner ruling 2026-11-09 on the Mathlib question, recorded here because it decides
+what those seven can become: *Lean is a generator, not a leg.* The Lean
+development keeps Mathlib and keeps its purpose — finding and stress-testing
+theorems — and its results are restated in core Agda, which is what becomes
+gradeable. So the three Lean-only rows do not become legs by any amount of
+bridging work; they become `PWG-3` when their Agda restatement lands, and no
+sooner.
 
 Neither can reach `PWG-2i`, `PWG-2ii` or `PWG-1` from where the tree stands: no
 Rocq development exists in that repository, so the ladder has a missing rung
 independent of any Agda work. This is the first concrete instance of the pattern
 this document predicted — a successful independent proof is not a verified
-Agda–Lean–Coq bridge. It also shows the two failure modes apart: one was a
-bookkeeping gap that a dispatch closed in four minutes, the other needs a proof
-that does not exist yet.
+Agda–Lean–Coq bridge. It also separates three failure modes that a prose status
+line had run together:
+
+. a *bookkeeping* gap — the proof was there and the record was not. A dispatch
+  closed it in four minutes and moved seventeen obligations to `PWG-3`.
+. a missing *source* — the theorem exists only in Lean, so there is nothing for
+  the ladder to grade. Only writing the Agda closes it.
+. a missing *rung* — no Rocq development exists, so `PWG-2ii` is unreachable
+  however much Agda or Lean work is done. Only a policy change or a new Rocq
+  development closes it, and the owner has chosen to put the policy question to
+  `standards`.
+
+The first was cheap, the second is proof work, the third is a decision. Reporting
+them as one number would have hidden all three.
 
 NOTE: the census row for trope-checker was refreshed on 2026-11-09 by re-running
 `scripts/census/census-repo.sh` against `main` `c0eb4f1`. It had published 10

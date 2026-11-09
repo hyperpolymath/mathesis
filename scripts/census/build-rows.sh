@@ -19,7 +19,7 @@ R=$1 T=$2
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t)' "$T" - \
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t)' "$T" - \
 | awk -F'\t' 'BEGIN{OFS="\t"} {
     e=$3; p="other"
     if (e ~ /agda/) p="agda"; else if (e ~ /idr|ipkg/) p="idris2"
@@ -28,28 +28,35 @@ jq -r '[.repo,.path,.ext]|@tsv' "$R/files.jsonl" \
     else if (e == "dk" || e == "lp") p="dedukti"; else if (e ~ /smt2|tptp/ || e == "p") p="smt-atp"
     else if (e ~ /ad[sb]/) p="spark"; else if (e == "mlw") p="why3"
     else if (e == "fst") p="fstar"; else if (e == "dfy") p="dafny"; else if (e == "als") p="alloy"
+    else if (e == "rs-creusot") p="creusot"; else if (e == "rs-verus") p="verus"
     fx = ($2 ~ /(^|\/)(tests?|fixtures?|corpus|corpus_fixtures|benches|benchmarks?)\//) ? 1 : 0
     print $1, p, fx }' > "$tmp/cls.tsv"
 
 jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t){print $1"\t"$3}' "$T" - > "$tmp/holes.tsv"
 
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
-| awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
+| awk -F'\t' 'FILENAME==ARGV[1]{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
 jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }
   FILENAME ~ /decls\.tsv$/  { d[$1]++; next }
-  FILENAME ~ /status\.tsv$/ { if (!($1 in st)) st[$1]=$2; next }
+  # Several status docs: the status page beats a needs list beats a debt
+  # ledger; within a rank, the first in path order (status.tsv is sorted).
+  FILENAME ~ /status\.tsv$/ {
+    b=$2; sub(/.*\//,"",b); b=toupper(b)
+    rk = (b ~ /^PROOF-STATUS/) ? 0 : ((b ~ /^PROOF-NEEDS/) ? 1 : 2)
+    if (!($1 in st) || rk < sr[$1]) { st[$1]=$2; sr[$1]=rk }
+    next }
   { n[$1]++; if ($3) fx[$1]++; pc[$1" "$2]++
-    if ($2 ~ /agda|lean|rocq|isabelle/) th[$1]++; if ($2 ~ /idris2|spark/) en[$1]++ }
+    if ($2 ~ /agda|lean|rocq|isabelle/) th[$1]++; if ($2 ~ /idris2|spark|creusot|verus/) en[$1]++ }
   END {
-    split("agda lean rocq isabelle idris2 spark tla dedukti smt-atp why3 fstar dafny alloy other", L, " ")
+    split("agda lean rocq isabelle idris2 spark creusot verus tla dedukti smt-atp why3 fstar dafny alloy other", L, " ")
     for (r in n) {
       provers=""
-      for (i=1;i<=14;i++) if (pc[r" "L[i]]) provers = provers L[i] " " pc[r" "L[i]] ", "
+      for (i=1;i<=16;i++) if (pc[r" "L[i]]) provers = provers L[i] " " pc[r" "L[i]] ", "
       sub(/, $/, "", provers)
       printf "%s\t%s\t%d\t%d\t%s\t%d\t%d\t%d\t%d\t%d\t%s\n",
         (th[r]+0 > en[r]+0) ? "theory" : "engineering", r, n[r], fx[r]+0, provers,

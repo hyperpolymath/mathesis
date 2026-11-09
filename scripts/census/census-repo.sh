@@ -12,7 +12,9 @@ O=$BASE/out/$KEY
 mkdir -p "$BASE/out"
 rm -rf "$D" "$O".*
 
-clone() { timeout 600 git clone -q --depth 1 --filter=blob:none --no-checkout "https://github.com/$FN" "$D" 2>&1; }
+# MATHESIS_GIT_BASE lets the tests point the census at a local forge (file://).
+GIT_BASE=${MATHESIS_GIT_BASE:-https://github.com}
+clone() { timeout 600 git clone -q --depth 1 --filter=blob:none --no-checkout "$GIT_BASE/$FN" "$D" 2>&1; }
 err=$(clone); rc=$?
 if [ $rc -ne 0 ]; then
   rm -rf "$D"; sleep 2; err=$(clone); rc=$?
@@ -25,12 +27,48 @@ fi
 git -C "$D" ls-tree -r --name-only HEAD > "$O.tree" 2>/dev/null || true
 if ! [ -s "$O.tree" ]; then rm -rf "$D" "$O.tree"; exit 0; fi
 
-# proof-status docs
-grep -iE '(^|/)(PROOF-STATUS[^/]*|PROOF-NEEDS[^/]*|proof-debt[^/]*)$' "$O.tree" \
+# proof-status docs: a status page, a needs list, or a proof-debt ledger
+# (e.g. CREUSOT-PROOF-DEBT.tsv). build-rows.sh ranks them when a repo has
+# several, so the status page is the one a row names.
+grep -iE '(^|/)(PROOF-STATUS[^/]*|PROOF-NEEDS[^/]*|[^/]*proof-debt[^/]*)$' "$O.tree" \
   | jq -RcS --arg r "$FN" '{path:., repo:$r}' > "$O.status.jsonl"
 
 # candidate paths
 grep -E '\.(agda|lagda|lagda\.md|idr|lidr|ipkg|lean|v|thy|tla|cfg|dk|lp|smt2|tptp|p|ads|adb|mlw|fst|dfy|als|gpr)$|(^|/)(\.?lean-toolchain|lakefile\.lean|lakefile\.toml|_CoqProject|dune|dune-project)$|\.agda-lib$' "$O.tree" > "$O.cand"
+
+# Rust verification (PROOF-POLICY §1.2: Creusot with Pearlite contracts, and
+# Verus). Proofs in Rust live in .rs files, which no prover extension marks,
+# so a crate is found by its manifest instead: a [package] Cargo.toml that
+# depends on a verifier crate. Its .rs files are checked out and kept only
+# when they carry a contract or proof marker, so an unverified crate costs one
+# manifest read and contributes nothing. Kani harnesses (§4.1) need no
+# dependency and are not detected by this rule.
+VERIFIER_DEP='^[[:space:]]*(creusot-std|creusot_std|creusot-contracts|creusot_contracts|vstd|verus_builtin|verus_builtin_macros)[[:space:]]*='
+RUST_MARK='(creusot_std|creusot_contracts|creusot)::(macros::)?(requires|ensures|invariant|variant|trusted|logic|predicate|proof_assert)|#\[[[:space:]]*(requires|ensures)[[:space:]]*\(|verus![[:space:]]*\{'
+grep -E '(^|/)Cargo\.toml$' "$O.tree" > "$O.cargo" || true
+: > "$O.rsdirs"
+if [ -s "$O.cargo" ]; then
+  tr '\n' '\0' < "$O.cargo" | (cd "$D" && timeout 600 xargs -0 -n 400 git checkout -q HEAD -- >/dev/null 2>&1)
+  while IFS= read -r p; do
+    m=$D/$p
+    grep -qE '^\[package\]' "$m" 2>/dev/null || continue
+    grep -qE "$VERIFIER_DEP" "$m" 2>/dev/null || continue
+    printf '%s\n' "${p%Cargo.toml}" >> "$O.rsdirs"
+  done < "$O.cargo"
+fi
+if [ -s "$O.rsdirs" ]; then
+  grep -E '\.rs$' "$O.tree" \
+  | awk 'NR==FNR { d[NR]=$0; n=NR; next } { for (i=1;i<=n;i++) if (d[i] == "" || index($0, d[i]) == 1) { print; break } }' "$O.rsdirs" - \
+  > "$O.rscand" || true
+  if [ -s "$O.rscand" ]; then
+    tr '\n' '\0' < "$O.rscand" | (cd "$D" && timeout 1800 xargs -0 -n 400 git checkout -q HEAD -- >/dev/null 2>&1)
+    while IFS= read -r p; do
+      grep -qE "$RUST_MARK" "$D/$p" 2>/dev/null && printf '%s\n' "$p" >> "$O.cand"
+    done < "$O.rscand"
+  fi
+fi
+rm -f "$O.cargo" "$O.rsdirs" "$O.rscand"
+
 if ! [ -s "$O.cand" ]; then rm -rf "$D"; rm -f "$O.tree" "$O.cand"; [ -s "$O.status.jsonl" ] || rm -f "$O.status.jsonl"; exit 0; fi
 
 # .cfg only if a .tla sits in the same directory; dune only if .v exists
@@ -115,8 +153,12 @@ while IFS= read -r p; do
   echo "$p" >> "$O.keep"
 done < "$O.co"
 
+# A .rs file is labelled by its verifier: rs-verus when it holds a verus!
+# block, rs-creusot otherwise (it was kept for a Creusot marker).
+rs_ext() { if grep -qE 'verus![[:space:]]*\{' "$D/$1" 2>/dev/null; then echo rs-verus; else echo rs-creusot; fi; }
 while IFS= read -r p; do
-  jq -cnS --arg e "$(ext_of "$p")" --arg p "$p" --arg r "$FN" '{ext:$e,path:$p,repo:$r}'
+  case "$p" in *.rs) e=$(rs_ext "$p") ;; *) e=$(ext_of "$p") ;; esac
+  jq -cnS --arg e "$e" --arg p "$p" --arg r "$FN" '{ext:$e,path:$p,repo:$r}'
 done < "$O.keep" > "$O.files.jsonl"
 
 # declarations: emit TSV prover\tkind\tline\tname\tfile then convert
@@ -163,6 +205,27 @@ while IFS= read -r p; do
           s=$0; sub(/^((public[ \t]+)?export[ \t]+|private[ \t]+)/,"",s); split(s,a,/[ \t]+/); print "idris2\t" a[1] "\t" NR "\t" a[2] "\t" fl; next }
         /^((public[ \t]+)?export[ \t]+|private[ \t]+|total[ \t]+|partial[ \t]+|covering[ \t]+)*[^ \t:(][^ \t]*[ \t]+:([ \t]|$)/ {
           s=$0; while (s ~ /^(public|export|private|total|partial|covering)[ \t]+/) sub(/^[^ \t]+[ \t]+/,"",s); split(s,a,/[ \t]+/); print "idris2\tsig\t" NR "\t" a[1] "\t" fl }' "$f" ;;
+    *.rs)
+      # Creusot: a fn whose attributes carry requires/ensures is one contract
+      # (uncontracted and #[trusted] fns are not counted). Verus: proof fn and
+      # spec fn by keyword; an exec fn counts when a requires/ensures clause
+      # follows its signature.
+      awk -v fl="$p" -v pr="$(rs_ext "$p")" '
+        function fname(s,   t) { t=s; sub(/^.*(^|[^A-Za-z0-9_])fn[ \t]+/,"",t); sub(/[^A-Za-z0-9_].*$/,"",t); return t }
+        /^[ \t]*\/\// { next }
+        pr == "rs-creusot" {
+          if ($0 ~ /(requires|ensures)[ \t]*\(/ && $0 ~ /(#\[|cfg_attr|macros::)/) pend=1
+          if ($0 ~ /(^|[^A-Za-z0-9_])fn[ \t]+[A-Za-z_]/) { if (pend) print "creusot\tcontract\t" NR "\t" fname($0) "\t" fl; pend=0 }
+          next
+        }
+        pr == "rs-verus" {
+          if ($0 ~ /(^|[^A-Za-z0-9_])(proof|spec)[ \t]+fn[ \t]+[A-Za-z_]/) {
+            k = ($0 ~ /proof[ \t]+fn/) ? "proof" : "spec"
+            print "verus\t" k "\t" NR "\t" fname($0) "\t" fl; cand=""; next }
+          if ($0 ~ /(^|[^A-Za-z0-9_])fn[ \t]+[A-Za-z_]/) { cand=fname($0); cl=NR; if ($0 ~ /\{/) cand=""; next }
+          if (cand != "" && $0 ~ /^[ \t]*(requires|ensures)([ \t]|$)/) { print "verus\tcontract\t" cl "\t" cand "\t" fl; cand=""; next }
+          if ($0 ~ /\{/) cand=""
+        }' "$f" ;;
     *.tla)
       grep -nE '^\s*(THEOREM|LEMMA)\s+[A-Za-z_][A-Za-z0-9_]*\s*==' "$f" \
       | sed -E 's/^([0-9]+):\s*(THEOREM|LEMMA)\s+([A-Za-z0-9_]+).*/\1\t\2\t\3/' \

@@ -728,6 +728,11 @@ catalogue:
 catalogue-check:
     bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
 
+# The census sees Rust proofs (Creusot, Verus) and ranks status docs: an
+# offline fixture repository through census-repo.sh and build-rows.sh
+census-test:
+    bash tests/census_rust_test.sh
+
 # Mathesis read-only census discovery views and agent retrieval
 atlas-build:
     bun scripts/atlas/census-atlas.mjs build

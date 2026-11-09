@@ -21,7 +21,8 @@ PROVER='def prover: (.ext) as $e |
   elif $e=="dk" then "dedukti" elif $e=="lp" then "lambdapi"
   elif $e=="smt2" then "smtlib" elif ($e|test("^(tptp|p)$")) then "tptp"
   elif ($e|test("^(ads|adb|gpr)$")) then "spark" elif $e=="mlw" then "why3"
-  elif $e=="fst" then "fstar" elif $e=="dfy" then "dafny" elif $e=="als" then "alloy" else $e end;'
+  elif $e=="fst" then "fstar" elif $e=="dfy" then "dafny" elif $e=="als" then "alloy"
+  elif $e=="rs-creusot" then "creusot" elif $e=="rs-verus" then "verus" else $e end;'
 CORPUS_RE='(^|/)(tests?|fixtures?|test-fixtures|testdata|test-data|examples?|benchmarks?|benches|bench|corpus|corpora|samples?|external_corpora|third_party|vendor|training_data)(/|$)'
 
 total=$(wc -l < repos.jsonl)

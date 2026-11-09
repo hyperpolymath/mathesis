@@ -73,7 +73,10 @@ isabelle~*.thy~^\s*\(\*~hole~sorry~\bsorry\b
 isabelle~*.thy~^\s*\(\*~hole~oops~\boops\b
 isabelle~*.thy~^\s*\(\*~axiom~axiomatization~\baxiomatization\b
 isabelle~*.thy~^\s*\(\*~unsafe~quick_and_dirty~quick_and_dirty
-creusot~*.rs~^\s*//~axiom~#[trusted]~#\[\s*(creusot::)?trusted\s*\]
+creusot~*.rs~^\s*//~axiom~#[trusted]~#\[\s*((creusot|creusot_std|creusot_contracts)::(macros::)?)?trusted\s*\]|cfg_attr\([^)]*,\s*((creusot|creusot_std|creusot_contracts)::(macros::)?)?trusted\s*\)
+verus~*.rs~^\s*//~hole~admit()~\badmit\s*\(\s*\)
+verus~*.rs~^\s*//~axiom~assume()~(?<![!\w])assume\s*\(
+verus~*.rs~^\s*//~axiom~external_body~#\[\s*verifier(::|\s*\(\s*)external_body
 creusot~*.rs~^\s*//~hole~assume!~\b(proof_)?assume!\s*\(
 spark~*.adb,*.ads~^\s*--~hole~pragma Assume~pragma\s+Assume\b
 spark~*.adb,*.ads~^\s*--~unsafe~SPARK_Mode Off~SPARK_Mode\s*(=>\s*)?\(?\s*Off
@@ -99,6 +102,7 @@ while IFS='~' read -r lang globs comment class marker re; do
     printf '%s\n' "$txt" | grep -qP -- "$comment" && continue
     if [ "$lang" = rocq ] && ! grep -qE '^\s*(Require|From|Theorem|Lemma|Definition|Inductive|Proof\.)' "$f"; then continue; fi
     if [ "$lang" = creusot ] && ! grep -qE 'creusot|pearlite|#\[\s*(requires|ensures)' "$f"; then continue; fi
+    if [ "$lang" = verus ] && ! grep -qE 'verus!\s*\{' "$f"; then continue; fi
     emit "$lang" "$class" "$marker" "${f#"$DIR"/}" "$n" "$(printf '%s' "$txt" | sed 's/^\s*//' | cut -c1-200)"
   done >>"$OUT"
 done <<<"$RULES"

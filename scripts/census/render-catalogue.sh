@@ -31,7 +31,7 @@ $(jq length "$C/repos.json") repositories. Do not edit by hand; rerun the census
 
 Each row is a repository with proof files of its own, after the files the RSR
 template ships as boilerplate are set aside. *Theory* and *engineering* are a
-first-pass sort (more Agda/Lean/Rocq/Isabelle files than Idris2/SPARK files
+first-pass sort (more Agda/Lean/Rocq/Isabelle files than Idris2/SPARK/Creusot/Verus files
 reads as theory); confirm each row against PROOF-POLICY before relying on it.
 Declarations are top-level names found by keyword and signature rules, so
 Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts

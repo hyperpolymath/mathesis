@@ -49,6 +49,8 @@ jobs:
         run: |
           bun scripts/atlas/census-atlas.mjs check
           bun test tests/atlas/census-atlas.test.mjs
+      - name: Mathesis census sees Rust proofs (offline fixture)
+        run: bash tests/census_rust_test.sh
       - name: Install verified Nickel 1.18.0 (K9 L2 semantics)
         run: |
           set -euo pipefail

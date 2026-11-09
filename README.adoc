@@ -48,7 +48,20 @@ organisation-specific working material belongs in separate protected repositorie
   `--no-checkout`, and its file names are filtered by prover extension:
   Agda, Idris2, Lean, Rocq, Isabelle, TLA+, Dedukti/Lambdapi, SMT-LIB, TPTP,
   SPARK, Why3, F*, Dafny and Alloy.
-. *Read only the proof files.* Only those files are checked out. Top-level
+. *Find proofs written in Rust.* Creusot (with Pearlite contracts) and Verus
+  proofs live in `.rs` files, which no extension marks. A crate is found by
+  its `[package]` `Cargo.toml` depending on `creusot-std`,
+  `creusot-contracts`, `vstd` or `verus_builtin`; only that crate's `.rs`
+  files are read, and a file is kept when it carries a contract or proof
+  marker. It is labelled `creusot` or `verus` (a `verus!` block), a function
+  with a `requires`/`ensures` contract (or a Verus `proof fn` / `spec fn`)
+  counts as a declaration, and `#[trusted]` (in either attribute form),
+  `admit()`, `assume(...)` and `external_body` count as escapes. Kani
+  harnesses need no dependency and are not found this way.
+. *Read only the proof files.* Only those files are checked out. A repository with several
+  proof-status documents is listed under its `PROOF-STATUS` page, else its
+  `PROOF-NEEDS` list, else a proof-debt ledger (any name containing
+  `proof-debt`, such as `CREUSOT-PROOF-DEBT.tsv`). Top-level
   declaration names go to `decls.jsonl`, and proof-craft's `proof-holes.sh`
   inventories holes, axioms, disabled checkers and policy breaches
   (`holes.jsonl`).
@@ -70,7 +83,7 @@ The first census covered 476 repositories:
   2026-09-15, so older, untouched repos may be absent. Add them to
   `docs/catalogue/census/repos.json` and rerun.
 * *Theory or engineering* is a heuristic: more Agda, Lean, Rocq or Isabelle
-  files than Idris2 or SPARK files reads as theory. Confirm each row against
+  files than Idris2, SPARK, Creusot or Verus files reads as theory. Confirm each row against
   PROOF-POLICY.
 * *Hole, axiom, unsafe and policy counts* are textual candidates, not kernel
   verdicts. The kernel is the authority. `import Mathlib` shows under

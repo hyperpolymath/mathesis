@@ -14,6 +14,13 @@ Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts
 come from proof-craft's `proof-holes.sh`: textual candidates, not kernel
 verdicts.
 
+The catalogue carries no proof status and no proof witness grade (`PWG-`,
+PROOF-POLICY §8). Counts say what files exist, not what has been checked, and a
+grade is derived from a repository's receipts, never from a census. The
+*Proof-status doc* column names the file that holds those statuses, preferring
+`PROOF-STATUS` over `PROOF-NEEDS` over `proof-debt` when a repository has more
+than one.
+
 == Theory
 
 [cols="3,1,1,4,1,1,1,1,1,3",options="header"]
@@ -22,7 +29,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |960 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
 
@@ -116,7 +123,7 @@ verdicts.
 
 |https://github.com/metadatastician/ZenodoDeposits.jl[metadatastician/ZenodoDeposits.jl] |3 |0 |agda 3 |53 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/proof-burrower[hyperpolymath/proof-burrower] |2 |0 |agda 2 |31 |0 |0 |0 |0 |`docs/proof-debt.adoc`
+|https://github.com/hyperpolymath/proof-burrower[hyperpolymath/proof-burrower] |2 |0 |agda 2 |31 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ResidualEvidenceTypes.jl[hyperpolymath/ResidualEvidenceTypes.jl] |1 |1 |agda 1 |1 |0 |0 |0 |0 |—
 
@@ -141,7 +148,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1945 |4 |1 |4 |26 |`docs/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1945 |4 |1 |4 |26 |`docs/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ambientops[hyperpolymath/ambientops] |102 |1 |idris2 39, spark 58, other 5 |777 |39 |0 |8 |0 |`PROOF-NEEDS.adoc`
 

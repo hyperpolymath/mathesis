@@ -37,7 +37,13 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# Prefer the token file (PROOF-STATUS), then the needs list (PROOF-NEEDS),
+# then proof-debt; the first line per repo wins below.
+jq -r '(.path | ascii_downcase | split("/") | last) as $b
+  | (if ($b | startswith("proof-status")) then 0
+     elif ($b | startswith("proof-needs")) then 1 else 2 end) as $rank
+  | [.repo, ($rank | tostring), .path] | @tsv' "$R/repos-with-status.jsonl" \
+  | sort -t$'\t' -k1,1 -k2,2n -k3,3 | cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

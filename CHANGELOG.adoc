@@ -18,6 +18,9 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   raw rows without one.
 * Catalogue: row for hyperpolymath/zig-dnssec (main at `1bcb82a`), the first
   built with content matching.
+* Deed `(canon …)` pin moves from 2.1.3 to canon 2.1.5 (gates `5c510bba…`;
+  criteria unchanged), since Canon lockstep was red; `CLAUDE.md`'s arrival pack is
+  regenerated with `just claude-md` for the new deed hash.
 * `repo-init` minting a repository created with GitHub's "Use this
   template" (measured on metadatastician/lintel, 2026-10-14):
 ** provenance recorded the CHILD's own HEAD as the template commit. The

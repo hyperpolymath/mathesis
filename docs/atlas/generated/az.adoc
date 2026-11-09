@@ -279,7 +279,7 @@
 * `hyperpolymath/tlaiser` — engineering; 9 own proof files, 181 detected declarations; provers: idris2 9
 * `hyperpolymath/tree-navigator` — engineering; 16 own proof files, 0 detected declarations; provers: spark 15, other 1
 * `hyperpolymath/trigger` — engineering; 64 own proof files, 165 detected declarations; provers: agda 2, idris2 5, spark 56, other 1
-* `hyperpolymath/trope-checker` — theory; 37 own proof files, 492 detected declarations; provers: agda 10, lean 11, idris2 16
+* `hyperpolymath/trope-checker` — theory; 38 own proof files, 514 detected declarations; provers: agda 10, lean 12, idris2 16
 * `hyperpolymath/tropical-types` — theory; 28 own proof files, 540 detected declarations; provers: lean 19, isabelle 9
 * `hyperpolymath/typed-wasm` — engineering; 46 own proof files, 850 detected declarations; provers: idris2 46
 * `hyperpolymath/typedqliser` — engineering; 11 own proof files, 155 detected declarations; provers: idris2 11

@@ -20,7 +20,16 @@
 | *Total* | *7* | *0* | *0* | *0* | *7*
 |===
 
-*Overall*: 0% proven
+*Census.* Of 7 recorded obligations: 0 done, 0 in progress, 0 blocked, 7
+remaining. No obligation here carries a Proof Witness Grade, because none is a
+theory obligation of this repository under PROOF-POLICY §8.1.
+
+NOTE: this line used to read "*Overall*: 0% proven". PROOF-POLICY §8.4 rule 7 is
+explicit — "Never publish 'X% proved', an average grade, or a single confidence
+score" — and requires a count per category with the denominator instead. The
+figure was accurate; the *form* was the one the policy forbids. The same line
+ships in `rsr-template-repo`'s `PROOF-STATUS.adoc`, so every repository minted
+from it carries it; fixing it there is the solution at source.
 
 == Proofs Done
 

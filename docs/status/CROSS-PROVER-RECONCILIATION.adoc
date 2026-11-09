@@ -147,7 +147,7 @@ is relabelled.
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|trope-checker |Theorem B, Targets 1–4 |Checked under the §2.1 flags, but no §2.1-conformant *receipt* is recorded, so not yet AGDA-VERIFIED |Rocq: none exists (ADR 0005 D5 removed the template). Lean: states no part of Theorem B |BRIDGE-PENDING
+|trope-checker |Theorem B, Targets 1–4 |AGDA-VERIFIED — `proofs.yml` run 42623339243 at `c0eb4f1`, log `PASS: All.agda + Smoke.agda typecheck (--safe --without-K --cubical-compatible)`, Agda 2.7.0.1 + stdlib v2.0 pinned by SHA-256 |Rocq: none exists (ADR 0005 D5 removed the template). Lean: states no part of Theorem B |BRIDGE-PENDING (no leg to bridge to)
 |trope-checker |O1-carrier atom factorisation, tropical factorisations, grade-algebra boundary |No Agda source states them |LEAN-CHECKED (kernel-accepted; `[propext]` for `GradeR.atom_factorization`). Rocq: none. The whole Lean package imports Mathlib, which PROOF-POLICY §2 forbids for a recheck leg |BRIDGE-PENDING
 |===
 
@@ -158,25 +158,33 @@ receipts and does not assign them. The home repository owns the theorem and its
 evidence." What follows is a catalogue entry only; the authority is
 `hyperpolymath/trope-checker`, `docs/status/PROOF-STATUS.adoc`.
 
-As of 2026-11-09, trope-checker carries the estate's first §8.5 PWG record. Both
-of its theory groups read `ungraded`, for different reasons, and the distinction
-is the useful part:
+As of 2026-11-09, trope-checker carries the estate's first §8.5 PWG record, and
+its two theory groups now sit on different rungs:
 
-* *Theorem B* — `ungraded` for want of a *receipt*, not a proof. The flags in
-  force already are the §2.1 invocation (`proofs.yml:167`,
-  `build/just/proofs.just:87,212` all pass `--cubical-compatible`), but every
-  recorded result in that repository is written up as `--safe --without-K` only,
-  and §2.1 declassifies prior successes under that profile. A recorded §2.1 run
-  at the current commit would move this to `PWG-3` with no proof work at all.
+* *Theorem B* — `PWG-3`. It read `ungraded` earlier the same day, for want of a
+  *receipt* rather than a proof: the flags in force already were the §2.1
+  invocation (`proofs.yml:167`, `build/just/proofs.just:87,212` all pass
+  `--cubical-compatible`), but every recorded result there was written up as
+  `--safe --without-K` only, and §2.1 declassifies prior successes under that
+  profile. Dispatching `proofs.yml` on `main` supplied the missing record — run
+  42623339243 at `c0eb4f1`, green, with the Agda version and standard-library pin
+  in the workflow and the §1.1 import cone in the proof-status file. The
+  mathematics did not change; the estate's record of it did.
 * *The Lean-witnessed results* — `ungraded` for want of an Agda *source* (§8.1).
   The Lean leg is target-only evidence under §3, so `BRIDGE-PENDING`, and the
   Mathlib dependency means it could not count even once an Agda source existed.
+  No dispatch fixes this one.
+
+`PWG-3` is not a discharge (§8.4 rule 1). Theorem B still owes both recheck legs,
+and so does every other theory result in the stack.
 
 Neither can reach `PWG-2i`, `PWG-2ii` or `PWG-1` from where the tree stands: no
 Rocq development exists in that repository, so the ladder has a missing rung
 independent of any Agda work. This is the first concrete instance of the pattern
 this document predicted — a successful independent proof is not a verified
-Agda–Lean–Coq bridge.
+Agda–Lean–Coq bridge. It also shows the two failure modes apart: one was a
+bookkeeping gap that a dispatch closed in four minutes, the other needs a proof
+that does not exist yet.
 
 NOTE: the census row for trope-checker was refreshed on 2026-11-09 by re-running
 `scripts/census/census-repo.sh` against `main` `c0eb4f1`. It had published 10

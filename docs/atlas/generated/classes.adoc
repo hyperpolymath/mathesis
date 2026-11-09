@@ -44,7 +44,7 @@
 * `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4
 * `hyperpolymath/system-et` — theory; 21 own proof files, 164 detected declarations; provers: lean 21
 * `hyperpolymath/tangle` — theory; 3 own proof files, 61 detected declarations; provers: lean 3
-* `hyperpolymath/trope-checker` — theory; 37 own proof files, 492 detected declarations; provers: agda 10, lean 11, idris2 16
+* `hyperpolymath/trope-checker` — theory; 38 own proof files, 514 detected declarations; provers: agda 10, lean 12, idris2 16
 * `hyperpolymath/tropical-types` — theory; 28 own proof files, 540 detected declarations; provers: lean 19, isabelle 9
 * `hyperpolymath/valence-shell` — theory; 64 own proof files, 960 detected declarations; provers: agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5
 * `hyperpolymath/wokelang` — theory; 18 own proof files, 418 detected declarations; provers: lean 7, rocq 3, idris2 8

@@ -117,6 +117,10 @@ predecessors did.
 | yes
 | -
 
+| `applied-systems/`
+| yes
+| owner-requested reusable applications area (2026-11-07)
+
 | `benches/`
 | optional
 | Cargo-conventional at package root
@@ -204,6 +208,11 @@ your own repo - but do not read their emptiness as neglect here.
 | `.machine_readable/bot_directives/`
 | `.machine_readable/descriptiles/anchors/`
 | `.machine_readable/scripts/verification/`
+| `applied-systems/decision-science/`
+| `applied-systems/finance/`
+| `applied-systems/finance/cohort-economics/`
+| `applied-systems/finance/liquidity/`
+| `applied-systems/organisational-design/`
 | `docs/governance/audit/`
 | `docs/governance/audit/compliance/`
 | `docs/governance/audit/effects/`

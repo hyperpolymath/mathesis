@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 = Cross-prover proof reconciliation — working policy
-:revdate: 2026-11-05
+:revdate: 2026-11-09
 :toc:
 :sectnums:
 
@@ -115,6 +115,7 @@ grade field.
 |trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
 |Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
 |ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
+|januskey |Three theory modules (`Reversibility`, `TransactionAtomicity`, `Epistemic`) checked in CI under the canonical flags plus `--no-libraries --ignore-interfaces --double-check`, Agda 2.6.4.3, sibling `resource-algebra` pinned by commit; the gate refuses six expected-rejection fixtures and, from januskey#172, prints the import cone and a comment-aware escape-hatch scan |Recheck the five `PWG-3` rows (G-1, T-1, T-2, T-3, E-1m) in Rocq and Lean; until then each leg is `OPEN`. The Lifecycle model matches the Rust by transcription only (januskey T-11)
 |===
 
 Existing proof statuses in these repos are historical evidence, not
@@ -147,7 +148,29 @@ is relabelled.
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |G-1 Reversibility (Loss grade algebra) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |T-1 `rollback-restores` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |T-2 `lifecycle-preserves-good` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |T-3 `at-most-one-active` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |E-1m epistemic model (`Epistemic.agda`) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
 |===
+
+The januskey rows are evidence-backed, not a todo. `AGDA-VERIFIED` rests on
+https://github.com/hyperpolymath/januskey/actions/runs/42076969251[`agda-proofs.yml` run 42076969251]
+at januskey `23bc8c38160a25c37917bce69cf05d91899b07e5`: Agda 2.6.4.3,
+`--safe --without-K --cubical-compatible --no-libraries --ignore-interfaces
+--double-check`, `resource-algebra` at
+`cf9235c532712a783a404c359a1055f40134794a`. Derived from that run and
+januskey's §8.5 record (`PROOF-NEEDS.adoc` §Proof Witness Grades, added by
+https://github.com/hyperpolymath/januskey/pull/172[januskey#172]), the five
+rows are `PWG-3` with no axioms: `--safe` refuses `postulate`, and januskey's
+cone scan finds none. That run predates the import-cone and escape-hatch
+fields that PROOF-POLICY §8.2 and §8.4 also ask a receipt to carry. januskey#172
+adds them to the gate, and the first run on its merge commit is the first
+complete receipt. No Rocq or Lean leg has
+been attempted, so no row counts towards `PWG-2i`. januskey owns these
+theorems and their evidence. This register catalogues them and assigns
+nothing.
 
 References:
 https://agda.readthedocs.io/en/v2.7.0.1/language/cubical-compatible.html[Agda cubical-compatible];

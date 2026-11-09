@@ -114,6 +114,8 @@ verdicts.
 
 |https://github.com/metadatastician/ZenodoDeposits.jl[metadatastician/ZenodoDeposits.jl] |3 |0 |agda 3 |53 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/proof-burrower[hyperpolymath/proof-burrower] |2 |0 |agda 2 |31 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/ResidualEvidenceTypes.jl[hyperpolymath/ResidualEvidenceTypes.jl] |1 |1 |agda 1 |1 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/invariant-path[hyperpolymath/invariant-path] |1 |0 |agda 1 |8 |0 |0 |0 |0 |—
@@ -137,7 +139,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |167 |21 |agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1885 |4 |1 |4 |23 |`docs/PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 27, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1945 |4 |1 |4 |26 |`docs/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ambientops[hyperpolymath/ambientops] |102 |1 |idris2 39, spark 58, other 5 |777 |39 |0 |8 |0 |`PROOF-NEEDS.adoc`
 

@@ -37,7 +37,13 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# One status document per repo, preferring the proof-status file (the
+# ledger PROOF-POLICY names) over PROOF-NEEDS and proof-debt registers;
+# the awk below keeps the first row per repo.
+jq -r '(if (.path | test("(^|/)PROOF-STATUS[^/]*$")) then 0
+         elif (.path | test("(^|/)PROOF-NEEDS[^/]*$")) then 1 else 2 end | tostring)
+        + "\t" + .repo + "\t" + .path' "$R/repos-with-status.jsonl" \
+  | sort -t "$(printf '\t')" -k2,2 -k1,1n -k3,3 | cut -f2,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

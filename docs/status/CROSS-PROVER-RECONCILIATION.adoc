@@ -114,7 +114,7 @@ grade field.
 |nextgen-typing / Echo |Agda `Verification.agda` imports Echo; historical modules use `--safe --without-K` |Recheck compatible Echo and stdlib under all three policy flags; record mismatches
 |trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
 |Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
-|ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
+|ECHIDNA |Audited 2026-11-09. The meta-checker checks 9/9 modules under the policy flags (CI run 42551607796 at `2ab7574`, and a local run with the pinned Agda 2.7.0.1 and stdlib 2.1). The 'funext' exception was a stale line in `meta-checker/README.adoc`, not in a module, and is removed by echidna#479. Under the owner's strict §1 ruling (2026-11-09) only `Receipt.agda` (10 theorems) is theory; the other modules are engineering models of Rust code. The dogfood `proofs/agda/` tree is a §3 fixture, not an obligation |Rocq and Lean legs for the ten `Receipt.agda` theorems, with a §2.2 correspondence record per theorem
 |===
 
 Existing proof statuses in these repos are historical evidence, not
@@ -137,6 +137,11 @@ full-mode runs or cross-prover reconciliations were observed during
 this policy edit**. CI must supply the evidence before any result
 is relabelled.
 
+_Update 2026-11-09._ The ECHIDNA row is relabelled `AGDA-VERIFIED` on a
+recorded receipt (source commit, toolchain digests, flags, import cone and
+postulate scan); its grade, `PWG-3`, is derived (with hyperpolymath/echidna#479) in echidna's own
+`docs/PROOF-STATUS.adoc`, not here (§8.5). No row is reconciled.
+
 == Register format (initially not reconciled)
 
 [cols="2,2,2,2,3",options="header"]
@@ -145,7 +150,8 @@ is relabelled.
 |Mathesis |Properties example |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |VCL-UT |L0–L10 / transition corpus |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
+|ECHIDNA |`meta-checker/src/Echidna/Receipt.agda` (10 theory theorems) |AGDA-VERIFIED (receipt `docs/reports/2026-11-09-agda-cone-receipt.json`, landing in echidna with hyperpolymath/echidna#479: Agda 2.7.0.1, stdlib 2.1, policy flags, 211-module cone, clean postulate scan) |NOT-INVENTORIED (no Rocq or Lean artefact states these theorems) |BRIDGE-PENDING
+|proof-burrower |`Burrow/Trust.agda`, `Burrow/Ledger.agda` (DOM-1, DOM-2) |AGDA-PENDING (a 2026-11-09 re-check passed under the policy flags; no receipt is committed in that repository and no CI job runs it) |NOT-INVENTORIED |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |===
 

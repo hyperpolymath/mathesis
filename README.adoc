@@ -61,7 +61,10 @@ organisation-specific working material belongs in separate protected repositorie
 . *Read only the proof files.* Only those files are checked out. A repository with several
   proof-status documents is listed under its `PROOF-STATUS` page, else its
   `PROOF-NEEDS` list, else a proof-debt ledger (any name containing
-  `proof-debt`, such as `CREUSOT-PROOF-DEBT.tsv`). Top-level
+  `proof-debt`, such as `CREUSOT-PROOF-DEBT.tsv`); a document two or more
+  directories deep (outside `docs/status/` and
+  `.machine_readable/compliance/`) usually belongs to a monorepo's
+  sub-project and comes after any shallower one. Top-level
   declaration names go to `decls.jsonl`, and proof-craft's `proof-holes.sh`
   inventories holes, axioms, disabled checkers and policy breaches
   (`holes.jsonl`).
@@ -70,9 +73,14 @@ organisation-specific working material belongs in separate protected repositorie
   catalogue counts only a repo's *own* files.
 . *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
 
-== Reading the catalogue (first pass, 2026-10-26)
+== Reading the catalogue (second pass, 2026-11-09)
 
-The first census covered 476 repositories:
+The second census re-read the same 476-repository input (`repos.json` was not
+refreshed) with the Rust rule added. 276 repositories have proof files and
+244 still have them once template boilerplate is set aside (239 in the first
+pass, 2026-10-26); 5 of them carry Creusot or Verus proofs, which the first
+pass could not see. The notes below date from the first pass and still hold:
+
 
 * *Scope:* 462 repositories were cloned; 5 forks and 9 awesome-lists were
   skipped. 275 have proof files, and 239 still have them once template

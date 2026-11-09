@@ -3,7 +3,7 @@
 
 This is a *generated, read-only directory of proof-source repositories*, not yet a
 complete alphabetic mathematical concept atlas. It derives from the existing
-239-row `docs/catalogue/census/catalogue-rows.json` snapshot and never alters
+244-row `docs/catalogue/census/catalogue-rows.json` snapshot and never alters
 or reclassifies the source census. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 

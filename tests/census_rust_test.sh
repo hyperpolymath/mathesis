@@ -142,4 +142,28 @@ row=$(bash "$census/build-rows.sh" "$data" "$work/template-paths.txt" | jq -c '.
 [ "$(jq -r .axioms <<<"$row")" = "2" ] || fail "axioms: $row"
 [ "$(jq -r .status_doc <<<"$row")" = "docs/status/PROOF-STATUS.adoc" ] || fail "status_doc: $row"
 
+# Status-doc ranking, on build-rows.sh alone: a nested sub-project's status
+# page (two or more directories deep) must not displace the
+# repository's own top-level needs list, as it did for developer-ecosystem.
+raw=$work/raw-ranking
+mkdir -p "$raw"
+printf '%s\n' '{"ext":"idr","path":"src/A.idr","repo":"x/nested"}' > "$raw/files.jsonl"
+: > "$raw/holes.jsonl"; : > "$raw/decls.jsonl"
+printf '%s\n' \
+  '{"path":"PROOF-NEEDS.adoc","repo":"x/nested"}' \
+  '{"path":"ecosystem/sub/PROOF-STATUS.adoc","repo":"x/nested"}' \
+  > "$raw/repos-with-status.jsonl"
+doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | jq -r '.[0].status_doc')
+[ "$doc" = "PROOF-NEEDS.adoc" ] || fail "nested status page won over the top-level needs list: $doc"
+
+# A repository's own one-level layout (standards keeps its needs list in
+# 3-practice/) is not a nested sub-project: its needs list beats a debt
+# ledger in docs/.
+printf '%s\n' \
+  '{"path":"3-practice/PROOF-NEEDS.adoc","repo":"x/nested"}' \
+  '{"path":"docs/proof-debt.adoc","repo":"x/nested"}' \
+  > "$raw/repos-with-status.jsonl"
+doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | jq -r '.[0].status_doc')
+[ "$doc" = "3-practice/PROOF-NEEDS.adoc" ] || fail "a one-level needs list lost to a debt ledger: $doc"
+
 echo "census_rust_test: ok (Creusot and Verus files, contracts, escapes and the status page all found)"

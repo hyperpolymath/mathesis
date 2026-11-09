@@ -43,11 +43,16 @@ jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }
   FILENAME ~ /decls\.tsv$/  { d[$1]++; next }
-  # Several status docs: the status page beats a needs list beats a debt
-  # ledger; within a rank, the first in path order (status.tsv is sorted).
+  # Several status docs: one at most a directory deep (or in docs/status/ or
+  # .machine_readable/compliance/) comes before one nested deeper, which
+  # usually belongs to a sub-project of a monorepo; then
+  # the status page beats a needs list beats a debt ledger; within a rank,
+  # the first in path order (status.tsv is sorted).
   FILENAME ~ /status\.tsv$/ {
     b=$2; sub(/.*\//,"",b); b=toupper(b)
     rk = (b ~ /^PROOF-STATUS/) ? 0 : ((b ~ /^PROOF-NEEDS/) ? 1 : 2)
+    sd=$2; if (sd ~ /\//) sub(/\/[^\/]*$/,"",sd); else sd=""
+    if (sd ~ /\// && sd !~ /^(docs\/status|\.machine_readable\/compliance)$/) rk += 10
     if (!($1 in st) || rk < sr[$1]) { st[$1]=$2; sr[$1]=rk }
     next }
   { n[$1]++; if ($3) fx[$1]++; pc[$1" "$2]++

@@ -14,15 +14,22 @@ Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts
 come from proof-craft's `proof-holes.sh`: textual candidates, not kernel
 verdicts.
 
+Rows may come from different census runs: `run-census.sh --merge` refreshes
+named repositories only. `census/provenance.json` records the commit and
+date each refreshed row was read from; 17 repositories have an entry.
+A row without one predates provenance recording (first census, 2026-10-26).
+
 == Theory
 
 [cols="3,1,1,4,1,1,1,1,1,3",options="header"]
 |===
 |Repository |Own files |Fixtures |Provers (files) |Declarations |Holes |Axioms |Unsafe |Policy |Proof-status doc
 
-|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |148 |0 |agda 148 |1467 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |960 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
+
+|https://github.com/hyperpolymath/epistemic-types[hyperpolymath/epistemic-types] |60 |28 |agda 60 |513 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/affinescript[hyperpolymath/affinescript] |54 |0 |agda 23, lean 1, rocq 21, idris2 9 |568 |9 |1 |0 |0 |`docs/PROOF-NEEDS.adoc`
 
@@ -34,17 +41,15 @@ verdicts.
 
 |https://github.com/hyperpolymath/firmboot[hyperpolymath/firmboot] |38 |0 |agda 19, lean 19 |409 |0 |1 |0 |0 |—
 
-|https://github.com/hyperpolymath/epistemic-types[hyperpolymath/epistemic-types] |37 |14 |agda 37 |320 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/residual-evidence-types[hyperpolymath/residual-evidence-types] |37 |23 |agda 37 |391 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/trope-checker[hyperpolymath/trope-checker] |37 |0 |agda 10, lean 11, idris2 16 |492 |10 |0 |0 |1 |`docs/proof-debt.adoc`
+
+|https://github.com/hyperpolymath/choreographic-types[hyperpolymath/choreographic-types] |34 |10 |agda 34 |214 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/arghda-core[hyperpolymath/arghda-core] |32 |32 |agda 13, lean 2, rocq 4, isabelle 4, idris2 7, smt-atp 2 |15 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |28 |0 |lean 19, isabelle 9 |540 |5 |0 |0 |0 |`PROOF-STATUS.adoc`
-
-|https://github.com/hyperpolymath/residual-evidence-types[hyperpolymath/residual-evidence-types] |27 |13 |agda 27 |328 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
-
-|https://github.com/hyperpolymath/choreographic-types[hyperpolymath/choreographic-types] |25 |6 |agda 25 |178 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -52,15 +57,17 @@ verdicts.
 
 |https://github.com/hyperpolymath/atoma[hyperpolymath/atoma] |21 |0 |agda 4, idris2 3, smt-atp 14 |127 |0 |0 |0 |4 |`docs/status/PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |21 |5 |agda 21 |91 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |21 |0 |lean 21 |164 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/occupancy-types[hyperpolymath/occupancy-types] |19 |2 |agda 8, lean 5, idris2 6 |76 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/occupancy-types[hyperpolymath/occupancy-types] |20 |2 |agda 8, lean 6, idris2 6 |90 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/wokelang[hyperpolymath/wokelang] |18 |0 |lean 7, rocq 3, idris2 8 |418 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/JuliaPackageSpitter.jl[hyperpolymath/JuliaPackageSpitter.jl] |17 |12 |agda 17 |83 |1 |1 |1 |1 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |16 |3 |agda 16 |67 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |17 |9 |agda 9, idris2 8 |193 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
 
@@ -153,7 +160,7 @@ verdicts.
 
 |https://github.com/hyperpolymath/ochrance[hyperpolymath/ochrance] |48 |8 |idris2 48 |404 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
-|https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |46 |12 |idris2 46 |850 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
+|https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |48 |14 |idris2 48 |870 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/ephapax[hyperpolymath/ephapax] |43 |0 |rocq 19, idris2 24 |635 |15 |0 |1 |0 |`PROOF-NEEDS.adoc`
 
@@ -236,8 +243,6 @@ verdicts.
 |https://github.com/hyperpolymath/docmatrix[hyperpolymath/docmatrix] |11 |0 |spark 10, other 1 |0 |0 |0 |0 |0 |`PROOF-NEEDS.md`
 
 |https://github.com/hyperpolymath/formatrix-docs[hyperpolymath/formatrix-docs] |11 |0 |spark 10, other 1 |0 |0 |0 |0 |0 |`PROOF-NEEDS.md`
-
-|https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |11 |5 |agda 3, idris2 8 |142 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/polyglot-i18n[hyperpolymath/polyglot-i18n] |11 |0 |spark 10, other 1 |0 |0 |0 |0 |0 |—
 

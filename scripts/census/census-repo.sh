@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: MPL-2.0
 # Usage: census-repo.sh OWNER/REPO   (run with cwd-independent absolute paths)
-# Writes per-repo outputs into $BASE/out/<owner>__<repo>.{files,decls,holes,agdaopts,status,unreach}.jsonl
+# Writes per-repo outputs into $BASE/out/<owner>__<repo>.{head,files,decls,holes,agdaopts,status,unreach}.jsonl
 set -uo pipefail
 FN=$1
 BASE=${MATHESIS_DATA:?set MATHESIS_DATA to the census work directory}
@@ -22,6 +22,8 @@ if [ $rc -ne 0 ]; then
   rm -rf "$D"; exit 0
 fi
 
+# Provenance: the exact commit this census read (summarise.sh -> heads.jsonl).
+jq -cnS --arg r "$FN" --arg c "$(git -C "$D" rev-parse HEAD)" '{repo:$r,source_commit:$c}' > "$O.head.jsonl"
 git -C "$D" ls-tree -r --name-only HEAD > "$O.tree" 2>/dev/null || true
 if ! [ -s "$O.tree" ]; then rm -rf "$D" "$O.tree"; exit 0; fi
 

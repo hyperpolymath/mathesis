@@ -56,6 +56,8 @@ organisation-specific working material belongs in separate protected repositorie
   (`docs/catalogue/census/template-paths.txt`) are boilerplate wherever they appear. The
   catalogue counts only a repo's *own* files.
 . *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
+. *Refresh named repositories.* `just census-merge FILE` (`run-census.sh --merge FILE`) censuses only the repositories listed in FILE and merges the result with `merge-rows.sh`. Rows, unreachable entries and provenance change for those repositories only; every other record is kept byte for byte. `just census-test` runs its positive and fail-closed tests, which CI runs too.
+. *Record provenance.* `docs/catalogue/census/provenance.json` records, for each repository a run read, the exact commit and the UTC date. Rows from the 2026-10-26 first pass have no entry.
 
 == Reading the catalogue (first pass, 2026-10-26)
 
@@ -89,7 +91,7 @@ The first census covered 476 repositories:
   obligations with the status vocabulary of PROOF-POLICY §5.
 * Theorem-level rows for the theory repos: statement, Agda source, Rocq
   leg, Lean leg, route.
-* A scheduled CI job that reruns the census and fails on catalogue drift.
+* A scheduled CI job that reruns the census. (Catalogue drift against the committed rows already fails in CI.)
 * Reconcile the existing `mathesis_chora.deed` with the current estate conventions; it is already present, not a future placeholder.
 
 == Licence

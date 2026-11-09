@@ -115,6 +115,15 @@ grade field.
 |trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
 |Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
 |ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
+|echo-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (stdlib v2.3 `8326c74`, absolute-zero `f486c29`): all five non-cubical entrypoints pass; the `All` cone is 125 local modules with no escape. Recipes pass no `--cubical-compatible`; file pragmas carry it in 131 of 137 files. `EchoImageFactorizationPropCubical` is checked in full Cubical through its pragma. No Rocq or Lean leg |Put the canonical flags in recipes and CI; give the cubical island a reviewed profile; record receipts in the home `PROOF-STATUS` for the eligible theorems (`Echo-comp-iso`, `cancel-iso`, `Echo-comp-pent-Σ-assoc`, `echo↔fib`, `A↔ΣEcho`, `echo-pullback-univ`, `GCLaws`, `no-section-of-collapsing-map`)
+|secret-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (builtins only): `SecretTypes.All` passes; 2/2 rejection fixtures refused. Its own `-W error` fails under the canonical flags unless `-W noUnsupportedIndexedMatch` is added. Rocq and Lean files present are RSR template files |Adopt the canonical flags; re-run at the pinned Agda 2.6.4.3; record receipts for N-1, N-2, N-3, N-7, N-8
+|epistemic-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: all 22 `src` modules and `CanonicalEcho` pass; 13/13 rejection fixtures refused |Re-run at the pinned Agda 2.6.4.3; record receipts; refresh the stale module counts in `PROOF-STATUS`
+|residual-evidence-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: `All`, both comparisons and `Correspondence` pass; 9/9 rejection fixtures refused |Re-run at the pinned Agda 2.6.4.3; record receipts for the Core, Context and Composition laws
+|choreographic-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: both roots pass with all `src` modules in cone; 5/5 rejection fixtures refused. The MaxPlus rows are said to equal tropical-types' Lean instance; that is not proved |Re-run at the pinned Agda 2.6.4.3; record receipts; state the MaxPlus correspondence as `BRIDGE-PENDING`
+|occupancy-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (resource-algebra `0b338c9`): passes; 2/2 rejection fixtures refused. The Agda check is not called by any workflow, recipe or script. Lean `stackcert` not re-run (no Lean installed) |Wire the Agda check first; move R-6 to TESTED; re-check `stackcert` once Lean is provisioned
+|absolute-zero |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`, stdlib 1.7.3 (its CI) and 2.3 (what echo-types consumes): the four modules pass. Most CNO lemmas are vacuous; `cno-composition` and OND1–OND5 carry content. The archived Lean uses Mathlib |Grade only `cno-composition` and OND1–OND5; record the stdlib pin; mark the archived Coq and Lean sections as archived
+|januskey |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (resource-algebra `cf9235c`): passes; 4/4 rejection fixtures refused. T-1..T-3 are engineering statements held in Agda |Record receipts for G-1 and absorption; record a PROOF-POLICY §4 exception for T-1..T-3 or move them to Idris2
+|affinescript |No Agda source for any theory theorem. Coq 8.18: all 20 `formal/` files build and all 137 assertions are closed under the global context; several hold by definition. Idris2 0.7.0: the Solo core proves progress and preservation. The 23 staged files under `proposals/` pass the canonical flags but are unwired |Owner chooses the Agda home (AffineScript completion plan, question 17); port `QttSemiring` first; compare the Rocq statements and record the bridge. The repo's proof ledger is in `docs/EXPLAINME.adoc`
 |===
 
 Existing proof statuses in these repos are historical evidence, not
@@ -137,6 +146,13 @@ full-mode runs or cross-prover reconciliations were observed during
 this policy edit**. CI must supply the evidence before any result
 is relabelled.
 
+On 2026-11-09 the rows for echo-types, secret-types, epistemic-types,
+residual-evidence-types, choreographic-types, occupancy-types, absolute-zero,
+januskey and affinescript were added from local runs. Those runs are
+reconnaissance: they used Agda 2.6.3, while four of these repositories pin
+2.6.4.3, and they are not receipts recorded in the home repositories. So no
+status below moved past `AGDA-PENDING`, and no grade is derived.
+
 == Register format (initially not reconciled)
 
 [cols="2,2,2,2,3",options="header"]
@@ -147,6 +163,15 @@ is relabelled.
 |Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
 |ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
 |nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|echo-types |Composition and fibration headlines (`All` cone) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|secret-types |TINI and countermodels (N-1, N-2, N-3, N-7, N-8) |AGDA-PENDING |NOT-INVENTORIED (template files only) |BRIDGE-PENDING
+|epistemic-types |Ordered-group and Kripke rows |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|residual-evidence-types |Core, Context and Composition laws |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|choreographic-types |K, W, T, Y, A, B and E rows |AGDA-PENDING |MaxPlus said to match a tropical-types Lean instance; not audited |BRIDGE-PENDING
+|occupancy-types |R-1, R-3, R-4 |AGDA-PENDING (unwired) |Lean `stackcert` not re-run |BRIDGE-PENDING
+|absolute-zero |`cno-composition`, OND1–OND5 |AGDA-PENDING |Archived; the Lean uses Mathlib |BRIDGE-PENDING
+|januskey |G-1 `lossless-trace-all`, absorption |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
+|affinescript |QTT semiring laws, STLC and records progress and preservation, Solo core |INVENTORIED (no Agda source) |COQ-CHECKED (Coq 8.18, 2026-11-09); Lean none; Solo core in Idris2 |BRIDGE-PENDING
 |===
 
 References:

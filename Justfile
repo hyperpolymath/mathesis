@@ -720,6 +720,15 @@ uncloak:
 census:
     bash scripts/census/run-census.sh
 
+# Census only the repos listed in FILE (one OWNER/REPO per line) and merge the
+# result into the committed census; rows for every other repo are kept as is
+census-merge file:
+    bash scripts/census/run-census.sh --merge "{{file}}"
+
+# Test the census merge (positive and fail-closed cases)
+census-test:
+    bash tests/census/merge-rows.test.sh
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc

@@ -38,6 +38,11 @@ Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts
 come from proof-craft's \`proof-holes.sh\`: textual candidates, not kernel
 verdicts.
 
+Rows may come from different census runs: \`run-census.sh --merge\` refreshes
+named repositories only. \`census/provenance.json\` records the commit and
+date each refreshed row was read from; $(jq length "$C/provenance.json" 2>/dev/null || echo 0) repositories have an entry.
+A row without one predates provenance recording (first census, 2026-10-26).
+
 == Theory
 
 $(table theory)

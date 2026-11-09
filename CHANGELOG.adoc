@@ -8,6 +8,31 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 === [Unreleased]
 
+==== Added
+
+* Partial census refresh. `run-census.sh --merge FILE` (`just census-merge`)
+  censuses only the listed repositories and merges them into the committed
+  data with the new `scripts/census/merge-rows.sh`. Records outside the list
+  are kept byte for byte. `tests/census/merge-rows.test.sh` (`just
+  census-test`) covers replacement, removal, addition, scope filtering, order
+  preservation and seven fail-closed cases. A planted defect fails 6 of its 13
+  tests.
+* Census provenance. `census-repo.sh` records the commit it read, and every
+  run writes `docs/catalogue/census/provenance.json` (repository, commit,
+  UTC date).
+* CI runs the merge tests and the catalogue freshness check
+  (`proven-tests.yml`).
+
+==== Changed
+
+* Refreshed the census rows for 17 repositories named in AffineScript's
+  completion plan (2026-11-09, recorded in `provenance.json`). Eight rows
+  changed: choreographic-types, echo-types, epistemic-types, januskey,
+  occupancy-types, residual-evidence-types, secret-types and typed-wasm.
+  januskey's class moved from engineering to theory by the file-count
+  heuristic, not by review. aggregate-library, jtv-halting-islands-ct and
+  affinescript-libraries still have no row: they have no own proof files.
+
 ==== Fixed
 
 * `repo-init` minting a repository created with GitHub's "Use this

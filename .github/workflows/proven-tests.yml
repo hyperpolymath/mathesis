@@ -49,6 +49,10 @@ jobs:
         run: |
           bun scripts/atlas/census-atlas.mjs check
           bun test tests/atlas/census-atlas.test.mjs
+      - name: Mathesis census merge tests and catalogue freshness
+        run: |
+          bash tests/census/merge-rows.test.sh
+          bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
       - name: Install verified Nickel 1.18.0 (K9 L2 semantics)
         run: |
           set -euo pipefail

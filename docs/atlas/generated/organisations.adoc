@@ -55,7 +55,7 @@
 * `hyperpolymath/candy-crash` — engineering; 1 own proof files, 5 detected declarations; provers: idris2 1
 * `hyperpolymath/chapeliser` — engineering; 9 own proof files, 136 detected declarations; provers: idris2 9
 * `hyperpolymath/checky-monkey` — engineering; 3 own proof files, 33 detected declarations; provers: idris2 3
-* `hyperpolymath/choreographic-types` — theory; 25 own proof files, 178 detected declarations; provers: agda 25
+* `hyperpolymath/choreographic-types` — theory; 34 own proof files, 214 detected declarations; provers: agda 34
 * `hyperpolymath/cicd-squabbler` — engineering; 3 own proof files, 0 detected declarations; provers: spark 2, other 1
 * `hyperpolymath/civic-connect` — engineering; 13 own proof files, 46 detected declarations; provers: idris2 4, spark 8, other 1
 * `hyperpolymath/Cliodynamics.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
@@ -81,12 +81,12 @@
 * `hyperpolymath/docudactyl` — engineering; 13 own proof files, 223 detected declarations; provers: idris2 7, spark 5, other 1
 * `hyperpolymath/echidna` — engineering; 167 own proof files, 1885 detected declarations; provers: agda 24, lean 17, rocq 9, isabelle 6, idris2 49, spark 18, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/echidnabot` — theory; 7 own proof files, 63 detected declarations; provers: lean 2, rocq 2, idris2 3
-* `hyperpolymath/echo-types` — theory; 148 own proof files, 1467 detected declarations; provers: agda 148
+* `hyperpolymath/echo-types` — theory; 161 own proof files, 1676 detected declarations; provers: agda 161
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
 * `hyperpolymath/eclexiaiser` — engineering; 9 own proof files, 121 detected declarations; provers: idris2 9
 * `hyperpolymath/ephapax` — engineering; 43 own proof files, 635 detected declarations; provers: rocq 19, idris2 24
 * `hyperpolymath/ephapaxiser` — engineering; 9 own proof files, 133 detected declarations; provers: idris2 9
-* `hyperpolymath/epistemic-types` — theory; 37 own proof files, 320 detected declarations; provers: agda 37
+* `hyperpolymath/epistemic-types` — theory; 60 own proof files, 513 detected declarations; provers: agda 60
 * `hyperpolymath/error-lang` — engineering; 5 own proof files, 57 detected declarations; provers: idris2 5
 * `hyperpolymath/ExactCounts.jl` — theory; 15 own proof files, 236 detected declarations; provers: agda 15
 * `hyperpolymath/ExactTests.jl` — theory; 9 own proof files, 44 detected declarations; provers: agda 9
@@ -119,7 +119,7 @@
 * `hyperpolymath/invariant-path` — theory; 1 own proof files, 8 detected declarations; provers: agda 1
 * `hyperpolymath/ipfs-overlay` — engineering; 5 own proof files, 17 detected declarations; provers: idris2 5
 * `hyperpolymath/iseriser` — engineering; 18 own proof files, 254 detected declarations; provers: idris2 18
-* `hyperpolymath/januskey` — engineering; 11 own proof files, 142 detected declarations; provers: agda 3, idris2 8
+* `hyperpolymath/januskey` — theory; 17 own proof files, 193 detected declarations; provers: agda 9, idris2 8
 * `hyperpolymath/jtv-lang` — theory; 10 own proof files, 225 detected declarations; provers: lean 9, idris2 1
 * `hyperpolymath/julia-ecosystem` — engineering; 25 own proof files, 399 detected declarations; provers: idris2 25
 * `hyperpolymath/julia-professional-registry` — engineering; 4 own proof files, 18 detected declarations; provers: idris2 4
@@ -150,7 +150,7 @@
 * `hyperpolymath/nimiser` — engineering; 9 own proof files, 147 detected declarations; provers: idris2 9
 * `hyperpolymath/oblibeniser` — engineering; 9 own proof files, 156 detected declarations; provers: idris2 9
 * `hyperpolymath/oblibeny` — engineering; 9 own proof files, 99 detected declarations; provers: idris2 9
-* `hyperpolymath/occupancy-types` — theory; 19 own proof files, 76 detected declarations; provers: agda 8, lean 5, idris2 6
+* `hyperpolymath/occupancy-types` — theory; 20 own proof files, 90 detected declarations; provers: agda 8, lean 6, idris2 6
 * `hyperpolymath/ochrance` — engineering; 48 own proof files, 404 detected declarations; provers: idris2 48
 * `hyperpolymath/ochrance-framework` — engineering; 14 own proof files, 123 detected declarations; provers: idris2 14
 * `hyperpolymath/odds-and-sods-package-manager` — engineering; 4 own proof files, 41 detected declarations; provers: idris2 4
@@ -177,13 +177,13 @@
 * `hyperpolymath/quintessence` — engineering; 4 own proof files, 20 detected declarations; provers: idris2 2, tla 2
 * `hyperpolymath/raze-tui` — engineering; 22 own proof files, 59 detected declarations; provers: idris2 3, spark 18, other 1
 * `hyperpolymath/reposystem` — engineering; 16 own proof files, 7 detected declarations; provers: idris2 1, spark 13, other 2
-* `hyperpolymath/residual-evidence-types` — theory; 27 own proof files, 328 detected declarations; provers: agda 27
+* `hyperpolymath/residual-evidence-types` — theory; 37 own proof files, 391 detected declarations; provers: agda 37
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1
 * `hyperpolymath/resource-algebra` — theory; 22 own proof files, 271 detected declarations; provers: agda 22
 * `hyperpolymath/resource-record-fluctuator` — engineering; 32 own proof files, 0 detected declarations; provers: spark 31, other 1
 * `hyperpolymath/robodog-defensive-systems-lab` — engineering; 13 own proof files, 64 detected declarations; provers: idris2 6, spark 6, other 1
 * `hyperpolymath/rpa-elysium` — engineering; 6 own proof files, 74 detected declarations; provers: idris2 6
-* `hyperpolymath/secret-types` — theory; 16 own proof files, 67 detected declarations; provers: agda 16
+* `hyperpolymath/secret-types` — theory; 21 own proof files, 91 detected declarations; provers: agda 21
 * `hyperpolymath/session-sentinel` — engineering; 6 own proof files, 117 detected declarations; provers: idris2 6
 * `hyperpolymath/SMTLib.jl` — engineering; 3 own proof files, 60 detected declarations; provers: idris2 3
 * `hyperpolymath/smtp-notify-action` — engineering; 6 own proof files, 101 detected declarations; provers: idris2 6
@@ -200,7 +200,7 @@
 * `hyperpolymath/trigger` — engineering; 64 own proof files, 165 detected declarations; provers: agda 2, idris2 5, spark 56, other 1
 * `hyperpolymath/trope-checker` — theory; 37 own proof files, 492 detected declarations; provers: agda 10, lean 11, idris2 16
 * `hyperpolymath/tropical-types` — theory; 28 own proof files, 540 detected declarations; provers: lean 19, isabelle 9
-* `hyperpolymath/typed-wasm` — engineering; 46 own proof files, 850 detected declarations; provers: idris2 46
+* `hyperpolymath/typed-wasm` — engineering; 48 own proof files, 870 detected declarations; provers: idris2 48
 * `hyperpolymath/typedqliser` — engineering; 11 own proof files, 155 detected declarations; provers: idris2 11
 * `hyperpolymath/typell` — engineering; 6 own proof files, 159 detected declarations; provers: idris2 6
 * `hyperpolymath/ubicity` — engineering; 7 own proof files, 76 detected declarations; provers: idris2 7

@@ -716,9 +716,12 @@ uncloak:
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
 
-# Re-run the proof census over docs/catalogue/census/repos.json and regenerate the catalogue
+# Re-run the proof census over docs/catalogue/census/repos.json and regenerate the
+# catalogue and the atlas built from the same rows (both are checked in CI, so a
+# census that refreshes one leaves the other stale)
 census:
     bash scripts/census/run-census.sh
+    bun scripts/atlas/census-atlas.mjs build
 
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:

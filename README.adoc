@@ -82,6 +82,16 @@ The first census covered 476 repositories:
 * *Fixtures:* files under `tests/`, `fixtures/`, `corpus/` or `benches/` are
   counted as fixtures. `examples/` is not, because some verifiers (Atoma)
   keep real verification conditions there.
+* *Estate-authored proofs in third-party repositories* are catalogued at
+  the repository that holds them, because a fork is skipped and may lag.
+  `JoshuaJewell/MetaManifold-WebUI` holds the owner's Agda proofs of
+  Benjamini–Hochberg, size-factor scaling and PERMANOVA permutation
+  bookkeeping (`proofs/agda/`). Its maintainer decides how those proofs
+  are kept; PROOF-POLICY binds first-party code only (§1.1), so the row is
+  a pointer, not an obligation. Its theorems are `ungraded`. That repository's
+  `pushed_at` in `repos.json` is its head commit's time (`b67851f`), not a
+  value read from the listing, because the listing covers only repositories
+  the estate owns.
 
 == Next steps
 

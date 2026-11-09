@@ -21,10 +21,19 @@ Initial development phase.
 
 * THY-1, `verification/proofs/agda/FeatureReachability.agda`: reachability
   in a dependency graph is monotone under additive features. It backs the
-  `--all-features` rule in the standards upstream dependency watch. `PWG-3`,
-  recorded in `docs/status/PROOF-STATUS.adoc`.
-* Next: the Rocq and Lean rechecks (transported through Dedukti, or
-  re-proved), which would raise it to `PWG-2ii`.
+  `--all-features` rule in the standards upstream dependency watch.
+  Re-proved in Rocq (`verification/proofs/coq/`) and Lean
+  (`verification/proofs/lean4/`), both `RECONCILED`: `PWG-2ii`, recorded
+  in `docs/status/PROOF-STATUS.adoc`. Transport was not possible because
+  Lambdapi's Rocq and Lean exports drop rewrite rules.
+* Next: CI lanes for Rocq and Lean. Only the Agda gate runs in CI, so
+  each witness has a current receipt only from a local run, and `PWG-1`
+  needs one per commit.
+* Gate gap: `scripts/check-proofs.sh` passes a Rocq file with `Admitted`
+  and a Lean file with `sorry`, because it checks only the compiler's
+  exit and error lines. Both compile, and the axiom reports name them.
+  The Rocq and Lean gates should also fail when `Print Assumptions` or
+  `#print axioms` lists an axiom for a gated theorem.
 
 == Milestones
 

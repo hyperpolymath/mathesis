@@ -95,12 +95,6 @@ is monotone.
 to run `cargo tree --target all --workspace --all-features` and read a
 missing crate as missing from every build.
 
-|`pwg`
-|`3`
-
-|`foundation_diverse`
-|`false`
-
 |Agda leg
 |`PROVEN`. Receipt:
 
@@ -121,10 +115,75 @@ missing crate as missing from every build.
 * Receipt state: current. It is a local run; no CI receipt yet.
 
 |Rocq leg
-|`OPEN`
+|`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
+
+* Checker: Rocq (Coq) 8.18.0, the Ubuntu 24.04 `coq` package.
+* Invocation: `coqc FeatureReachability.v` from
+  `verification/proofs/coq`; also `scripts/check-proofs.sh coq`, which
+  passes.
+* Source: `f1be654e69b23873ea40651cb40e0e095ac53680`; file SHA-256
+  `e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1`.
+* Imports: the prelude only.
+* Axioms: `Print Assumptions` reports "Closed under the global context"
+  for `absent_under_all_features`, `reach_mono` and `edge_mono`.
+* Negative controls: a planted false lemma is rejected. A planted
+  `Admitted` compiles, and `Print Assumptions` reports it as an axiom.
+* Receipt state: current. It is a local run; no CI lane runs Rocq here.
 
 |Lean leg
-|`OPEN`
+|`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
+
+* Checker: Lean 4.15.0 (`11651562caae`, the version
+  `verification/proofs/lean4/lean-toolchain` pins), installed from the
+  GitHub release archive (SHA-256
+  `af71a2569a9f68337de2434829b3008cd8e32c436e9cb6bd8c84a2c2ba3585c9`)
+  because the session's network refused `release.lean-lang.org`.
+* Invocation: `lean FeatureReachability.lean` from
+  `verification/proofs/lean4`; also `scripts/check-proofs.sh lean4`,
+  which passes.
+* Source: `f1be654e69b23873ea40651cb40e0e095ac53680`; file SHA-256
+  `4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a`.
+* Imports: none; Lean core only, no Mathlib.
+* Axioms: `#print axioms` reports none for `absentUnderAllFeatures`,
+  `reachMono` and `onMono`.
+* Negative controls: a planted false lemma and a non-terminating
+  definition are rejected. A planted `sorry` compiles with a warning, and
+  `#print axioms` reports `sorryAx`.
+* Receipt state: current. It is a local run; no CI lane runs Lean here.
+
+|Why neither leg is transported
+|Lambdapi's Rocq and Lean exports translate before elaboration and drop
+rewrite rules (Lambdapi `doc/cli.rst`, `raw_coq`/`raw_lean`). The
+Agda2Dedukti encoding of Agda depends on rewrite rules, so the pinned
+exporters have no route into either target, and §2 falls back to
+re-proof.
+
+|Statement correspondence (§2.2)
+|Compared by reading, item by item. Each target restates every Agda
+definition with the same parameters, constructors and fields, and states
+`reach-mono`, `absent-below` and `absent-under-all-features` with the
+same hypotheses and conclusions. The differences are encoding only:
+
+* Agda `Set` is `Type` in both targets, so every relation stays
+  proof-relevant. `Ctx : Set₁` is a universe-polymorphic `Type` in Rocq
+  and `Type 1` in Lean.
+* The empty type: Agda `⊥` is `Bot` (Rocq) or `Empty` (Lean), and
+  `¬ A` is `A → Bot` or `A → Empty`.
+* Equality: Agda `_≡_` (in `Set`) is `eq` (in `Prop`) in Rocq and `Eq`
+  in Lean. It occurs only in the `src` and `dst` fields of `Edge`, which
+  no proof inspects.
+* `_⊑_` takes the feature implicitly in Agda and Lean, and explicitly
+  in Rocq.
+
+Residual assumptions: none in any leg.
+
+|`pwg`
+|`2ii`: the Agda leg checks, and both recheck legs count (kernel-checked
+and `RECONCILED`). It is not `PWG-1`, because no leg has a per-commit CI
+receipt.
+
+|`foundation_diverse`
+|`false`
 
 |Applying it to Cargo
 |`ASSUMED`: Cargo's resolver activates exactly the modelled edges.

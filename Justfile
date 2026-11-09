@@ -735,6 +735,7 @@ atlas-build:
 atlas-check:
     bun scripts/atlas/census-atlas.mjs check
     bun test tests/atlas/census-atlas.test.mjs
+    bash tests/census/build_rows_status_test.sh
 
 atlas-find query:
     bun scripts/atlas/census-atlas.mjs find "{{query}}"

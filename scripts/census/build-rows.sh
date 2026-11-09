@@ -14,6 +14,13 @@
 # tests/, fixtures/, corpus/, benches/ count as fixtures. "theory" is a
 # first-pass heuristic: more Agda/Lean/Rocq/Isabelle files than Idris2/SPARK
 # files. A human confirms each row.
+#
+# status_doc names one document per repository. A repository's proof status
+# lives in its PROOF-STATUS file (standards PROOF-POLICY §8.5); PROOF-NEEDS
+# lists obligations and proof-debt lists holes. So a PROOF-STATUS document
+# wins over a proof-debt one, which wins over a PROOF-NEEDS one; within a
+# rank the first path in sorted order wins. Taking the first sorted path
+# alone named docs/status/PROOF-NEEDS.adoc over docs/status/PROOF-STATUS.adoc.
 set -euo pipefail
 R=$1 T=$2
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
@@ -42,7 +49,11 @@ jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }
   FILENAME ~ /decls\.tsv$/  { d[$1]++; next }
-  FILENAME ~ /status\.tsv$/ { if (!($1 in st)) st[$1]=$2; next }
+  FILENAME ~ /status\.tsv$/ {
+    b = tolower($2); sub(/.*\//, "", b)
+    k = (b ~ /^proof-status/) ? 3 : (b ~ /^proof-debt/) ? 2 : 1
+    if (!($1 in st) || k > sk[$1]) { st[$1]=$2; sk[$1]=k }
+    next }
   { n[$1]++; if ($3) fx[$1]++; pc[$1" "$2]++
     if ($2 ~ /agda|lean|rocq|isabelle/) th[$1]++; if ($2 ~ /idris2|spark/) en[$1]++ }
   END {

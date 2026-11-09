@@ -37,7 +37,18 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# One status document per repository.  A PROOF-STATUS file is the per-claim
+# record PROOF-POLICY §8.5 names (grades and recheck legs), so it wins over
+# PROOF-NEEDS (obligations) and proof-debt; within a rank the first path in
+# byte order (LC_ALL=C, so the choice does not depend on the locale) wins.
+# Sorting on the path alone picked docs/status/PROOF-NEEDS.adoc over
+# docs/status/PROOF-STATUS.adoc.
+jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" \
+| awk -F'\t' 'BEGIN{OFS="\t"} {
+    b=$2; sub(/.*\//, "", b); b=toupper(b)
+    rank = (b ~ /^PROOF-STATUS/) ? 0 : (b ~ /^PROOF-NEEDS/) ? 1 : 2
+    print $1, rank, $2 }' \
+| LC_ALL=C sort -t$'\t' -k1,1 -k2,2n -k3,3 | cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

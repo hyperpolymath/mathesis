@@ -209,9 +209,12 @@ gradeable. So the three Lean-only rows do not become legs by any amount of
 bridging work; they become `PWG-3` when their Agda restatement lands, and no
 sooner.
 
-Neither can reach `PWG-2i`, `PWG-2ii` or `PWG-1` from where the tree stands: no
-Rocq development exists in that repository, so the ladder has a missing rung
-independent of any Agda work. This is the first concrete instance of the pattern
+These results cannot reach `PWG-2i`, `PWG-2ii` or `PWG-1` from where the tree
+stands: the current Lean development is not a counting leg, and no Rocq
+development exists. A separate, policy-conformant Lean recheck that is
+`RECONCILED`, together with a qualifying Agda witness, could satisfy `PWG-2i`
+without Rocq; the theorem would still need its second recheck leg. `PWG-2ii` and
+`PWG-1` require Rocq as well. This is the first concrete instance of the pattern
 this document predicted — a successful independent proof is not a verified
 Agda–Lean–Coq bridge. It also separates three failure modes that a prose status
 line had run together:

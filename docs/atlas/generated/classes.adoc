@@ -225,6 +225,7 @@
 * `hyperpolymath/voyage-enterprise-decision-system` — engineering; 3 own proof files, 33 detected declarations; provers: idris2 3
 * `hyperpolymath/wokelangiser` — engineering; 9 own proof files, 143 detected declarations; provers: idris2 9
 * `hyperpolymath/zerotier-k8s-link` — engineering; 12 own proof files, 110 detected declarations; provers: idris2 12
+* `hyperpolymath/zig-dnssec` — engineering; 5 own proof files, 60 detected declarations; provers: idris2 5
 * `metadatastician/_pathroot` — engineering; 34 own proof files, 70 detected declarations; provers: idris2 5, spark 25, other 4
 * `metadatastician/authority-watch` — engineering; 3 own proof files, 13 detected declarations; provers: idris2 3
 * `metadatastician/bowtie-workbench` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1

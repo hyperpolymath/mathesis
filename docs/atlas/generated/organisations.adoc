@@ -220,6 +220,7 @@
 * `hyperpolymath/wokelangiser` — engineering; 9 own proof files, 143 detected declarations; provers: idris2 9
 * `hyperpolymath/zerostep` — theory; 1 own proof files, 16 detected declarations; provers: isabelle 1
 * `hyperpolymath/zerotier-k8s-link` — engineering; 12 own proof files, 110 detected declarations; provers: idris2 12
+* `hyperpolymath/zig-dnssec` — engineering; 5 own proof files, 60 detected declarations; provers: idris2 5
 * `hyperpolymath/zotero-tools` — theory; 15 own proof files, 94 detected declarations; provers: lean 9, idris2 3, tla 3
 
 == metadatastician

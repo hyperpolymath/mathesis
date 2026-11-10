@@ -45,6 +45,23 @@ jobs:
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      # PROOF-POLICY 8.5.1: the receipt must read, and the grade it records must
+      # be the grade the canon reader derives (re-anchoring plan WO 1.5). The
+      # canon pin above (8e48b1c) predates the reader, so the reader has its own
+      # pinned, sparse checkout.
+      - name: Proof receipt reads and derives its recorded grade
+        run: |
+          set -euo pipefail
+          r="$RUNNER_TEMP/receipt-reader"
+          git init -q "$r"
+          git -C "$r" remote add origin https://github.com/metadatastician/standards.git
+          git -C "$r" config core.sparseCheckout true
+          printf '1-formats/deed/tools/\n' > "$r/.git/info/sparse-checkout"
+          git -C "$r" fetch -q --depth 1 origin be39f900665fb7c042c05d1165da018adc1860f4
+          git -C "$r" checkout -q FETCH_HEAD
+          for f in verification/receipts/*_praxis.deed; do
+            bun "$r/1-formats/deed/tools/deed_lint.js" --proof-receipt-json "$f"
+          done
       - name: Mathesis census atlas integrity and tests
         run: |
           bun scripts/atlas/census-atlas.mjs check

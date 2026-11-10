@@ -106,9 +106,12 @@ missing crate as missing from every build.
   `scripts/check-proofs.sh agda`, which passes.
 * Source: `f68b78d6ceb8d3c83f96f5ab8e57779442a8834f`; file SHA-256
   `4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564`.
-* Import cone: the module alone. It imports nothing, the standard
-  library included, and contains no postulate (comment-aware scan).
-  `--safe` refuses postulates.
+* Import cone: the module and `Agda.Primitive`, which the prover supplies
+  (`agda --dependency-graph`, checked 2026-11-10). The module imports
+  nothing, the standard library included, and contains no postulate
+  (comment-aware scan). `--safe` refuses postulates. `Agda.Primitive`
+  postulates exactly `Level`, `lzero`, `lsuc` and `_⊔_`, each bound by its
+  `BUILTIN` pragma: the trusted base the receipt records (§8.4).
 * Negative controls, all rejected: a planted postulate, a planted false
   claim, a non-terminating definition, and a `reach-mono` that skips the
   monotonicity step.
@@ -202,6 +205,11 @@ same hypotheses and conclusions. The differences are encoding only:
   in Rocq.
 
 Residual assumptions: none in any leg.
+
+|Machine receipt (§8.5.1)
+|`verification/receipts/theory_praxis.deed`. The canon reader
+(`deed_lint.js --proof-receipt-json`) derives `PWG-2ii` from it, the grade
+below, and CI runs that reader on each change.
 
 |`pwg`
 |`2ii`: the Agda leg checks, and both recheck legs count (kernel-checked

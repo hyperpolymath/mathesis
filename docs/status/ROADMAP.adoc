@@ -63,12 +63,18 @@ One pull request that changes census rows is open at a time (atlas README,
   in `forks-with-own-proofs.txt`, so it had no row. The row uses the scanner
   rules of 2026-11-10; the other rows still use the rules of 2026-11-09
   until the next full census.
+  Merged.
 * 2026-11-10: the row of `hyperpolymath/system-et`, taken by
   `scripts/census/update-rows.sh` (the script of `just update-rows`) at
   mathesis `c527480`. The wager proofs merged into the main branch of
   system-et (pull request 89) after the row of the morning. The row goes
   from 86 proof files and 612 declarations to 102 and 773. Holes, axioms
   and unsafe flags stay at 0.
+  Merged.
+* 2026-11-10: every row, taken by `just census` (re-anchoring plan WO 2.1).
+  The census data moves to JSON Lines, and each row gains `commit` and
+  `censused_at`. One full census fills both fields, with the scanner rules
+  of 2026-11-10 for every row.
 
 == Milestones
 

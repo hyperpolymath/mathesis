@@ -3,8 +3,10 @@
 
 This is a *generated, read-only directory of proof-source repositories*, not yet a
 complete alphabetic mathematical concept atlas. It derives from
-`docs/catalogue/census/catalogue-rows.json` and never alters
-or reclassifies the source census. A–Z means repository-name order, not a claim
+`docs/catalogue/census/catalogue-rows.jsonl` and never alters
+or reclassifies the source census. Each row names the commit that the census read
+(`commit`) and the time it read it (`censused_at`, UTC), so each count has a
+source. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 
 The first views are A–Z repositories, theory-versus-engineering census class,
@@ -28,7 +30,7 @@ No private-source records are added or published by this generator.
 Census rows change in one way only: `just census` (the whole frame) or
 `just update-rows OWNER/REPO...` (named repositories). Both rebuild the
 catalogue and this atlas from the same rows. Nobody edits
-`catalogue-rows.json`, `unreachable.json` or the generated views by hand.
+`catalogue-rows.jsonl`, `unreachable.jsonl` or the generated views by hand.
 Only one pull request that changes rows is open at a time; record it under
 "Open census work" in link:../status/ROADMAP.adoc[`ROADMAP.adoc`] before it
 opens. The deed states the same rule in `(bot-directives (census-writer))`.

@@ -64,8 +64,10 @@ for class in hole axiom unsafe policy; do
   jq -cn --arg class "$class" '{repo:"test/all-ranks",file:"template/Boilerplate.agda",class:$class}' >> "$work/holes.jsonl"
 done
 
+# Provenance fixture: one meta record per repository (census-repo.sh writes it).
+jq -cS '{repo, commit: "0123456789abcdef0123456789abcdef01234567", censused_at: "2026-11-10T00:00:00Z"}' "$work/files.jsonl" | sort -u > "$work/meta.jsonl"
 run_rows() {
-  bash "$repo/scripts/census/build-rows.sh" "$work" "$work/templates.txt" > "$work/actual.json"
+  bash "$repo/scripts/census/build-rows.sh" "$work" "$work/templates.txt" | jq -cs . > "$work/actual.json"
 }
 run_rows
 jq -sS 'sort_by(.repo)' "$work/expected.jsonl" > "$work/expected.json"
@@ -77,7 +79,9 @@ jq -e '
   (map(select(.repo == "test/all-ranks")) == [{
     repo:"test/all-ranks", class:"theory", own_files:2, fixture_files:1,
     provers:"agda 1, lean 1", declarations:2, holes:1, axioms:1,
-    unsafe:1, policy:1, status_doc:"docs/status/PROOF-STATUS.adoc"
+    unsafe:1, policy:1, status_doc:"docs/status/PROOF-STATUS.adoc",
+    commit:"0123456789abcdef0123456789abcdef01234567",
+    censused_at:"2026-11-10T00:00:00Z"
   }]) and
   (map(select(.repo != "test/all-ranks")) | all(
     .class == "theory" and .own_files == 1 and .fixture_files == 0 and

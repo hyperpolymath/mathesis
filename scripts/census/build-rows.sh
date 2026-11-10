@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fold the raw, path-level census into one row per repository.
 #
-# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.json
-#   RAW_DIR   files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl
+# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.jsonl
+#   RAW_DIR   files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl,
+#             meta.jsonl
 #             (written by census-repo.sh + summarise.sh; not committed)
 #   TEMPLATE  template-blobs.tsv: "path<TAB>blob" for every blob the RSR
 #             template has had at a proof-file path (template-blobs.sh). A
@@ -13,6 +14,13 @@
 #             works, and so do raw rows without a blob: both fall back to
 #             matching by path alone. The template repository itself
 #             (hyperpolymath/rsr-template-repo) owns its files.
+#
+# The output is JSON Lines (standards JSON-POLICY J-2): one JCS record for each
+# repository, in byte order of the repository name. A change to one row then
+# changes one line only.
+# Each row carries its provenance from meta.jsonl: `commit`, the commit that
+# the census read, and `censused_at`, when it read it. A row without them is an
+# error, never a row with no source.
 #
 # Rows carry counts only, never file paths, so the committed data neither
 # grows with the estate's file trees nor repeats other repositories' paths.
@@ -88,9 +96,13 @@ awk -F'\t' '
         (r in st) ? st[r] : ""
     }
   }' "$tmp/holes.tsv" "$tmp/decls.tsv" "$tmp/status.tsv" "$tmp/cls.tsv" \
-| sort -t$'\t' -k2,2 \
-| jq -RcS 'split("\t") | {class:.[0], repo:.[1], own_files:(.[2]|tonumber),
+| LC_ALL=C sort -t$'\t' -k2,2 \
+| jq -RcS --slurpfile meta "$R/meta.jsonl" '
+    (reduce $meta[] as $m ({}; .[$m.repo] = $m)) as $by
+  | split("\t") | {class:.[0], repo:.[1], own_files:(.[2]|tonumber),
     fixture_files:(.[3]|tonumber), provers:.[4], declarations:(.[5]|tonumber),
     holes:(.[6]|tonumber), axioms:(.[7]|tonumber), unsafe:(.[8]|tonumber),
-    policy:(.[9]|tonumber), status_doc:.[10]}' \
-| jq -cS -s .
+    policy:(.[9]|tonumber), status_doc:.[10]}
+  | . as $row
+  | ($by[$row.repo] // error("build-rows: no commit recorded for " + $row.repo)) as $m
+  | $row + {commit: $m.commit, censused_at: $m.censused_at}'

@@ -10,6 +10,7 @@ cat_sorted holes > holes.jsonl
 cat_sorted agdaopts > agda-options.jsonl
 cat_sorted status > repos-with-status.jsonl
 cat_sorted unreach > unreachable.jsonl
+cat_sorted meta > meta.jsonl
 
 PROVER='def prover: (.ext) as $e |
   if ($e|test("^(agda|lagda|lagda.md|agda-lib)$")) then "agda"

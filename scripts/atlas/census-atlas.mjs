@@ -4,7 +4,8 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const rowsFile=path.join(root,'docs/catalogue/census/catalogue-rows.json');
+const rowsFile=path.join(root,'docs/catalogue/census/catalogue-rows.jsonl');
+const reposFile=path.join(root,'docs/catalogue/census/repos.jsonl');
 const output=path.join(root,'docs/atlas/generated');
 const validClass=new Set(['theory','engineering']);
 const clean=s=>String(s).replaceAll('|',String.raw`\|`).replaceAll('\n',' ');
@@ -20,6 +21,17 @@ function jcs(v){
   if(v!==null&&typeof v==='object')return '{'+Object.keys(v).sort(compareUtf16).map(k=>JSON.stringify(k)+':'+jcs(v[k])).join(',')+'}';
   return JSON.stringify(v);
 }
+// JSON Lines (standards JSON-POLICY J-2): one record on each line, and each line
+// ends with LF. An empty file holds no records. A blank line is an error.
+export function parseJsonl(text,name='JSON Lines input'){
+  if(text==='')return [];
+  if(!text.endsWith('\n'))throw new Error(`${name}: the last line has no LF`);
+  return text.slice(0,-1).split('\n').map((line,i)=>{
+    if(line==='')throw new Error(`${name}: line ${i+1} is blank`);
+    return JSON.parse(line);
+  });
+}
+export const readJsonl=async file=>parseJsonl(await readFile(file,'utf8'),path.relative(root,file));
 const order=(a,b)=>a.localeCompare(b,'en',{sensitivity:'base'});
 export function validate(rows){
   if(!Array.isArray(rows))throw new Error('Census rows must be an array');
@@ -29,6 +41,8 @@ export function validate(rows){
     if(!validClass.has(r.class))throw new Error('Unknown census class '+r.repo);
     for(const name of ['own_files','declarations','holes','axioms','fixture_files','unsafe','policy'])
       if(!Number.isSafeInteger(r[name])||r[name]<0)throw new Error('Invalid census counts '+r.repo+': '+name);
+    if(typeof r.commit!=='string'||!/^[0-9a-f]{40}$/.test(r.commit))throw new Error('Census row without a 40-hex source commit: '+r.repo);
+    if(typeof r.censused_at!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(r.censused_at))throw new Error('Census row without a UTC census time: '+r.repo);
     seen.add(r.repo);
   }
   return rows;
@@ -56,7 +70,7 @@ export function pack(rows,query,limit=5000){
 }
 export function render(rows){
   const ordered=[...rows].sort((a,b)=>order(a.repo,b.repo));
-  const header='// SPDX-License-Identifier: CC-BY-SA-4.0\n// GENERATED from census/catalogue-rows.json; do not hand-edit.\n';
+  const header='// SPDX-License-Identifier: CC-BY-SA-4.0\n// GENERATED from census/catalogue-rows.jsonl; do not hand-edit.\n';
   const line=r=>`* \u0060${clean(r.repo)}\u0060 — ${clean(r.class)}; ${r.own_files} own proof files, ${r.declarations} detected declarations; provers: ${clean(r.provers)}`;
   const alphabet=[...new Set(ordered.map(r=>r.repo.split('/')[1][0].toLocaleUpperCase('en')))].sort(order);
   const byName=[...ordered].sort((a,b)=>order(a.repo.split('/')[1],b.repo.split('/')[1])||order(a.repo,b.repo));
@@ -64,13 +78,13 @@ export function render(rows){
   const classes=header+'= Census classifications\n\n'+[...validClass].map(c=>`== ${c}\n\n${ordered.filter(r=>r.class===c).map(line).join('\n')}\n`).join('\n');
   const owners=[...new Set(ordered.map(r=>r.repo.split('/')[0]))].sort(order);
   const estates=header+'= Estate organisation view\n\n'+owners.map(owner=>`== ${owner}\n\n${ordered.filter(r=>r.repo.startsWith(owner+'/')).map(line).join('\n')}\n`).join('\n');
-  const index=jcs({schema:'mathesis.census-atlas/0.1',source:'docs/catalogue/census/catalogue-rows.json',verification:'not_asserted',count:ordered.length,records:ordered})+'\n';
+  const index=jcs({schema:'mathesis.census-atlas/0.1',source:'docs/catalogue/census/catalogue-rows.jsonl',verification:'not_asserted',count:ordered.length,records:ordered})+'\n';
   return {'az.adoc':az,'classes.adoc':classes,'organisations.adoc':estates,'index.json':index};
 }
 async function main(){
   const [cmd,...args]=process.argv.slice(2);
-  const rows=validate(JSON.parse(await readFile(rowsFile,'utf8')));
-  validateVisibility(rows,JSON.parse(await readFile(path.join(root,'docs/catalogue/census/repos.json'),'utf8')));
+  const rows=validate(await readJsonl(rowsFile));
+  validateVisibility(rows,await readJsonl(reposFile));
   const views=render(rows);
   if(cmd==='build'){
     await mkdir(output,{recursive:true});

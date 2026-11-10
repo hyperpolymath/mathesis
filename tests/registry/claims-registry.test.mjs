@@ -6,9 +6,10 @@ import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {validate, parseReceipt, derive, deriveAll, render} from '../../scripts/registry/claims-registry.mjs';
+import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = JSON.parse(readFileSync(new URL('../../docs/registry/claims.json', import.meta.url), 'utf8'));
-const inventory = JSON.parse(readFileSync(new URL('../../docs/catalogue/census/repos.json', import.meta.url), 'utf8'));
+const inventory = parseJsonl(readFileSync(new URL('../../docs/catalogue/census/repos.jsonl', import.meta.url), 'utf8'));
 
 const commit = 'a'.repeat(40);
 const theorem = {id: 'o/r#T-1', repo: 'o/r', claim: 'T-1', kind: 'theorem', statement: 'a statement of some length',

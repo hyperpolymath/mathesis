@@ -4,21 +4,39 @@
 -- Agda Proof Template: Inductive and coinductive properties
 -- Replace with your project's domain-specific proofs.
 -- All proofs must be total (no postulate, no {-# TERMINATING #-}).
+--
+-- No library imports: only the Agda.Builtin modules that ship with Agda.
+-- The agda-stdlib 2.3 package of the pinned Guix does not build (re-anchoring
+-- plan WO 1.4, owner ruling 2026-11-10), and these examples need little of it.
 
 module Properties where
 
-open import Data.Nat using (ℕ; zero; suc; _+_; _≤_; z≤n; s≤s; _<_)
-open import Data.Nat.Properties using (+-comm; +-assoc; ≤-refl; ≤-trans)
-open import Data.List using (List; []; _∷_; length; _++_)
-open import Data.List.Properties using (length-++ )
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; cong; sym; trans)
+open import Agda.Builtin.Nat using (Nat; zero; suc; _+_)
+open import Agda.Builtin.List using (List; []; _∷_)
+open import Agda.Builtin.Equality using (_≡_; refl)
+
+cong : ∀ {A B : Set} (f : A → B) {x y : A} → x ≡ y → f x ≡ f y
+cong f refl = refl
+
+length : ∀ {A : Set} → List A → Nat
+length []       = zero
+length (_ ∷ xs) = suc (length xs)
+
+_++_ : ∀ {A : Set} → List A → List A → List A
+[]       ++ ys = ys
+(x ∷ xs) ++ ys = x ∷ (xs ++ ys)
+
+data _≤_ : Nat → Nat → Set where
+  z≤n : ∀ {n} → zero ≤ n
+  s≤s : ∀ {m n} → m ≤ n → suc m ≤ suc n
 
 -- Example: Proof that list append preserves total length
 -- Replace with your project's domain proofs.
 
 append-length : ∀ {A : Set} (xs ys : List A) →
   length (xs ++ ys) ≡ length xs + length ys
-append-length xs ys = length-++ xs
+append-length []       ys = refl
+append-length (_ ∷ xs) ys = cong suc (append-length xs ys)
 
 -- Example: Monotonicity proof template
 -- Use for state machines, confidence scores, trust levels

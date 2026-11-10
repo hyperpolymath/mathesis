@@ -12,4 +12,8 @@
 ;; Canon: hyperpolymath/standards 3-practice/provisioning/PROVISIONING-STANDARD.adoc
 (specifications->manifest
  (list "git" "bash" "coreutils" "nss-certs" "just" "mise"
-       "shellcheck" "chez-scheme" "gmp" "gcc-toolchain" "zig"))
+       "shellcheck" "chez-scheme" "gmp" "gcc-toolchain" "zig"
+       ;; Provers for the proof lanes (re-anchoring plan WO 1.4, ruling D-8 (a)).
+       ;; No agda-stdlib: its Guix package does not build, and no proof here
+       ;; imports it (owner ruling 2026-11-10).
+       "agda" "coq" "lean4"))

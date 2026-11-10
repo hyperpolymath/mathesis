@@ -220,7 +220,10 @@ Residual assumptions: none in any leg.
 |Machine receipt (§8.5.1)
 |`verification/receipts/theory_praxis.deed`. The canon reader
 (`deed_lint.js --proof-receipt-json`) derives `PWG-1` from it, the grade
-below, and CI runs that reader on each change.
+below, and CI runs that reader on each change. The claims registry lists
+the claim as `hyperpolymath/mathesis#THY-1` and shows the grade that the
+same reader derives
+(link:../registry/registry.adoc[`docs/registry/registry.adoc`]).
 
 |`pwg`
 |`1` (since 2026-11-10): `PWG-2ii`, and every counted witness has a current

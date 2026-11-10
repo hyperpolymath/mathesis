@@ -70,11 +70,14 @@ jobs:
         run: |
           for t in tests/census/*.sh; do bash "$t"; done
           bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
-      # The claims registry (docs/decisions/0004-claims-registry.adoc): re-derive
-      # every grade from the home repositories' receipts at their pinned commits
-      # (fetched, digest-checked) and fail if the committed view is stale or a
-      # receipt asserts a grade its evidence does not support.
+      # The claims registry (docs/decisions/0004-claims-registry.adoc): the canon
+      # reader re-derives every grade from the home repositories' receipts at
+      # their pinned commits (fetched, digest-checked). The check fails if the
+      # committed view is stale (re-anchoring plan WO 2.2).
       - name: Mathesis claims registry derivation and tests
+        env:
+          # The canon reader checked out above, at the pin the registry checks.
+          MATHESIS_STANDARDS: ${{ runner.temp }}/receipt-reader
         run: |
           bun scripts/registry/claims-registry.mjs check
           bun test tests/registry/claims-registry.test.mjs

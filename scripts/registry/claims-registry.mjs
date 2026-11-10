@@ -7,21 +7,24 @@
 // its home repository, its id there, the statement as the home repository
 // words it, the Agda names, a full 40-character commit, and the path and
 // sha256 of the home repository's machine receipt at that commit.  It never
-// records a grade.  The grade is DERIVED here, from the receipt fetched at the
-// pinned commit, by the rules of standards/3-practice/PROOF-POLICY.adoc §8.2,
-// and rendered into docs/registry/registry.adoc.  PROOF-POLICY §8.5: "Mathesis
-// may catalogue grades. It derives them from those receipts and does not
-// assign them."
+// records a grade.  The grade is DERIVED by the canon reader of
+// standards/3-practice/PROOF-POLICY.adoc §8.5.1 (`readProofReceipt` in
+// 1-formats/deed/tools/deed_lint.js), from the receipt fetched at the pinned
+// commit, and rendered into docs/registry/registry.adoc.  PROOF-POLICY §8.5:
+// "Mathesis may catalogue grades. It derives them from those receipts and does
+// not assign them."  This file holds no grading rule of its own.
 //
 //   bun scripts/registry/claims-registry.mjs build   fetch, derive, render
 //   bun scripts/registry/claims-registry.mjs check   the same, and fail if the
 //                                                     committed view differs
 //
+// MATHESIS_STANDARDS names a checkout of metadatastician/standards that holds
+// the reader at READER.commit; the reader's sha256 must equal READER.sha256.
 // --receipts-dir DIR reads receipts from DIR/<owner>__<repo>@<commit>/<path>
 // instead of fetching them (the tests use it; CI fetches).
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
 
@@ -31,10 +34,16 @@ const reposFile = path.join(root, 'docs/catalogue/census/repos.jsonl');
 const viewFile = path.join(root, 'docs/registry/registry.adoc');
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
-const PROVEN = new Set(['proven', 'proven-with-postulates']);
-// PROOF-POLICY §2.1: the canonical invocation; every flag must be in force.
-const CANONICAL_FLAGS = ['--safe', '--without-K', '--cubical-compatible'];
-const PWG = new Set(['3', '2i', '2ii', '1', 'ungraded']);
+const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
+
+// The canon reader, pinned by commit and by the digest of its file. A reader
+// that is not this file is refused, so a grade never comes from an unpinned rule.
+export const READER = {
+  repository: 'metadatastician/standards',
+  commit: 'be39f900665fb7c042c05d1165da018adc1860f4',
+  path: '1-formats/deed/tools/deed_lint.js',
+  sha256: 'f7e2b91905f0d99e5cabab59385073afb695be8b9f2d0591257a6a6fd62e25e3',
+};
 
 // ── Validation of the registry rows ──────────────────────────────────────────
 
@@ -68,76 +77,49 @@ export function validate(rows, inventory) {
   return rows;
 }
 
-// ── Reading a home repository's receipt ──────────────────────────────────────
+// ── The canon reader ─────────────────────────────────────────────────────────
 
-// Parse a praxis-deed receipt into its flags and its claims.  Both the §8.5
-// shape (`:pwg`, per-leg `(leg …)` forms) and the earlier shape (`:grade`,
-// `:coq-leg`, `:lean-leg`) are read; nothing absent is invented.
-export function parseReceipt(text) {
-  const flags = (text.match(/:flags "([^"]*)"/) || [, null])[1];
-  const claims = new Map();
-  const lines = text.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(/\(claim :id "([^"]+)" :token "([^"]+)"(.*)$/);
-    if (!m) continue;
-    const rest = m[3];
-    const field = k => (rest.match(new RegExp(`:${k} "([^"]*)"`)) || [, null])[1];
-    const claim = {token: m[2], pwg: field('pwg'), legacyGrade: field('grade'), legs: []};
-    for (let j = i + 1; j < lines.length; j++) {
-      const l = lines[j].match(/^\s*\(leg :prover "([^"]+)" :route "([^"]+)" :token "([^"]+)" :state "([^"]+)"/);
-      if (!l) break;
-      claim.legs.push({prover: l[1], route: l[2], token: l[3], state: l[4]});
-    }
-    if (claim.legs.length === 0 && field('coq-leg') !== null) {
-      // The earlier shape records a route per leg and no §2.2 state.
-      claim.legs.push({prover: 'rocq', route: field('coq-leg'), token: null, state: null});
-      claim.legs.push({prover: 'lean', route: field('lean-leg'), token: null, state: null});
-    }
-    claims.set(m[1], claim);
+// Load readProofReceipt from a standards checkout, after its digest check.
+export async function loadReader(standardsDir = process.env.MATHESIS_STANDARDS) {
+  if (!standardsDir) {
+    throw new Error(`set MATHESIS_STANDARDS to a checkout of ${READER.repository} at ${READER.commit}`);
   }
-  return {flags, claims};
+  const file = path.resolve(standardsDir, READER.path);
+  const digest = createHash('sha256').update(await readFile(file)).digest('hex');
+  if (digest !== READER.sha256) {
+    throw new Error(`${file} is not the pinned canon reader (sha256 ${digest}, pinned ${READER.sha256} at ${READER.commit})`);
+  }
+  const {readProofReceipt} = await import(pathToFileURL(file).href);
+  if (typeof readProofReceipt !== 'function') throw new Error(`${file} exports no readProofReceipt`);
+  return readProofReceipt;
 }
 
-// ── The derivation: PROOF-POLICY §8.1–§8.2 ───────────────────────────────────
+// ── The derivation: the canon reader, PROOF-POLICY §8.1, §8.2, §8.5.1 ────────
 
-// Derive one row's Proof Witness Grade from its parsed receipt (or null).
-// Returns {pwg, reasons, findings, legs}.  `reasons` say why the grade is not
-// higher; `findings` are disagreements between the receipt and the derivation.
-export function derive(row, receipt) {
-  const reasons = [], findings = [];
-  if (row.kind !== 'theorem') return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`], findings, legs: []};
-  if (receipt === null) return {pwg: 'ungraded', reasons: ['no machine receipt in the home repository'], findings, legs: []};
-  const claim = receipt.claims.get(row.claim);
-  if (!claim) return {pwg: 'ungraded', reasons: ['claim absent from the receipt'], findings, legs: []};
-  const flags = (receipt.flags ?? '').split(/\s+/);
-  const missing = CANONICAL_FLAGS.filter(f => !flags.includes(f));
-  let pwg;
-  if (missing.length) {
-    pwg = 'ungraded';
-    reasons.push(`not under the §2.1 invocation (missing ${missing.join(' ')})`);
-  } else if (!PROVEN.has(claim.token)) {
-    pwg = 'ungraded';
-    reasons.push(`Agda token is ${claim.token}, not proven`);
-  } else {
-    // A leg counts only when its §2.2 state is RECONCILED (§8.2).
-    const counted = claim.legs.filter(l => l.state === 'RECONCILED').length;
-    pwg = counted === 0 ? '3' : counted === 1 ? '2i' : '2ii';
-    if (counted < 2) reasons.push(`${2 - counted} of the Rocq and Lean legs not RECONCILED`);
-    // PWG-1 needs a current per-commit receipt for every counted witness;
-    // this slice does not read witness receipts, so it never derives PWG-1.
+// Derive one row's grade from the reader's record of its receipt. `read` is
+// {record} when the reader accepted the receipt, {refusal} when it refused it,
+// or null when the row pins no receipt. Returns {pwg, reasons}: `reasons` say
+// why the grade is not higher.
+export function derive(row, read) {
+  if (row.kind !== 'theorem') return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`]};
+  if (read === null) return {pwg: 'ungraded', reasons: ['no machine receipt in the home repository']};
+  if (read.refusal) return {pwg: 'ungraded', reasons: [`the canon reader refuses the receipt: ${read.refusal}`]};
+  const {record} = read;
+  if (record.repository !== row.repo) {
+    return {pwg: 'ungraded', reasons: [`the receipt is for ${record.repository}, not ${row.repo}`]};
   }
-  if (claim.pwg !== null && claim.pwg !== pwg)
-    findings.push(`receipt asserts PWG ${claim.pwg}; derived ${pwg} (§8.4 drift)`);
-  if (claim.pwg === null && claim.legacyGrade !== null)
-    findings.push(`receipt uses the pre-§8 vocabulary (${claim.legacyGrade}); derived ${pwg === 'ungraded' ? 'ungraded' : 'PWG-' + pwg}`);
-  return {pwg, reasons, findings, legs: claim.legs};
+  const claim = record.claims.find(c => c.id === row.claim);
+  if (!claim) return {pwg: 'ungraded', reasons: ['claim absent from the receipt']};
+  if (!PWG.has(claim.pwg)) throw new Error(`the reader returned an unknown grade ${claim.pwg}: ${row.id}`);
+  const reasons = [];
+  if (claim.pwg !== 'PWG-1') reasons.push(`the reader derives ${claim.pwg} from the legs and receipts at \`${record.source_commit.slice(0, 12)}\``);
+  return {pwg: claim.pwg, reasons};
 }
 
 // ── Fetching receipts at their pinned commits ────────────────────────────────
 
-// Return the receipt text for a row, verified against its sha256, or null.
+// Return the receipt text for a row, verified against its sha256.
 async function loadReceipt(row, receiptsDir) {
-  if (row.receipt === null) return null;
   let text;
   if (receiptsDir) {
     text = await readFile(path.join(receiptsDir, `${row.repo.replace('/', '__')}@${row.source_commit}`, row.receipt.path), 'utf8');
@@ -152,14 +134,28 @@ async function loadReceipt(row, receiptsDir) {
   return text;
 }
 
-// Derive every row, fetching each distinct receipt once.
-export async function deriveAll(rows, receiptsDir) {
+// Derive every row, reading each distinct receipt once. A receipt that the
+// reader refuses gives `ungraded` with the reader's reason; a receipt that
+// cannot be fetched or fails its digest stops the run.
+export async function deriveAll(rows, receiptsDir, readProofReceipt) {
   const cache = new Map();
   const out = [];
   for (const row of rows) {
-    const key = row.receipt === null ? null : `${row.repo}@${row.source_commit}/${row.receipt.path}`;
-    if (key !== null && !cache.has(key)) cache.set(key, parseReceipt(await loadReceipt(row, receiptsDir)));
-    out.push({row, ...derive(row, key === null ? null : cache.get(key))});
+    let read = null;
+    if (row.receipt !== null) {
+      const key = `${row.repo}@${row.source_commit}/${row.receipt.path}`;
+      if (!cache.has(key)) {
+        const text = await loadReceipt(row, receiptsDir);
+        try {
+          cache.set(key, {record: readProofReceipt(text, path.basename(row.receipt.path))});
+        } catch (e) {
+          if (!['LintError', 'ProofReceiptError'].includes(e?.name)) throw e;
+          cache.set(key, {refusal: String(e)});
+        }
+      }
+      read = cache.get(key);
+    }
+    out.push({row, ...derive(row, read)});
   }
   return out;
 }
@@ -167,7 +163,7 @@ export async function deriveAll(rows, receiptsDir) {
 // ── Rendering ────────────────────────────────────────────────────────────────
 
 const cell = s => String(s).replaceAll('|', String.raw`\|`).replaceAll('\n', ' ');
-const label = p => (p === 'ungraded' ? '`ungraded`' : `\`PWG-${p}\``);
+const label = p => `\`${p}\``;
 
 // Render the derived registry as AsciiDoc: a census line (§8.4.7: counts per
 // grade with the denominator, never a percentage), then one row per claim.
@@ -175,7 +171,7 @@ export function render(derived) {
   for (const d of derived) if (!PWG.has(d.pwg)) throw new Error(`internal: bad pwg ${d.pwg}`);
   const theorems = derived.filter(d => d.row.kind === 'theorem');
   const count = p => theorems.filter(d => d.pwg === p).length;
-  const census = ['1', '2ii', '2i', '3'].map(p => `${count(p)} at \`PWG-${p}\``).join(', ') + `, ${count('ungraded')} \`ungraded\`, of ${theorems.length} theorems`;
+  const census = ['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3'].map(p => `${count(p)} at \`${p}\``).join(', ') + `, ${count('ungraded')} \`ungraded\`, of ${theorems.length} theorems`;
   const ordered = [...derived].sort((a, b) => (a.row.repo + '#' + a.row.claim).localeCompare(b.row.repo + '#' + b.row.claim, 'en', {numeric: true}));
   const out = [
     '// SPDX-License-Identifier: CC-BY-SA-4.0',
@@ -184,16 +180,17 @@ export function render(derived) {
     '= Claims registry (pilot slice)',
     '',
     'Each row is a claim in its home repository at a pinned commit. The grade is',
-    '*derived* here from that repository\'s receipt by PROOF-POLICY §8.2, never',
+    '*derived* here from that repository\'s receipt by the canon reader of',
+    `PROOF-POLICY §8.5.1 (\`${READER.repository}\` at \`${READER.commit.slice(0, 12)}\`), never`,
     'assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still',
-    'owe their Rocq and Lean legs. Status of this slice: proposed in',
-    'link:../decisions/0004-claims-registry.adoc[ADR 0004], not ratified.',
+    'owe their Rocq and Lean legs. Status of this slice: accepted in',
+    'link:../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.',
     '',
     `Census: ${census}. ${derived.length - theorems.length} demonstrations and assumptions are listed and not graded.`,
     '',
     '[cols="2,1,1,4,3",options="header"]',
     '|===',
-    '|Claim |Kind |PWG |Statement (home repository\'s wording) |Why not higher; findings',
+    '|Claim |Kind |PWG |Statement (home repository\'s wording) |Why not higher',
     '',
   ];
   for (const d of ordered) {
@@ -201,7 +198,7 @@ export function render(derived) {
     const link = `https://github.com/${r.repo}/blob/${r.source_commit}/${r.status_doc}[${r.repo}#${r.claim}]`;
     const at = `at \`${r.source_commit.slice(0, 12)}\``;
     const names = r.agda ? ` (\`${cell(r.agda.module)}\`: ${r.agda.names.map(n => '`' + cell(n) + '`').join(', ')})` : '';
-    const notes = [...d.reasons, ...d.findings.map(f => `*Finding:* ${f}`)].map(cell).join('; ') || '—';
+    const notes = d.reasons.map(cell).join('; ') || '—';
     out.push(`|${link} ${at} |${r.kind} |${label(d.pwg)} |${cell(r.statement)}${names} |${notes}`, '');
   }
   out.push('|===', '');
@@ -212,24 +209,23 @@ export function render(derived) {
 
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
+  if (cmd !== 'build' && cmd !== 'check') {
+    console.error('usage: claims-registry.mjs build|check [--receipts-dir DIR]');
+    process.exit(2);
+  }
   const i = args.indexOf('--receipts-dir');
   const receiptsDir = i >= 0 ? path.resolve(args[i + 1]) : null;
   const rows = validate(JSON.parse(await readFile(claimsFile, 'utf8')), await readJsonl(reposFile));
-  const derived = await deriveAll(rows, receiptsDir);
-  const drift = derived.flatMap(d => d.findings.filter(f => f.includes('§8.4 drift')).map(f => `${d.row.id}: ${f}`));
-  if (drift.length) throw new Error('a receipt asserts a grade its evidence does not support:\n  ' + drift.join('\n  '));
+  const derived = await deriveAll(rows, receiptsDir, await loadReader());
   const view = render(derived);
   if (cmd === 'build') {
     await mkdir(path.dirname(viewFile), {recursive: true});
     await writeFile(viewFile, view);
     console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims)`);
-  } else if (cmd === 'check') {
+  } else {
     const committed = await readFile(viewFile, 'utf8').catch(() => '');
     if (committed !== view) throw new Error(`${path.relative(root, viewFile)} is stale; run: bun scripts/registry/claims-registry.mjs build`);
     console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); view matches (${rows.length} claims)`);
-  } else {
-    console.error('usage: claims-registry.mjs build|check [--receipts-dir DIR]');
-    process.exit(2);
   }
 }
 

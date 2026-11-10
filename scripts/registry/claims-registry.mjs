@@ -23,10 +23,11 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {readJsonl} from '../atlas/census-atlas.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/registry/claims.json');
-const reposFile = path.join(root, 'docs/catalogue/census/repos.json');
+const reposFile = path.join(root, 'docs/catalogue/census/repos.jsonl');
 const viewFile = path.join(root, 'docs/registry/registry.adoc');
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
@@ -213,7 +214,7 @@ async function main() {
   const [cmd, ...args] = process.argv.slice(2);
   const i = args.indexOf('--receipts-dir');
   const receiptsDir = i >= 0 ? path.resolve(args[i + 1]) : null;
-  const rows = validate(JSON.parse(await readFile(claimsFile, 'utf8')), JSON.parse(await readFile(reposFile, 'utf8')));
+  const rows = validate(JSON.parse(await readFile(claimsFile, 'utf8')), await readJsonl(reposFile));
   const derived = await deriveAll(rows, receiptsDir);
   const drift = derived.flatMap(d => d.findings.filter(f => f.includes('§8.4 drift')).map(f => `${d.row.id}: ${f}`));
   if (drift.length) throw new Error('a receipt asserts a grade its evidence does not support:\n  ' + drift.join('\n  '));

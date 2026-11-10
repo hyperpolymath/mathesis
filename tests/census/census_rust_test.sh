@@ -135,7 +135,7 @@ jq -r '.path' "$o.status.jsonl" | grep -qx 'crates/CREUSOT-PROOF-DEBT.tsv' \
 : > "$data/repos.jsonl"; echo fixture/rusty > "$data/census-list.txt"
 MATHESIS_DATA=$data bash "$census/summarise.sh" >/dev/null
 : > "$work/template-paths.txt"
-row=$(bash "$census/build-rows.sh" "$data" "$work/template-paths.txt" | jq -c '.[0]')
+row=$(bash "$census/build-rows.sh" "$data" "$work/template-paths.txt" | head -n 1)
 [ "$(jq -r .provers <<<"$row")" = "creusot 1, verus 1" ] || fail "provers: $row"
 [ "$(jq -r .class <<<"$row")" = "engineering" ] || fail "class: $row"
 [ "$(jq -r .declarations <<<"$row")" = "5" ] || fail "declarations: $row"
@@ -153,7 +153,7 @@ printf '%s\n' \
   '{"path":"PROOF-NEEDS.adoc","repo":"x/nested"}' \
   '{"path":"ecosystem/sub/PROOF-STATUS.adoc","repo":"x/nested"}' \
   > "$raw/repos-with-status.jsonl"
-doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | jq -r '.[0].status_doc')
+doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | head -n 1 | jq -r .status_doc)
 [ "$doc" = "PROOF-NEEDS.adoc" ] || fail "nested status page won over the top-level needs list: $doc"
 
 # A repository's own one-level layout (standards keeps its needs list in
@@ -163,7 +163,7 @@ printf '%s\n' \
   '{"path":"3-practice/PROOF-NEEDS.adoc","repo":"x/nested"}' \
   '{"path":"crates/sub/proof-debt.adoc","repo":"x/nested"}' \
   > "$raw/repos-with-status.jsonl"
-doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | jq -r '.[0].status_doc')
+doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | head -n 1 | jq -r .status_doc)
 [ "$doc" = "3-practice/PROOF-NEEDS.adoc" ] || fail "a one-level needs list lost to a nested debt ledger: $doc"
 
 echo "census_rust_test: ok (Creusot and Verus files, contracts, escapes and the status page all found)"

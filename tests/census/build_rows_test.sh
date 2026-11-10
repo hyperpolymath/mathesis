@@ -35,7 +35,7 @@ EOF
 : > "$R/repos-with-status.jsonl"
 
 out=$(bash "$build" "$R" "$T/template.tsv")
-row() { jq -c --arg r "$1" '.[] | select(.repo == $r)' <<<"$out"; }
+row() { jq -c --arg r "$1" 'select(.repo == $r)' <<<"$out"; }
 check "customised Types.idr is own (2 own files)" [ "$(row x/custom | jq .own_files)" = 2 ]
 check "customised repo provers" [ "$(row x/custom | jq -r .provers)" = "agda 1, idris2 1" ]
 check "hole in the customised file counts, the boilerplate one does not" [ "$(row x/custom | jq .holes)" = 1 ]

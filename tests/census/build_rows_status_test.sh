@@ -32,7 +32,7 @@ J
 rows=$(bash "$ROOT/scripts/census/build-rows.sh" "$raw" "$raw/template.txt")
 doc() {
   local repo="$1"
-  jq -r --arg r "$repo" '.[] | select(.repo == $r) | .status_doc' <<< "$rows"
+  jq -r --arg r "$repo" 'select(.repo == $r) | .status_doc' <<< "$rows"
 }
 fail=0
 expect() {

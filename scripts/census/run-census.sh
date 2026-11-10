@@ -4,8 +4,8 @@
 #
 # Usage: run-census.sh [REPO_LIST]
 #   REPO_LIST: one OWNER/REPO per line. Default: every non-fork repo in
-#   docs/catalogue/census/repos.json, plus the forks named in
-#   docs/catalogue/census/forks-with-own-proofs.txt. Refresh repos.json
+#   docs/catalogue/census/repos.jsonl, plus the forks named in
+#   docs/catalogue/census/forks-with-own-proofs.txt. Refresh repos.jsonl
 #   first when repos are added; the GitHub listing is not scriptable from
 #   agent sessions, so it is an input. To refresh only some rows, use
 #   update-rows.sh.
@@ -18,7 +18,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 census=$here/../../docs/catalogue/census
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
-jq -c '.[]' "$census/repos.json" > "$work/repos.jsonl"
+cp "$census/repos.jsonl" "$work/repos.jsonl"
 if [ -n "${1:-}" ]; then
   cp "$1" "$work/census-list.txt"
 else
@@ -31,7 +31,7 @@ while IFS= read -r repo; do
   [ -n "$repo" ] && MATHESIS_DATA=$work bash "$here/census-repo.sh" "$repo" || true
 done < "$list"
 MATHESIS_DATA=$work bash "$here/summarise.sh"
-jq -cS -s . "$work/unreachable.jsonl" > "$census/unreachable.json"
-bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$census/catalogue-rows.json"
+jq -cS -s 'sort_by(.repo)[]' "$work/unreachable.jsonl" > "$census/unreachable.jsonl"
+bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$census/catalogue-rows.jsonl"
 bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
 echo "raw census kept in $work"

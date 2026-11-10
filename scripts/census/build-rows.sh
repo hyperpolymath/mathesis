@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fold the raw, path-level census into one row per repository.
 #
-# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.json
+# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.jsonl
 #   RAW_DIR   files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl
 #             (written by census-repo.sh + summarise.sh; not committed)
 #   TEMPLATE  template-blobs.tsv: "path<TAB>blob" for every blob the RSR
@@ -13,6 +13,10 @@
 #             works, and so do raw rows without a blob: both fall back to
 #             matching by path alone. The template repository itself
 #             (hyperpolymath/rsr-template-repo) owns its files.
+#
+# The output is JSON Lines (standards JSON-POLICY J-2): one JCS record for each
+# repository, in byte order of the repository name. A change to one row then
+# changes one line only.
 #
 # Rows carry counts only, never file paths, so the committed data neither
 # grows with the estate's file trees nor repeats other repositories' paths.
@@ -88,9 +92,8 @@ awk -F'\t' '
         (r in st) ? st[r] : ""
     }
   }' "$tmp/holes.tsv" "$tmp/decls.tsv" "$tmp/status.tsv" "$tmp/cls.tsv" \
-| sort -t$'\t' -k2,2 \
+| LC_ALL=C sort -t$'\t' -k2,2 \
 | jq -RcS 'split("\t") | {class:.[0], repo:.[1], own_files:(.[2]|tonumber),
     fixture_files:(.[3]|tonumber), provers:.[4], declarations:(.[5]|tonumber),
     holes:(.[6]|tonumber), axioms:(.[7]|tonumber), unsafe:(.[8]|tonumber),
-    policy:(.[9]|tonumber), status_doc:.[10]}' \
-| jq -cS -s .
+    policy:(.[9]|tonumber), status_doc:.[10]}'

@@ -53,7 +53,7 @@ and the tests prove each failure.
 
 |`id` |`<owner>/<repo>#<claim>`; unique.
 |`repo` |The home repository. It must be `public` in
-`docs/catalogue/census/repos.json`: the registry never names a private
+`docs/catalogue/census/repos.jsonl`: the registry never names a private
 repository, so it cannot leak one (brief §7).
 |`claim` |The claim's id in the home repository's proof-status file (`N-7`, `L-6`).
 |`kind` |`theorem` (graded, §8.1), `demonstration` (a TESTED example) or `assumption`

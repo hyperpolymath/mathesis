@@ -65,7 +65,7 @@ for class in hole axiom unsafe policy; do
 done
 
 run_rows() {
-  bash "$repo/scripts/census/build-rows.sh" "$work" "$work/templates.txt" > "$work/actual.json"
+  bash "$repo/scripts/census/build-rows.sh" "$work" "$work/templates.txt" | jq -cs . > "$work/actual.json"
 }
 run_rows
 jq -sS 'sort_by(.repo)' "$work/expected.jsonl" > "$work/expected.json"

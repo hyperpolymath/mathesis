@@ -550,8 +550,8 @@ session):
 * hyperpolymath/claude-memory
 * hyperpolymath/contractiles-a2-lab
 * hyperpolymath/cut-calculus
-* hyperpolymath/dev-notes-vault
 * hyperpolymath/dev-notes
+* hyperpolymath/dev-notes-vault
 * hyperpolymath/dotfiles
 * hyperpolymath/echobox
 * hyperpolymath/email-octad-experiment

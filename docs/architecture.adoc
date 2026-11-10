@@ -10,10 +10,10 @@ Mathesis is the estate's mathematical source-discovery and proof-orientation ind
 
 [source,text]
 ----
-Repository census input (docs/catalogue/census/repos.json)
+Repository census input (docs/catalogue/census/repos.jsonl)
   -> scripts/census/ (source and prover-file discovery)
   -> corpus counts, holes/unsafe candidates, reachability observations
-  -> docs/catalogue/census/catalogue-rows.json
+  -> docs/catalogue/census/catalogue-rows.jsonl
   -> generated docs/catalogue/catalogue.adoc
   -> scripts/atlas/census-atlas.mjs
   -> docs/atlas/generated/ (A-Z, class, owner; index.json)

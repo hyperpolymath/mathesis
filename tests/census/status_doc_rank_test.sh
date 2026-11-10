@@ -32,7 +32,7 @@ echo "PASS: build-rows.sh ranks PROOF-STATUS, then proof-debt, then PROOF-NEEDS"
 # A listed template path still counts as boilerplate: with every proof file
 # on the list, no repository has own files, so there are no rows.
 echo "src/X.agda" > "$raw/template.txt"
-if [ "$(bash scripts/census/build-rows.sh "$raw" "$raw/template.txt")" != "" ]; then
+if [[ -n "$(bash scripts/census/build-rows.sh "$raw" "$raw/template.txt")" ]]; then
   echo "FAIL: template paths were counted as own files" >&2
   exit 1
 fi

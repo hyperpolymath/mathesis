@@ -37,7 +37,7 @@ EOF
 # Provenance fixture: one meta record per repository (census-repo.sh writes it).
 jq -cS '{repo, commit: "0123456789abcdef0123456789abcdef01234567", censused_at: "2026-11-10T00:00:00Z"}' "$R/files.jsonl" | sort -u > "$R/meta.jsonl"
 out=$(bash "$build" "$R" "$T/template.tsv")
-row() { jq -c --arg r "$1" 'select(.repo == $r)' <<<"$out"; }
+row() { local repo=$1; jq -c --arg r "$repo" 'select(.repo == $r)' <<<"$out"; }
 check "customised Types.idr is own (2 own files)" [ "$(row x/custom | jq .own_files)" = 2 ]
 check "customised repo provers" [ "$(row x/custom | jq -r .provers)" = "agda 1, idris2 1" ]
 check "hole in the customised file counts, the boilerplate one does not" [ "$(row x/custom | jq .holes)" = 1 ]

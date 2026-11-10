@@ -76,7 +76,7 @@ test('the grade is the one the reader derives (§8.2)', () => {
   expect(two.pwg).toBe('PWG-2ii');
   expect(two.reasons.join()).toContain('the reader derives PWG-2ii');
   const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'})));
-  expect(one).toEqual({pwg: 'PWG-1', reasons: []});
+  expect(one).toEqual({pwg: 'PWG-1', reasons: [], evidence: commit});
 });
 
 test('a receipt the reader refuses is ungraded, with the reader\'s reason', () => {
@@ -118,4 +118,11 @@ test('the view is a census with its denominator, never a percentage, and is dete
   expect(v).toContain('1 `ungraded`, of 2 theorems');
   expect(v).not.toMatch(/\d+(\.\d+)?\s*%/);
   expect(render([...ds].reverse())).toEqual(v);
+});
+
+test('a row names the commit that its receipt describes when it differs from the pin', () => {
+  const at = 'c'.repeat(40);
+  const v = render([{row: {...theorem, source_commit: at}, pwg: 'PWG-1', reasons: [], evidence: commit}]);
+  expect(v).toContain(`at \`${at.slice(0, 12)}\`; the receipt describes \`${commit.slice(0, 12)}\``);
+  expect(render([{row: theorem, pwg: 'PWG-1', reasons: [], evidence: commit}])).not.toContain('the receipt describes');
 });

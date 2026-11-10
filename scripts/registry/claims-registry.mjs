@@ -98,8 +98,9 @@ export async function loadReader(standardsDir = process.env.MATHESIS_STANDARDS) 
 
 // Derive one row's grade from the reader's record of its receipt. `read` is
 // {record} when the reader accepted the receipt, {refusal} when it refused it,
-// or null when the row pins no receipt. Returns {pwg, reasons}: `reasons` say
-// why the grade is not higher.
+// or null when the row pins no receipt. Returns {pwg, reasons, evidence}: `reasons` say
+// why the grade is not higher, and `evidence` is the commit that the receipt
+// describes (its :source-commit), which can differ from the commit that holds it.
 export function derive(row, read) {
   if (row.kind !== 'theorem') return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`]};
   if (read === null) return {pwg: 'ungraded', reasons: ['no machine receipt in the home repository']};
@@ -113,7 +114,7 @@ export function derive(row, read) {
   if (!PWG.has(claim.pwg)) throw new Error(`the reader returned an unknown grade ${claim.pwg}: ${row.id}`);
   const reasons = [];
   if (claim.pwg !== 'PWG-1') reasons.push(`the reader derives ${claim.pwg} from the legs and receipts at \`${record.source_commit.slice(0, 12)}\``);
-  return {pwg: claim.pwg, reasons};
+  return {pwg: claim.pwg, reasons, evidence: record.source_commit};
 }
 
 // ── Fetching receipts at their pinned commits ────────────────────────────────
@@ -196,7 +197,7 @@ export function render(derived) {
   for (const d of ordered) {
     const r = d.row;
     const link = `https://github.com/${r.repo}/blob/${r.source_commit}/${r.status_doc}[${r.repo}#${r.claim}]`;
-    const at = `at \`${r.source_commit.slice(0, 12)}\``;
+    const at = `at \`${r.source_commit.slice(0, 12)}\`` + (d.evidence && d.evidence !== r.source_commit ? `; the receipt describes \`${d.evidence.slice(0, 12)}\`` : '');
     const names = r.agda ? ` (\`${cell(r.agda.module)}\`: ${r.agda.names.map(n => '`' + cell(n) + '`').join(', ')})` : '';
     const notes = d.reasons.map(cell).join('; ') || '—';
     out.push(`|${link} ${at} |${r.kind} |${label(d.pwg)} |${cell(r.statement)}${names} |${notes}`, '');

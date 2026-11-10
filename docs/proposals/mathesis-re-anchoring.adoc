@@ -6,10 +6,11 @@
 :sectnums:
 :icons: font
 
-Status: *proposed, not ratified* (2026-11-10). This document changes no gate,
-schema, deed clause or data file. Each change in it needs the owner's ruling,
-and each ruling goes through the selector. The work orders in <<work-orders>>
-are written for a later implementation session.
+Status: *proposed* (2026-11-10). The owner ruled on six of its eight
+decisions on 2026-11-10, through the selector (<<decisions>>). This document
+changes no gate, schema, deed clause or data file. Each change that a ruling
+does not cover still needs one. The work orders in <<work-orders>> are
+written for a later implementation session.
 
 The companion document is
 link:mathesis-research-programme.adoc[the research programme]. This document
@@ -852,7 +853,7 @@ table to the owner. Rebase the kept changes in this order: scanner fixes,
 one refresh tool, the frame fix. Close a pull request only on the owner's
 word. +
 *Check:* each open pull request merges cleanly, one at a time. +
-*Needs ruling:* yes (D-6).
+*Ruling:* D-6 (a), 2026-11-10. The owner approves each row before the session acts.
 
 [[wo-0-2]]WO 0.2 Name one writer for census data::
 *Goal:* two sessions cannot refresh rows at the same time. +
@@ -930,7 +931,7 @@ tests, recipes, the workflow step and the README. Leave a pointer file at
 each old path that another repository cites. Run `just repo-map`. +
 *Check:* each generated view is byte-identical to the view before the move,
 apart from its own path strings. +
-*Needs ruling:* yes (D-4).
+*Ruling:* D-4 (a), 2026-11-10.
 
 [[wo-2-4]]WO 2.4 Generate the bridge view::
 *Steps:* For each hand-written row in the reconciliation register, find the
@@ -955,7 +956,7 @@ set `(manifest :project)` to `mathesis`, and correct `(meta)`, `(anchor)`,
 and `just coapt`. +
 *Check:* the canon deed validator, `just validate-state`,
 `just validate-claude-md` and `just validate-coapt` pass. +
-*Needs ruling:* yes (D-1).
+*Ruling:* D-1 (a), 2026-11-10. The owner still reviews the clause text before it lands.
 
 [[wo-3-2]]WO 3.2 Declare the capabilities and remove vestigial modules::
 *Steps:* Declare `agda`, `formal-proofs`, `bash`, `docs-site`,
@@ -966,7 +967,7 @@ template for the `validate-rsr` conflict of <<f-4>>. Record each local
 divergence in `(variant (paths :diverged))` until the template fix lands. +
 *Check:* `check-rsr-profile.sh` passes for the gated modules, and
 `just validate-rsr` passes. +
-*Needs ruling:* yes (D-3).
+*Ruling:* D-3 (a), 2026-11-10.
 
 [[wo-3-3]]WO 3.3 State the Mathesis contracts::
 *Steps:* Add Mathesis clauses to the contractiles. Remove a template clause
@@ -997,8 +998,16 @@ D-10 ruling there. Write the true obligations into `PROOF-NEEDS.adoc`. Fill
 result that this session did not observe.
 
 [[wo-3-5]]WO 3.5 Stop the publication of private names::
-*Steps:* Apply the owner's ruling. +
-*Needs ruling:* yes (D-2).
+*Ruling:* D-2 (a), 2026-11-10. Counts only. The history stays as it is. +
+*Steps:* Keep only public repositories in the frame file. Record the count
+of private repositories as one number, with the date of the listing. Remove
+the private names from the unreachable list. Print the count in the "Not
+reached" section of the catalogue. Remove the private name from
+`README.adoc`. Extend the visibility check of the atlas to the frame file. +
+*Check:* a frame record or a row whose visibility is not `public` fails the
+gate. No tracked file at `HEAD` holds a name from the old private list. +
+*Note:* do not rewrite the history (<<no-rewrite>>). If one name is
+sensitive, the owner renames that private repository.
 
 [[wo-3-6]]WO 3.6 Affirm::
 *Steps:* When stages 0 to 3 are done, fill `docs/AFFIRMATION.adoc` at one
@@ -1043,7 +1052,7 @@ receipt lands.
 
 [[wo-5-2]]WO 5.2 Pilot the bridge lock::
 Build the mechanism of <<centre>> for one relation that crosses repositories.
-*Needs ruling:* yes (D-7).
+*Ruling:* D-7 (a), 2026-11-10.
 
 [[wo-5-3]]WO 5.3 Schedule the census::
 Run the census in one scheduled workflow that opens one pull request. This
@@ -1060,33 +1069,64 @@ Each decision lists its arms with the most elegant and correct long-term arm
 first. The recommended arm is marked where it differs. The plan above assumes
 arm (a) in each case.
 
+The owner ruled on six decisions through the selector on 2026-11-10. D-5 and
+D-8 are open.
+
 . *D-1 Identity.* (a) The three shelves with the evidence spine, as in
   <<identity>>. (b) An index only, with the theory and the applied area moved
   to other repositories. (c) An evidence system only, with the applied area
-  moved out.
+  moved out. *Ruled 2026-11-10: (a).*
 . *D-2 Private repository names.* (a) Publish counts only, remove the names
   from the tracked files, and keep the history as it is. (b) The same, and
   also rewrite the history, which breaks each clone and mirror. (c) Rule that
-  the names are public, and amend the invariant.
+  the names are public, and amend the invariant. *Ruled 2026-11-10: (a).*
+  <<no-rewrite>> gives the reason against a rewrite.
 . *D-3 Template material.* (a) Declare capabilities, remove the vestigial
   modules by the canon route, and fix the gate conflict in the template.
   (b) Keep each file, and record the ownership boundary only. (c) Remove all
   unused template material at once, which breaks template conformance.
+  *Ruled 2026-11-10: (a).*
 . *D-4 Paths.* (a) Consolidate the pipeline under `docs/atlas/`. (b) Keep the
-  paths and change the content only.
+  paths and change the content only. *Ruled 2026-11-10: (a).*
 . *D-5 Overlapping proposals.* (a) Amend ADR 0004 to use the canon reader,
   and ratify it. Mark `proof-receipts-as-data.adoc` as settled in part by
   PROOF-POLICY §8.5.1, and keep its experiments E1 to E6. Close issue 28 with
-  a pointer. (b) Keep the three open.
+  a pointer. (b) Keep the three open. *Open.*
 . *D-6 Open pull requests.* (a) The implementation session completes the
   triage table and the owner approves each row. (b) The owner triages alone.
   (c) Merge all 17 in order and resolve each conflict.
+  *Ruled 2026-11-10: (a).*
 . *D-7 Bridge centre.* (a) The lock with slices, as in <<centre>>.
   (b) No centre: each relation lives in one named home, and Mathesis derives
   the view. (c) Defer until the registry covers ten repositories.
+  *Ruled 2026-11-10: (a).*
 . *D-8 Proof toolchains.* (a) Pin Agda, Rocq and Lean in the Guix manifest.
   (b) Install from release archives with `deviation` records now, and move
   to Guix later. Recommended: (b), because it closes the hole this week.
+  *Open.*
+
+The companion programme records two more rulings of the same day: the token
+theory starts with the chain of PROOF-POLICY §5 and imports the
+`resource-algebra` kernel. The order is provisional until experiment X-PF1
+has a result.
+
+[[no-rewrite]]
+=== Why the history is not rewritten
+
+A rewrite of the history would add little and cost much.
+
+* It cannot remove the names from public view. They have been public since
+  2026-10-26. They are in each mirror, in each clone and in the pull request
+  refs, which a force-push does not remove.
+* The public standards repository names at least one of the same private
+  repositories.
+* It changes each commit identifier. Other repositories cite Mathesis by
+  commit, and the THY-1 record in `PROOF-STATUS.adoc` cites two source
+  commits. Those citations would point at nothing.
+* It breaks each clone, each mirror and each open pull request.
+
+If one name is sensitive, the effective remedy is to rename that private
+repository. The published name then points at nothing.
 
 == What this plan does not do
 

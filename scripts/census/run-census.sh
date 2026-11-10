@@ -4,9 +4,11 @@
 #
 # Usage: run-census.sh [REPO_LIST]
 #   REPO_LIST: one OWNER/REPO per line. Default: every non-fork repo in
-#   docs/catalogue/census/repos.json. Refresh that file first when repos are
-#   added; the GitHub listing is not scriptable from agent sessions, so it is
-#   an input.
+#   docs/catalogue/census/repos.json, plus the forks named in
+#   docs/catalogue/census/forks-with-own-proofs.txt. Refresh repos.json
+#   first when repos are added; the GitHub listing is not scriptable from
+#   agent sessions, so it is an input. To refresh only some rows, use
+#   update-rows.sh.
 #
 # Raw, path-level output (clones, per-file rows, summary.md) goes to
 # MATHESIS_WORK (default: a fresh temporary directory) and is not committed.
@@ -21,6 +23,7 @@ if [ -n "${1:-}" ]; then
   cp "$1" "$work/census-list.txt"
 else
   jq -r 'select(.fork|not) | .full_name | select(test("/awesome-")|not)' "$work/repos.jsonl" > "$work/census-list.txt"
+  grep -vE '^[[:space:]]*(#|$)' "$census/forks-with-own-proofs.txt" >> "$work/census-list.txt" || true
 fi
 list=$work/census-list.txt
 rm -rf "$work/out"

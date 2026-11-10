@@ -1,0 +1,149 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Architecture Decision Record: 0004-claims-registry
+
+== 4. A theorem-level claims registry that derives grades and never assigns them
+
+Date: 2026-11-09
+
+=== Status
+
+*Proposed — awaiting owner ratification.* Nothing here is estate policy until
+the owner rules on it. Ratification is the owner's merge of the pull request
+that introduces this file, with this Status changed to `Accepted (ratified by
+owner <date>)` in the same change. Until then the registry view
+(`docs/registry/registry.adoc`) says on its face that the slice is proposed.
+
+=== Context
+
+The atlas (`docs/atlas/README.adoc`) stops at repository-level counts and says
+so: "The next slice requires a separately reviewed, source-anchored claims
+registry." The architecture brief
+(`docs/proposals/estate-mathematical-architecture.adoc`) names that slice as
+Stage 1 (schema decision) and Stage 4 (proof-level indexing), with `registry/`
+and `schemas/` directories; its proof grades were adopted, corrected, as
+`PROOF-POLICY.adoc` §8 (owner ruling 2026-11-04), which binds what a registry
+may say:
+
+* §8.4: grades are *derived*, not asserted; a hand-written grade the receipts
+  do not support is drift; a census, never a percentage.
+* §8.5: each theorem's grade is recorded in its *home repository*; "Mathesis
+  may catalogue grades. It derives them from those receipts and does not assign
+  them."
+* `docs/standards/AUTHORITY.adoc` (this repository): pin claims to source
+  commits, checker versions, assumptions and receipts; never infer a missing
+  field from a green badge; proof receipts stay in their home repositories.
+
+So the registry's job is narrow: point at a claim in its home repository at an
+exact commit, fetch that repository's own machine receipt, recompute the grade
+by §8.2, and report disagreements. It is a checker of home-repository claims,
+not a second ledger.
+
+=== Decision
+
+==== Record (the schema)
+
+`docs/registry/claims.json` is one I-JSON/JCS array. Each record has exactly
+these fields; `scripts/registry/claims-registry.mjs` `validate` enforces them
+and the tests prove each failure.
+
+[cols="1,3",options="header"]
+|===
+|Field |Meaning
+
+|`id` |`<owner>/<repo>#<claim>`; unique.
+|`repo` |The home repository. It must be `public` in
+`docs/catalogue/census/repos.json`: the registry never names a private
+repository, so it cannot leak one (brief §7).
+|`claim` |The claim's id in the home repository's proof-status file (`N-7`, `L-6`).
+|`kind` |`theorem` (graded, §8.1), `demonstration` (a TESTED example) or `assumption`
+(an ASSUMED hypothesis). Only theorems are graded.
+|`statement` |The statement in the home repository's own wording. Mathesis
+does not restate mathematics.
+|`status_doc` |The home repository's proof-status file.
+|`agda` |For a theorem: `{module, names}`, the Agda source of truth (§1). `null`
+otherwise.
+|`source_commit` |The full 40-character commit the record describes.
+|`receipt` |`{path, sha256}` of the home repository's machine receipt at that
+commit, or `null` when it has none.
+|===
+
+A record holds *no grade, token, leg or flag*. Those are read from the receipt.
+
+==== Derivation (PROOF-POLICY §8.1–§8.2)
+
+For each record, the tool fetches the receipt at `source_commit`, refuses it
+if its sha256 differs from the pinned digest, and derives:
+
+. not a theorem → `ungraded` (§8.1);
+. no receipt, or the claim absent from it → `ungraded`;
+. the receipt's flags lack any of `--safe --without-K --cubical-compatible` →
+  `ungraded` (§2.1 is a condition of `PWG-3`);
+. the Agda token is not `proven` or `proven-with-postulates` → `ungraded`;
+. otherwise `PWG-3`, `PWG-2i` or `PWG-2ii` by the number of legs whose §2.2
+  state is `RECONCILED`. A leg's route never counts on its own.
+
+`PWG-1` is never derived in this slice: it needs a current receipt for every
+counted witness, and the slice reads only the Agda-side receipt.
+
+Two kinds of disagreement are reported. A receipt that asserts a `:pwg` its
+evidence does not support is *drift* (§8.4) and fails the check. A receipt that
+still uses the pre-§8 vocabulary (`:grade "grade-3"`) is a visible *finding*,
+not a failure: the vocabulary changed after the receipt was written.
+
+==== View, gate and tooling
+
+* `docs/registry/registry.adoc` is generated (`just registry`) and checked
+  (`just registry-check`, and CI `proven-tests.yml`): stale view, digest
+  mismatch, or drift fails. The view opens with a §8.4.7 census line.
+* The tool is Bun, beside the atlas (`scripts/atlas/census-atlas.mjs`), with
+  hermetic tests (`tests/registry/claims-registry.test.mjs`, `--receipts-dir`
+  fixtures): the ladder, each withheld reason, drift versus legacy finding,
+  digest refusal, validation failures, and "never a percentage".
+* Receipts are fetched from `raw.githubusercontent.com` at the pinned commit,
+  never vendored (AUTHORITY: receipts stay home).
+
+==== Pilot rows
+
+Seventeen claims from the two repositories whose proofs this work audited:
+`hyperpolymath/secret-types` (N-1 to N-9) and `metadatastician/lintel` (L-1 to
+L-7, A-1), each pinned at its `main` of 2026-11-09. At those commits the
+derivation gives *0 of 12 theorems graded*, and says why:
+
+* secret-types `eee4e40`: the receipt records the flag set without
+  `--cubical-compatible` (waiver W-1), and uses the pre-§8 "grade-3" wording.
+  hyperpolymath/secret-types#32 puts the flag in force and writes the §8.5
+  receipt; once it merges, bumping the pin should derive `PWG-3`.
+* Lintel `a0f2bae`: no machine receipt exists in the repository.
+
+That the pilot reports zero is the point: it is what the evidence supports today.
+
+=== Alternatives considered
+
+* *Store grades in the registry.* Rejected: §8.4 and §8.5 forbid assigning
+  them, and a stored grade drifts silently when the home repository moves.
+* *Vendor receipts into Mathesis.* Rejected: AUTHORITY keeps receipts home;
+  a pinned digest gives the same tamper-evidence without a copy.
+* *A JSON Schema file validated by a library.* Deferred: it adds a pinned npm
+  dependency for checks the 40-line `validate` already makes and tests. A
+  schema file can be generated from `validate` later if a consumer needs one.
+* *A ruling in `standards` first.* Possible, slower: the registry's authority
+  would sit beside PROOF-POLICY §8.5. Chosen instead: ratify here, because the
+  registry only *reads* the policy and adds no rule to it.
+
+=== Consequences
+
+* Mathesis can answer "which theorems, at which grade, why not higher" for the
+  piloted repositories, with every answer traceable to a commit and a digest.
+* A home repository whose receipt overstates its grade turns this repository's
+  CI red. That is intended (§8.4.2: "a gate or a bot may recompute it at any
+  time and reports the computed value").
+* The census rows and the atlas are unchanged; the registry sits beside them.
+* After ratification, in order:
+  . Lintel: move its real ledger into `docs/status/PROOF-STATUS.adoc`, retire
+    the template boilerplate, adopt the §2.1 invocation and add a receipt;
+  . `scripts/census/build-rows.sh`: prefer `PROOF-STATUS` over `PROOF-NEEDS`
+    when choosing a repository's status document, then refresh the two rows;
+  . list both repositories as the first §2 reconciliation pilot in
+    `docs/status/CROSS-PROVER-RECONCILIATION.adoc`;
+  . bump the pilot pins as those changes land.

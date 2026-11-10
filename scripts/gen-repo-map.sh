@@ -80,10 +80,19 @@ done < "$ALLOW"
 # julia-library/ child is real content. (The ply manifests that once padded
 # these counts were folded into the repo deed — standards#837 pilot.)
 declared_only() {
-    local d="$1" n
-    n=$(repo_files "$d" | awk -F/ '{print $NF}' \
-        | grep -vxE 'README\.adoc|\.gitkeep' | wc -l)
-    [ "$n" -eq 0 ]
+    local d="$1" f
+    while IFS= read -r f; do
+        case "${f##*/}" in
+            .gitkeep) ;;
+            README.adoc)
+                # A stub has only a title, comments, attributes and blank lines.
+                if grep -qEv '^[[:space:]]*$|^//|^= |^:[^:]+:' "$f"; then
+                    return 1
+                fi ;;
+            *) return 1 ;;
+        esac
+    done < <(repo_files "$d")
+    return 0
 }
 
 {
@@ -120,8 +129,8 @@ declared_only() {
   echo
   echo "== Declared structure not yet filled"
   echo
-  echo "These directories currently hold only a stub \`README.adoc\` and a level"
-  echo "manifest. That is deliberate. They declare the shape a repository minted"
+  echo "These directories currently hold only a stub \`README.adoc\` or \`.gitkeep\`."
+  echo "That is deliberate. They declare the shape a repository minted"
   echo "from this template is expected to grow into; they are *intended"
   echo "structure, not abandoned work*. Add content, or delete the directory in"
   echo "your own repo - but do not read their emptiness as neglect here."

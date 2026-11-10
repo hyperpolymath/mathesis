@@ -9,7 +9,8 @@
 # it. Its row in catalogue-rows.json is replaced, added, or removed when it
 # no longer has proof files of its own. Every other row is left as it is.
 # Raw output goes to MATHESIS_WORK (default: a fresh temporary directory)
-# and is not committed. A name must appear in repos.json, so the catalogue's
+# and is not committed. Every name is checked before any clone. A name must
+# appear in repos.json and be public there, so the catalogue's
 # repository count stays the census input; a fork must also be listed in
 # forks-with-own-proofs.txt.
 set -euo pipefail
@@ -23,6 +24,9 @@ jq -c '.[]' "$census/repos.json" > "$work/repos.jsonl"
 for repo in "$@"; do
   rec=$(jq -c --arg r "$repo" 'select(.full_name == $r)' "$work/repos.jsonl")
   [ -n "$rec" ] || { echo "update-rows: $repo is not in repos.json" >&2; exit 1; }
+  # A private repository never gets a row: the catalogue is public (ruling D-2).
+  [ "$(jq -r '.visibility' <<<"$rec")" = public ] \
+    || { echo "update-rows: $repo is not public in repos.json" >&2; exit 1; }
   if [ "$(jq -r '.fork' <<<"$rec")" = true ] \
      && ! grep -qxF "$repo" "$census/forks-with-own-proofs.txt"; then
     echo "update-rows: $repo is a fork not listed in forks-with-own-proofs.txt" >&2
@@ -45,5 +49,10 @@ jq -cS --slurpfile new "$work/new-rows.json" --slurpfile names "$work/names.json
   map(select(.repo as $r | $names[0] | index($r) | not)) + $new[0] | sort_by(.repo)
 ' "$census/catalogue-rows.json" > "$work/rows.json"
 mv "$work/rows.json" "$census/catalogue-rows.json"
+# A named repository was reached, so it leaves the "not reached" list.
+jq -cS --slurpfile names "$work/names.json" \
+  'map(select(.repo as $r | $names[0] | index($r) | not))' \
+  "$census/unreachable.json" > "$work/unreach.json"
+mv "$work/unreach.json" "$census/unreachable.json"
 bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
 echo "update-rows: refreshed $(wc -l < "$work/census-list.txt") repo(s); raw census kept in $work"

@@ -716,13 +716,17 @@ uncloak:
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
 
-# Re-run the proof census over docs/catalogue/census/repos.json and regenerate the catalogue
+# Re-run the proof census over docs/catalogue/census/repos.json and regenerate the
+# catalogue and the atlas built from the same rows (CI checks both, so a census
+# that refreshes one leaves the other stale)
 census:
     bash scripts/census/run-census.sh
+    bun scripts/atlas/census-atlas.mjs build
 
 # Refresh the census rows of the named repositories only, then re-render the catalogue
 update-rows +repos:
     bash scripts/census/update-rows.sh {{repos}}
+    bun scripts/atlas/census-atlas.mjs build
 
 # Re-list every blob the RSR template has shipped at its template paths, in any commit
 template-blobs:

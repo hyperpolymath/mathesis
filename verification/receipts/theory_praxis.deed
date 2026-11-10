@@ -1,41 +1,62 @@
 ;; SPDX-License-Identifier: CC-BY-SA-4.0
 ;; SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
 ;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1), written from the THY-1
-;; record in docs/status/PROOF-STATUS.adoc (re-anchoring plan WO 1.5). Every
-;; receipt below is a local run, because no CI lane has given one yet: the run
-;; field says so instead of naming a run that does not exist. The reader in
-;; standards 1-formats/deed/tools/deed_lint.js derives the grade:
+;; record in docs/status/PROOF-STATUS.adoc (re-anchoring plan WO 1.5). The
+;; current receipts come from one CI run of the proof lanes in the pinned Guix
+;; (WO 1.4, Guix 8edb9da). Its log records, for each witness, the checker and
+;; its version, the invocation, the SHA-256 of the file, the result and the
+;; axioms reported. The local runs of 2026-11-09 stay as superseded receipts.
+;; The reader in standards 1-formats/deed/tools/deed_lint.js derives the grade:
 ;;   bun deed_lint.js --proof-receipt-json verification/receipts/theory_praxis.deed
 ;; The trusted base is the Agda.Primitive block of the import cone that
-;; agda --dependency-graph reports for FeatureReachability (2026-11-10).
+;; agda --dependency-graph reports for FeatureReachability; Agda 2.6.3 and
+;; 2.7.0.1 postulate the same four names there (checked 2026-11-10).
 (praxis-deed
   :schema-version "1.0.0"
   :canonical-name "mathesis-theory-receipt"
   :beholding-chora #u5"estate/chora"
   :profile proof-receipt
   :repository "hyperpolymath/mathesis"
-  :source-commit "f1be654e69b23873ea40651cb40e0e095ac53680"
+  :source-commit "336768958d01257caae14cb81fb54197c2617d97"
   (trusted-base
     (primitive :prover agda :module "Agda.Primitive" :name "Level" :binding "BUILTIN LEVEL")
     (primitive :prover agda :module "Agda.Primitive" :name "lzero" :binding "BUILTIN LEVELZERO")
     (primitive :prover agda :module "Agda.Primitive" :name "lsuc" :binding "BUILTIN LEVELSUC")
     (primitive :prover agda :module "Agda.Primitive" :name "_⊔_" :binding "BUILTIN LEVELMAX"))
-  (claim :id "THY-1" :pwg PWG-2ii :foundation-diverse #f
+  (claim :id "THY-1" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
-      (receipt :run "local run, 2026-11-09; no CI receipt yet"
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
+               :commit "336768958d01257caae14cb81fb54197c2617d97"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :state current)
+      (receipt :run "local run, 2026-11-09"
                :commit "f68b78d6ceb8d3c83f96f5ab8e57779442a8834f"
                :checker "agda 2.6.3 (Ubuntu 24.04 agda package)"
                :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
-               :state current))
+               :state superseded
+               :reason "replaced by the CI receipt in the pinned Guix, Agda 2.7.0.1"))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
-      (receipt :run "local run, 2026-11-09; no CI lane runs Rocq yet"
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
+               :commit "336768958d01257caae14cb81fb54197c2617d97"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc FeatureReachability.v"
+               :state current)
+      (receipt :run "local run, 2026-11-09"
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "coqc 8.18.0 (Ubuntu 24.04 coq package)"
                :invocation "coqc FeatureReachability.v"
-               :state current))
+               :state superseded
+               :reason "replaced by the CI receipt in the pinned Guix"))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
-      (receipt :run "local run, 2026-11-09; no CI lane runs Lean yet"
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
+               :commit "336768958d01257caae14cb81fb54197c2617d97"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean FeatureReachability.lean"
+               :state current)
+      (receipt :run "local run, 2026-11-09"
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "lean 4.15.0 (11651562caae, release archive)"
                :invocation "lean FeatureReachability.lean"
-               :state current))))
+               :state superseded
+               :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0"))))

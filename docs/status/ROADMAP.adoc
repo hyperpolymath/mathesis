@@ -23,18 +23,23 @@ Initial development phase.
   in a dependency graph is monotone under additive features. It backs the
   `--all-features` rule in the standards upstream dependency watch.
   Re-proved in Rocq (`verification/proofs/coq/`) and Lean
-  (`verification/proofs/lean4/`), both `RECONCILED`: `PWG-2ii`, recorded
-  in `docs/status/PROOF-STATUS.adoc`. Transport was not possible because
+  (`verification/proofs/lean4/`), both `RECONCILED`: `PWG-1` since 2026-11-10 (`PWG-2ii` before),
+  recorded in `docs/status/PROOF-STATUS.adoc`. Transport was not possible because
   Lambdapi's Rocq and Lean exports drop rewrite rules.
-* Proof lanes (2026-11-10, re-anchoring plan WO 1.4, ruling D-8 (a)): CI is
-  wired to check Agda, Rocq and Lean inside the pinned Guix shell
+* Proof lanes (2026-11-10, re-anchoring plan WO 1.4, ruling D-8 (a)): CI
+  checks Agda, Rocq and Lean inside the pinned Guix shell
   (`build/channels.scm`, `build/manifest.scm`) on every commit, with no path
   filter, and asserts each version: Agda 2.7.0.1, Rocq 8.18.0, Lean 4.29.0.
   The THY-1 record names Agda 2.6.3 and Lean 4.15.0, so those two receipts
   are earned again at the new versions; Rocq stays at 8.18.0. The first
-  lane runs were still going when this was written; their receipts are
-  recorded only after they pass.
-* Two findings on the way. The `agda-stdlib` 2.3 package of the pinned Guix
+  green run on `main` (run 42896264290, commit `336768958d01`) earned them:
+  each witness passed with an unchanged file digest and a clean axiom
+  report, so the receipt derives `PWG-1`. The toolchain step takes 22 to 35
+  minutes per run, because Guix builds some of its own modules at the pin.
+* Three findings on the way. The Guix `agda` 2.7.0.1 package ships without
+  the interfaces of its primitive modules in a read-only store, so the gate
+  gives Agda a writable copy of its data directory (`Agda_datadir`); that
+  defect belongs to Guix. The `agda-stdlib` 2.3 package of the pinned Guix
   does not build (it fails on the Guix build farm in every build since
   2026-10-18), so `Properties.agda` now uses `Agda.Builtin` only. At the old
   pin `ae77aeb` Guix had no substitute for itself, so the pin moved to

@@ -116,7 +116,11 @@ missing crate as missing from every build.
   claim, a non-terminating definition, and a `reach-mono` that skips the
   monotonicity step.
 * Axioms: none.
-* Receipt state: current. It is a local run; no CI receipt yet.
+* Receipt state: superseded on 2026-11-10 by the CI receipt below.
+* CI receipt (current): Agda 2.7.0.1 in the pinned Guix (`8edb9da`), same
+  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
+  unchanged, and the log reports no postulate in the cone (`Agda.Primitive`,
+  `FeatureReachability`).
 
 |Rocq leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -132,7 +136,11 @@ missing crate as missing from every build.
   for `absent_under_all_features`, `reach_mono` and `edge_mono`.
 * Negative controls: a planted false lemma is rejected. A planted
   `Admitted` compiles, and `Print Assumptions` reports it as an axiom.
-* Receipt state: current. It is a local run; no CI lane runs Rocq here.
+* Receipt state: superseded on 2026-11-10 by the CI receipt below.
+* CI receipt (current): Rocq 8.18.0 in the pinned Guix (`8edb9da`), same
+  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
+  unchanged, and `Print Assumptions` reports `absent_under_all_features`
+  closed under the global context.
 
 |Lean leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -153,7 +161,10 @@ missing crate as missing from every build.
 * Negative controls: a planted false lemma and a non-terminating
   definition are rejected. A planted `sorry` compiles with a warning, and
   `#print axioms` reports `sorryAx`.
-* Receipt state: current. It is a local run; no CI lane runs Lean here.
+* Receipt state: superseded on 2026-11-10 by the CI receipt below.
+* CI receipt (current): Lean 4.29.0 in the pinned Guix (`8edb9da`), same
+  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
+  unchanged, and no declared theorem depends on an axiom.
 
 |Why neither leg is transported
 |Lambdapi's Rocq and Lean exports translate before elaboration and drop
@@ -208,13 +219,16 @@ Residual assumptions: none in any leg.
 
 |Machine receipt (§8.5.1)
 |`verification/receipts/theory_praxis.deed`. The canon reader
-(`deed_lint.js --proof-receipt-json`) derives `PWG-2ii` from it, the grade
+(`deed_lint.js --proof-receipt-json`) derives `PWG-1` from it, the grade
 below, and CI runs that reader on each change.
 
 |`pwg`
-|`2ii`: the Agda leg checks, and both recheck legs count (kernel-checked
-and `RECONCILED`). It is not `PWG-1`, because no leg has a per-commit CI
-receipt.
+|`1` (since 2026-11-10): `PWG-2ii`, and every counted witness has a current
+receipt from one headless, isolated, pinned CI run on the exact source commit
+`336768958d01` (PROOF-POLICY §8.2). The grade holds while those receipts stay
+current: a later commit that breaks a leg, or a run that cannot be repeated,
+drops it (§8.4). Before 2026-11-10 it was `2ii`, because each receipt came
+from a local run.
 
 |`foundation_diverse`
 |`false`

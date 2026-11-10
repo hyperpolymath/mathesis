@@ -63,6 +63,7 @@ jobs:
           echo "$G/bin" >> "$GITHUB_PATH"
 
       - name: Pinned toolchain from build/channels.scm and build/manifest.scm
+        id: toolchain
         run: |
           set -euo pipefail
           guix time-machine -C build/channels.scm -- describe
@@ -72,18 +73,21 @@ jobs:
             lean --version | tee /dev/stderr | grep -qF "version ${LEAN_VERSION}"'
 
       - name: Agda lane (gate, then planted controls)
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
             bash scripts/check-proofs.sh agda
             bash tests/proofs/gate_controls_test.sh agda'
 
       - name: Rocq lane (gate, then planted controls)
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
             bash scripts/check-proofs.sh coq
             bash tests/proofs/gate_controls_test.sh coq'
 
       - name: Lean lane (gate, then planted controls)
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
             bash scripts/check-proofs.sh lean4

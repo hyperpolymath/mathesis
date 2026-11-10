@@ -197,6 +197,25 @@ if ! command -v "$CMD" >/dev/null 2>&1; then
   exit 1
 fi
 "$CMD" --version 2>/dev/null | head -1 || true
+
+# --- Agda: a data directory it can write ---------------------------------------
+# Agda keeps the interfaces of its own primitive modules (Agda.Primitive and the
+# Agda.Builtin modules) in <data dir>/lib/prim/_build. A packaged Agda whose
+# store path is read-only and ships without them (Guix agda 2.7.0.1, found
+# 2026-11-10: "lib/prim/_build: createDirectory: permission denied") cannot
+# check any module. Then the gate gives Agda a writable copy of its data
+# directory through Agda_datadir, the variable Agda reads for it. The copy holds
+# Agda's own library unchanged; only the interfaces are written there.
+if [ "$PROVER" = agda ] && [ -z "${Agda_datadir:-}" ]; then
+  agda_data="$(agda --print-agda-data-dir 2>/dev/null || true)"
+  if [ -n "$agda_data" ] && [ ! -d "$agda_data/lib/prim/_build" ] && [ ! -w "$agda_data/lib/prim" ]; then
+    Agda_datadir="$(mktemp -d)"
+    cp -r "$agda_data/." "$Agda_datadir/"
+    chmod -R u+w "$Agda_datadir"
+    export Agda_datadir
+    echo "Agda data directory is read-only without interfaces; using a writable copy"
+  fi
+fi
 echo
 
 # --- a repo with proofs but no MANIFEST is itself a failure -------------------

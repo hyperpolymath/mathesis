@@ -1124,10 +1124,11 @@ The owner ruled on each of the eight decisions through the selector on
   *Ruled 2026-11-10: (a). The owner chose the Guix manifest, which is also
   the route that PROOF-POLICY §6 prefers.*
 
-The companion programme records two more rulings of the same day: the token
-theory starts with the chain of PROOF-POLICY §5 and imports the
-`resource-algebra` kernel. The order is provisional until experiment X-PF1
-has a result.
+The companion programme records four more rulings of the same day. The token
+theory starts with the chain of PROOF-POLICY §5, and the order is
+provisional until experiment X-PF1 has a result. The theory imports the
+`resource-algebra` kernel. Statement S-2 lives in Mathesis. `januskey` is the
+first slice from theorem to code.
 
 [[no-rewrite]]
 === Why the history is not rewritten

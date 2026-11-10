@@ -49,6 +49,10 @@ jobs:
         run: |
           bun scripts/atlas/census-atlas.mjs check
           bun test tests/atlas/census-atlas.test.mjs
+      - name: Mathesis census tests (offline fixtures) and catalogue currency
+        run: |
+          for t in tests/census/*.sh; do bash "$t"; done
+          bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
       # The claims registry (docs/decisions/0004-claims-registry.adoc): re-derive
       # every grade from the home repositories' receipts at their pinned commits
       # (fetched, digest-checked) and fail if the committed view is stale or a

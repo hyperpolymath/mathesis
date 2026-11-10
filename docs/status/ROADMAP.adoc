@@ -26,9 +26,19 @@ Initial development phase.
   (`verification/proofs/lean4/`), both `RECONCILED`: `PWG-2ii`, recorded
   in `docs/status/PROOF-STATUS.adoc`. Transport was not possible because
   Lambdapi's Rocq and Lean exports drop rewrite rules.
-* Next: CI lanes for Rocq and Lean. Only the Agda gate runs in CI, so
-  each witness has a current receipt only from a local run, and `PWG-1`
-  needs one per commit.
+* Proof lanes (2026-11-10, re-anchoring plan WO 1.4, ruling D-8 (a)): CI is
+  wired to check Agda, Rocq and Lean inside the pinned Guix shell
+  (`build/channels.scm`, `build/manifest.scm`) on every commit, with no path
+  filter, and asserts each version: Agda 2.7.0.1, Rocq 8.18.0, Lean 4.29.0.
+  The THY-1 record names Agda 2.6.3 and Lean 4.15.0, so those two receipts
+  are earned again at the new versions; Rocq stays at 8.18.0. The first
+  lane runs were still going when this was written; their receipts are
+  recorded only after they pass.
+* Two findings on the way. The `agda-stdlib` 2.3 package of the pinned Guix
+  does not build (it fails on the Guix build farm in every build since
+  2026-10-18), so `Properties.agda` now uses `Agda.Builtin` only. At the old
+  pin `ae77aeb` Guix had no substitute for itself, so the pin moved to
+  `8edb9da` (owner rulings 2026-11-10).
 * Gate gap closed (2026-11-10, re-anchoring plan WO 1.3):
   `scripts/check-proofs.sh` now audits each gated module after it compiles.
   Rocq: `Print Assumptions` for each declared theorem. Lean: every declared

@@ -1,0 +1,41 @@
+;; SPDX-License-Identifier: CC-BY-SA-4.0
+;; SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
+;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1), written from the THY-1
+;; record in docs/status/PROOF-STATUS.adoc (re-anchoring plan WO 1.5). Every
+;; receipt below is a local run, because no CI lane has given one yet: the run
+;; field says so instead of naming a run that does not exist. The reader in
+;; standards 1-formats/deed/tools/deed_lint.js derives the grade:
+;;   bun deed_lint.js --proof-receipt-json verification/receipts/theory_praxis.deed
+;; The trusted base is the Agda.Primitive block of the import cone that
+;; agda --dependency-graph reports for FeatureReachability (2026-11-10).
+(praxis-deed
+  :schema-version "1.0.0"
+  :canonical-name "mathesis-theory-receipt"
+  :beholding-chora #u5"estate/chora"
+  :profile proof-receipt
+  :repository "hyperpolymath/mathesis"
+  :source-commit "f1be654e69b23873ea40651cb40e0e095ac53680"
+  (trusted-base
+    (primitive :prover agda :module "Agda.Primitive" :name "Level" :binding "BUILTIN LEVEL")
+    (primitive :prover agda :module "Agda.Primitive" :name "lzero" :binding "BUILTIN LEVELZERO")
+    (primitive :prover agda :module "Agda.Primitive" :name "lsuc" :binding "BUILTIN LEVELSUC")
+    (primitive :prover agda :module "Agda.Primitive" :name "_⊔_" :binding "BUILTIN LEVELMAX"))
+  (claim :id "THY-1" :pwg PWG-2ii :foundation-diverse #f
+    (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "local run, 2026-11-09; no CI receipt yet"
+               :commit "f68b78d6ceb8d3c83f96f5ab8e57779442a8834f"
+               :checker "agda 2.6.3 (Ubuntu 24.04 agda package)"
+               :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :state current))
+    (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "local run, 2026-11-09; no CI lane runs Rocq yet"
+               :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
+               :checker "coqc 8.18.0 (Ubuntu 24.04 coq package)"
+               :invocation "coqc FeatureReachability.v"
+               :state current))
+    (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "local run, 2026-11-09; no CI lane runs Lean yet"
+               :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
+               :checker "lean 4.15.0 (11651562caae, release archive)"
+               :invocation "lean FeatureReachability.lean"
+               :state current))))

@@ -115,6 +115,7 @@ grade field.
 |trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
 |Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
 |ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
+|januskey |Four theory roots (`Reversibility`, `TransactionAtomicity`, `SingleActiveLog`, `Epistemic`) checked in CI under the canonical flags plus `--no-libraries --ignore-interfaces --double-check`, Agda 2.6.4.3, sibling `resource-algebra` pinned by commit; the gate scans the import cone for postulates and refuses seven expected-rejection fixtures. T-1 is re-proved in core Rocq and Lean with its statement comparison recorded |Recheck the four remaining `PWG-3` rows (G-1, T-2, T-3, E-1m) in Rocq and Lean. The Rust TransactionManager refines the abstract log only by transcription (januskey T-10, OPEN)
 |===
 
 Existing proof statuses in these repos are historical evidence, not
@@ -164,7 +165,28 @@ not hand-edited here.
 |squeakwell (R8 narrowing) |Fibre of a pairing = intersection of fibres; `narrow-shrinks` on `FiberSize-fin` |AGDA-VERIFIED (echo-types `EchoFibreIntersection.agda`, same run) |NOT-INVENTORIED (no Rocq/Lean statement) |n/a — single-prover theorem
 |squeakwell (R10 progress / termination) |Lexicographic progress on the (missing-count, conflict-count) pair; nine-round fixpoint; `winner_some`, `conflict_refl` explicit |AGDA-PENDING (not stated; needs the finite octad) |COQ-CHECKED (`Recovery.v`: `step_progress`, `iter_9_fixpoint`) |BRIDGE-PENDING
 |squeakwell (R5–R7 tropical) |`weightedResidueMeasure`; hub ceiling under `OneTop` (refuted at MaxPlus); `reachGrade` monotone in matrix and observed set |AGDA-PENDING (not stated) |LEAN-CHECKED (tropical-types `Resource/HubCeiling.lean`, Lean 4.35.0; axioms propext/Quot.sound only) |BRIDGE-PENDING
+|januskey |G-1 Reversibility (Loss grade algebra) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |T-1 `rollback-restores` |AGDA-VERIFIED |COQ-CHECKED, LEAN-CHECKED (both re-proved; Rocq 8.18, Lean 4.35, no Mathlib) |RECONCILED
+|januskey |T-2 `lifecycle-preserves-good` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |T-3 `at-most-one-active` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
+|januskey |E-1m epistemic model (`Epistemic.agda`) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
 |===
+
+The januskey rows are evidence-backed, not a todo. januskey owns these theorems
+and records them in `PROOF-NEEDS.adoc` §Proof Witness Grades and
+`docs/theory/PROOF-GRADES.adoc` (leg records per PROOF-POLICY §8.5). Derived
+from those records and their receipts, its census is `PWG-2ii` 1 (T-1) and
+`PWG-3` 4 (G-1, T-2, T-3, E-1m), of 5; none rests on an axiom. The `PWG-3`
+receipt is the `agda-proofs.yml` run on januskey `main`: the first to carry the
+import cone and the postulate scan is
+https://github.com/hyperpolymath/januskey/actions/runs/42633520061[run 42633520061]
+at `05ade7862f7f95d618c53bef73a82e71c1700925` (Agda 2.6.4.3, `--safe
+--without-K --cubical-compatible`, `resource-algebra` pinned at
+`cf9235c532712a783a404c359a1055f40134794a`). T-1's Rocq and Lean legs were
+re-proved by hand, because Agda2Dedukti cannot read Agda 2.6.4.3 modules.
+januskey records their statement comparison, and checks them in the same
+workflow's "Rocq and Lean recheck legs" job. This register catalogues
+januskey's grades and assigns none.
 
 References:
 https://agda.readthedocs.io/en/v2.7.0.1/language/cubical-compatible.html[Agda cubical-compatible];

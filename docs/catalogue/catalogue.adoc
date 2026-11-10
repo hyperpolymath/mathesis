@@ -22,6 +22,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |86 |0 |agda 65, lean 21 |612 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/valence-shell[hyperpolymath/valence-shell] |64 |0 |agda 10, lean 16, rocq 12, isabelle 9, idris2 12, smt-atp 5 |996 |5 |1 |0 |9 |`PROOF-NEEDS.adoc`
@@ -54,8 +56,6 @@ verdicts.
 
 |https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |21 |5 |agda 21 |91 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |21 |0 |lean 21 |164 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
-
 |https://github.com/hyperpolymath/occupancy-types[hyperpolymath/occupancy-types] |20 |2 |agda 8, lean 6, idris2 6 |90 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/wokelang[hyperpolymath/wokelang] |18 |0 |lean 7, rocq 3, idris2 8 |418 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
@@ -71,8 +71,6 @@ verdicts.
 |https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |16 |7 |agda 10, idris2 1, tla 5 |203 |0 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |15 |0 |agda 15 |63 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
-
-|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |16 |7 |agda 10, idris2 1, tla 5 |203 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
 

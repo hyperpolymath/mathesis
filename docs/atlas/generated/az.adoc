@@ -274,7 +274,7 @@
 * `hyperpolymath/stateful-artefacts` — engineering; 4 own proof files, 23 detected declarations; provers: idris2 2, tla 2
 * `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4
 * `catachresis-colloquium/stealth-glider-ecosystem` — engineering; 1 own proof files, 13 detected declarations; provers: idris2 1
-* `hyperpolymath/system-et` — theory; 21 own proof files, 164 detected declarations; provers: lean 21
+* `hyperpolymath/system-et` — theory; 86 own proof files, 612 detected declarations; provers: agda 65, lean 21
 
 == T
 

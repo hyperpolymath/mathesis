@@ -48,6 +48,12 @@ One pull request that changes census rows is open at a time (atlas README,
   in `forks-with-own-proofs.txt`, so it had no row. The row uses the scanner
   rules of 2026-11-10; the other rows still use the rules of 2026-11-09
   until the next full census.
+* 2026-11-10: the row of `hyperpolymath/system-et`, taken by
+  `scripts/census/update-rows.sh` (the script of `just update-rows`) at
+  mathesis `c527480`. The wager proofs merged into the main branch of
+  system-et (pull request 89) after the row of the morning. The row goes
+  from 86 proof files and 612 declarations to 102 and 773. Holes, axioms
+  and unsafe flags stay at 0.
 
 == Milestones
 

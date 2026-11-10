@@ -29,7 +29,7 @@ than one.
 
 |https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |161 |0 |agda 161 |1676 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |86 |0 |agda 65, lean 21 |612 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |102 |0 |agda 80, lean 22 |773 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |618 |0 |2 |0 |1 |`docs/status/PROOF-NEEDS.adoc`
 

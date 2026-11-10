@@ -1,67 +1,90 @@
 # SPDX-License-Identifier: MPL-2.0
-# Focused Agda proof policy gate. Does not silently skip missing provers.
-name: Agda Proof Policy Gate
+# Proof lanes: Agda, Rocq and Lean, each checked inside the pinned Guix shell
+# (build/channels.scm and build/manifest.scm; re-anchoring plan WO 1.4,
+# ruling D-8 (a)). No path filter: every commit gets a run, so a receipt can
+# name any commit. A missing prover fails the gate; it never skips.
+name: Proof Policy Gate
 
 on:
   pull_request:
-    paths:
-      - 'scripts/check-proofs.sh'
-      - 'scripts/scan-postulates.sh'
-      - 'tests/proofs/**'
-      - 'verification/proofs/agda/**'
-      - '.github/workflows/agda-proof-policy.yml'
   push:
     branches: [main]
-    paths:
-      - 'scripts/check-proofs.sh'
-      - 'scripts/scan-postulates.sh'
-      - 'tests/proofs/**'
-      - 'verification/proofs/agda/**'
-      - '.github/workflows/agda-proof-policy.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: agda-policy-${{ github.ref }}
+  group: proof-lanes-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  GUIX_VERSION: "1.5.0"
+  # SHA-256 of guix-binary-1.5.0.x86_64-linux.tar.xz from ftp.gnu.org. Its
+  # OpenPGP signature (key A28BF40C3E551372662D14F741AAE7DCCA3D8351, a Guix
+  # maintainer) was verified when this digest was taken, 2026-11-10.
+  GUIX_SHA256: "aa41025489c5061543e9c48873eaa829b900b2da75d40f9648913622f5f47817"
+  # The versions the pinned channel gives. A different version fails the run:
+  # a new version means each receipt is earned again (WO 1.4).
+  AGDA_VERSION: "2.7.0.1"
+  ROCQ_VERSION: "8.18.0"
+  LEAN_VERSION: "4.29.0"
+
 jobs:
-  typecheck:
-    name: Agda safe / without-K / cubical-compatible
+  proof-lanes:
+    name: Agda, Rocq and Lean in the pinned Guix
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Install Agda and standard library
+      - name: Install Guix (checksum-pinned binary release)
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends agda agda-stdlib
-          agda --version
-          # Ubuntu's agda-stdlib package supplies sources but may not ship
-          # a discoverable .agda-lib descriptor. Use dpkg's file manifest
-          # to locate its root, then register a descriptor explicitly.
-          stdlib_root="$(dpkg -L agda-stdlib | sed -n 's@/Data/Nat[.]agda$@@p' | head -n 1)"
-          test -n "$stdlib_root" && test -f "$stdlib_root/Data/Nat.agda"
-          # Agda 2.6.x writes .agdai interfaces beside imported sources.
-          # Distro /usr/share is read-only to CI's runner user; copy the
-          # pinned distro library to a writable temp tree, never sudo agda.
-          cp -a "$stdlib_root" "$RUNNER_TEMP/agda-stdlib-writable"
-          stdlib_root="$RUNNER_TEMP/agda-stdlib-writable"
-          stdlib="$RUNNER_TEMP/standard-library.agda-lib"
-          printf 'name: standard-library\ninclude: %s\n' "$stdlib_root" > "$stdlib"
-          mkdir -p "$HOME/.agda"
-          printf '%s\n' "$stdlib" > "$HOME/.agda/libraries"
-          printf 'standard-library\n' > "$HOME/.agda/defaults"
+          cd "$RUNNER_TEMP"
+          curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://ftp.gnu.org/gnu/guix/guix-binary-${GUIX_VERSION}.x86_64-linux.tar.xz" --output guix.tar.xz
+          echo "${GUIX_SHA256}  guix.tar.xz" | sha256sum --check --strict
+          sudo tar --warning=no-timestamp -xf guix.tar.xz -C /
+          sudo groupadd --system guixbuild
+          for i in 1 2 3 4; do
+            sudo useradd -g guixbuild -G guixbuild -d /var/empty -s /usr/sbin/nologin \
+              -c "Guix build user $i" --system "guixbuilder$i"
+          done
+          G=/var/guix/profiles/per-user/root/current-guix
+          sudo sh -c "nohup $G/bin/guix-daemon --build-users-group=guixbuild > /var/log/guix-daemon.log 2>&1 &"
+          for _ in $(seq 30); do [ -S /var/guix/daemon-socket/socket ] && break; sleep 1; done
+          [ -S /var/guix/daemon-socket/socket ] || { sudo cat /var/log/guix-daemon.log; exit 1; }
+          sudo "$G/bin/guix" archive --authorize < "$G/share/guix/ci.guix.gnu.org.pub"
+          sudo "$G/bin/guix" archive --authorize < "$G/share/guix/bordeaux.guix.gnu.org.pub"
+          echo "$G/bin" >> "$GITHUB_PATH"
 
-      - name: Run manifest-driven Agda proof gate
-        run: bash scripts/check-proofs.sh agda
+      - name: Pinned toolchain from build/channels.scm and build/manifest.scm
+        run: |
+          set -euo pipefail
+          guix time-machine -C build/channels.scm -- describe
+          guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
+            agda --version | tee /dev/stderr | grep -qF "Agda version ${AGDA_VERSION}"
+            coqc --version | tee /dev/stderr | grep -qF "version ${ROCQ_VERSION}"
+            lean --version | tee /dev/stderr | grep -qF "version ${LEAN_VERSION}"'
 
-      - name: Proof gate fails a planted postulate and passes a clean module
-        run: bash tests/proofs/gate_controls_test.sh agda
+      - name: Agda lane (gate, then planted controls)
+        run: |
+          guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
+            bash scripts/check-proofs.sh agda
+            bash tests/proofs/gate_controls_test.sh agda'
+
+      - name: Rocq lane (gate, then planted controls)
+        run: |
+          guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
+            bash scripts/check-proofs.sh coq
+            bash tests/proofs/gate_controls_test.sh coq'
+
+      - name: Lean lane (gate, then planted controls)
+        run: |
+          guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
+            bash scripts/check-proofs.sh lean4
+            bash tests/proofs/gate_controls_test.sh lean4'

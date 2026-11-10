@@ -1,0 +1,1119 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Mathesis research programme: evidence, bridges and loss
+:toc: preamble
+:toclevels: 2
+:sectnums:
+:icons: font
+
+Status: *proposed, not ratified* (2026-11-10). This document claims no proved
+result. A statement marked *pre-registered* is a statement to prove or to
+refute. A sentence marked *reading* is the view of the author of this
+programme. Each fact about another repository names that repository and its
+commit in <<survey>>. Each such fact is that repository's own claim. This
+session checked no proof.
+
+The companion document is
+link:mathesis-re-anchoring.adoc[the re-anchoring plan]. The plan puts the
+repository in order. This programme says what research the ordered repository
+supports, and who gains from it.
+
+== The programme in one page
+
+*The question.* The owner's research note on types, tropes and identity asks
+one question. When may "a proposition or transition cross between those
+spaces without conflating distinct identities or inventing authority,
+evidence or preserved particularity"? This programme takes one kind of
+crossing first: a mathematical claim that crosses between systems. Mathesis
+is the anchor for that kind.
+
+*The crossings.* A claim crosses in five ways:
+
+. from one prover to another (a recheck leg);
+. from a theorem to the code that implements it;
+. from a theorem to the estate rule that relies on it;
+. from a proof to the ledger row that reports it;
+. from many ledger rows to one published view.
+
+Each crossing can lose something. The programme asks, for each one, what is
+preserved, what is forgotten, and what evidence shows it.
+
+*What the estate has already.* The type family has one algebraic kernel
+(`resource-algebra`), three core theories (echo, epistemic and residual
+evidence) and several applications. The proof policy has a closed status
+vocabulary, a grade ladder and a receipt format. These two bodies of work are
+not yet joined.
+
+*The proposal.* Join them, in four lines of work and one horizon:
+
+[cols="1,3,3",options="header"]
+|===
+|Line |Subject |First result to aim for
+
+|1
+|The algebra of status
+|The ledger tokens are a sub-algebra of the family's bottleneck grade.
+
+|2
+|Bridges between systems
+|A record of what each existing statement comparison preserves and forgets.
+
+|3
+|From theorem to running code
+|One vertical slice, with its composite status computed and not typed.
+
+|4
+|Evidence for decisions
+|A sound three-valued verdict for one synthetic cash forecast.
+
+|Horizon
+|Propose and dispose
+|A labelled corpus of bridges that an exact checker has accepted or refused.
+|===
+
+*The one idea.* Status is a monotone function of evidence. More evidence does
+not lower a status. Less evidence does not raise one. A chain of steps is as
+strong as its weakest step. Each line of work is this idea in one setting.
+
+== Where the programme comes from
+
+The programme adds no new direction. It joins directions that the owner has
+already written down in separate places.
+
+[cols="2,3,3",options="header"]
+|===
+|Source |What it fixes |Use in this programme
+
+|Manifesto, `hyperpolymath/manifesto`
+|Assurance is a relation among a claim, its evidence, the model, the residual
+uncertainty and an accountable authority. "Probabilistic generation may
+propose; only symbolic method may dispose."
+|The record model. The horizon.
+
+|Research note on types, tropes and identity, `hyperpolymath/vcl-ut`
+|Identity and equivalence need a named criterion. A bridge is partial and
+direction-sensitive. It says what it preserves and what it forgets. No
+unified calculus is required.
+|The rules for line 2. The limits in <<limits>>.
+
+|PROOF-POLICY, `metadatastician/standards`
+|Which prover carries which obligation. The five status tokens. The
+correspondence states. The Proof Witness Grades and the receipt.
+|The objects that lines 1 to 3 study.
+
+|ECHIDNA proof-route plan, `metadatastician/standards`
+|Ladder rows 2, 7 and 12. Ruling D-10: the token-lattice theory lives in
+Mathesis. Experiment X-PF1: is a total order on tokens enough?
+|The first theorems of line 1.
+
+|Kautz-ladder plan, `metadatastician/standards`
+|Rungs K0 to K6, each with a falsifier. "K3 and K4 are where the proof and
+type repositories pay off."
+|The horizon, and the habit of a falsifier for each step.
+
+|Architecture brief, Mathesis
+|The dogfooding experiments A, B and C. The owner direction on the
+correspondence record.
+|Lines 2 and 3.
+
+|Applied-systems area, Mathesis
+|Evidence status on each input. "Missing" is not zero.
+|Line 4.
+|===
+
+== What exists today
+
+This section reports the survey of <<survey>>. It quotes each repository's
+own words.
+
+=== One kernel
+
+`resource-algebra` says that it is "a kernel module of the family, not a
+family of its own". Its record `ResourceAlgebra` has two operations.
+Alternatives (`⊕`) form an idempotent commutative monoid. Sequence (`⊗`)
+forms a monoid. The order comes from the alternatives: `a ≼ b` when
+`a ⊕ b ≡ b`. The kernel proves that `⊕` is the join of that order. It proves
+that each dioid is ordered, so sequence is monotone.
+
+Four instances exist: `Loss`, `MaxPlus`, `HWM` and `MinMax`. The kernel also
+states what is *not* true. No strict morphism leaves `HWM` for an algebra
+with `𝟘 ≢ 𝟙`. "An occupancy bound is not a cost bound."
+
+`choreographic-types` and `occupancy-types` import the kernel.
+`autoformal-fidelity` imports its prelude.
+
+=== Three core theories
+
+[cols="1,3,3",options="header"]
+|===
+|Theory |Its own description |Central object
+
+|`echo-types`
+|"proof-relevant fibers as first-class witnesses for structured information
+loss". "This is the standard preimage fiber, not a new construction."
+|`Echo f y`: the sources that a map sends to `y`.
+
+|`residual-evidence-types`
+|"the alternative explanations compatible with an observation and its
+declared evidence"
+|`Candidate`: a fibre refined by evidence. `Revision` and `Retraction`.
+
+|`epistemic-types`
+|"standpoint-indexed epistemic modalities, separating knowledge, belief, and
+warrant"
+|`Warrant` and `SoundWarrant`. Result L-2: "Warrant evidence does not imply
+its claim".
+|===
+
+`residual-evidence-types` says that its verdicts "are a view on Epistemic
+over Echo". `nextgen-typing` coordinates the family map and the glossary.
+
+=== Applications of the family
+
+* `autoformal-fidelity` asks: "does a formal artefact F say what its informal
+  source S says?" It defines `Faithful = RoundTrip × Covered`. Its statement
+  F-2 says: "Round trip is blind to additions".
+* `invariant-path` "traces what a claim _means_ when it crosses from one
+  domain into another". It says that it is "a claim-path debugger, not a truth
+  engine".
+* `trope-checker` gives "a sufficiency verdict" for a graded Trope IR. Its
+  calculus names "the bottleneck (max–min) grading of a path by its weakest
+  link".
+* `secret-types` proves noninterference "over any Lattice record". It lists
+  the laws that the proof uses, and it shows by countermodels that each law
+  is necessary. `lintel` instantiates the theorem.
+* `MetaManifold-Evidence` answers "is the taxon present, absent, or
+  undecided?" from read counts and a noise bound. Its theorem
+  `never-strengthens` says that "more noise never strengthens a verdict".
+* `EpistemicTypes.jl` attaches a receipt to each row of a taxonomic table.
+* `hvn-dehallucinator` keeps agent task state outside the model. "Only an
+  independent verifier may write COMPLETE."
+
+=== Systems, proof tools and languages
+
+* *Systems with theory inside.* `januskey` grades its file operations "in
+  resource-algebra's Loss instance". `absolute-zero` proves that a program
+  computes nothing, or reveals nothing. `squeakwell` states a recovery ladder
+  and says: "No proof lives in this repository." Its proofs are in
+  `echo-types`, `verisimdb` and `tropical-types`.
+* *Languages.* The Echo fibre is mechanised in six language repositories:
+  `my-lang`, `ephapax`, `eclexia`, `tangle`, `phronesis` and `jtv-lang`. Each
+  one mirrors or imports the Agda source. `jtv-lang` calls its
+  correspondence "`argued`, not bridged". Two of them disagree: `my-lang`
+  says that Echo is "NOT a graded comonad", and `eclexia` keeps "the
+  graded-comonad-of-loss reading".
+* *Quantities.* `affinescript`, `my-lang` and `typell` use the usage
+  quantities 0, 1 and ω. `ephapax` says that `resource-algebra` "cannot
+  host" them. `affinescript` records an owner ruling: the laws of that
+  semiring go in `resource-algebra` "as a non-idempotent tier".
+* *Statistics.* Four Julia packages keep Agda proofs of exact identities
+  about models: the centred log-ratio, the Benjamini-Hochberg step-up,
+  rounding and Fisher's exact test. They state their limits. On control of
+  the false discovery rate, `CompositionalDA.jl` says: "Nothing in `proofs/`
+  bears on it".
+* *Knots.* `tangle` is a language in which "program equivalence is defined by
+  isotopy". `quandledb` separates candidate matches from certified
+  equivalence. `KnotTheory.jl` has no proof file.
+* *Accounts of evidence.* `gnpl` "turns an evidence base into an _account_".
+  Its theory document credits provenance semirings and AGM revision.
+* *Proof tools.* The survey reader for ECHIDNA, echidnabot, Hypatia and
+  proof-burrower stopped at a usage limit. For these four, the programme
+  uses only the two ECHIDNA plans in the standards repository. It also uses
+  the first line of the proof-burrower README: "Find the mathematical home
+  of a proof goal."
+
+=== A method that is already in use
+
+The surveyed repositories share habits that few projects have:
+
+* *Pre-registration.* `choreographic-types` and `autoformal-fidelity` state
+  each theorem before the proof exists.
+* *Law census.* `secret-types` and `choreographic-types` record exactly which
+  laws a proof uses.
+* *Necessity by countermodel.* `secret-types` shows that the theorem fails
+  when one law is removed.
+* *Negative controls.* `residual-evidence-types` keeps 17 rejection controls.
+  `firmboot` keeps seven false-claim controls. THY-1 in Mathesis keeps four.
+* *Agreement by exhaustion.* `residual-evidence-types` proves by `refl` that
+  its checker matches a finite explorer on 546 configurations.
+* *Recorded retraction.* `echo-types` keeps a retraction log, and it closes
+  one line of work "negatively". `protocol-squisher` is frozen "as its own
+  provenance and negative result".
+* *Three outcomes.* `proven-tests-and-benches` says: "Three outcomes, not
+  two". Its third outcome is "NO CHECK WAS PERFORMED". The verdicts of
+  `residual-evidence-types` and `MetaManifold-Evidence` have the same third
+  value, and so does the "missing" status of the applied-systems area.
+
+Nobody has written this method down in one place. <<line-0>> proposes that
+Mathesis does.
+
+== The question and five fixed points
+
+The fixed points are commitments that the owner's documents already make.
+The programme does not test them. It builds on them.
+
+[cols="1,3,3",options="header"]
+|===
+|Fixed point |Statement |Source
+
+|FP-1
+|A claim is tied to its evidence, the model in which the evidence has force,
+the residual uncertainty and an accountable authority.
+|Manifesto, "the assurance turn"
+
+|FP-2
+|Status is derived from evidence. Nobody asserts it.
+|PROOF-POLICY §8.4. Ledger rule 3 of the README and EXPLAINME standard.
+
+|FP-3
+|Identity and equivalence hold under a named criterion. A crossing says what
+it preserves and what it forgets.
+|Research note. Manifesto: "identity defined by equivalence rather than
+asserted".
+
+|FP-4
+|A learned component proposes. An exact checker decides.
+|Manifesto, pillar 2. Kautz-ladder plan.
+
+|FP-5
+|Abstraction leaves something behind, and the loss is named.
+|Manifesto: "abstraction always leaves something behind". `echo-types`.
+|===
+
+[[line-0]]
+== Line 0: the theorem dossier (method)
+
+*Question.* What must a report of a machine-checked theorem contain? A
+stranger must be able to trust it as far as the evidence goes, and no
+further.
+
+*Proposal.* Describe the method of the previous section as one checklist, the
+*theorem dossier*:
+
+. the statement, registered before the proof;
+. the checker, its version, its flags and the import cone;
+. the laws and axioms that the proof uses;
+. a countermodel for each law that the statement needs;
+. the negative controls that the gate rejects;
+. the receipts, with their states;
+. each bridge, with what it preserves and forgets;
+. the retractions.
+
+The registry can then show which parts of the dossier each claim has. This is
+a census of practice. It is not a new grade.
+
+*First experiment.* Score ten existing theorems against the checklist: THY-1,
+five from `januskey`, two from `secret-types` and two from `lintel`. +
+*Pass condition:* each item is found, or its absence is stated, without a
+question to the author.
+
+*Who gains.* The owner gains one description of a method that is now spread
+over many repositories. Other projects gain a concrete answer to the question
+"what does `verified` mean here?".
+
+[[line-1]]
+== Line 1: the algebra of status
+
+*Question.* The estate has five status tokens, a weakest-step rule, a fold
+over attempts and a grade ladder. Are these one algebra, and is it one that
+the type family already has?
+
+=== What exists
+
+* The tokens: `open`, `argued`, `tested-only`, `proven-with-postulates` and
+  `proven` (README and EXPLAINME standard, proof ledger).
+* Ledger rule 3: "A row's status may only be as strong as the weakest step it
+  depends on."
+* Ladder row 2 of the ECHIDNA proof-route plan: "Token order and weakest-step
+  meet are lawful". Row 12: the status fold over attempts "is a join on the
+  token lattice". Row 7: "Retraction never raises a level."
+* Ruling D-10: the theory of rows 2 and 12 lives in Mathesis.
+* The `MinMax` instance of `resource-algebra`: alternatives take the minimum
+  ("the better path"), and sequence takes the maximum ("the worst hop").
+
+=== Pre-registered statements
+
+The statements use this order, weakest first: `open`, `argued`,
+`tested-only`, `proven-with-postulates`, `proven`. PROOF-POLICY §5 lists the
+tokens in the reverse of this order. The owner rules on the order before any
+proof starts.
+
+S-1 (the tokens are a bottleneck grade)::
+Take the join of the order as alternatives and the meet as sequence, with
+`open` as `𝟘` and `proven` as `𝟙`. Then the tokens are a `ResourceAlgebra`
+that is a dioid and in which `𝟘` annihilates. The map below is an injective
+strict morphism (`Hom`) into `MinMax`.
++
+[cols="2,1",options="header"]
+|===
+|Token |`MinMax` grade
+|`proven` |`fin 0`
+|`proven-with-postulates` |`fin 1`
+|`tested-only` |`fin 2`
+|`argued` |`fin 3`
+|`open` |`inf`
+|===
++
+*Consequences.* Rows 2 and 12 follow from the kernel's own lemmas. The join
+laws give a fold that does not depend on order or on repetition. The dioid
+law gives a monotone weakest step. +
+*Falsifier.* `meet(proven, argued) = proven` is derivable (row 2), or two
+orders of one fold give two statuses (row 12).
+
+S-2 (positive evaluation is monotone)::
+Take an expression built from atoms with `⊕` and `⊗` only. Its value in an
+ordered resource algebra is monotone in the grades of the atoms.
++
+*Consequences.* A new attempt does not lower a status. A broken leg does not
+raise one. Trust withdrawn from a checker version does not raise one. These
+are §8.4 rule 4 of PROOF-POLICY and the status half of row 7. +
+*Falsifier.* An expression and two atom gradings, one below the other, whose
+values are in the opposite order.
+
+S-3 (the grade is a function of the receipt)::
+Write PROOF-POLICY §8.2 as a total function from the facts of a receipt to a
+grade. The function is monotone in the set of counted legs. The canon reader
+agrees with it on each combination of route, token, state and receipt state.
++
+*Method.* The domain is finite. Generate the table from the reader, and let
+Agda compare it with the function by `refl`. This is the method that
+`residual-evidence-types` uses for its 546 configurations. +
+*Status aimed for.* The function and its monotonicity are theory. The
+agreement of the reader is `tested-only`, by exhaustion. +
+*Falsifier.* One row where the reader and the function differ.
+
+=== Research questions
+
+Q-1.1 Is a chain enough?::
+Experiment X-PF1 of the ECHIDNA plan asks whether a total order on tokens is
+enough for the weakest-step rule. A chain puts `tested-only` above `argued`.
+Then a claim that rests on one tested step and one argued step is `argued`,
+and the report forgets the tested step. *Reading:* the chain is a lossy view
+of a richer value, and the loss can be measured with the fibre of
+`echo-types`. The question is which decisions need the richer value.
+
+Q-1.2 What does a recheck leg buy?::
+*Reading:* a theorem with three legs rests on a disjunction. The claim holds
+if the Agda kernel is sound. It also holds if the Rocq kernel is sound and
+the Rocq bridge is faithful. The same is true for Lean. More legs weaken the
+assumption about kernels. Each leg adds an assumption about a bridge. In the
+kernel's
+terms, legs are alternatives and the parts of one leg are a sequence. The
+question is whether this *trust expression* can be computed from a receipt,
+and whether the grade is its monotone image. `epistemic-types` already has
+the vocabulary: its result L-3 derives a claim from a proof "only from an
+accepted sound checker".
+
+Q-1.3 Which conversions between grade schemes are sound?::
+PROOF-POLICY §8 lists seven schemes named "grade" or "level" and says: "None
+of these converts into another." `resource-algebra` proves statements of this
+kind with morphisms and with separations. The question is which maps between
+the estate's schemes are morphisms, which are lax, and which a countermodel
+refutes. The first map is the one in row 2: token to HYP-01 level.
+
+=== First experiments
+
+. *E-1.1* Prove S-1 in Agda against `resource-algebra` at a pinned commit.
+  Re-prove it in Rocq and Lean. +
+  *Pass condition:* the receipt of Mathesis derives `PWG-2ii` for S-1 through
+  the canon reader, with no axiom.
+. *E-1.2* Prove S-2 once, for each ordered resource algebra. +
+  *Pass condition:* the token corollaries need no case analysis of their own.
+. *E-1.3* Run the table of S-3 against the canon reader and against the
+  present Mathesis tool. +
+  *Pass condition:* the reader agrees on each row. The count of rows where
+  the Mathesis tool differs is published. The plan expects a count above
+  zero, because the two programs use different rules today.
+
+=== Who gains
+
+* *The owner's theory.* The proof ledger joins the type family. Evidence
+  status becomes a grade in the exact sense of the family's other grades.
+* *The owner's engineering.* Each program that computes a status or a grade
+  can be tested against one checked specification.
+* *Others.* A small, checked algebra for the composition of levels.
+  *Reading:* many assurance schemes define levels and leave their
+  composition informal.
+
+[[line-2]]
+== Line 2: bridges between systems
+
+*Question.* A statement in one system is said to be the same as a statement
+in another. What exactly is preserved? What is forgotten? How can a third
+party check it?
+
+=== What exists
+
+* The correspondence states of PROOF-POLICY §2.2, and the rule that "a
+  successful compilation in each prover does not establish that all proved
+  the same proposition".
+* Written statement comparisons in at least five repositories: Mathesis
+  (THY-1), `januskey` (T-1), `lintel`, `MetaManifold-Evidence` and
+  `hvn-dehallucinator`.
+* The theory of `autoformal-fidelity`: a round trip rules out collapses and
+  is blind to additions. Faithfulness needs coverage too.
+* The classification of `invariant-path`: `ValidPath`, `Overextended`,
+  `Conflation`, `Incomplete` and `Abstain`.
+* A blocked transport route. THY-1 records that the Agda to Dedukti
+  translator fails on one construct, and that the Lambdapi exporters drop
+  rewrite rules.
+* Two structures named `ResourceAlgebra`, one in Agda and one in Lean, with
+  different laws and an open bridge (`resource-algebra`, item M-2).
+* A recorded mismatch. `absolute-zero` says that its OND-5 in Agda and its
+  OND-5 in Coq and Lean are "different propositions".
+* A map inside one home. `verisimdb` says that each of its theorems "is an
+  instance of a more general Echo-Types theorem". It says that its bridge
+  from Coq to Agda is "Currently NOT IMPLEMENTED".
+* A possible repeat. `januskey`, `valence-shell` and `absolute-zero` each
+  prove that undo in reverse order restores a state. *Reading* of the survey:
+  no file compares the three statements.
+
+=== Research questions
+
+Q-2.1 What must a statement comparison record?::
+The five existing comparisons are prose. Each lists differences of encoding:
+universes, the empty type, equality, implicit arguments. Collect the
+differences into a closed list. For each one, state when it preserves the
+statement and when it adds a side condition.
+
+Q-2.2 Is a round trip enough?::
+PROOF-POLICY §2 allows a comparison "by a round trip back through Dedukti".
+`autoformal-fidelity` F-2 says that a round trip cannot see an addition.
+*Reading:* a bridge that rests on a round trip alone is weaker than a bridge
+that also shows coverage. The question is whether the estate's comparisons
+show coverage.
+
+Q-2.3 Can a bridge hold by construction?::
+For statements in a small fragment, write the statement once and generate the
+Agda, Rocq and Lean forms. The bridge then rests on the generator. The canon
+has a precedent: `ZenodoDeposits.jl` regenerates its proved table, and the
+row is `tested-only`.
+
+Q-2.4 Where does transport fail?::
+Keep each failure of the Agda to Dedukti to Rocq or Lean route as a minimal
+reproducer with tool versions. The collection is a map of the frontier, and
+each entry is a report for the tool's authors.
+
+Q-2.5 When are two legs independent?::
+The research note asks when "multiple views count as independent
+corroboration, rather than duplicated presentations of one witness".
+*Reading:* a transported leg checks the same argument with a second kernel. A
+re-proved leg can be a second argument. In a trust expression, two legs are
+independent with respect to an assumption when they do not share it. A
+comparison that one reader wrote for both legs is a shared assumption.
+
+=== First experiments
+
+. *E-2.1* Write the five existing comparisons as bridge records, with the
+  fields of the re-anchoring plan. +
+  *Pass condition:* each record states its criterion, what it preserves and
+  what it forgets, from the home's own text. A field that the text does not
+  support is recorded as missing.
+. *E-2.2* Record the `ResourceAlgebra` pair as a bridge. +
+  *Pass condition:* the record names each law that differs. Its relation is
+  not `same-statement`.
+. *E-2.3* Generate the three forms of S-1 from one source. +
+  *Pass condition:* the hand-written proofs of E-1.1 check against the
+  generated statements with no edit to a statement.
+. *E-2.4* File the THY-1 reproducer with the translator's authors, and keep
+  it in the frontier collection. +
+  *Pass condition:* the reproducer fails in the same way at the pinned
+  versions on a clean machine.
+. *E-2.5* Write one bridge record for each of the six Echo mirrors. +
+  *Pass condition:* each record says whether the mirror imports the Agda
+  source or restates it, and what the restatement forgets. The disagreement
+  about the graded comonad is recorded as a question. It is not resolved by
+  the record.
+
+=== Who gains
+
+* *The owner's theory.* The identity question gets a body of worked cases,
+  each with a criterion. Line 2 is the research note's first stage,
+  "vocabulary and discovery", applied to mathematics.
+* *The owner's engineering.* `RECONCILED` becomes a state with a checkable
+  record. ECHIDNA gets labelled pairs, with refusals among them.
+* *Others.* A closed list of encoding differences between provers, drawn from
+  real cases. *Reading:* projects that keep one theorem in two provers have
+  no common form for the statement comparison.
+
+[[line-3]]
+== Line 3: from theorem to running code
+
+*Question.* How much of a theorem's guarantee reaches the running system, and
+can the answer be computed?
+
+=== What exists
+
+* PROOF-POLICY §1.1: a caller proved against an assumed contract is "proved
+  _relative to the assumption_".
+* The ledger rule that a theorem about a model is proved "for the model", and
+  that the link from model to code "is its own row".
+* The Aeneas rule of §4.1: the theorem about the model and the correspondence
+  of the model to the code are two rows.
+
+* `januskey`: theorem T-1 says that "undoing a fully executed transaction's
+  operations in reverse order restores the state it began in". Its own record
+  gives T-1 `PWG-2ii`. Row T-10, that the Rust operations "refine the abstract
+  open, edit and settle transitions", is OPEN. Row G-2, the link from Idris2
+  to Agda, is "by transcription" and ASSUMED.
+* `valence-shell`: "The Rust CLI refines the proven model" is `argued`.
+* `verisimdb`: the Rust contracts enter the Rocq development as axioms
+  "checkable by a Rust property test".
+* `vcl-ut`: `WireConformance` "proves, by `Refl`, that this decoder agrees
+  byte-for-byte with the trusted Rust encoder".
+* `protocol-squisher` keeps a negative result: "Toy-model proofs were
+  presented as system verification."
+* `proven` calls itself "the estate trust root". Its draft affirmation says:
+  "It is not fully proven today."
+
+=== Research questions
+
+Q-3.1 Can the composite status be computed?::
+For one chain from theorem to code, write each rung as a row with its token.
+Compute the status of the whole with S-2. Compare it with the status that
+the documents state.
+
+Q-3.2 Can a cited law be generated?::
+Row 2 of the ECHIDNA plan lets the Idris2 ABI state the token laws "for its
+own types". The ABI cites the Agda theorem as an `argued` row. If the ABI
+laws are generated from the Agda source, the row can rise to `tested-only`.
+
+=== First experiments
+
+. *E-3.1* Choose one vertical slice with the owner. The survey suggests
+  `januskey` T-1 with T-10 and G-2. Write its rungs as claims and bridges.
+  Compute its composite status. +
+  *Pass condition:* the computed status is not stronger than the weakest
+  rung, and each document that states a stronger status is listed.
+. *E-3.2* Generate the Idris2 statement of the token laws from the source of
+  S-1. +
+  *Pass condition:* a change to the Agda order makes the generated file
+  differ, and the gate fails until it is regenerated.
+
+=== Who gains
+
+* *The owner's engineering.* A dashboard that states a status for a system
+  can be checked against the weakest rung.
+* *Others.* A computed, visible composite status is a small tool against
+  overclaim. *Reading:* the gap between a proved model and the shipped code
+  is a common weak point of verified software.
+
+[[line-4]]
+== Line 4: evidence for decisions
+
+*Question.* Can the evidence discipline of the proof ledger serve a decision
+about money, capacity and people?
+
+=== What exists
+
+* The applied-systems area: five evidence statuses, from "verified
+  observation" to "missing", and the rule that a missing input stays blank.
+* Its liquidity method: "Missing opening cash makes the cash feasibility
+  verdict unknown."
+* `MetaManifold-Evidence`: a verdict of `entailed`, `refuted` or `unresolved`
+  from counts and a noise bound, with `verdict-sound` and `never-strengthens`.
+* `EpistemicTypes.jl`: a receipt for each row, and a merge test that can
+  refuse.
+
+=== Pre-registered statements
+
+S-4 (a sound cash verdict)::
+Give each weekly receipt and payment as an interval. Give a cash floor for
+each week. The verdict is `meets the floor`, `breaches the floor` or
+`undecided`. The verdict is sound: `meets` holds for each value in the
+intervals, and `breaches` holds for each value in the intervals. A missing
+input is an unbounded interval.
+
+S-5 (more uncertainty does not strengthen)::
+If each interval grows, a verdict of `undecided` stays `undecided`, and no
+verdict changes from `breaches` to `meets` or from `meets` to `breaches`.
+
+*Reading:* S-4 and S-5 have the shape of `verdict-sound` and
+`never-strengthens`. The fibre is the set of cash paths that the inputs
+allow. If the reading is correct, the proofs reuse `residual-evidence-types`
+at a pin, as `MetaManifold-Evidence` does.
+
+=== Research questions
+
+Q-4.1 Is evidence status a grade?::
+The applied statuses and the proof tokens are both ordered vocabularies with
+a weakest-input rule. The question is whether the applied statuses form a
+resource algebra, and whether a map to the proof tokens is a morphism. The
+research note warns against "implicit exchange" between measures, so the
+default answer is that no map exists until one is proved.
+
+Q-4.2 When may two views be added?::
+The accounting method keeps five views and says that they are "not amounts to
+add together indiscriminately". `EpistemicTypes.jl` has a merge test with
+three results. The question is what the merge test is for cost views.
+
+=== First experiments
+
+. *E-4.1* Write one synthetic 13-week forecast as records, each with an
+  evidence status. Compute the verdict. +
+  *Pass condition:* with the opening cash removed, the verdict is
+  `undecided`. It is not a number.
+. *E-4.2* Prove S-4 and S-5 in Agda. +
+  *Pass condition:* the receipt of Mathesis derives `PWG-3` for both, and the
+  executable check agrees with the proof on a generated table.
+
+=== Who gains
+
+* *The owner's theory.* The residual-evidence verdict gets a second applied
+  domain, far from metagenomics. That tests how general it is.
+* *The owner's practice.* The management-accounting research gets a checked
+  core that refuses to turn a missing input into a number.
+* *Others.* A forecast method that says `undecided` when an input is
+  missing. *Reading:* small organisations often decide on forecasts with
+  missing inputs.
+
+[[horizon]]
+== Horizon: propose and dispose
+
+*Question.* Can a learned component propose bridges and proofs while an exact
+checker keeps the last word?
+
+=== What exists
+
+* Rungs K3 and K4 of the Kautz-ladder plan. At K3, "learned front-ends emit
+  symbolic IR for exact reasoners". At K4, "provers and executors generate
+  training data".
+* The owner direction of 2026-11-09 in the architecture brief. Translations of
+  verified Rust are "a corpus for ECHIDNA, not proof evidence". ECHIDNA
+  "learns from these pairs how statements correspond across systems".
+* The ECHIDNA engineering plan. It says that "no trained model weights
+  exist", and that learned advice may "reorder candidates but never decide a
+  verdict".
+* A large stock of work for a proposer. `echo-types` reports 717 `ungraded`
+  pins of 722. `marches` reports 211 `ungraded` theorems, each with no Agda
+  witness.
+
+* `proof-burrower` searches prover libraries "for the place where that goal
+  already lives". An index of the estate's own declarations would be one
+  more library for it.
+* `statistikles` calls itself "a _Kautz Type 3 neurosymbolic_ statistical
+  analysis assistant", with "zero neural inference in the computation path".
+
+=== Research questions
+
+Q-H.1 What is the task?::
+Given two artefacts, a proposer writes a bridge record: the relation, the
+criterion, and what is preserved and forgotten. An exact checker or a
+reviewer accepts or refuses it. The labels come from the records of line 2.
+The refusals are as useful as the acceptances: each negative control and
+each countermodel is a hard case.
+
+Q-H.2 How is a proposer measured?::
+The Kautz-ladder plan gives the falsifier for K3: "Every proposal is accepted
+(the exact reasoner is not refusing anything) or every proposal is rejected
+(the front-end is noise)." A proposer passes only between these two ends.
+
+Q-H.3 What does a recheck leg cost?::
+A model proposes a Rocq or Lean proof for a generated statement (Q-2.3), and
+the kernel checks it. The count of accepted legs for each hour of work is a
+number that the estate does not have today. The number decides whether
+`PWG-2ii` across the estate is a matter of months or of years.
+
+=== First experiments
+
+. *E-H.1* Define the corpus as a view over bridge records and receipts. It
+  needs no new store. +
+  *Pass condition:* each corpus row points to a record whose state came from
+  a checker or from a reviewed comparison. No row has a label that a model
+  wrote.
+. *E-H.2* Take 20 `ungraded` Agda theorems from two repositories. Let a model
+  propose each Rocq leg and each Lean leg against a generated statement. +
+  *Pass condition:* the counts are published with their denominator. Each
+  accepted leg stays `BRIDGE-PENDING` until a person reviews the comparison.
+
+=== Who gains
+
+* *The owner's theory.* A measured cost for a recheck leg, and with it a
+  realistic plan for the 900 and more theorems that are `ungraded` today.
+* *The owner's engineering.* A first honest reading for rungs K3 and K4, on
+  data whose labels are exact.
+* *Others.* A corpus of paired statements that records refusals. *Reading:*
+  most public sets of paired statements hold accepted pairs only.
+
+== Order of work
+
+The lines depend on each other in one direction only.
+
+. Line 0 and E-1.1 start first. They need only this repository and the
+  kernel.
+. E-1.3 follows stage 2 of the re-anchoring plan, which moves the registry to
+  the canon reader.
+. Line 2 starts when the bridge record has a ruling (decision D-7 of the
+  plan).
+. Line 3 needs one home repository that agrees to be the slice.
+. Line 4 can run at any time. It shares only S-2 with the other lines.
+. The horizon waits for lines 1 and 2 to produce records.
+
+The Kautz-ladder plan has a standing rule: nothing above its first wave is
+committed before the experiments have numbers. This programme keeps the same
+rule. Each experiment above has a pass condition that was written first.
+
+== Benefits in one table
+
+[cols="1,2,2,2",options="header"]
+|===
+|Line |The owner's theory |The owner's engineering |Theory and engineering in general
+
+|0
+|One written method
+|A dossier check in the registry
+|A concrete meaning for "verified"
+
+|1
+|The ledger joins the type family
+|One specification for each grade computer
+|A checked algebra for level schemes
+
+|2
+|Worked cases for the identity question
+|A checkable `RECONCILED`
+|A list of encoding differences between provers
+
+|3
+|A test of the weakest-step rule on a real chain
+|A computed status for a system
+|A tool against overclaim for verified software
+
+|4
+|A second domain for residual evidence
+|A forecast that can say `undecided`
+|Evidence-typed decision models
+
+|Horizon
+|Data on what a learned proposer can do
+|Rungs K3 and K4 of the ladder
+|A corpus with exact labels
+|===
+
+== How to tell if the programme fails
+
+A programme that cannot fail is not research. Each sign below would show that
+a line is not worth its cost.
+
+* *Line 1.* The proofs of rows 2 and 12 through the kernel are longer than
+  direct proofs, or no program is ever tested against the specification.
+* *Line 2.* The five existing comparisons do not fit one record without
+  invented fields. Or the closed list of encoding differences keeps growing
+  after twenty cases.
+* *Line 3.* No home repository can state the rungs of one slice.
+* *Line 4.* S-4 needs assumptions that no real forecast meets.
+* *The whole.* After two quarters, no result of the programme has changed a
+  rule, a gate or a document in any other repository.
+
+[[limits]]
+== What the programme does not claim
+
+* It does not claim one calculus for the type family. The research note says
+  that none is required, and the kernel's own separations show where the
+  instances differ.
+* It does not claim that a status token, a grade and an evidence status are
+  the same thing. Each map between them is a question until it is proved.
+* It does not claim that a bridge gives identity. A bridge holds under its
+  criterion.
+* It does not claim that a recheck leg is an independent witness of truth.
+  Q-1.2 and Q-2.5 ask what a leg does witness.
+* It does not move any theorem out of its home repository.
+* It does not treat a proposal of a model as evidence.
+
+== Decisions for the owner
+
+Each decision lists the most elegant and correct long-term arm first. The
+programme assumes arm (a).
+
+. *R-1 The order of the tokens.* (a) The chain of S-1, as PROOF-POLICY §5
+  lists it. (b) A partial order in which `tested-only` and `argued` are not
+  comparable. Arm (b) needs a new bottom value for a mixed claim.
+. *R-2 The kernel import.* (a) The token theory imports `resource-algebra` at
+  a pinned commit, as `januskey` and `choreographic-types` do. (b) The token
+  theory is self-contained, and a bridge record joins it to the kernel.
+. *R-3 The home of S-2.* (a) Mathesis, because the expression language is the
+  ledger's. (b) `resource-algebra`, as a kernel lemma.
+. *R-4 The first slice for line 3.* The owner names the repository.
+. *R-5 The dossier.* (a) Mathesis describes the method and reports it as a
+  census. (b) The method goes to the standards repository as policy first.
+
+[appendix]
+[[survey]]
+== Survey of the estate
+
+Read on 2026-11-10 from the default branch of each repository. Each entry
+gives the commit that was read. Fenced readers extracted the entries from
+documentation and proof headers. The author of this programme checked the
+quoted kernel module, the research note and the manifesto first-hand.
+
+A status in the third column is the repository's own statement. Some
+repositories still use the older wording "Grade 3" for what PROOF-POLICY §8
+now calls `PWG-3`.
+
+=== The type family
+
+[cols="2,4,3",options="header"]
+|===
+|Repository and commit |Its own description |Status that it states
+
+|`resource-algebra` `aac649c`
+|"a kernel module of the family, not a family of its own"
+|PROVEN rows are `PWG-3` at a commit with a passing run. "no Rocq or Lean leg
+exists"
+
+|`echo-types` `b6c8b97`
+|"proof-relevant fibers as first-class witnesses for structured information
+loss"
+|Of 722 pins: `PWG-2ii` 5, `ungraded` 717
+
+|`epistemic-types` `bfcee6e`
+|"standpoint-indexed epistemic modalities, separating knowledge, belief, and
+warrant"
+|"Every theorem is `ungraded`"
+
+|`residual-evidence-types` `1807536`
+|"evidence-indexed residual types"
+|No grade recorded. A hosted Agda run is recorded.
+
+|`nextgen-typing` `bc91959`
+|"the coordination monorepo for the hyperpolymath type theory research and
+production pipeline"
+|XP-1 at "Grade 2i" (older wording)
+
+|`tropical-types` `f2e465c`
+|"applying max-plus (tropical) algebra to resource-aware type systems"
+|Lean, no Mathlib. No grade stated.
+
+|`occupancy-types` `1ba67f7`
+|"live-state occupancy as a graded type discipline"
+|R-1 to R-5 are `PWG-3` at a commit with a passing job.
+
+|`choreographic-types` `edf7b88`
+|"A pre-registration and research notebook for a graded multiparty-session
+and choreographic type theory"
+|No grade stated.
+
+|`secret-types` `ecf164a`
+|"a standalone information-flow typing project"
+|"mathesis Grade 3 and no higher" (older wording). A receipt deed exists.
+
+|`lintel` `89ceac3`
+|"A privacy lattice for oblivious DNS"
+|Six rows at `PWG-2ii`. The comparison is "provisional until the owner
+reviews it".
+
+|`system-et` `04a8b6e`
+|"systemet is the theory, not an implementation"
+|Of 15 obligations: 2 done, 2 in progress, 11 open.
+
+|`ordinal-notation` `f27d292`
+|"A constructive Agda development of ordinal notations". "Status: frozen"
+|"Every theorem is `ungraded`"
+
+|`trope-checker` `24d1985`
+|"The portable trust boundary of trope-particularity"
+|Of 24 theory obligations: `PWG-3` 17, `ungraded` 7
+
+|`invariant-path` `3a0a8fc`
+|"a claim-path debugger, not a truth engine"
+|"Nothing in this repository implements these layers."
+
+|`autoformal-fidelity` `a235db8`
+|"An application of the type family to the autoformalisation fidelity
+problem"
+|Its pre-registration marks three statements PROVEN. No receipt was found.
+
+|`marches` `e479ebc`
+|Region crossing in a routed network as "a typing judgment on traces"
+|"`ungraded` 211". Lean only.
+
+|`firmboot` `034d50c`
+|"A research language for evolving running systems under explicit continuity
+guarantees."
+|95 Lean lemmas with an axiom audit. No grade stated.
+|===
+
+=== Applications and executable companions
+
+[cols="2,4,3",options="header"]
+|===
+|Repository and commit |Its own description |Status that it states
+
+|`MetaManifold-Evidence` `051a426`
+|"Evidence Mode for MetaManifold as an independent package"
+|"22 of 22 theorems at `PWG-3`". Legs `BRIDGE-PENDING`.
+
+|`hvn-dehallucinator` `da01ab8`
+|"An external state-management orchestration framework for LLM agents"
+|Three theorems at `pwg` 3. Legs `BRIDGE-PENDING`.
+
+|`EchoTypes.jl` `83a2ad8`
+|"An executable companion to the Agda library"
+|"It is not a proof."
+
+|`EpistemicTypes.jl` `3f52b6f`
+|"Per-row claims with receipts for taxonomic tables"
+|"not extracted from the proofs"
+
+|`ResidualEvidenceTypes.jl` `a92a9e2`
+|"the executable side of the Agda development"
+|"It is not a proof about either."
+|===
+
+=== Systems
+
+[cols="2,4,3",options="header"]
+|===
+|Repository and commit |Its own description |Status that it states
+
+|`januskey` `989a747`
+|"A Rust CLI for file operations that carry their own inversion metadata"
+|`PWG-3` 4, `PWG-2ii` 1
+
+|`squeakwell` `8ad9d12`
+|"A database recovery and reconstruction tool"
+|"No proof lives in this repository"
+
+|`absolute-zero` `ffcfed1`
+|Programs that "provably compute nothing" and programs that "provably reveal
+nothing"
+|Agda `proven`. "Grade: `ungraded`"
+
+|`valence-shell` `48a88ea`
+|"Research shell exploring formally specified reversible operations"
+|Agda `PWG-3` "once CI is green on the merge head"
+
+|`verisimdb` `7039618`
+|"a federated consonance engine"
+|13 Coq axioms, 0 `Admitted`. No grade stated.
+
+|`vcl-ut` `5b10cb0`
+|"the proof-bearing safety pipeline for VCL"
+|"No Grade 3 claim is assigned by this plan"
+
+|`protocol-squisher` `3d50aa0`
+|"Terminated as an active project (2026-07-06)"
+|Two results are machine-checked, by its own provenance note.
+
+|`proven` `a7503b2`
+|"Mathematically proven safe operations."
+|Draft affirmation: "It is not fully proven today."
+
+|`proven-tests-and-benches` `f90bacb`
+|"the testing framework for the hyperpolymath ecosystem"
+|"29 spec-suite properties are now Actually-Proven"
+
+|`kategoria` `948d020`
+|"an exploration, not a product"
+|Its status files disagree.
+|===
+
+=== Languages
+
+[cols="2,4,3",options="header"]
+|===
+|Repository and commit |Its own description |Status that it states
+
+|`affinescript` `a4d02e1`
+|"a small, affine-typed core language that compiles to WebAssembly"
+|"22 obligations: 7 `proven`, 13 `open`, 2 `argued`"
+
+|`my-lang` `0ba3b9f`
+|"a multi-dialect surface for the hyperpolymath language stack"
+|Its README calls the Coq core "axiom-free".
+
+|`ephapax` `6a422f6`
+|A research language for "irreversible boundaries" in WebAssembly
+|"446 of 446 named results closed"
+
+|`jtv-lang` `499038a`
+|"A Harvard-architecture programming language"
+|"PWG-3 24 · ungraded 10"
+
+|`eclexia` `48ea0e4`
+|"an Economics-as-Code programming language"
+|Five axioms, in a file that CI does not build.
+
+|`wokelang` `1624f41`
+|"A human-centered, consent-driven programming language."
+|The proofs cover a subset of the surface language.
+
+|`phronesis` `b06a951`
+|A language "designed to formalize ethical reasoning in autonomous systems"
+|Proof corpus "Authored, not independently reviewed."
+
+|`gnpl` `bbed3a0`
+|"Lithoglyph's narration/projection language"
+|16 Lean `axiom` declarations in inherited code.
+
+|`typell` `5a6592a`
+|"The type-theoretic verification engine"
+|"5 / 5 required PASS"
+
+|`tangle` `6f070d6`
+|"A research language for knots and their mathematics"
+|No `sorry` and no `axiom`. "`braidEquiv` is TRUSTED, NOT PROVEN"
+|===
+
+=== Statistics, knots and other
+
+[cols="2,4,3",options="header"]
+|===
+|Repository and commit |Its own description |Status that it states
+
+|`CompositionalDA.jl` `9903e76`
+|"Native-Julia compositional differential abundance for microbiome count
+tables."
+|Nine Agda modules, "no postulates". "No second Rocq/Lean witness"
+
+|`ExactCounts.jl` `08c5c64`
+|"Exact counts and proportions for count tables"
+|Each theorem is "about the Agda model".
+
+|`ExactTests.jl` `cf0a5e8`
+|No README. Its proofs are about Fisher's exact test.
+|No status document.
+
+|`CompositionalCounts.jl` `0c86831`
+|"Multinomial (MN) and Dirichlet-Multinomial (DM) regression"
+|Its documents disagree about its proofs.
+
+|`statistikles` `f2de559`
+|"a Kautz Type 3 neurosymbolic statistical analysis assistant"
+|Ten lemmas over the naturals are proven. Ten statistical targets are
+"pending".
+
+|`KnotTheory.jl` `b84ce1c`
+|"A comprehensive Julia toolkit for computational knot theory"
+|No proof file.
+
+|`quandledb` `68c1485`
+|"stores and investigates knots using presentations, invariants and semantic
+indexes"
+|One Agda file. Most rows are "NOT STARTED".
+
+|`snifs` `720eb82`
+|"Safer (sandboxed) NIFs"
+|"10/10 gated proof artifacts". The gap from model to code is "NOT proven".
+
+|`plasma-parser-writer` `17b2096`
+|"a deterministic, typed policy engine for the agentic era"
+|No proof file.
+
+|`ensaid-spec` `57412d7`
+|"an open specification for neurosymbolic development environments"
+|Each section is "Draft".
+|===
+
+=== Read first-hand, or not surveyed
+
+* Read first-hand by the author: `manifesto` `5f0b20e`, the research note in
+  `vcl-ut` `5b10cb0`, `resource-algebra` `aac649c` (`Core.agda`,
+  `Morphism.agda`, the `MinMax` instance), and `metadatastician/standards`
+  `be39f90`.
+* `gv-clade-index` `539dd61` was searched for the word "mathesis". It has no
+  entry.
+* Cloned and not surveyed, because the reader stopped at a usage limit:
+  `echidna` `f546ee9`, `echidnabot` `bbbc433`, `hypatia` `b2fc9d4`,
+  `proof-burrower` `5063985`, `arghda-core` `e793355`, `ijson-jcs`
+  `cccb538` and `metadatastician/kyq` `ca6f427`.

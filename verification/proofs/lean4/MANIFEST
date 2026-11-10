@@ -1,5 +1,5 @@
 # Lean4 proof manifest — read by scripts/check-proofs.sh lean4
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
 # Ground-truthed 2026-07-17 with Lean leanprover/lean4:v4.15.0 (via elan).
-verification/proofs/lean4|ApiTypes.lean|gated| compiles under Lean 4.15.0 (rechecked 2026-11-09; the 2026-07-17 Nat.zero_le error no longer reproduces); #print axioms: none
+verification/proofs/lean4|ApiTypes.lean|gated| compiles under Lean 4.29.0 (2026-11-10, axiom audit: none); both laws by rfl, because simp brings in propext under 4.29.0; not rechecked under 4.15.0 since that change
 verification/proofs/lean4|FeatureReachability.lean|gated| THY-1 Lean leg, re-proved; core only; #print axioms: none

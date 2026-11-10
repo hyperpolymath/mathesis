@@ -4,7 +4,9 @@
 This is a *generated, read-only directory of proof-source repositories*, not yet a
 complete alphabetic mathematical concept atlas. It derives from
 `docs/catalogue/census/catalogue-rows.jsonl` and never alters
-or reclassifies the source census. A–Z means repository-name order, not a claim
+or reclassifies the source census. Each row names the commit that the census read
+(`commit`) and the time it read it (`censused_at`, UTC), so each count has a
+source. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 
 The first views are A–Z repositories, theory-versus-engineering census class,

@@ -19,6 +19,8 @@ cat > "$raw/repos-with-status.jsonl" <<'J'
 {"repo":"a/debt-only","path":"docs/proof-debt.md"}
 {"repo":"a/needs-only","path":"PROOF-NEEDS.adoc"}
 J
+# Provenance fixture: one meta record per repository (census-repo.sh writes it).
+jq -cS '{repo, commit: "0123456789abcdef0123456789abcdef01234567", censused_at: "2026-11-10T00:00:00Z"}' "$raw/files.jsonl" | sort -u > "$raw/meta.jsonl"
 got=$(bash scripts/census/build-rows.sh "$raw" "$raw/template.txt" \
       | jq -r '.repo + " " + .status_doc' | sort)
 want=$'a/debt-only docs/proof-debt.md\na/needs-first docs/status/PROOF-STATUS.adoc\na/needs-only PROOF-NEEDS.adoc'

@@ -41,6 +41,8 @@ export function validate(rows){
     if(!validClass.has(r.class))throw new Error('Unknown census class '+r.repo);
     for(const name of ['own_files','declarations','holes','axioms','fixture_files','unsafe','policy'])
       if(!Number.isSafeInteger(r[name])||r[name]<0)throw new Error('Invalid census counts '+r.repo+': '+name);
+    if(typeof r.commit!=='string'||!/^[0-9a-f]{40}$/.test(r.commit))throw new Error('Census row without a 40-hex source commit: '+r.repo);
+    if(typeof r.censused_at!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(r.censused_at))throw new Error('Census row without a UTC census time: '+r.repo);
     seen.add(r.repo);
   }
   return rows;

@@ -36,7 +36,7 @@ organisation-specific working material belongs in separate protected repositorie
 [cols="1,3"]
 |===
 |`docs/catalogue/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
-|`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.jsonl` (one row of counts per repository, no file paths), `repos.jsonl` (the census input), `unreachable.jsonl`, `template-paths.txt` and `forks-with-own-proofs.txt`. Each `.jsonl` file is JSON Lines: one I-JSON/JCS record on each line, so a change to one row changes one line.
+|`docs/catalogue/census/` |What the catalogue is rendered from: `catalogue-rows.jsonl` (one row of counts per repository, no file paths), `repos.jsonl` (the census input), `unreachable.jsonl`, `template-paths.txt` and `forks-with-own-proofs.txt`. Each `.jsonl` file is JSON Lines: one I-JSON/JCS record on each line, so a change to one row changes one line. Each row also names `commit`, the commit that the census read, and `censused_at`, the UTC time it read it.
 |`scripts/census/` |`run-census.sh` (whole census), `update-rows.sh` (refresh named repositories' rows only), `census-repo.sh` (one repo), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
 |`Justfile` |`just census`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
 |===

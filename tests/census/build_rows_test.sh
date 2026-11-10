@@ -34,6 +34,8 @@ cat > "$R/decls.jsonl" <<'EOF'
 EOF
 : > "$R/repos-with-status.jsonl"
 
+# Provenance fixture: one meta record per repository (census-repo.sh writes it).
+jq -cS '{repo, commit: "0123456789abcdef0123456789abcdef01234567", censused_at: "2026-11-10T00:00:00Z"}' "$R/files.jsonl" | sort -u > "$R/meta.jsonl"
 out=$(bash "$build" "$R" "$T/template.tsv")
 row() { jq -c --arg r "$1" 'select(.repo == $r)' <<<"$out"; }
 check "customised Types.idr is own (2 own files)" [ "$(row x/custom | jq .own_files)" = 2 ]
@@ -48,6 +50,11 @@ check "the template repository owns its template files" [ "$(row hyperpolymath/r
 out=$(bash "$build" "$R" "$T/paths.txt")
 check "path-only mode: only Extra.agda is own" [ "$(row x/custom | jq .own_files)" = 1 ]
 check "path-only mode: no template-path hole counts" [ "$(row x/custom | jq .holes)" = 0 ]
+
+# Provenance is required: a row without a recorded commit is an error, not a
+# row with no source.
+grep -v '"x/custom"' "$R/meta.jsonl" > "$T/meta.jsonl"; mv "$T/meta.jsonl" "$R/meta.jsonl"
+check "a row without provenance stops the run" eval '! err=$(bash "$build" "$R" "$T/template.tsv" 2>&1 >/dev/null) && [[ "$err" == *"no commit recorded for x/custom"* ]]'
 
 echo "build-rows tests: $pass passed, $fail failed"
 [ "$fail" -eq 0 ]

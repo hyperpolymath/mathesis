@@ -141,6 +141,9 @@ row=$(bash "$census/build-rows.sh" "$data" "$work/template-paths.txt" | head -n 
 [ "$(jq -r .declarations <<<"$row")" = "5" ] || fail "declarations: $row"
 [ "$(jq -r .axioms <<<"$row")" = "2" ] || fail "axioms: $row"
 [ "$(jq -r .status_doc <<<"$row")" = "docs/status/PROOF-STATUS.adoc" ] || fail "status_doc: $row"
+# Provenance: the row names the commit that the census read, and when.
+[ "$(jq -r .commit <<<"$row")" = "$(git -C "$src" rev-parse HEAD)" ] || fail "commit: $row"
+jq -e '.censused_at | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")' <<<"$row" >/dev/null || fail "censused_at: $row"
 
 # Status-doc ranking, on build-rows.sh alone: a nested sub-project's status
 # page (two or more directories deep) must not displace the
@@ -153,6 +156,8 @@ printf '%s\n' \
   '{"path":"PROOF-NEEDS.adoc","repo":"x/nested"}' \
   '{"path":"ecosystem/sub/PROOF-STATUS.adoc","repo":"x/nested"}' \
   > "$raw/repos-with-status.jsonl"
+# Provenance fixture: one meta record per repository (census-repo.sh writes it).
+jq -cS '{repo, commit: "0123456789abcdef0123456789abcdef01234567", censused_at: "2026-11-10T00:00:00Z"}' "$raw/files.jsonl" | sort -u > "$raw/meta.jsonl"
 doc=$(bash "$census/build-rows.sh" "$raw" "$work/template-paths.txt" | head -n 1 | jq -r .status_doc)
 [ "$doc" = "PROOF-NEEDS.adoc" ] || fail "nested status page won over the top-level needs list: $doc"
 

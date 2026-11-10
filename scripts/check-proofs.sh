@@ -106,8 +106,15 @@ check_one() {
 #          (Lean.collectAxioms, the function behind #print axioms). The
 #          lemmas Lean generates for an inductive are not witnesses.
 # Each audit fails closed: if it cannot show that it ran, the module fails.
+# Both axiom reports are transitive: a theorem's report covers every Fixpoint,
+# Definition or def it uses. A declaration that no audited theorem uses is not
+# reported; Lean still warns on its sorry, and Rocq still compiles its Admitted.
+# On success the gate prints the receipt fields of PWG-1 (PROOF-POLICY 8.2) for
+# each gated module: the SHA-256 of the file and the axioms reported.
 audit_one() {
   # $1 source-root, $2 module; sets LAST_OUT on failure; returns 0 iff clean.
+  # On success AUDIT_NOTE holds the axiom report that a receipt records (PWG-1).
+  AUDIT_NOTE=""
   local root="$1" rel="$2" dir out rc base copy names expect got
   dir="$(mktemp -d)"
   case "$PROVER" in
@@ -127,6 +134,7 @@ audit_one() {
         done
       [ -s "$dir/own" ] || { LAST_OUT="axiom audit: no first-party module in the import cone"; rm -rf "$dir"; return 1; }
       set +e; mapfile -t own <"$dir/own"; out="$(bash "$ROOT/scripts/scan-postulates.sh" "${own[@]}" 2>&1)"; rc=$?; set -e
+      AUDIT_NOTE="postulates: none in the ${#own[@]} first-party module(s) of the import cone: $(sed -n 's/.*label="\([^"]*\)".*/\1/p' "$dir/cone.dot" | LC_ALL=C sort -u | tr '\n' ' ')"
       ;;
     coq)
       base="$(basename "$rel" .v)"; copy="GateAudit_${base}"
@@ -141,7 +149,7 @@ audit_one() {
           s = $0; sub(/^[ \t]*[A-Za-z]+[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s)
           q = ""; for (i = 1; i <= d; i++) if (stack[i] ~ /^M:/) q = q substr(stack[i], 3) "."
           print q s }' "$ROOT/$root/$rel")"
-      if [ -z "$names" ]; then rm -rf "$dir"; LAST_OUT=""; return 0; fi
+      if [ -z "$names" ]; then rm -rf "$dir"; LAST_OUT=""; AUDIT_NOTE="no theorem declared"; return 0; fi
       { cat "$ROOT/$root/$rel"; echo; while IFS= read -r n; do echo "Print Assumptions $n."; done <<<"$names"; } \
         >"$ROOT/$root/$copy.v"
       set +e; out="$(cd "$ROOT/$root" && coqc "$copy.v" 2>&1)"; rc=$?; set -e
@@ -149,6 +157,7 @@ audit_one() {
       expect="$(grep -c . <<<"$names")"
       got="$(grep -c '^Closed under the global context' <<<"$out" || true)"
       if [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ]; then rc=0
+        AUDIT_NOTE="Print Assumptions: closed under the global context for $expect theorem(s): $(tr '\n' ' ' <<<"$names")"
       else rc=1; out="axiom audit: $got of $expect theorem(s) closed under the global context"$'\n'"$out"; fi
       ;;
     lean4)
@@ -174,6 +183,7 @@ LEAN
       if [ "$rc" -ne 0 ] || ! grep -q 'GATE-AUDIT-DONE' <<<"$out" || grep -q 'GATE-AXIOMS' <<<"$out"; then
         rc=1; out="axiom audit: a theorem depends on an axiom, or the audit did not run"$'\n'"$(grep -E 'GATE-|error' <<<"$out" || printf '%s' "$out")"
       fi
+      [ "$rc" -eq 0 ] && AUDIT_NOTE="axioms: none for $(sed -n 's/.*GATE-AUDIT-DONE \([0-9]*\).*/\1/p' <<<"$out") declared theorem(s)"
       ;;
     *) rc=0; out="" ;;
   esac
@@ -247,6 +257,9 @@ while IFS='|' read -r root rel status note; do
       fails=$((fails + 1))
     elif [ "$status" = gated ]; then
       echo "PASS"
+      # The receipt fields of PWG-1: a digest of the input and the axioms reported.
+      echo "        sha256 $(sha256sum "$ROOT/$root/$rel" | cut -d' ' -f1)"
+      echo "        $AUDIT_NOTE"
     else
       echo "PASS -- UNEXPECTED (quarantined module now compiles)"
       echo "        Promote '$rel' to 'gated' in $MANIFEST_FILE and update docs/status/ROADMAP.adoc."

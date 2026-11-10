@@ -28,6 +28,7 @@
 * `hyperpolymath/kitchenspeak` — theory; 6 own proof files, 82 detected declarations; provers: agda 5, idris2 1
 * `hyperpolymath/lithoglyph` — theory; 13 own proof files, 264 detected declarations; provers: lean 8, idris2 5
 * `hyperpolymath/marches` — theory; 17 own proof files, 198 detected declarations; provers: lean 17
+* `hyperpolymath/MetaManifold-WebUI` — theory; 13 own proof files, 107 detected declarations; provers: agda 13
 * `hyperpolymath/my-lang` — theory; 25 own proof files, 617 detected declarations; provers: rocq 16, idris2 9
 * `hyperpolymath/neurophone` — theory; 6 own proof files, 19 detected declarations; provers: lean 3, tla 2, dafny 1
 * `hyperpolymath/nextgen-typing` — theory; 16 own proof files, 118 detected declarations; provers: agda 3, lean 6, rocq 7

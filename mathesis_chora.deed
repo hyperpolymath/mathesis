@@ -657,7 +657,15 @@
           (merge :sources (".gitattributes-legacy" ".gitattributes-os") :dest ".gitattributes"))
         ; Explicitly ignore certain paths from being cleaned
         (ignores
-          :dirs ("src/" "tests/" ".git/" "docs/" ".machine_readable/")))))
+          :dirs ("src/" "tests/" ".git/" "docs/" ".machine_readable/"))))
+    ; census-writer: one writer for census data (re-anchoring plan WO 0.2,
+    ; 2026-11-10). Two sessions that refresh rows at the same time made the
+    ; conflicting pull requests that WO 0.1 had to triage.
+    (census-writer
+      :writers ("just census" "just update-rows")
+      :hand-edit-rows #f
+      :open-row-pull-requests-max 1
+      :open-work-recorded-in "docs/status/ROADMAP.adoc"))
   ; Optional ecosystem integrations.
   ; Each clause is opt-in; delete the ones your project does not use.
   (integrations

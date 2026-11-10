@@ -2,8 +2,8 @@
 = Mathesis discovery atlas — census-backed first slice
 
 This is a *generated, read-only directory of proof-source repositories*, not yet a
-complete alphabetic mathematical concept atlas. It derives from the existing
-248-row `docs/catalogue/census/catalogue-rows.json` snapshot and never alters
+complete alphabetic mathematical concept atlas. It derives from
+`docs/catalogue/census/catalogue-rows.json` and never alters
 or reclassifies the source census. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 
@@ -22,3 +22,15 @@ The next slice requires a separately reviewed, source-anchored claims registry;
 it is proposed in link:../decisions/0004-claims-registry.adoc[ADR 0004]
 (pilot view: link:../registry/registry.adoc[`docs/registry/registry.adoc`]).
 No private-source records are added or published by this generator.
+
+== One writer for census data
+
+Census rows change in one way only: `just census` (the whole frame) or
+`just update-rows OWNER/REPO...` (named repositories). Both rebuild the
+catalogue and this atlas from the same rows. Nobody edits
+`catalogue-rows.json`, `unreachable.json` or the generated views by hand.
+Only one pull request that changes rows is open at a time; record it under
+"Open census work" in link:../status/ROADMAP.adoc[`ROADMAP.adoc`] before it
+opens. The deed states the same rule in `(bot-directives (census-writer))`.
+Two sessions that refreshed rows at once made the 17 conflicting pull requests
+that work order 0.1 of the re-anchoring plan had to triage.

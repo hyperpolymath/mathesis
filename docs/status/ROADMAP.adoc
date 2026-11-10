@@ -35,6 +35,17 @@ Initial development phase.
   The Rocq and Lean gates should also fail when `Print Assumptions` or
   `#print axioms` lists an axiom for a gated theorem.
 
+=== Open census work
+
+One pull request that changes census rows is open at a time (atlas README,
+"One writer for census data"). Record it here before it opens.
+
+* 2026-11-10: the row of `hyperpolymath/MetaManifold-WebUI`, taken by
+  `just update-rows`. The census of 2026-11-09 ran before the fork was listed
+  in `forks-with-own-proofs.txt`, so it had no row. The row uses the scanner
+  rules of 2026-11-10; the other rows still use the rules of 2026-11-09
+  until the next full census.
+
 == Milestones
 
 === v0.1.0 - Foundation

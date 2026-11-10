@@ -1210,89 +1210,99 @@ three different practices (<<centre>>).
 
 [appendix]
 [[triage]]
-== Provisional triage of the open pull requests
+== Triage of the open pull requests (ruled 2026-11-10)
 
-The table comes from commit subjects and file lists at 2026-11-10. Each row
-needs a full read of the diff (<<wo-0-1>>). Each pull request conflicts with
-`main`.
+The implementation session read each full diff on 2026-11-10 and put each
+row to the owner, who approved every row (ruling D-6 (a)). Each pull request
+conflicted with `main`. The kept parts land in four landing pull requests from
+one branch: A (scanner fixes, hyperpolymath/mathesis#51), B (one refresh tool,
+#52), C (frame, #53) and D (documents, the pull request that adds this table).
+Each original closes with a pointer to its landing pull request. No other
+branch is written.
 
 [cols="1,4,4",options="header"]
 |===
-|PR |Content that `main` does not have |Provisional disposition
+|PR |What `main` lacked |Ruled disposition
 
 |16
-|An audit report of the ECHIDNA proof route. The record of ruling D-10.
-|Keep both as documents. Drop the row changes.
+|An audit report of the ECHIDNA proof route, with ruling D-10.
+|Report lands in D. Rows and the script change are dropped. Closed.
 
 |17
-|Nothing found. The status-document fix and the canon 2.1.5 pin are on
-`main`.
-|Close as superseded.
+|Only its CI step: `main` did not run the census tests.
+|CI step lands in A. Closed.
 
 |20
-|Template boilerplate matched by blob, first implementation.
-|Choose one of 20 and 26.
+|Template boilerplate by blob, first design, with a test.
+|Test lands in A, adapted to the design of 26. Its refresh script is dropped.
+Closed.
 
 |22
-|Tests for status-document choice. The trope-checker grades, typed into the
-register.
-|Keep the tests. Move the grades to the registry (<<wo-2-4>>).
+|Order-independent status tests, two trope-checker register rows, a prose
+grade census.
+|Tests and rows land in D. The prose grade census is dropped: the registry
+derives grades (<<wo-2-4>>). Closed.
 
 |24
-|A partial refresh that records provenance. A finding: one occupancy proof
-fails under its pinned Lean.
-|Keep the provenance design for <<wo-2-1>>. Keep the finding.
+|Reconnaissance rows for nine repositories and the occupancy finding; a
+second refresh mode and a provenance file.
+|Rows and finding land in D, without its januskey rows (superseded by CI
+rows). The mode and the file are dropped for <<wo-2-1>>. Closed.
 
 |25
-|A fix that keeps rows when the template list is empty.
-|Check `main` for the same fix. Then close or rebase that part.
+|A fix: on `main` an empty template list dropped every row.
+|Fix and test land in A. Closed.
 
 |26
-|Template boilerplate matched by path and blob, second implementation.
-|Choose one of 20 and 26.
+|Template boilerplate by (path, blob), second design.
+|The design lands in A. Closed.
 
 |27
-|A scanner that skips comments and strings. Idris2 signatures without
-clauses, reported as axiom candidates.
-|Keep the scanner changes. Send them to the scanner's source.
+|A scanner that blanks comments and strings; Idris2 signatures without
+clauses as axiom candidates.
+|Lands in A. The change goes to the proof-craft source. Closed.
 
 |31
-|The census sees proofs written in Rust (Creusot, Pearlite, Verus).
-|Keep. PROOF-POLICY §1.2 makes this necessary.
+|The census sees Rust proofs (Creusot, Pearlite, Verus); nested status
+documents rank last.
+|Lands in A. Closed.
 
 |34
-|Verus rules.
-|Fold into 31. Close the remainder.
+|One Verus rule; a proof-burrower register row; the Rust wording; an
+ECHIDNA relabel.
+|Rule in A; row and wording in D. The relabel waits: the receipt it cites is
+not on the `main` of echidna. Closed.
 
 |36
-|25 repositories that the frame lacks. A derived row count.
-|Keep both. Drop the rerun data.
+|A derived row count; the atlas rebuilt with each census.
+|Lands in C. The frame was already on `main`. Closed.
 
 |39
-|The owner's proofs in one fork, with the fork listed.
-|Keep the fork listing. Take the row from the next census.
+|A third-party upstream added to `repos.json` by hand.
+|Closed. `main` lists the fork; a sync of the fork gives the row.
 
 |40
-|A census rerun.
-|Close as superseded by the next single run.
+|Nothing: a census rerun.
+|Closed.
 
 |41
-|A row refresh tool with atomic publication and tests.
-|Choose one refresh tool among `main`, 24, 41 and 42.
+|A public-only check; a repository-map fix; a snapshot step.
+|Check and fix land in B. The snapshot step is dropped: it needs
+`mv --exchange`, which ubuntu-24.04 does not have. Closed.
 
 |42
-|Wording that says the catalogue has no grades.
-|Keep the wording. See 41.
+|A sentence that the catalogue carries no grades.
+|Lands in B. Closed.
 
 |44
-|Ada counted as SPARK only where the code opts in.
-|Keep the scanner change. Drop the row changes.
+|Ada counted as SPARK only where it opts in; the template owns its files.
+|Lands in A. Closed.
 
 |45
-|Nothing found beyond a rerun.
-|Close as superseded.
+|Nothing: status-document order and a rerun.
+|Closed.
 |===
 
 `scripts/census/proof-holes.sh` is a copy of the scanner from the proof-craft
-skill. Pull requests 27, 31, 34 and 44 change the copy. The same change must
-reach the source, or the two will differ.
+skill. Landing change A changes the copy. The same change must reach the
+source, or the two will differ.

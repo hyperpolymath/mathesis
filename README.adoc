@@ -11,7 +11,7 @@ Proofs stay in their home repositories. mathesis points at them. Later it
 will also hold the Agda sources for theory that has no other natural home.
 
 The rules for where a proof *should* live are not here: they are
-https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[the canonical standards/3-practice/PROOF-POLICY.adoc] (Creusot for Rust, SPARK for Ada,
+https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[the canonical standards/3-practice/PROOF-POLICY.adoc] (Creusot with Pearlite contracts, and Verus, for Rust; SPARK for Ada;
 Idris2 for APIs, ABIs and engineering properties, Agda for theory rechecked
 in Rocq and Lean). The working method is the proof-craft skill.
 

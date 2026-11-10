@@ -1,0 +1,1278 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Mathesis re-anchoring: assessment, identity and reorganisation plan
+:toc: preamble
+:toclevels: 2
+:sectnums:
+:icons: font
+
+Status: *proposed* (2026-11-10). The owner ruled on six of its eight
+decisions on 2026-11-10, through the selector (<<decisions>>). This document
+changes no gate, schema, deed clause or data file. Each change that a ruling
+does not cover still needs one. The work orders in <<work-orders>> are
+written for a later implementation session.
+
+The companion document is
+link:mathesis-research-programme.adoc[the research programme]. This document
+says what Mathesis is and how to put it in order. The companion says what
+research the ordered repository supports.
+
+== Verdict in one page
+
+*Where Mathesis stands.* The facts below were measured on `main` at
+`8ee6354` (2026-11-10). <<measured>> gives the command or file for each.
+
+* Mathesis has real, working parts. A census reads 505 repositories, and a
+  catalogue lists the 248 that have proof files. Three atlas views are
+  generated from the catalogue rows. A pilot registry pins 17 claims. One
+  theory theorem is proved in three provers. An applied-systems area exists.
+* These parts are a small share of the tree. Of 539 tracked files, 52 exist
+  only in Mathesis and 23 more were changed after the mint. The other 464 come
+  from the RSR template unchanged, or changed only by the mint's name pass.
+* The declared golden path, `just test && just quality`, checks template
+  stubs only. It checks no Mathesis part, and no workflow runs it.
+* Main CI is green. Four checks fail when a person runs them, and CI runs none
+  of them. They are the catalogue drift check, the arrival-pack check, the
+  coaptation check and the AI-install check.
+* The deed, the six contractiles and most status documents still describe the
+  template. The north-star contract lists the template's goals.
+* 17 pull requests are open. Each one conflicts with `main`. At least six
+  repeat a fix that `main` already has.
+* The public data names 40 private repositories. The architecture document
+  says that private metadata must not be published.
+* Two programs derive Proof Witness Grades by different rules: the Mathesis
+  registry tool and the reader that the proof policy names as normative.
+* Mathesis records the grade of its own theorem in prose only. It keeps no
+  machine-readable receipt, and its own registry does not list the theorem.
+
+*What Mathesis is.* Mathesis is the maths section of the estate. It keeps an
+atlas of the mathematics in other repositories, the theory that no single
+system owns, and methods that apply mathematics to decisions. One rule binds
+the three: each statement carries its evidence, and Mathesis derives status
+from that evidence. It does not assert status.
+
+*How it fits the estate.* The standards repository prescribes. The home
+repositories prove. Mathesis describes.
+
+*What to do.* Six stages, each made of small work orders (<<work-orders>>):
+
+. Stage 0 stops the conflict between pull requests.
+. Stage 1 closes the soundness holes.
+. Stage 2 makes one data pipeline with one vocabulary.
+. Stage 3 makes the deed, the contracts and the documents tell the truth.
+. Stage 4 gives each of the three shelves its rule and its first content.
+. Stage 5 scales the derived registry across the home repositories.
+
+The owner's decisions are in <<decisions>>.
+
+*How the plan meets the four aims of the request.*
+
+[cols="1,4,2",options="header"]
+|===
+|Aim |Answer |Where
+
+|Coherence
+|One identity, one record model, one vocabulary and one data pipeline. The
+template material is fenced by declared capabilities.
+|<<identity>>, <<structure>>, stages 2 and 3
+
+|Value in use
+|Rows that show their commit and date. A registry that says what each
+theorem still owes. Checks that fail when a view is stale. A published atlas.
+|Stages 1, 2 and 5
+
+|Clarity of direction
+|A deed and contracts that state Mathesis goals. A roadmap with real stages.
+Each open decision listed with its arms.
+|Stage 3, <<decisions>>
+
+|Opportunity
+|A theory shelf with an admission rule. A centre for bridges between
+systems. An applied shelf tied to the same evidence rules. A research
+programme.
+|Stages 4 and 5, <<centre>>, the companion document
+|===
+
+[[measured]]
+== What was measured, and how
+
+=== Method
+
+* Source: `hyperpolymath/mathesis`, `main` at
+  `8ee635472ca2db6e59579c008233ec9bf747e439`.
+* Canon: `metadatastician/standards` at
+  `be39f900665fb7c042c05d1165da018adc1860f4`.
+* Template: `hyperpolymath/rsr-template-repo` at the mint pin
+  `4e663535bd939a6d9ed840aef2b6849434901b04`, which the deed records.
+* Tools: Just 1.56.0, Nickel 1.18.0, Bun 1.4.4 and jq 1.7. The Just and
+  Nickel binaries passed the checksums that `proven-tests.yml` uses.
+* Each check in <<gate-results>> was run from a clean tree.
+
+Limits of this assessment:
+
+* The session had no Agda, Rocq, Lean, Idris2 or Zig. No proof was rechecked.
+  `just test` and `just quality` could not complete.
+* The pull request review read commit subjects and file lists. It did not
+  read each full diff.
+* The estate survey read documentation and proof headers in public
+  repositories. It checked no proof.
+
+=== Where the files come from
+
+The template tree at the mint pin was compared with `main`, path by path and
+blob by blob.
+
+[cols="3,1,4",options="header"]
+|===
+|Class |Files |Meaning
+
+|Only in Mathesis
+|52
+|The census, atlas and registry tools, their data and tests, the theory
+proofs, the proposals, the authority guide, the applied-systems area and one
+workflow. Five of the 52 are template files that the mint renamed or seeded:
+the deed and four documents.
+
+|In the template, changed after the mint
+|23
+|Mathesis edits, such as `README.adoc`, `Justfile` and `PROOF-STATUS.adoc`,
+and later template syncs.
+
+|In the template, changed by the mint only
+|115
+|The name pass changed these files. Nobody changed them later.
+
+|In the template, byte-identical
+|349
+|The template spine and its scaffolds.
+|===
+
+The 115 and the 349 make 464 files, which is 86% of the tree. This number is a
+file count. It is not a measure of value.
+
+[[gate-results]]
+=== Gate results
+
+[cols="3,4,3,1",options="header"]
+|===
+|Check |Command |Result |In CI
+
+|Catalogue matches its rows
+|`just catalogue-check`
+|*Fails.* `catalogue.adoc` holds a second row for one repository.
+|no
+
+|Arrival pack matches the deed
+|`just validate-claude-md`
+|*Fails.* `CLAUDE.md` says the clade is `UNASSIGNED`. The deed says `fv`.
+|no
+
+|Coaptation receipt is current
+|`just validate-coapt`
+|*Fails.* The committed receipt is stale.
+|no
+
+|AI-install guide
+|`just validate-ai-install`
+|*Fails.* `README.adoc` has no AI-install section or anchor.
+|no
+
+|Capability profile (canon checker)
+|`standards/scripts/check-rsr-profile.sh .`
+|*Cannot score.* The deed declares no capability and no preset.
+|no
+
+|Golden path
+|`just test`, `just quality`
+|Not completed (no Idris2, no Zig). Both recipes read `src/interface` only.
+|no
+
+|Atlas matches its rows
+|`bun scripts/atlas/census-atlas.mjs check`, plus 10 tests
+|Passes.
+|yes
+
+|Registry derives and matches
+|`bun scripts/registry/claims-registry.mjs check`, plus 7 tests
+|Passes. 17 claims, 2 pinned sources.
+|yes
+
+|Status-document choice
+|`bash tests/census/build_rows_status_test.sh`
+|Passes.
+|no
+
+|Repository map
+|`just validate-repo-map`
+|Passes.
+|yes
+
+|Root shape
+|`bash scripts/check-root-shape.sh .`
+|Passes.
+|yes
+
+|RSR compliance, deed state
+|`just validate-rsr`, `just validate-state`
+|Pass.
+|no
+
+|I-JSON and JCS
+|`bash scripts/check-ijson-jcs.sh --enforce .`
+|Passes. 18 files.
+|yes
+
+|Agda proof gate
+|`bash scripts/check-proofs.sh agda`
+|Not run here. The workflow `agda-proof-policy.yml` runs it.
+|yes
+|===
+
+=== Findings
+
+Each finding states a fact, its evidence and its consequence.
+
+[[f-1]]F-1. The golden path does not test Mathesis::
+`just test` runs `idris2 --typecheck src/interface/abi.ipkg` and
+`zig build test` in `src/interface/ffi`. `just quality` adds
+`zig fmt --check`. These files are template stubs. The census, atlas, registry
+and proof checks are separate recipes. No workflow runs `just test` or
+`just quality`. The deed's `(anchor (golden-path))` therefore promises a check
+that says nothing about this repository.
+
+[[f-2]]F-2. Four checks fail and CI does not run them::
+See <<gate-results>>. The duplicate catalogue row came from two merged pull
+requests that changed the same generated file. A check that CI does not run
+cannot protect `main`.
+
+[[f-3]]F-3. The descriptive record describes the template::
+* Deed: `(manifest :purpose)` says "Canonical RSR ... template".
+  `(meta :type)` says `library`. `(anchor (implementation-policy))` allows
+  Rust, Idris2 and Zig and does not name the JavaScript that the atlas and
+  registry use. `(anchor (semantic-authority-files))` names four files that do
+  not exist. `(ecosystem :not)` is empty. `(variant (paths :added))` is empty.
+* Contractiles: the `intend` contract lists `repo-initialization` and four
+  more template goals. No contract states a Mathesis invariant.
+* Status: `TEST-NEEDS.adoc` records CRG grade C as "ACHIEVED 2026-04-04", a
+  date before this repository existed. `READINESS.adoc` is an unfilled form.
+  `ROADMAP.adoc` keeps the template milestones. `PROOF-NEEDS.adoc` lists the
+  template's seven ABI and typing obligations.
+* Documents: `docs/EXPLAINME.adoc` is titled "RSR Template Repo - Explainme".
+  `docs/usage.adoc` shows a service that listens on port 8080.
+  `docs/AFFIRMATION.adoc` is an unsigned form.
+* The name pass damaged some sentences. `PROOF-NEEDS.adoc` says "These proofs
+  come from the mathesis". The `dust` contract forbids "references to mathesis
+  in generic template files".
+
+[[f-4]]F-4. The capability profile is empty, and two gates disagree::
+The canon decides which template modules a repository carries by its declared
+capabilities. Mathesis declares none. With an honest profile
+(<<wo-3-2>>), the canon checker reports seven vestigial modules:
+`src/interface/ffi/`, `src/interface/Abi/`, `src/interface/generated/`,
+`benches/`, `build/container/Containerfile`, `rust-ci.yml` and `release.yml`.
+The local `just validate-rsr` requires three of these directories in every
+repository. The two gates cannot both pass. The cause is in the template.
++
+The canon checker also compares `(manifest :project)` with the deed's
+`:canonical-name`, letter for letter. The deed has "Mathesis" in one and
+"mathesis" in the other, so the checker reports a missing baseline manifest.
+
+[[f-5]]F-5. Two derivations of the grade exist::
+PROOF-POLICY §8.5.1 names `readProofReceipt` in the standards repository as
+"the normative definition of the profile's fields, vocabularies and
+derivation". It says that Mathesis reads receipts through it. The Mathesis
+tool `scripts/registry/claims-registry.mjs` has its own parser and its own
+rules. The rules differ in three places:
++
+* The canon counts a recheck leg only with a `proven` token, a `transported`
+  or `re-proved` route, the state `RECONCILED` and a current receipt. The
+  Mathesis tool counts each leg whose state is `RECONCILED`.
+* The canon requires a current Agda receipt and the state `AGDA-VERIFIED`. The
+  Mathesis tool reads one `:flags` field and the Agda token.
+* The canon derives `PWG-1`. The Mathesis tool does not.
+
+[[f-6]]F-6. Mathesis does not yet keep the rules of a home repository::
+THY-1 has a careful prose record in `docs/status/PROOF-STATUS.adoc`. The
+record has gaps that the same file and the roadmap name:
++
+* No receipt deed exists under `verification/receipts/` (PROOF-POLICY §8.5.1).
+* The registry does not list `hyperpolymath/mathesis#THY-1`.
+* No CI lane runs the Rocq leg or the Lean leg.
+* `scripts/check-proofs.sh` passes a Rocq file with `Admitted` and a Lean file
+  with `sorry`.
+* The Agda lane installs Agda from the distribution package. PROOF-POLICY §6
+  requires a `deviation` record for that, and none exists.
+
+[[f-7]]F-7. One register is written by hand::
+`docs/status/CROSS-PROVER-RECONCILIATION.adoc` calls itself a working policy.
+PROOF-POLICY §2.2 has since adopted that vocabulary, so the policy text is now
+a copy. The same file holds a register of grades that a person typed. The
+registry exists so that nobody types a grade.
+
+[[f-8]]F-8. The data layout causes the pull request conflicts::
+* Each data file is one line of JSON. Two pull requests that change two
+  different rows conflict on that line.
+* A row has no source commit and no census date. A reader cannot tell a fresh
+  row from an old one.
+* The atlas test, the atlas README and the main README state the row count as
+  a literal number. Each refresh must edit them.
+* No rule names one writer for the census data. On 2026-11-09 many sessions
+  refreshed rows at the same time.
+* The deed's `(coverage)` and `(debt)` clauses are empty, so no session could
+  see the work of another.
+
+[[f-9]]F-9. Private names are public::
+`repos.json` lists 40 repositories with `"visibility":"private"`.
+`unreachable.json` and the "Not reached" section of `catalogue.adoc` repeat
+the names. `README.adoc` names one of them. `docs/architecture.adoc` says
+"private metadata must not be published". The architecture brief says a
+public catalogue must not leak private repository titles.
+
+[[f-10]]F-10. Three proposals overlap, and the canon settled part of them::
+Issue 28, `proof-receipts-as-data.adoc` and ADR 0004 each propose how
+receipts become data. PROOF-POLICY §8.5.1 now fixes the receipt format, its
+conventional path and its reader. Each proposal still reads as open.
+
+[[f-11]]F-11. A ruling about Mathesis is not recorded in Mathesis::
+The owner ruled on 2026-11-09 that the token-lattice theory lives in Mathesis
+(decision D-10 of the ECHIDNA proof-route plan in the standards repository).
+On `main`, no Mathesis file records the ruling. An open, conflicting pull
+request carries it.
+
+=== What works and must stay
+
+* The census is reproducible, and it states its own limits in plain words.
+* The atlas refuses a row whose repository is not public. Its tests include
+  negative controls.
+* A registry record holds no grade. It pins a commit and a receipt digest.
+* The THY-1 record is a model: checker versions, invocations, file digests,
+  import cone, negative controls, and a statement comparison item by item.
+  It records the failed Dedukti route as `BLOCKED` and describes a seven-line
+  reproducer.
+* `docs/standards/AUTHORITY.adoc` and `docs/architecture.adoc` state the
+  limits of Mathesis correctly.
+* The applied-systems area has its own evidence vocabulary, and it keeps
+  "missing" apart from zero.
+
+== What Mathesis could be
+
+=== Models from outside the estate
+
+Each model below solves a part of the same problem. The last column says what
+Mathesis takes from it.
+
+[cols="2,3,3",options="header"]
+|===
+|Model |What it is |Lesson for Mathesis
+
+|Formalizing 100 Theorems
+|A list that shows which proof assistant has formalised each theorem.
+|A cross-prover scoreboard needs one key per statement. The PWG census is
+that scoreboard for the estate.
+
+|Archive of Formal Proofs
+|A refereed collection of Isabelle developments, rechecked on each release.
+|Recheck on each change, and show a broken entry as broken. This is the
+`regressed` receipt state.
+
+|Stacks Project tags
+|A stable identifier for each result, kept when the text moves.
+|A claim identifier must outlive file moves. Use the home's own claim id.
+
+|Formal Abstracts
+|Formal statements of main results, without the proofs.
+|A registry of statements has value before all proofs exist.
+
+|Concept alignments (Math-in-the-Middle)
+|Typed links between the same concept in different proof libraries.
+|A bridge is a record with a type and a justification. It is not a
+matching name.
+
+|Dedukti and Logipedia
+|Proofs written in one logical framework and exported to several provers.
+|Transport is the strongest recheck where it works. Record where it fails.
+
+|Hets and DOL
+|Theories in different logics, joined by recorded logic translations.
+|A relation between statements in two systems names its translation.
+
+|Assurance cases
+|Claims, arguments, evidence and defeaters in one structure.
+|A grade needs its reasons. The registry's "why not higher" column is the
+defeater list.
+
+|Provenance semirings
+|An algebra that computes the annotation of a derived fact from its inputs.
+|"Only as strong as the weakest step" is one instance. See the research
+programme.
+
+|Attestations (in-toto, SLSA)
+|Signed statements about how an artefact was produced.
+|A receipt is an attestation. It can use the same transport and checks.
+
+|Federated software catalogues
+|Each repository owns its descriptor. A centre collects them.
+|The home repository owns the record. Mathesis collects and recomputes.
+
+|Official census practice
+|A frame, an enumeration, a reference date and a non-response count.
+|Each row needs a reference date and a source commit.
+|===
+
+=== Four candidate identities
+
+[cols="1,3,3",options="header"]
+|===
+|Candidate |Description |Verdict
+
+|M1. Index only
+|Mathesis points at proofs and holds none.
+|Rejected. It contradicts two owner rulings: the token-lattice theory lives
+here, and the applied-systems area was requested here.
+
+|M2. Three shelves
+|An atlas, a theory shelf and an applied shelf, each with its own rule.
+|Adopted as the *shape*.
+
+|M3. Evidence system
+|One record model for claims, evidence and bridges.
+|Adopted as the *spine* that the three shelves share.
+
+|M4. Concept commons
+|One identity for each mathematical object across all systems.
+|Kept as the *horizon*. It is reached through recorded bridges. It
+is not reached through a taxonomy that a person or a model invents.
+|===
+
+[[identity]]
+== The proposed identity
+
+=== In brief
+
+Mathesis is the maths section of the estate. It keeps an atlas of the
+mathematics in other repositories, the theory that no single system owns, and
+methods that apply mathematics to decisions.
+
+=== Three verbs
+
+[cols="1,2,4",options="header"]
+|===
+|Verb |Who |What
+
+|Prescribe
+|`metadatastician/standards`
+|It says what must be proved and how (PROOF-POLICY, the requirements master
+list).
+
+|Prove
+|Each home repository
+|It holds the proof and the receipt. It owns the theorem and its evidence.
+
+|Describe
+|Mathesis
+|It says what is proved, where and how strongly. It derives each answer from
+the home's receipts.
+|===
+
+In the estate's own terms, Mathesis is the mathematical *descriptile* of the
+estate and the standards repository holds the *contractile*. A report that
+compares the two is the estate-level form of coaptation.
+
+Mathesis is also a home repository for its own theory. In that role it obeys
+each rule that it checks in others.
+
+=== IS and IS NOT
+
+Mathesis *is*:
+
+* the index that answers "where does that proof live, and what supports it?";
+* the home of theory that an estate rule or vocabulary depends on and that no
+  single system owns;
+* the canonical place for bridge records that cross repositories
+  (<<centre>>, proposed);
+* a place for reusable methods that apply mathematics to decisions.
+
+Mathesis *is not*:
+
+* a prover or a proof kernel. The home repository's checker decides.
+* the proof policy. PROOF-POLICY decides.
+* the identity registry. `gv-clade-index` decides.
+* the map of the type family. `nextgen-typing` coordinates that map and its
+  glossary.
+* a copy of other repositories' proofs or receipts.
+* a grade authority. It derives a grade and does not assign one.
+* a store for private or organisation-specific case material.
+* the RSR template. The template is its lineage only.
+
+=== The spine: one relation, four record kinds
+
+The manifesto defines assurance as "a disciplined relationship among a claim,
+the evidence offered for it, the model in which that evidence has force, the
+residual uncertainty, and an authority accountable for the decision". Mathesis
+uses that relation as its record model.
+
+[cols="2,3,3",options="header"]
+|===
+|Manifesto term |Mathesis field |Source of the field
+
+|Claim
+|The claim id and the statement, in the home's wording
+|The home's proof-status file
+
+|Evidence
+|Receipts: checker, version, invocation, input digest, result
+|The home's receipt deed
+
+|Model
+|Prover, flags, import cone, foundation family
+|The receipt
+
+|Residual uncertainty
+|Axioms, assumptions, waivers and the reasons a grade is not higher
+|The receipt and the derivation
+
+|Accountable authority
+|The home repository and commit, and the policy pin
+|The registry pin
+|===
+
+Mathesis holds four kinds of record. Each kind has one authority.
+
+[cols="1,3,2,2",options="header"]
+|===
+|Kind |What it is |Authority |Mathesis role
+
+|Source row
+|One measured row for each repository with proof files
+|The census run, at a commit and a date
+|Measures
+
+|Claim pin
+|A pointer to one claim in its home, at a commit and a receipt digest
+|The home repository
+|Points and derives
+
+|Receipt
+|The home's machine-readable proof receipt
+|The home repository
+|Reads through the canon reader. Does not store.
+
+|Bridge
+|A recorded relation between two artefacts, possibly in two repositories. It
+names its criterion.
+|Mathesis, for bridges that cross repositories (proposed)
+|Records, with the evidence in the homes
+|===
+
+=== Three shelves
+
+[cols="1,3,2,3",options="header"]
+|===
+|Shelf |Holds |Authored or derived |Rule
+
+|Atlas
+|Census rows, the catalogue and views, the claims registry, the
+bridge view
+|Derived. Only the pins and the bridge records are authored.
+|No view states a status that a receipt does not support.
+
+|Theory
+|Theorems that no single system owns: THY-1 and the token-lattice theory
+|Authored here
+|Mathesis is the home. The admission rule in <<wo-4-1>> applies.
+
+|Applied
+|Methods and synthetic examples in `applied-systems/`
+|Authored here
+|Each input carries an evidence status. No private case data.
+|===
+
+The three shelves match the three pillars of the manifesto: machine-readable
+governance, neurosymbolic verification and post-disciplinary praxis. This
+match is a reading by the author of this plan. The manifesto does not name
+Mathesis.
+
+=== One meaning for each word
+
+[cols="1,4",options="header"]
+|===
+|Word |Meaning in Mathesis
+
+|Census
+|The measurement run over the frame. It counts files and text markers.
+
+|Frame
+|The list of repositories that the census reads.
+
+|Row
+|The census result for one repository: counts, a source commit and a date.
+
+|Catalogue
+|The generated table of rows, split by census class. It is one atlas view.
+
+|Atlas
+|All generated views together, with their data.
+
+|Claim
+|One theorem, demonstration or assumption in a home repository.
+
+|Receipt
+|The home's record of checker runs for its claims (PROOF-POLICY §8.5.1).
+
+|Registry
+|The generated theorem-level view. Its grades are derived.
+
+|Bridge
+|A recorded, direction-sensitive relation between two artefacts. It names its
+criterion, what it preserves and what it forgets.
+
+|Grade
+|A Proof Witness Grade only. It always has the `PWG-` prefix.
+
+|Home repository
+|The repository that owns a claim and its evidence.
+
+|Shelf
+|One of the three parts: atlas, theory, applied.
+|===
+
+Two words leave the vocabulary. "Register" becomes a generated view of
+bridges. "Ledger" stays the home repository's word.
+
+[[structure]]
+== Target structure
+
+The plan adds no root directory. It keeps the paths that the estate's gates
+read: `verification/proofs/`, `verification/receipts/` and `applied-systems/`.
+
+[source,text]
+----
+README.adoc                      identity, three shelves, quick start
+mathesis_chora.deed              truthful clauses (stage 3)
+docs/
+  atlas/                         ATLAS shelf
+    README.adoc                  pipeline, vocabulary, refresh rule
+    census/                      measured: repos.jsonl, rows.jsonl,
+                                 unreachable.jsonl, the two text lists
+    claims/                      authored: claims.jsonl,
+                                 bridges.jsonl (stage 5)
+    generated/                   catalogue.adoc, az.adoc,
+                                 organisations.adoc, index.json,
+                                 registry.adoc, bridges.adoc
+  theory/                        THEORY shelf: admission rule and index
+  status/                        ROADMAP, PROOF-NEEDS, PROOF-STATUS
+  decisions/  proposals/  standards/
+verification/
+  proofs/agda|coq|lean4/         home theory sources and manifests
+  receipts/                      the proof receipt of Mathesis
+applied-systems/                 APPLIED shelf
+scripts/census|atlas|registry/   tools
+tests/census|atlas|registry/     tests
+----
+
+[cols="2,2,3",options="header"]
+|===
+|Today |Target |Reason
+
+|`docs/catalogue/census/*.json`
+|`docs/atlas/census/*.jsonl`
+|One record on each line ends the single-line conflicts.
+
+|`docs/catalogue/catalogue.adoc`
+|`docs/atlas/generated/catalogue.adoc`
+|The catalogue is a generated view of the same rows.
+
+|`docs/registry/claims.json`
+|`docs/atlas/claims/claims.jsonl`
+|Pins are authored data. They sit beside the bridge records.
+
+|`docs/registry/registry.adoc`
+|`docs/atlas/generated/registry.adoc`
+|The registry is a generated view.
+
+|`docs/atlas/generated/classes.adoc`
+|Removed
+|It repeats the catalogue with fewer columns.
+
+|`docs/status/CROSS-PROVER-RECONCILIATION.adoc`
+|A short pointer file at the same path
+|The policy text is in PROOF-POLICY §2.2. The rows become generated.
+|===
+
+Paths that other repositories cite keep a pointer file. Known examples are
+`docs/proposals/estate-mathematical-architecture.adoc`, which PROOF-POLICY §8
+cites, and the old catalogue path. The proposal files do not move.
+
+[[centre]]
+== The bridge centre (proposed mechanism)
+
+The architecture brief records an owner direction of 2026-11-09. Mathesis
+becomes the canonical centre for the correspondence record. Each
+participating repository keeps an attested local copy, and drift raises an
+alert. The brief leaves the mechanism open. This section proposes one.
+
+The estate already has a word for one such record: a *bridge*. PROOF-POLICY
+§2.2 uses it ("a checked bridge or justified statement correspondence"). The
+owner's research note on types, tropes and identity
+(`hyperpolymath/vcl-ut`, `docs/research/TYPE-TROPE-IDENTITY-SPACES.adoc`)
+defines it. This plan uses the word with that meaning.
+
+=== Principle
+
+Evidence is local. A bridge has two ends.
+
+A home repository can check its own proofs, so it owns its evidence. A bridge
+relates two artefacts, and the two can be in two repositories. Examples are
+an Agda statement and its Lean restatement, or a theorem and the code that
+implements it. If one end keeps the record, the other end can change without
+notice. So the centre keeps the record, and each end keeps an attested copy.
+
+This principle keeps the receipt rule intact. Proof status still comes from
+the home's receipts. The centre records only the relation and points at the
+evidence in each home.
+
+The centre does not decide how the type disciplines relate. `nextgen-typing`
+holds that map (`docs/TYPE-CONNECTIONS.adoc`) and its decisions. A Mathesis
+bridge records the evidence for one pair of artefacts.
+
+=== Rules that each bridge obeys
+
+The rules come from the research note. A bridge is "a partial and potentially
+many-to-many, direction-sensitive relation, not an assumed coercion or
+equivalence".
+
+* It names its *criterion*: what "the same" means for this bridge, and for
+  which observer.
+* It states what it *preserves* and what it *forgets*.
+* It has a *direction*.
+* It claims no universal identity. Two artefacts are the same under a named
+  criterion, or they are not related by this record.
+* Equal names prove nothing. The estate has an example: an Agda record and a
+  Lean structure are both named `ResourceAlgebra`, and their laws differ.
+
+=== The record
+
+One record for each bridge, in `docs/atlas/claims/bridges.jsonl`:
+
+* an identifier;
+* two endpoints, each with repository, commit, path, name, system and the
+  blob digest of the file;
+* the criterion and the direction;
+* what the bridge preserves and what it forgets;
+* the relation: `same-statement`, `refinement`, `conditional-transport`,
+  `countermodel` or `unassessed`;
+* the §2.2 correspondence state;
+* the basis: `read`, `generated`, `transported` or `proved`;
+* a pointer to the comparison record in a home repository;
+* the residual assumptions;
+* who proposed it, a person or an agent, and who reviewed it.
+
+A record that an agent proposed stays `unassessed` until a person reviews a
+comparison that a home repository holds. The record holds no token and no
+grade.
+
+The survey found three practices for that review:
+
+* `MetaManifold-Evidence` and `hvn-dehallucinator` keep a leg
+  `BRIDGE-PENDING` until the owner reviews the comparison.
+* `lintel` records `RECONCILED` and says that the comparison is provisional
+  until the owner reviews it.
+* `nextgen-typing` (XP-1) and Mathesis (THY-1) record `RECONCILED` with no
+  such note.
+
+The bridge record names the reviewer, so the three cases cannot look the
+same.
+
+=== What the centre computes
+
+* *Classes under one criterion.* The centre composes the bridges that share a
+  criterion and that the records declare composable. It lists the classes
+  that result. A class means "the same under this criterion". The concept
+  view of the architecture brief can list these classes. Nobody writes that
+  view by hand.
+* *Order.* `refinement` bridges give an order between classes.
+* *Contradictions.* A `countermodel` between two artefacts that a chain of
+  bridges joins, under the same criterion, fails the check.
+* *Five different absences.* When no bridge exists, the view says which case
+  holds: refuted, not yet proved, not enough evidence, forbidden, or not
+  defined. The research note asks for this distinction.
+
+This is the manifesto's phrase "identity defined by equivalence rather than
+asserted", made into a computation that always names its criterion.
+
+=== The lock
+
+The estate already has one pattern for a canonical centre with pinned
+copies: the canon lockstep in the deed's `(canon)` clause. The proposal uses
+the same pattern.
+
+. Mathesis publishes a lock file. For each participating repository, the lock
+  gives the digest of the records that name it. This set is the repository's
+  *slice*.
+. Each participating repository keeps its slice as a file and records the
+  slice digest in its deed.
+. A k9 contract in the home compares the local slice with the lock at the
+  pinned Mathesis commit. A difference fails the home's gate.
+. A check in Mathesis compares each endpoint's blob digest with the home's
+  current tree. A changed file marks the record `stale` and fails the check.
+. A pull request that changes a record must name the home commits that hold
+  the evidence. The check lists each affected repository.
+
+Blob digests make a record survive commits that do not touch the file. A
+commit that changes the statement makes the record stale, which is correct.
+A stale record is a question about identity through time. A new comparison
+answers it. A digest does not.
+
+=== Order of work
+
+. The home lands the proof, the receipt and the statement comparison.
+. Mathesis records the bridge and releases the lock.
+. The home pins its slice.
+
+The centre derives the bridges inside one home from that home's receipt: the
+legs of one claim are joined there already. It records by hand only the
+bridges that cross repositories.
+
+Two pilots are ready. The first is a squeakwell recovery-ladder row, whose
+Agda, Rocq and Lean artefacts are in three repositories. The second is the
+open bridge between the Agda `ResourceAlgebra` of `resource-algebra` and the
+Lean structure of the same name in `tropical-types`.
+
+[[work-orders]]
+== Work orders
+
+Each work order is one small pull request. It names its check. A work order
+that needs a ruling says so. No work order relaxes a gate.
+
+=== Stage 0: stop the conflicts
+
+[[wo-0-1]]WO 0.1 Triage the open pull requests::
+*Goal:* no open pull request repeats or blocks another. +
+*Steps:* Read each full diff. Complete the table in <<triage>>. Put the
+table to the owner. Rebase the kept changes in this order: scanner fixes,
+one refresh tool, the frame fix. Close a pull request only on the owner's
+word. +
+*Check:* each open pull request merges cleanly, one at a time. +
+*Ruling:* D-6 (a), 2026-11-10. The owner approves each row before the session acts.
+
+[[wo-0-2]]WO 0.2 Name one writer for census data::
+*Goal:* two sessions cannot refresh rows at the same time. +
+*Steps:* State the rule in `docs/atlas/README.adoc` and in the deed's
+`(bot-directives)`. Only `just census` and `just update-rows` write rows.
+Only one pull request that changes rows is open at a time. Record open work
+in `docs/status/ROADMAP.adoc`. +
+*Check:* the rule is in both files.
+
+=== Stage 1: close the holes
+
+[[wo-1-1]]WO 1.1 Repair and gate the catalogue::
+*Steps:* Run `just catalogue`. Add `just catalogue-check` and
+`tests/census/build_rows_status_test.sh` to CI. +
+*Check:* a planted duplicate row fails the new step. A clean tree passes.
+
+[[wo-1-2]]WO 1.2 Gate the arrival pack and the coaptation receipt::
+*Steps:* Run `just claude-md`. Add `just validate-claude-md` to CI. Add
+`just validate-coapt` after stage 3 regenerates the receipt. +
+*Check:* a hand edit inside the generated region of `CLAUDE.md` fails. +
+*Note:* the template does not run these two checks in CI. Report that to the
+template repository.
+
+[[wo-1-3]]WO 1.3 Close the proof gate gap::
+*Steps:* Adopt the reference gate that PROOF-POLICY §8.4 names
+(januskey `scripts/check-agda.sh` and `scripts/scan-postulates.sh`) for the
+Agda leg. For Rocq, fail when `Print Assumptions` lists an axiom for a gated
+theorem. For Lean, fail when `#print axioms` lists one. +
+*Check:* a planted `postulate`, `Admitted` and `sorry` each fail. The clean
+files pass. +
+*Note:* `scripts/check-proofs.sh` is a template file. Send the same fix to
+the template.
+
+[[wo-1-4]]WO 1.4 Add CI lanes for Rocq and Lean::
+*Steps:* Install Rocq 8.18.0 and Lean 4.15.0 at pinned versions with digest
+checks. Assert each version in the run. Write a `deviation` record for each
+toolchain that does not come from the Guix manifest or the container
+(PROOF-POLICY §6). Write the same record for the Agda lane. Run the three
+lanes on each commit to `main`, with no path filter. A lane that runs only
+when a proof file changes gives no receipt for the other commits. +
+*Check:* each lane fails on the planted controls of WO 1.3. A commit that
+changes only a document still gets three receipts.
+
+[[wo-1-5]]WO 1.5 Write the receipt of Mathesis::
+*Steps:* Write `verification/receipts/theory_praxis.deed` with
+`:profile proof-receipt`, from the THY-1 record. Record a run only where a
+run exists. Validate the file with
+`bun 1-formats/deed/tools/deed_lint.js --proof-receipt-json`. Add the claim
+`hyperpolymath/mathesis#THY-1` to the registry. +
+*Check:* the reader accepts the receipt, and the registry shows the grade
+that the reader derives. Change `PROOF-STATUS.adoc` if the two differ.
+
+=== Stage 2: one pipeline
+
+[[wo-2-1]]WO 2.1 Move the data to JSON Lines, with provenance::
+*Steps:* Write each record on one line (standards JSON-POLICY rule J-2).
+Add `commit` and `censused_at` to each row. Make `census-repo.sh` record the
+commit that it read. Run one full census so that each row has both fields.
+Derive the row count in tests and documents. Do not write it as a literal. +
+*Check:* `jq -cS -s .` over the new rows equals the old array for the old
+fields. Two branches that change two different rows merge cleanly.
+
+[[wo-2-2]]WO 2.2 Use the canon reader in the registry::
+*Steps:* Delete `parseReceipt` and `derive` from `claims-registry.mjs`. Call
+`readProofReceipt` from the pinned standards checkout. Show a receipt that
+the reader refuses as `ungraded`, with the reader's reason. Keep the pin, the
+digest check and the renderer. +
+*Check:* the 17 pilot claims still derive `ungraded`. The hermetic tests pass
+with fixture receipts in the §8.5.1 shape. +
+*Needs ruling:* yes (D-5).
+
+[[wo-2-3]]WO 2.3 Move the paths::
+*Steps:* Apply the table in <<structure>> with `git mv`. Update the tools,
+tests, recipes, the workflow step and the README. Leave a pointer file at
+each old path that another repository cites. Run `just repo-map`. +
+*Check:* each generated view is byte-identical to the view before the move,
+apart from its own path strings. +
+*Ruling:* D-4 (a), 2026-11-10.
+
+[[wo-2-4]]WO 2.4 Generate the bridge view::
+*Steps:* For each hand-written row in the reconciliation register, find the
+home's receipt. Add a claim pin where a receipt exists. Keep the row as a
+candidate bridge where the relation crosses repositories. Replace the
+policy text with a pointer to PROOF-POLICY §2.2. +
+*Check:* no grade in the repository is typed by hand.
+
+[[wo-2-5]]WO 2.5 Make the golden path real::
+*Steps:* Add a recipe `check` that runs the catalogue, atlas, registry and
+proof checks. Make `test` depend on it. Run the recipe in CI. +
+*Check:* `just test` fails on a stale view and on a failing proof.
+
+=== Stage 3: tell the truth
+
+[[wo-3-1]]WO 3.1 Correct the deed::
+*Steps:* Use `scripts/deed-clause.sh`, the one writer. Set the `(ecosystem)`
+purpose and `:not` list from <<identity>>. Correct `(manifest :purpose)`,
+set `(manifest :project)` to `mathesis`, and correct `(meta)`, `(anchor)`,
+`(variant (paths))` and `(bot-directives)`. Review each
+`(integrations)` clause and remove the unused ones. Then run `just claude-md`
+and `just coapt`. +
+*Check:* the canon deed validator, `just validate-state`,
+`just validate-claude-md` and `just validate-coapt` pass. +
+*Ruling:* D-1 (a), 2026-11-10. The owner still reviews the clause text before it lands.
+
+[[wo-3-2]]WO 3.2 Declare the capabilities and remove vestigial modules::
+*Steps:* Declare `agda`, `formal-proofs`, `bash`, `docs-site`,
+`governance-tier` and `reproducible-build` in `(rsr-profile)`. Run the canon
+checker. Remove each module that it reports as vestigial, with the proofs,
+tests and obligations that belong to that module only. Open an issue on the
+template for the `validate-rsr` conflict of <<f-4>>. Record each local
+divergence in `(variant (paths :diverged))` until the template fix lands. +
+*Check:* `check-rsr-profile.sh` passes for the gated modules, and
+`just validate-rsr` passes. +
+*Ruling:* D-3 (a), 2026-11-10.
+
+[[wo-3-3]]WO 3.3 State the Mathesis contracts::
+*Steps:* Add Mathesis clauses to the contractiles. Remove a template clause
+only where it cannot apply to a minted repository. The `intend` contract
+takes the stages of this plan. The `trust` contract says who writes which
+record. The `must` contract takes these clauses:
++
+* each generated view is current;
+* no private repository is named;
+* no grade is typed by hand;
+* receipts stay in their homes;
+* each home theorem has a receipt;
+* each row has a commit and a date.
+
++
+*Check:* the k9 validators pass, and `just coapt` reports each new clause as
+witnessed. +
+*Needs ruling:* yes. The contractiles are a declared sensitive area.
+
+[[wo-3-4]]WO 3.4 Rewrite the entry documents to the standard::
+*Steps:* Write `README.adoc` and `docs/EXPLAINME.adoc` to the README and
+EXPLAINME authoring standard. EXPLAINME carries the proof ledger that the
+standard requires. Write the real stages into `ROADMAP.adoc`, and record the
+D-10 ruling there. Write the true obligations into `PROOF-NEEDS.adoc`. Fill
+`READINESS.adoc` and `TEST-NEEDS.adoc` from observed runs. Fill or shorten
+`usage.adoc`, `contributing.adoc` and `troubleshooting.adoc`. +
+*Check:* each README claim has an EXPLAINME entry. No status document states a
+result that this session did not observe.
+
+[[wo-3-5]]WO 3.5 Stop the publication of private names::
+*Ruling:* D-2 (a), 2026-11-10. Counts only. The history stays as it is. +
+*Steps:* Keep only public repositories in the frame file. Record the count
+of private repositories as one number, with the date of the listing. Remove
+the private names from the unreachable list. Print the count in the "Not
+reached" section of the catalogue. Remove the private name from
+`README.adoc`. Extend the visibility check of the atlas to the frame file. +
+*Check:* a frame record or a row whose visibility is not `public` fails the
+gate. No tracked file at `HEAD` holds a name from the old private list. +
+*Note:* do not rewrite the history (<<no-rewrite>>). If one name is
+sensitive, the owner renames that private repository.
+
+[[wo-3-6]]WO 3.6 Affirm::
+*Steps:* When stages 0 to 3 are done, fill `docs/AFFIRMATION.adoc` at one
+commit, from runs in the same session, in a signed commit. +
+*Check:* each line of the affirmation names its command.
+
+=== Stage 4: the three shelves
+
+[[wo-4-1]]WO 4.1 Give the theory shelf its rule::
+*Steps:* Write `docs/theory/README.adoc`. State the admission rule. A theorem
+enters only when three conditions hold:
++
+* it is theory by the test of PROOF-POLICY §1;
+* no single system owns it;
+* an estate rule, vocabulary or interface depends on it, and the record names
+  that dependant.
+
++
+Generate the theorem index from the receipt. Remove the three template
+example proofs. Each one says that the project must replace it. +
+*Next content:* the token-lattice theorems (rows 2 and 12 of the ECHIDNA
+proof-route ladder). The research programme gives their statements.
+
+[[wo-4-2]]WO 4.2 Tie the applied shelf to the spine::
+*Steps:* Define the minimal data schema that the roadmap already names. Write
+one synthetic worked example. Give each input an evidence status. State which
+invariants merit a proof, and record them as open obligations. +
+*Check:* a missing input stays missing in the output. It does not become zero.
+
+[[wo-4-3]]WO 4.3 Publish the atlas::
+*Steps:* Enable the Pages workflow for the generated views after stage 1
+holds for two weeks. +
+*Needs ruling:* yes. Publication is outward-facing.
+
+=== Stage 5: scale
+
+[[wo-5-1]]WO 5.1 Bring receipts to the home repositories::
+Run a campaign, one repository at a time, that writes a §8.5.1 receipt where
+a theory repository records grades. Start with the repositories that the
+registry and the register already name. Add each one to the registry when its
+receipt lands.
+
+[[wo-5-2]]WO 5.2 Pilot the bridge lock::
+Build the mechanism of <<centre>> for one relation that crosses repositories.
+*Ruling:* D-7 (a), 2026-11-10.
+
+[[wo-5-3]]WO 5.3 Schedule the census::
+Run the census in one scheduled workflow that opens one pull request. This
+workflow becomes the one writer of WO 0.2.
+
+[[wo-5-4]]WO 5.4 Report what is owed::
+Generate one view that sets the requirements master list of the standards
+repository beside the census and the registry, repository by repository.
+
+[[decisions]]
+== Decisions for the owner
+
+Each decision lists its arms with the most elegant and correct long-term arm
+first. The recommended arm is marked where it differs. The plan above assumes
+arm (a) in each case.
+
+The owner ruled on six decisions through the selector on 2026-11-10. D-5 and
+D-8 are open.
+
+. *D-1 Identity.* (a) The three shelves with the evidence spine, as in
+  <<identity>>. (b) An index only, with the theory and the applied area moved
+  to other repositories. (c) An evidence system only, with the applied area
+  moved out. *Ruled 2026-11-10: (a).*
+. *D-2 Private repository names.* (a) Publish counts only, remove the names
+  from the tracked files, and keep the history as it is. (b) The same, and
+  also rewrite the history, which breaks each clone and mirror. (c) Rule that
+  the names are public, and amend the invariant. *Ruled 2026-11-10: (a).*
+  <<no-rewrite>> gives the reason against a rewrite.
+. *D-3 Template material.* (a) Declare capabilities, remove the vestigial
+  modules by the canon route, and fix the gate conflict in the template.
+  (b) Keep each file, and record the ownership boundary only. (c) Remove all
+  unused template material at once, which breaks template conformance.
+  *Ruled 2026-11-10: (a).*
+. *D-4 Paths.* (a) Consolidate the pipeline under `docs/atlas/`. (b) Keep the
+  paths and change the content only. *Ruled 2026-11-10: (a).*
+. *D-5 Overlapping proposals.* (a) Amend ADR 0004 to use the canon reader,
+  and ratify it. Mark `proof-receipts-as-data.adoc` as settled in part by
+  PROOF-POLICY §8.5.1, and keep its experiments E1 to E6. Close issue 28 with
+  a pointer. (b) Keep the three open. *Open.*
+. *D-6 Open pull requests.* (a) The implementation session completes the
+  triage table and the owner approves each row. (b) The owner triages alone.
+  (c) Merge all 17 in order and resolve each conflict.
+  *Ruled 2026-11-10: (a).*
+. *D-7 Bridge centre.* (a) The lock with slices, as in <<centre>>.
+  (b) No centre: each relation lives in one named home, and Mathesis derives
+  the view. (c) Defer until the registry covers ten repositories.
+  *Ruled 2026-11-10: (a).*
+. *D-8 Proof toolchains.* (a) Pin Agda, Rocq and Lean in the Guix manifest.
+  (b) Install from release archives with `deviation` records now, and move
+  to Guix later. Recommended: (b), because it closes the hole this week.
+  *Open.*
+
+The companion programme records two more rulings of the same day: the token
+theory starts with the chain of PROOF-POLICY §5 and imports the
+`resource-algebra` kernel. The order is provisional until experiment X-PF1
+has a result.
+
+[[no-rewrite]]
+=== Why the history is not rewritten
+
+A rewrite of the history would add little and cost much.
+
+* It cannot remove the names from public view. They have been public since
+  2026-10-26. They are in each mirror, in each clone and in the pull request
+  refs, which a force-push does not remove.
+* The public standards repository names at least one of the same private
+  repositories.
+* It changes each commit identifier. Other repositories cite Mathesis by
+  commit, and the THY-1 record in `PROOF-STATUS.adoc` cites two source
+  commits. Those citations would point at nothing.
+* It breaks each clone, each mirror and each open pull request.
+
+If one name is sensitive, the effective remedy is to rename that private
+repository. The published name then points at nothing.
+
+== What this plan does not do
+
+* It does not move, copy or regrade any proof in another repository.
+* It does not change PROOF-POLICY or any other canon text.
+* It does not register Mathesis in `gv-clade-index`. Registration is the
+  owner's act. The index at `539dd61` has no entry for Mathesis.
+* It does not replace the working census before a tested replacement exists.
+* It does not edit a licence.
+
+[appendix]
+[[reports]]
+== Reports for other repositories
+
+The assessment found these defects outside Mathesis. Each one is a report.
+This plan does not repair them.
+
+[cols="2,5",options="header"]
+|===
+|Where |Report
+
+|`rsr-template-repo`
+|`just validate-rsr` requires `src/interface/abi`, `ffi` and `generated` in
+each repository. The canon capability model calls them vestigial where the
+`abi` and `ffi` capabilities are not declared (<<f-4>>).
+
+|`rsr-template-repo`
+|No workflow runs `just validate-claude-md`, `just validate-coapt`,
+`just test` or `just quality`.
+
+|`rsr-template-repo`
+|The mint's name pass changes the meaning of some sentences (<<f-3>>).
+
+|`rsr-template-repo`
+|`scripts/check-proofs.sh` passes a Rocq file with `Admitted` and a Lean file
+with `sorry`.
+
+|`standards`, `deed_lint.js`
+|`readProofReceipt`, as read at `be39f90`, accepts `--cubical` in place of
+`--cubical-compatible`. It has no field for the proof profile that
+PROOF-POLICY §8.2 requires for full `--cubical`.
+
+|`standards`, `deed_lint.js`
+|The reader derives `PWG-1` when each counted receipt is at the source
+commit. A receipt has no field that separates a headless CI run from a local
+run.
+
+|`standards`, PROOF-POLICY
+|§2.2 does not say who may record `RECONCILED`. Home repositories follow
+three different practices (<<centre>>).
+
+|The proof-craft scanner
+|Four open pull requests change the Mathesis copy of `proof-holes.sh`
+(<<triage>>).
+
+|`occupancy-types`, `autoformal-fidelity`
+|Each one still carries the template's deed, named
+`rsr-template-repo_chora.deed`, with the canonical name
+`rsr-template-repo`.
+|===
+
+[appendix]
+[[triage]]
+== Provisional triage of the open pull requests
+
+The table comes from commit subjects and file lists at 2026-11-10. Each row
+needs a full read of the diff (<<wo-0-1>>). Each pull request conflicts with
+`main`.
+
+[cols="1,4,4",options="header"]
+|===
+|PR |Content that `main` does not have |Provisional disposition
+
+|16
+|An audit report of the ECHIDNA proof route. The record of ruling D-10.
+|Keep both as documents. Drop the row changes.
+
+|17
+|Nothing found. The status-document fix and the canon 2.1.5 pin are on
+`main`.
+|Close as superseded.
+
+|20
+|Template boilerplate matched by blob, first implementation.
+|Choose one of 20 and 26.
+
+|22
+|Tests for status-document choice. The trope-checker grades, typed into the
+register.
+|Keep the tests. Move the grades to the registry (<<wo-2-4>>).
+
+|24
+|A partial refresh that records provenance. A finding: one occupancy proof
+fails under its pinned Lean.
+|Keep the provenance design for <<wo-2-1>>. Keep the finding.
+
+|25
+|A fix that keeps rows when the template list is empty.
+|Check `main` for the same fix. Then close or rebase that part.
+
+|26
+|Template boilerplate matched by path and blob, second implementation.
+|Choose one of 20 and 26.
+
+|27
+|A scanner that skips comments and strings. Idris2 signatures without
+clauses, reported as axiom candidates.
+|Keep the scanner changes. Send them to the scanner's source.
+
+|31
+|The census sees proofs written in Rust (Creusot, Pearlite, Verus).
+|Keep. PROOF-POLICY §1.2 makes this necessary.
+
+|34
+|Verus rules.
+|Fold into 31. Close the remainder.
+
+|36
+|25 repositories that the frame lacks. A derived row count.
+|Keep both. Drop the rerun data.
+
+|39
+|The owner's proofs in one fork, with the fork listed.
+|Keep the fork listing. Take the row from the next census.
+
+|40
+|A census rerun.
+|Close as superseded by the next single run.
+
+|41
+|A row refresh tool with atomic publication and tests.
+|Choose one refresh tool among `main`, 24, 41 and 42.
+
+|42
+|Wording that says the catalogue has no grades.
+|Keep the wording. See 41.
+
+|44
+|Ada counted as SPARK only where the code opts in.
+|Keep the scanner change. Drop the row changes.
+
+|45
+|Nothing found beyond a rerun.
+|Close as superseded.
+|===
+
+`scripts/census/proof-holes.sh` is a copy of the scanner from the proof-craft
+skill. Pull requests 27, 31, 34 and 44 change the copy. The same change must
+reach the source, or the two will differ.

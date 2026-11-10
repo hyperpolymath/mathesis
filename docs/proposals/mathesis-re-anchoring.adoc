@@ -6,11 +6,11 @@
 :sectnums:
 :icons: font
 
-Status: *proposed* (2026-11-10). The owner ruled on six of its eight
-decisions on 2026-11-10, through the selector (<<decisions>>). This document
-changes no gate, schema, deed clause or data file. Each change that a ruling
-does not cover still needs one. The work orders in <<work-orders>> are
-written for a later implementation session.
+Status: *proposed, with rulings* (2026-11-10). The owner ruled on each of its
+eight decisions on 2026-11-10, through the selector (<<decisions>>). This
+document changes no gate, schema, deed clause or data file. Each change that
+a ruling does not cover still needs one. The work orders in <<work-orders>>
+are written for a later implementation session.
 
 The companion document is
 link:mathesis-research-programme.adoc[the research programme]. This document
@@ -888,14 +888,27 @@ files pass. +
 the template.
 
 [[wo-1-4]]WO 1.4 Add CI lanes for Rocq and Lean::
-*Steps:* Install Rocq 8.18.0 and Lean 4.15.0 at pinned versions with digest
-checks. Assert each version in the run. Write a `deviation` record for each
-toolchain that does not come from the Guix manifest or the container
-(PROOF-POLICY §6). Write the same record for the Agda lane. Run the three
-lanes on each commit to `main`, with no path filter. A lane that runs only
-when a proof file changes gives no receipt for the other commits. +
+*Ruling:* D-8 (a), 2026-11-10. The toolchains come from the Guix manifest.
+The plan recommended the other arm. +
+*Steps:* Add Agda, Rocq and Lean to `build/manifest.scm`, at the Guix
+revision that `build/channels.scm` pins. The manifest lists none of them
+today. Use the provisioning engine if it knows the three provers. Record the
+version that the pinned Guix gives for each prover. Compare it with the
+version in the THY-1 record: Agda 2.6.3, Rocq 8.18.0 and Lean 4.15.0. A
+different version means that the receipt is earned again at the new version.
+Run the three proof lanes inside the pinned Guix shell. Move the Agda lane
+from the distribution package to the same shell. Assert each version in the
+run. Run the three lanes on each commit to `main`, with no path filter. A
+lane that runs only when a proof file changes gives no receipt for the other
+commits. +
+*Stop condition:* the pinned Guix has no package for a prover, or has only a
+version that cannot check the proofs. Then stop and report. Do not install
+from an archive without a `deviation` record (PROOF-POLICY §6) and a new
+ruling. +
 *Check:* each lane fails on the planted controls of WO 1.3. A commit that
-changes only a document still gets three receipts.
+changes only a document still gets three receipts. +
+*Consequence:* until the manifest works, the Rocq leg and the Lean leg have
+no CI lane.
 
 [[wo-1-5]]WO 1.5 Write the receipt of Mathesis::
 *Steps:* Write `verification/receipts/theory_praxis.deed` with
@@ -923,7 +936,12 @@ the reader refuses as `ungraded`, with the reader's reason. Keep the pin, the
 digest check and the renderer. +
 *Check:* the 17 pilot claims still derive `ungraded`. The hermetic tests pass
 with fixture receipts in the §8.5.1 shape. +
-*Needs ruling:* yes (D-5).
+*Ruling:* D-5 (a), 2026-11-10. +
+*Also under this ruling:* Amend ADR 0004 so that it names the canon reader.
+The owner ratifies the ADR when the owner merges that change. Add a note at
+the head of `proof-receipts-as-data.adoc`: PROOF-POLICY §8.5.1 settles the
+receipt format and the reader, and experiments E1 to E6 stay open. Close
+issue 28 with a pointer to §8.5.1, on the owner's word.
 
 [[wo-2-3]]WO 2.3 Move the paths::
 *Steps:* Apply the table in <<structure>> with `git mv`. Update the tools,
@@ -1069,8 +1087,8 @@ Each decision lists its arms with the most elegant and correct long-term arm
 first. The recommended arm is marked where it differs. The plan above assumes
 arm (a) in each case.
 
-The owner ruled on six decisions through the selector on 2026-11-10. D-5 and
-D-8 are open.
+The owner ruled on each of the eight decisions through the selector on
+2026-11-10.
 
 . *D-1 Identity.* (a) The three shelves with the evidence spine, as in
   <<identity>>. (b) An index only, with the theory and the applied area moved
@@ -1091,7 +1109,7 @@ D-8 are open.
 . *D-5 Overlapping proposals.* (a) Amend ADR 0004 to use the canon reader,
   and ratify it. Mark `proof-receipts-as-data.adoc` as settled in part by
   PROOF-POLICY §8.5.1, and keep its experiments E1 to E6. Close issue 28 with
-  a pointer. (b) Keep the three open. *Open.*
+  a pointer. (b) Keep the three open. *Ruled 2026-11-10: (a).*
 . *D-6 Open pull requests.* (a) The implementation session completes the
   triage table and the owner approves each row. (b) The owner triages alone.
   (c) Merge all 17 in order and resolve each conflict.
@@ -1103,12 +1121,14 @@ D-8 are open.
 . *D-8 Proof toolchains.* (a) Pin Agda, Rocq and Lean in the Guix manifest.
   (b) Install from release archives with `deviation` records now, and move
   to Guix later. Recommended: (b), because it closes the hole this week.
-  *Open.*
+  *Ruled 2026-11-10: (a). The owner chose the Guix manifest, which is also
+  the route that PROOF-POLICY §6 prefers.*
 
-The companion programme records two more rulings of the same day: the token
-theory starts with the chain of PROOF-POLICY §5 and imports the
-`resource-algebra` kernel. The order is provisional until experiment X-PF1
-has a result.
+The companion programme records four more rulings of the same day. The token
+theory starts with the chain of PROOF-POLICY §5, and the order is
+provisional until experiment X-PF1 has a result. The theory imports the
+`resource-algebra` kernel. Statement S-2 lives in Mathesis. `januskey` is the
+first slice from theorem to code.
 
 [[no-rewrite]]
 === Why the history is not rewritten

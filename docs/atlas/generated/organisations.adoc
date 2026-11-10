@@ -199,7 +199,7 @@
 * `hyperpolymath/ssg-collection` — engineering; 23 own proof files, 108 detected declarations; provers: lean 1, idris2 6, spark 13, other 3
 * `hyperpolymath/stateful-artefacts` — engineering; 4 own proof files, 23 detected declarations; provers: idris2 2, tla 2
 * `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4
-* `hyperpolymath/system-et` — theory; 21 own proof files, 164 detected declarations; provers: lean 21
+* `hyperpolymath/system-et` — theory; 86 own proof files, 612 detected declarations; provers: agda 65, lean 21
 * `hyperpolymath/tangle` — theory; 3 own proof files, 61 detected declarations; provers: lean 3
 * `hyperpolymath/thunderbird-template-reloaded` — engineering; 10 own proof files, 74 detected declarations; provers: idris2 10
 * `hyperpolymath/tlaiser` — engineering; 9 own proof files, 181 detected declarations; provers: idris2 9

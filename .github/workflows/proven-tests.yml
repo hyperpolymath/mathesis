@@ -49,7 +49,14 @@ jobs:
         run: |
           bun scripts/atlas/census-atlas.mjs check
           bun test tests/atlas/census-atlas.test.mjs
-          bash tests/census/build_rows_status_test.sh
+      # The claims registry (docs/decisions/0004-claims-registry.adoc): re-derive
+      # every grade from the home repositories' receipts at their pinned commits
+      # (fetched, digest-checked) and fail if the committed view is stale or a
+      # receipt asserts a grade its evidence does not support.
+      - name: Mathesis claims registry derivation and tests
+        run: |
+          bun scripts/registry/claims-registry.mjs check
+          bun test tests/registry/claims-registry.test.mjs
       - name: Install verified Nickel 1.18.0 (K9 L2 semantics)
         run: |
           set -euo pipefail

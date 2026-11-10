@@ -720,6 +720,10 @@ uncloak:
 census:
     bash scripts/census/run-census.sh
 
+# Refresh the census rows of the named repositories only, then re-render the catalogue
+update-rows +repos:
+    bash scripts/census/update-rows.sh {{repos}}
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc
@@ -739,3 +743,13 @@ atlas-check:
 
 atlas-find query:
     bun scripts/atlas/census-atlas.mjs find "{{query}}"
+
+# Theorem-level claims registry (ADR 0004): fetch each pinned receipt, derive
+# Proof Witness Grades, and write docs/registry/registry.adoc
+registry:
+    bun scripts/registry/claims-registry.mjs build
+
+# Fail if the committed registry view is stale or a receipt overstates its grade
+registry-check:
+    bun scripts/registry/claims-registry.mjs check
+    bun test tests/registry/claims-registry.test.mjs

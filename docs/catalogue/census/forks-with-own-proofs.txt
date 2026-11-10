@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+# Forks the census includes because their proof files are first-party.
+# The census skips forks by default: a fork normally carries someone
+# else's work. List one OWNER/REPO per line, only where the fork's own
+# proofs are first-party, and give the reason on the line above.
+#
+# Agda proofs by the owner for MetaManifold (BH, size factors, PERMANOVA,
+# CladeCumulus); ledger at proofs/PROOF-STATUS.md.
+hyperpolymath/MetaManifold-WebUI

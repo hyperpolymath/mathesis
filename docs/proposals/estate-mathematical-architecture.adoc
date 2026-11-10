@@ -62,6 +62,59 @@ per-verb coaptation grades (`.machine_readable/coaptation/`), and the
 estate uses it for CRG, TRG, ARG and FRG. None of those is a PWG.
 ====
 
+[IMPORTANT]
+.Aeneas translations as a default learning route for ECHIDNA (owner direction 2026-11-09)
+====
+*Default.* First-party Rust that is verified with Creusot/Pearlite and
+Verus (PROOF-POLICY §1.2) is also translated with *Aeneas* (via Charon) into
+a Lean or Rocq model by default, starting with the security cores. A repo
+opts out by saying so in its proof-status file. The owner names the
+occasions where it does not apply.
+
+*Purpose.* The translations are a corpus for ECHIDNA, not proof evidence.
+Each translation pairs:
+
+* the Rust source;
+* its Creusot and Verus contracts;
+* the Aeneas model;
+* where one exists, the Agda theorem and its Rocq or Lean recheck.
+
+ECHIDNA learns from these pairs how statements correspond across systems.
+That is the groundwork for *mathematical-object arbitration*: deciding
+whether two artefacts in different systems state the same thing, which is
+the estate's equivalence-as-identity through-line. The corpus also exercises
+ECHIDNA's cross-prover exchange (OpenTheory, Dedukti) on real estate code.
+
+*What it does not change.*
+
+* *No proof status rises.* The theorem about an Aeneas model may be
+`PROVEN`. The correspondence between the model and the Rust (Aeneas's
+translation) is a separate `ASSUMED` row (PROOF-POLICY §4.1). A Creusot or
+Verus result on the code itself is still what establishes implementation
+correctness.
+* *Backend axioms.* Aeneas's Rocq backend carries an axiom from which
+`False` is derivable (its `mk_array` axiom, Aeneas issue #1116). Its Lean
+backend depends on Mathlib, which §2 rules out for theory rechecks. Neither
+backend's output may stand as a theory witness or count toward a PWG.
+Corpus use is unaffected, because nothing in the corpus is counted.
+* *Evidence stays home.* Each translation and its receipt live in the home
+repository. Mathesis catalogues them as correspondence records, not as
+receipts of proof.
+
+*Policy gap.* PROOF-POLICY §4.1 currently allows Aeneas "only where Rust
+code implements a theorem proved in Agda". Making it a default, even for
+corpus use, needs an amendment in `metadatastician/standards`. File it
+together with the ATS2 amendment (also owner direction 2026-11-09). Until
+then, translations outside §4.1's scope are corpus artefacts only and are
+recorded as such.
+
+*Related direction (design open).* Mathesis becomes the shared, canonical
+centre for this record. Each participating repository keeps a local copy
+that is attested by its deed and kept in line by k9 and coordination
+runners. Any drift from, or attempt to change, the canonical record raises
+an alert. Fable's restart session sets the mechanism.
+====
+
 == Original working brief (preserved)
 
 [literal]

@@ -38,6 +38,13 @@ Agda and Idris2 counts include helpers. Hole, axiom, unsafe and policy counts
 come from proof-craft's \`proof-holes.sh\`: textual candidates, not kernel
 verdicts.
 
+The catalogue carries no proof status and no proof witness grade (\`PWG-\`,
+PROOF-POLICY §8). Counts say what files exist, not what has been checked, and a
+grade is derived from a repository's receipts, never from a census. The
+*Proof-status doc* column names the file that holds those statuses, preferring
+\`PROOF-STATUS\` over \`proof-debt\` over \`PROOF-NEEDS\` when a repository has more
+than one.
+
 == Theory
 
 $(table theory)

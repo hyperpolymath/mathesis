@@ -85,6 +85,8 @@ than one.
 
 |https://github.com/hyperpolymath/zotero-tools[hyperpolymath/zotero-tools] |15 |0 |lean 9, idris2 3, tla 3 |94 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
+|https://github.com/hyperpolymath/MetaManifold-WebUI[hyperpolymath/MetaManifold-WebUI] |13 |0 |agda 13 |107 |0 |0 |0 |0 |`proofs/PROOF-STATUS.md`
+
 |https://github.com/hyperpolymath/lithoglyph[hyperpolymath/lithoglyph] |13 |0 |lean 8, idris2 5 |264 |1 |0 |0 |0 |`docs/status/PROOF-NEEDS.adoc`
 
 |https://github.com/metadatastician/MetaManifold-Evidence[metadatastician/MetaManifold-Evidence] |13 |0 |agda 13 |70 |0 |0 |0 |0 |—

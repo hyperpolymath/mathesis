@@ -724,6 +724,14 @@ census:
 update-rows +repos:
     bash scripts/census/update-rows.sh {{repos}}
 
+# Re-list every blob the RSR template has shipped at its template paths, in any commit
+template-blobs:
+    bash scripts/census/template-blobs.sh docs/catalogue/census/template-paths.txt > docs/catalogue/census/template-blobs.tsv
+
+# Offline census tests: row folding, status documents, template blobs, scanner, Rust proofs
+census-test:
+    for t in tests/census/*.sh; do bash "$t" || exit 1; done
+
 # Re-render docs/catalogue/catalogue.adoc from the committed census rows
 catalogue:
     bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc

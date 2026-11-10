@@ -20,8 +20,9 @@ PROVER='def prover: (.ext) as $e |
   elif ($e|test("^(tla|cfg)$")) then "tla"
   elif $e=="dk" then "dedukti" elif $e=="lp" then "lambdapi"
   elif $e=="smt2" then "smtlib" elif ($e|test("^(tptp|p)$")) then "tptp"
-  elif ($e|test("^(ads|adb|gpr)$")) then "spark" elif $e=="mlw" then "why3"
-  elif $e=="fst" then "fstar" elif $e=="dfy" then "dafny" elif $e=="als" then "alloy" else $e end;'
+  elif ($e|test("^(ads|adb|adc|gpr)$")) then "spark" elif $e=="mlw" then "why3"
+  elif $e=="fst" then "fstar" elif $e=="dfy" then "dafny" elif $e=="als" then "alloy"
+  elif $e=="rs-creusot" then "creusot" elif $e=="rs-verus" then "verus" else $e end;'
 CORPUS_RE='(^|/)(tests?|fixtures?|test-fixtures|testdata|test-data|examples?|benchmarks?|benches|bench|corpus|corpora|samples?|external_corpora|third_party|vendor|training_data)(/|$)'
 
 total=$(wc -l < repos.jsonl)
@@ -99,6 +100,6 @@ echo "## Method and caveats"
 echo
 echo "- Enumeration used the session's list_repos tool (per-letter substring queries). Every repo it returned has pushed_at on or after 2026-09-15, so repos untouched since then may be missing from the listing."
 echo "- Declarations are grep/awk best effort. Agda and Idris2 count every column-0 \`name : type\` signature (helpers included), plus data/record names and postulated names; Lean/Rocq/Isabelle use keyword rules; TLA+ counts THEOREM/LEMMA and .cfg INVARIANT/PROPERTY names. SMT-LIB, TPTP, Dafny, F*, Why3, Alloy and SPARK files are counted as files only."
-echo "- .v files count only in repos with Rocq signs (_CoqProject, dune with coq, or a .v containing Require/Theorem); Verilog-looking files are skipped. .p counts only with TPTP formulas, .lp only with Lambdapi keywords, .ads/.adb only when the repo has a .gpr or SPARK_Mode."
+echo "- .v files count only in repos with Rocq signs (_CoqProject, dune with coq, or a .v containing Require/Theorem); Verilog-looking files are skipped. .p counts only with TPTP formulas, .lp only with Lambdapi keywords, .ads/.adb only when SPARK analysis is on for the file: the file carries SPARK_Mode, or a .adc configuration-pragma file switches it on for the project (a .gpr alone does not count)."
 echo "- Hole counts are textual (proof-holes.sh); a kernel-level audit is the authority."
 } > summary.md

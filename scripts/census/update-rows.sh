@@ -39,7 +39,7 @@ if [ -s "$work/unreachable.jsonl" ]; then
   echo "update-rows: could not clone: $(jq -r .repo "$work/unreachable.jsonl" | tr '\n' ' ')" >&2
   exit 1
 fi
-bash "$here/build-rows.sh" "$work" "$census/template-paths.txt" > "$work/new-rows.json"
+bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$work/new-rows.json"
 jq -R . "$work/census-list.txt" | jq -s . > "$work/names.json"
 jq -cS --slurpfile new "$work/new-rows.json" --slurpfile names "$work/names.json" '
   map(select(.repo as $r | $names[0] | index($r) | not)) + $new[0] | sort_by(.repo)

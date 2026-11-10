@@ -6,13 +6,13 @@
 :sectnums:
 :icons: font
 
-Status: *proposed* (2026-11-10). The owner ruled on two of its five decisions
-on 2026-11-10 (<<programme-decisions>>). The rest is not ratified. This
-document claims no proved result. A statement marked *pre-registered* is a
-statement to prove or to refute. A sentence marked *reading* is the view of the author of this
-programme. Each fact about another repository names that repository and its
-commit in <<survey>>. Each such fact is that repository's own claim. This
-session checked no proof.
+Status: *proposed, with rulings* (2026-11-10). The owner ruled on four of its
+five decisions on 2026-11-10 (<<programme-decisions>>). The rest is not
+ratified. This document claims no proved result. A statement marked
+*pre-registered* is a statement to prove or to refute. A sentence marked
+*reading* is the view of the author of this programme. Each fact about
+another repository names that repository and its commit in <<survey>>. Each
+such fact is that repository's own claim. This session checked no proof.
 
 The companion document is
 link:mathesis-re-anchoring.adoc[the re-anchoring plan]. The plan puts the
@@ -708,9 +708,9 @@ laws are generated from the Agda source, the row can rise to `tested-only`.
 
 === First experiments
 
-. *E-3.1* Choose one vertical slice with the owner. The survey suggests
-  `januskey` T-1 with T-10 and G-2. Write its rungs as claims and bridges.
-  Compute its composite status. +
+. *E-3.1* Take `januskey` as the first vertical slice (ruling R-4): theorem
+  T-1 with rows T-10 and G-2. Write its rungs as claims and bridges. Compute
+  its composite status. +
   *Pass condition:* the computed status is not stronger than the weakest
   rung, and each document that states a stronger status is listed.
 . *E-3.2* Generate the Idris2 statement of the token laws from the source of
@@ -873,7 +873,8 @@ The lines depend on each other in one direction only.
   the canon reader.
 . Line 2 can start. The owner ruled on the bridge centre on 2026-11-10
   (decision D-7 of the plan).
-. Line 3 needs one home repository that agrees to be the slice.
+. Line 3 starts with `januskey` (ruling R-4). Each change in `januskey` is
+  made in that repository, by its own rules.
 . Line 4 can run at any time. It shares only S-2 with the other lines.
 . The horizon waits for lines 1 and 2 to produce records.
 
@@ -952,8 +953,8 @@ a line is not worth its cost.
 == Decisions for the owner
 
 Each decision lists the most elegant and correct long-term arm first. The
-programme assumes arm (a). The owner ruled on R-1 and R-2 through the
-selector on 2026-11-10. R-3, R-4 and R-5 are open.
+programme assumes arm (a). The owner ruled on R-1 to R-4 through the
+selector on 2026-11-10. R-5 is open.
 
 . *R-1 The order of the tokens.* (a) The chain of S-1, as PROOF-POLICY §5
   lists it. (b) A partial order in which `tested-only` and `argued` are not
@@ -966,9 +967,12 @@ selector on 2026-11-10. R-3, R-4 and R-5 are open.
   *Ruled 2026-11-10: (a).*
 . *R-3 The home of S-2.* (a) Mathesis, because the expression language is the
   ledger's. (b) `resource-algebra`, as a kernel lemma.
+  *Ruled 2026-11-10: (a).*
 . *R-4 The first slice for line 3.* The owner names the repository.
+  *Ruled 2026-11-10: `januskey`.*
 . *R-5 The dossier.* (a) Mathesis describes the method and reports it as a
   census. (b) The method goes to the standards repository as policy first.
+  *Open.*
 
 [appendix]
 [[survey]]

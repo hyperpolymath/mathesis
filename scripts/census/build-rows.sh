@@ -44,7 +44,13 @@ jq -r '[.repo,.file,.class]|@tsv' "$R/holes.jsonl" \
 jq -r '[.repo,.file]|@tsv' "$R/decls.jsonl" \
 | awk -F'\t' 'NR==FNR{t[$1]=1;next} !($2 in t){print $1}' "$T" - > "$tmp/decls.tsv"
 
-jq -r '.repo+"\t"+.path' "$R/repos-with-status.jsonl" | sort > "$tmp/status.tsv"
+# A repository may carry more than one status document (a ledger beside a
+# template-era requirements list). Prefer the ledger: PROOF-STATUS, then
+# PROOF-NEEDS, then proof-debt, then the path, so the choice does not depend
+# on alphabetical order.
+jq -r '.repo+"\t"+(if (.path|test("(^|/)PROOF-STATUS[^/]*$";"i")) then "0"
+    elif (.path|test("(^|/)PROOF-NEEDS[^/]*$";"i")) then "1" else "2" end)+"\t"+.path' \
+  "$R/repos-with-status.jsonl" | sort | cut -f1,3 > "$tmp/status.tsv"
 
 awk -F'\t' '
   FILENAME ~ /holes\.tsv$/  { h[$1" "$2]++; next }

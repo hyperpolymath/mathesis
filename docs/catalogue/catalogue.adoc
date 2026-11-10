@@ -72,6 +72,8 @@ verdicts.
 
 |https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |15 |0 |agda 15 |63 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
 
+|https://github.com/metadatastician/hvn-dehallucinator[metadatastician/hvn-dehallucinator] |16 |7 |agda 10, idris2 1, tla 5 |203 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
 
 |https://github.com/hyperpolymath/jtv-lang[hyperpolymath/jtv-lang] |15 |0 |agda 5, lean 9, idris2 1 |287 |0 |0 |0 |0 |`verification/PROOF-STATUS.adoc`

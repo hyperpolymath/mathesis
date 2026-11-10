@@ -71,6 +71,11 @@ jobs:
           echo "${NICKEL_SHA256}  $RUNNER_TEMP/nickel-bin/nickel" | sha256sum --check --strict
           chmod +x "$RUNNER_TEMP/nickel-bin/nickel"
           echo "$RUNNER_TEMP/nickel-bin" >> "$GITHUB_PATH"
+      # The arrival pack (CLAUDE.md) is compiled from the deed; a hand edit
+      # inside its generated region, or a deed change without `just claude-md`,
+      # fails here (re-anchoring plan WO 1.2).
+      - name: Arrival pack in sync with the deed
+        run: bash .machine_readable/arrival-pack/verify.sh
       - name: Install verified Zig 0.16.0 (matching mise.lock)
         run: |
           set -euo pipefail

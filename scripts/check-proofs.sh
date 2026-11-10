@@ -92,6 +92,96 @@ check_one() {
   LAST_OUT="$out"; return 1
 }
 
+# --- axiom audit: a gated module must also be free of axioms -------------------
+# Compiling is not enough (re-anchoring plan WO 1.3): coqc accepts `Admitted`
+# and lean accepts `sorry`; both name the gap only in their axiom reports. So a
+# gated module that compiles is audited as well, and fails if its axiom report
+# names an axiom. PROOF-POLICY §8.4: axioms travel with the grade.
+#   agda : the first-party modules of the import cone that Agda itself reports
+#          go through scan-postulates.sh (the reference gate of januskey).
+#   coq  : `Print Assumptions` for every Theorem, Lemma, Corollary, Proposition,
+#          Fact and Remark of the file must print "Closed under the global
+#          context".
+#   lean4: every theorem the source declares must depend on no axiom
+#          (Lean.collectAxioms, the function behind #print axioms). The
+#          lemmas Lean generates for an inductive are not witnesses.
+# Each audit fails closed: if it cannot show that it ran, the module fails.
+audit_one() {
+  # $1 source-root, $2 module; sets LAST_OUT on failure; returns 0 iff clean.
+  local root="$1" rel="$2" dir out rc base copy names expect got
+  dir="$(mktemp -d)"
+  case "$PROVER" in
+    agda)
+      set +e
+      out="$(cd "$ROOT/$root" && agda --safe --without-K --cubical-compatible \
+              --dependency-graph="$dir/cone.dot" "$rel" 2>&1)"; rc=$?
+      set -e
+      if [ "$rc" -ne 0 ] || [ ! -s "$dir/cone.dot" ]; then
+        LAST_OUT="axiom audit: no import cone from agda --dependency-graph"$'\n'"$out"; rm -rf "$dir"; return 1
+      fi
+      : >"$dir/own"
+      sed -n 's/.*label="\([^"]*\)".*/\1/p' "$dir/cone.dot" | LC_ALL=C sort -u |
+        while IFS= read -r name; do
+          f="$ROOT/$root/${name//.//}.agda"
+          [ -f "$f" ] && echo "$f" >>"$dir/own"
+        done
+      [ -s "$dir/own" ] || { LAST_OUT="axiom audit: no first-party module in the import cone"; rm -rf "$dir"; return 1; }
+      set +e; mapfile -t own <"$dir/own"; out="$(bash "$ROOT/scripts/scan-postulates.sh" "${own[@]}" 2>&1)"; rc=$?; set -e
+      ;;
+    coq)
+      base="$(basename "$rel" .v)"; copy="GateAudit_${base}"
+      names="$(awk '
+        /^[ \t]*Module[ \t]+Type[ \t]/ { split($0, w, /[ \t.]+/); stack[++d] = "T:" w[4]; next }
+        /^[ \t]*Module[ \t]+[A-Za-z_][A-Za-z0-9_'\'']*[ \t]*\.[ \t]*$/ ||
+        /^[ \t]*Module[ \t]+[A-Za-z_][A-Za-z0-9_'\'']*[ \t]*[:(<]/ && !/:=/ {
+          s = $0; sub(/^[ \t]*Module[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s); stack[++d] = "M:" s; next }
+        /^[ \t]*Section[ \t]/ { stack[++d] = "S:"; next }
+        /^[ \t]*End[ \t]/ { if (d > 0) d--; next }
+        /^[ \t]*(Theorem|Lemma|Corollary|Proposition|Fact|Remark)[ \t]/ {
+          s = $0; sub(/^[ \t]*[A-Za-z]+[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s)
+          q = ""; for (i = 1; i <= d; i++) if (stack[i] ~ /^M:/) q = q substr(stack[i], 3) "."
+          print q s }' "$ROOT/$root/$rel")"
+      if [ -z "$names" ]; then rm -rf "$dir"; LAST_OUT=""; return 0; fi
+      { cat "$ROOT/$root/$rel"; echo; while IFS= read -r n; do echo "Print Assumptions $n."; done <<<"$names"; } \
+        >"$ROOT/$root/$copy.v"
+      set +e; out="$(cd "$ROOT/$root" && coqc "$copy.v" 2>&1)"; rc=$?; set -e
+      rm -f "$ROOT/$root/$copy".{v,vo,vok,vos,glob} "$ROOT/$root/.$copy".aux
+      expect="$(grep -c . <<<"$names")"
+      got="$(grep -c '^Closed under the global context' <<<"$out" || true)"
+      if [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ]; then rc=0
+      else rc=1; out="axiom audit: $got of $expect theorem(s) closed under the global context"$'\n'"$out"; fi
+      ;;
+    lean4)
+      { echo "import Lean"; cat "$ROOT/$root/$rel"; cat <<'LEAN'
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let mut n := 0
+  for (name, ci) in env.constants.map₂.toList do
+    -- Only theorems the source declares: the lemmas Lean generates for an
+    -- inductive (injEq, inj, sizeOf_spec) carry no declaration range.
+    if let .thmInfo _ := ci then
+      if (← liftCoreM (findDeclarationRanges? name)).isNone then continue
+      n := n + 1
+      let axs ← Lean.collectAxioms name
+      unless axs.isEmpty do
+        logInfo m!"GATE-AXIOMS {name}: {axs.toList}"
+  logInfo m!"GATE-AUDIT-DONE {n}"
+LEAN
+      } >"$dir/Audit.lean"
+      set +e; out="$(cd "$ROOT/$root" && lean "$dir/Audit.lean" 2>&1)"; rc=$?; set -e
+      if [ "$rc" -ne 0 ] || ! grep -q 'GATE-AUDIT-DONE' <<<"$out" || grep -q 'GATE-AXIOMS' <<<"$out"; then
+        rc=1; out="axiom audit: a theorem depends on an axiom, or the audit did not run"$'\n'"$(grep -E 'GATE-|error' <<<"$out" || printf '%s' "$out")"
+      fi
+      ;;
+    *) rc=0; out="" ;;
+  esac
+  rm -rf "$dir"
+  if [ "$rc" -eq 0 ]; then LAST_OUT=""; return 0; fi
+  LAST_OUT="$out"; return 1
+}
+
 echo "=== $PROVER proof check ==="
 
 # --- toolchain: absent means FAIL, never skip ---------------------------------
@@ -132,7 +222,11 @@ while IFS='|' read -r root rel status note; do
   printf '  %-30s %-24s ' "$root" "$rel"
   echo "$root/$rel" >>"$listed_tmp"
   if check_one "$root" "$rel"; then
-    if [ "$status" = gated ]; then
+    if [ "$status" = gated ] && ! audit_one "$root" "$rel"; then
+      echo "FAIL (compiles, but the axiom audit fails)"
+      printf '%s\n' "${LAST_OUT//$'\n'/$'\n        '}" | sed '1s/^/        /'
+      fails=$((fails + 1))
+    elif [ "$status" = gated ]; then
       echo "PASS"
     else
       echo "PASS -- UNEXPECTED (quarantined module now compiles)"

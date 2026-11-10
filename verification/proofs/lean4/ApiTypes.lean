@@ -16,19 +16,16 @@ namespace ApiResult
     | .ok v      => .ok (f v)
     | .error c m => .error c m
 
+  -- By `rfl` after `cases`: under Lean 4.29.0 `simp [map]` brings in `propext`.
   theorem map_id : ∀ (r : ApiResult α), map id r = r := by
     intro r
-    cases r with
-    | ok v => simp [map]
-    | error c m => simp [map]
+    cases r <;> rfl
 
   -- Proof: map composition (functor law: map (g ∘ f) = map g ∘ map f)
   theorem map_comp (f : α → β) (g : β → γ) :
       ∀ (r : ApiResult α), map (g ∘ f) r = map g (map f r) := by
     intro r
-    cases r with
-    | ok v => simp [map, Function.comp]
-    | error c m => simp [map]
+    cases r <;> rfl
 end ApiResult
 
 -- Example: Bounded confidence value (0.0 to 1.0 modelled as Nat/1000)

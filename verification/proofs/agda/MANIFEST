@@ -1,5 +1,5 @@
 # Agda proof manifest — read by scripts/check-proofs.sh agda
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
 # Prior check (2026-07-17): agda --safe only; full 2026-11 policy pending CI.
-verification/proofs/agda|Properties.agda|gated| previously checked under `agda --safe`; new full-mode recheck pending
+verification/proofs/agda|Properties.agda|gated| template examples on Agda.Builtin only, no library (2026-11-10); passes the canonical invocation
 verification/proofs/agda|FeatureReachability.agda|gated| additive features: reachability monotone in the requested set (no library imports)

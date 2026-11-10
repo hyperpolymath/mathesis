@@ -13,7 +13,7 @@
 (specifications->manifest
  (list "git" "bash" "coreutils" "nss-certs" "just" "mise"
        "shellcheck" "chez-scheme" "gmp" "gcc-toolchain" "zig"
-       ;; Provers for the proof lanes (re-anchoring plan WO 1.4, ruling D-8 (a)):
-       ;; at the pinned Guix revision these are Agda 2.7.0.1 with agda-stdlib
-       ;; 2.3, Rocq (coq) 8.18.0 and Lean 4.29.0.
-       "agda" "agda-stdlib" "coq" "lean4"))
+       ;; Provers for the proof lanes (re-anchoring plan WO 1.4, ruling D-8 (a)).
+       ;; No agda-stdlib: its Guix package does not build, and no proof here
+       ;; imports it (owner ruling 2026-11-10).
+       "agda" "coq" "lean4"))

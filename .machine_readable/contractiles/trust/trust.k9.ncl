@@ -131,11 +131,15 @@ let base    = import "../_base.ncl" in
   # -------------------------------------------------------------------
   declaration = {
     preamble = "# SPDX-License-Identifier: MPL-2.0\n# Trustfile — Trust boundaries and integrity invariants for mathesis\n# Author: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>\n#\n# Defines what LLM/SLM agents are trusted to do without asking, and\n# integrity invariants that verify the repo has not been tampered with.\n",
-    abstract = "Trust boundaries and integrity checks for mathesis. This file\ncombines the trust-level definitions from the original TRUST.contractile\nwith the integrity invariants from the old Trustfile.a2ml. It defines\nwhat AI agents may do autonomously and what requires human approval,\nplus checks that verify repository integrity.",
+    abstract = "Trust boundaries and integrity checks for Mathesis. This file\ncombines the trust-level definitions from the original TRUST.contractile\nwith the integrity invariants from the old Trustfile.a2ml. It defines\nwhat AI agents may do autonomously and what requires human approval,\nplus checks that verify repository integrity.",
     prose = [
       {
         section = "Trust Levels",
-        text = "The mathesis operates at trust level: maximal\n\nTrust levels:\n- maximal:    Agent may read, build, test, lint, format, heal freely.\n             Only destructive/external actions require approval.\n- standard:   Agent may read and build. Test/lint need approval.\n- restricted: Agent may read only. All modifications need approval.\n- minimal:    Agent may read specific files only. Everything else blocked.\n\nCurrent trust level: maximal",
+        text = "Mathesis operates at trust level: maximal\n\nTrust levels:\n- maximal:    Agent may read, build, test, lint, format, heal freely.\n             Only destructive/external actions require approval.\n- standard:   Agent may read and build. Test/lint need approval.\n- restricted: Agent may read only. All modifications need approval.\n- minimal:    Agent may read specific files only. Everything else blocked.\n\nCurrent trust level: maximal",
+      },
+      {
+        section = "Writers",
+        text = "Who writes which record in Mathesis (re-anchoring plan WO 3.3):\n- Census rows and the not-reached list: only `just census` and `just update-rows`; nobody edits them by hand (deed bot-directives census-writer).\n- The frame repos.jsonl and private-count.json: a person refreshes them from the GitHub listing; the frame holds public records only (ruling D-2 (a)).\n- Claim pins (claims.jsonl) and bridge records (bridges.jsonl): authored by a person or an agent, and reviewed in a pull request; they hold no grade.\n- Generated views (docs/atlas/generated/): only their generators; `just check` fails on a stale view.\n- Grades: no writer in Mathesis. The registry derives each grade from a receipt through the canon reader.\n- Receipts of other repositories: their home repositories only. Mathesis pins and reads them.\n- The receipt of Mathesis (verification/receipts/): written from observed checker runs only.\n- The deed: only scripts/deed-clause.sh.\n- CLAUDE.md and the coaptation receipt: only `just claude-md` and `just coapt`.\n- Contractiles: the owner reviews each clause before it lands.",
       },
     ],
     verifications = [

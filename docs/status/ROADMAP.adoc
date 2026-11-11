@@ -108,6 +108,11 @@ One pull request that changes census rows is open at a time (atlas README,
   `censused_at`. One full census fills both fields, with the scanner rules
   of 2026-11-10 for every row.
   Merged.
+* 2026-11-11: the frame and the "not reached" list, taken by
+  `just update-rows --frame` (re-anchoring plan WO 3.5, ruling D-2 (a)).
+  `repos.jsonl` keeps its 465 public records. `private-count.json` records
+  that the listing of 2026-11-09 counted 40 private repositories. The 40
+  private entries leave `unreachable.jsonl` and the catalogue. No row changes.
 
 == Milestones
 

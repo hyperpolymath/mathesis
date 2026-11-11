@@ -25,40 +25,61 @@ const ENDPOINT_FIELDS = new Set(['repository', 'system', 'name', 'state']);
 
 const text = v => typeof v === 'string' && v.trim() !== '';
 
+// Throw `message` unless `ok`.
+const need = (ok, message) => {
+  if (!ok) throw new Error(message);
+};
+
+// Check the fields of one record against a closed set.
+const closed = (object, allowed, label, where) => {
+  for (const k of Object.keys(object)) need(allowed.has(k), `${label} ${k}: ${where}`);
+};
+
+// Check one endpoint: a public repository, a known system, a name, a §2.2 state.
+function checkEndpoint(e, visibility, where) {
+  closed(e, ENDPOINT_FIELDS, 'Unknown endpoint field', where);
+  need(visibility.get(e.repository) === 'public', `Nonpublic or unlisted repository ${e.repository}: ${where}`);
+  need(SYSTEMS.has(e.system), `Unknown system ${e.system}: ${where}`);
+  need(text(e.name), `Missing endpoint name: ${where}`);
+  need(STATES.has(e.state), `Endpoint state ${e.state} is not a §2.2 state: ${where}`);
+}
+
+// Check who proposed and who reviewed a record. An agent's proposal stays
+// unassessed until a person reviews a comparison that a home repository holds.
+function checkReview(b, where) {
+  need(b.proposed_by === 'agent' || b.proposed_by === 'person', `proposed_by is agent or person: ${where}`);
+  need(b.reviewed_by === null || text(b.reviewed_by), `reviewed_by is null or a name: ${where}`);
+  const unreviewedAgent = b.proposed_by === 'agent' && b.reviewed_by === null;
+  need(!unreviewedAgent || b.relation === 'unassessed', `An unreviewed agent proposal has relation unassessed: ${where}`);
+}
+
+// Check one candidate record.
+function checkRecord(b, visibility, where) {
+  closed(b, FIELDS, 'Unknown field (a bridge holds no token or grade):', where);
+  need(/^[a-z0-9]+(-[a-z0-9]+)*$/.test(b.id ?? ''), `id must be lowercase words joined by hyphens: ${where}`);
+  need(STAGES.has(b.stage), `stage ${b.stage} is not accepted; only candidate until WO 5.2: ${where}`);
+  need(text(b.subject), `Missing subject: ${where}`);
+  need(Array.isArray(b.endpoints) && b.endpoints.length === 2, `A bridge has two endpoints: ${where}`);
+  for (const e of b.endpoints) checkEndpoint(e, visibility, where);
+  need(b.endpoints[0].repository !== b.endpoints[1].repository, `A bridge crosses repositories: ${where}`);
+  need(RELATIONS.has(b.relation), `Unknown relation ${b.relation}: ${where}`);
+  need(STATES.has(b.state), `Bridge state ${b.state} is not a §2.2 state: ${where}`);
+  need(BASES.has(b.basis), `Unknown basis ${b.basis}: ${where}`);
+  need(text(b.source), `Missing source: ${where}`);
+  need(b.note === undefined || text(b.note), `An empty note: ${where}`);
+  checkReview(b, where);
+}
+
 // Throw unless every record is a well-formed candidate whose repositories are
-// public in the census inventory.
+// public in the census inventory, and no two records share an id.
 export function validateBridges(records, inventory) {
   const visibility = new Map(inventory.map(r => [r.full_name, r.visibility]));
   const seen = new Set();
   for (const b of records) {
-    const where = b && text(b.id) ? b.id : JSON.stringify(b);
-    for (const k of Object.keys(b)) if (!FIELDS.has(k)) throw new Error(`Unknown field ${k} (a bridge holds no token or grade): ${where}`);
-    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(b.id ?? '')) throw new Error(`id must be lowercase words joined by hyphens: ${where}`);
-    if (seen.has(b.id)) throw new Error(`Duplicate id: ${b.id}`);
+    const where = text(b?.id) ? b.id : JSON.stringify(b);
+    checkRecord(b, visibility, where);
+    need(!seen.has(b.id), `Duplicate id: ${b.id}`);
     seen.add(b.id);
-    if (!STAGES.has(b.stage)) throw new Error(`stage ${b.stage} is not accepted; only candidate until WO 5.2: ${where}`);
-    if (!text(b.subject)) throw new Error(`Missing subject: ${where}`);
-    if (!Array.isArray(b.endpoints) || b.endpoints.length !== 2) throw new Error(`A bridge has two endpoints: ${where}`);
-    for (const e of b.endpoints) {
-      for (const k of Object.keys(e)) if (!ENDPOINT_FIELDS.has(k)) throw new Error(`Unknown endpoint field ${k}: ${where}`);
-      if (!text(e.repository) || visibility.get(e.repository) !== 'public') throw new Error(`Nonpublic or unlisted repository ${e.repository}: ${where}`);
-      if (!SYSTEMS.has(e.system)) throw new Error(`Unknown system ${e.system}: ${where}`);
-      if (!text(e.name)) throw new Error(`Missing endpoint name: ${where}`);
-      if (!STATES.has(e.state)) throw new Error(`Endpoint state ${e.state} is not a §2.2 state: ${where}`);
-    }
-    if (b.endpoints[0].repository === b.endpoints[1].repository) throw new Error(`A bridge crosses repositories: ${where}`);
-    if (!RELATIONS.has(b.relation)) throw new Error(`Unknown relation ${b.relation}: ${where}`);
-    if (!STATES.has(b.state)) throw new Error(`Bridge state ${b.state} is not a §2.2 state: ${where}`);
-    if (!BASES.has(b.basis)) throw new Error(`Unknown basis ${b.basis}: ${where}`);
-    if (!text(b.source)) throw new Error(`Missing source: ${where}`);
-    if (b.note !== undefined && !text(b.note)) throw new Error(`An empty note: ${where}`);
-    if (b.proposed_by !== 'agent' && b.proposed_by !== 'person') throw new Error(`proposed_by is agent or person: ${where}`);
-    if (b.reviewed_by !== null && !text(b.reviewed_by)) throw new Error(`reviewed_by is null or a name: ${where}`);
-    // An agent's proposal stays unassessed until a person reviews a comparison
-    // that a home repository holds.
-    if (b.proposed_by === 'agent' && b.reviewed_by === null && b.relation !== 'unassessed') {
-      throw new Error(`An unreviewed agent proposal has relation unassessed: ${where}`);
-    }
   }
   return records;
 }
@@ -68,7 +89,8 @@ const end = e => `https://github.com/${e.repository}[${e.repository}] ${e.system
 
 // Render the bridge view as AsciiDoc, ordered by id.
 export function renderBridges(records) {
-  const ordered = [...records].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // Byte order of the id (ids are ASCII), independent of the locale.
+  const ordered = [...records].sort((a, b) => Number(a.id > b.id) - Number(a.id < b.id));
   const out = [
     '// SPDX-License-Identifier: CC-BY-SA-4.0',
     '// GENERATED by scripts/registry/claims-registry.mjs from docs/atlas/claims/bridges.jsonl;',

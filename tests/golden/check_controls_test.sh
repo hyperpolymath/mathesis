@@ -36,7 +36,7 @@ expect_fail "stale catalogue" "$d" test "a row that no census wrote"
 
 # A proof that does not check: a gated Agda module gains a type error.
 d=$(copy proof)
-printf '\nbroken : Set\nbroken = Set\n' >> "$d/verification/proofs/agda/Properties.agda"
-expect_fail "failing proof" "$d" check-proofs "Properties.agda"
+printf '\nbroken : Set\nbroken = Set\n' >> "$d/verification/proofs/agda/FeatureReachability.agda"
+expect_fail "failing proof" "$d" check-proofs "FeatureReachability.agda"
 
 exit "$fail"

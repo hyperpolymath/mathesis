@@ -18,7 +18,7 @@ reader of PROOF-POLICY §8.5.1.
 |`PWG-1`
 |The receipt `verification/receipts/theory_praxis.deed`; the record below
 
-|The token-lattice theorems (WO 4.1)
+|The token-lattice theorems (next on the theory shelf)
 |Open
 |-
 |Not yet stated in a prover
@@ -31,8 +31,7 @@ reader of PROOF-POLICY §8.5.1.
 
 *Overall*: 1 of 3 obligations discharged; 2 open. These are counts, not a
 percentage: PROOF-POLICY §8 grades are derived from receipts and are never
-flattened. The template example proofs are not obligations (see
-link:PROOF-NEEDS.adoc[PROOF-NEEDS]).
+flattened. The template example proofs were removed in WO 4.1.
 
 == Theory theorems
 

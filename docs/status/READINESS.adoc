@@ -85,7 +85,7 @@ public repository is not reached
 |D
 |alpha-unstable
 |CI passes with controls; THY-1 at `PWG-1` in three provers
-|A dogfood log; the template example proofs still sit in the gate (WO 4.1)
+|A dogfood log
 |===
 
 The applied shelf (`applied-systems/`) is not graded: it holds design

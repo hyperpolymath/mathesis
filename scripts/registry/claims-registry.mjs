@@ -28,6 +28,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
+import {validateAdmissions, renderTheoryIndex} from './theory.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
@@ -35,6 +36,8 @@ const reposFile = path.join(root, 'docs/atlas/census/repos.jsonl');
 const viewFile = path.join(root, 'docs/atlas/generated/registry.adoc');
 const bridgesFile = path.join(root, 'docs/atlas/claims/bridges.jsonl');
 const bridgesView = path.join(root, 'docs/atlas/generated/bridges.adoc');
+const admissionsFile = path.join(root, 'docs/theory/admissions.jsonl');
+const theoryView = path.join(root, 'docs/theory/generated/index.adoc');
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
@@ -222,17 +225,18 @@ async function main() {
   const inventory = await readJsonl(reposFile);
   const rows = validate(await readJsonl(claimsFile), inventory);
   const bridges = validateBridges(await readJsonl(bridgesFile), inventory);
+  const admissions = validateAdmissions(await readJsonl(admissionsFile), rows, inventory);
   const derived = await deriveAll(rows, receiptsDir, await loadReader());
-  const views = [[viewFile, render(derived)], [bridgesView, renderBridges(bridges)]];
+  const views = [[viewFile, render(derived)], [bridgesView, renderBridges(bridges)], [theoryView, renderTheoryIndex(derived, admissions)]];
   if (cmd === 'build') {
-    await mkdir(path.dirname(viewFile), {recursive: true});
+    await Promise.all(views.map(([file]) => mkdir(path.dirname(file), {recursive: true})));
     await Promise.all(views.map(([file, body]) => writeFile(file, body)));
-    console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims) and ${path.relative(root, bridgesView)} (${bridges.length} bridges)`);
+    console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims) and ${path.relative(root, bridgesView)} (${bridges.length} bridges) and ${path.relative(root, theoryView)} (${admissions.length} admissions)`);
   } else {
     const committed = await Promise.all(views.map(([file]) => readFile(file, 'utf8').catch(() => '')));
     const stale = views.filter(([, body], i) => committed[i] !== body).map(([file]) => path.relative(root, file));
     if (stale.length) throw new Error(`${stale.join(', ')} stale; run: bun scripts/registry/claims-registry.mjs build`);
-    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges)`);
+    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges, ${admissions.length} admissions)`);
   }
 }
 

@@ -1,58 +1,62 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <6759885+hyperpolymath@users.noreply.github.com>
-= Troubleshooting — Mathesis
-:revdate: 2026-MM-DD
+= Troubleshooting Mathesis
 
-This file is a *living FAQ* — known failure modes and recovery paths.
-Add a new entry every time you debug something that took more than 15
-minutes; future-you (and other maintainers) will thank you.
+Known failures and their fixes. Each entry was met in practice; add one when
+a failure takes real time to diagnose.
 
-== Known failure modes
+== `just` fails on `provision::build`
 
-=== `<error message or symptom>`
+*Symptom*: `error: Expected '&&', comment, end of file, ... but found '::'`.
 
-**Symptom**: short reproduction. What does the user see?
+*Cause*: an old `just` that does not know module paths.
 
-**Cause**: root cause (one or two sentences).
+*Fix*: use the version that `mise.lock` pins (1.56.0), and check its
+checksum against `mise.lock`.
 
-**Fix**:
-[source,bash]
-----
-<the actual commands to recover>
-----
+== `validate-claude-md` or `validate-coapt` fails with `nickel: command not found`
 
-**Avoidance**: how to not hit this again (config setting, doc link, etc.).
+*Fix*: install Nickel 1.18.0. CI checks the release binary against the
+SHA-256 in `.github/workflows/dogfood-gate.yml`.
 
----
+== `validate-coapt` reports `DRIFT`
 
-=== `<another failure mode>`
+*Cause*: a contractile or a deed clause changed, and the receipt was not
+regenerated.
 
-(Replace this and the above example with real entries as you encounter
-them.)
+*Fix*: run `just coapt` and commit the receipt. Never edit the receipt by
+hand.
 
-== Diagnostic toolkit
+== The registry stops with `set MATHESIS_STANDARDS`
 
-When something is wrong, run these first:
+*Fix*: point `MATHESIS_STANDARDS` at a `metadatastician/standards` checkout
+whose reader file has the digest that `READER` in
+`scripts/registry/claims-registry.mjs` names.
 
-[source,bash]
-----
-just doctor          # runs all available self-checks
-just version         # prints the version & build hash
-just log-tail        # last N lines of logs
-----
+== The canon capability checker reports `no profile at .../rsr-profile.a2ml`
 
-== When to escalate
+*Cause*: the copy of `check-rsr-profile.sh` at the CI pin of `standards`
+still reads the retired `.a2ml` profile.
 
-. Filed an issue with: version, OS, exact command, full error output,
-  and the symptom in plain English.
-. Linked from the issue: the relevant ADR(s) and any related issues.
-. For *security*-relevant findings, see
-  link:./../SECURITY.md[SECURITY.md] — do **not** file public issues.
+*Fix*: run the checker from `standards` main, which reads the deed's
+`(rsr-profile)` clause. Without network access to the Actions API, omit the
+`owner/repo` argument; the checker then skips its live step.
 
-== Where to look for more help
+== `scripts/check-proofs.sh agda` fails on `--print-agda-data-dir`
 
-* `docs/architecture.adoc` — internals.
-* `docs/decisions/` — historical record of why things are this shape.
-* `https://github.com/hyperpolymath/Mathesis/issues?q=is%3Aissue+<your symptom>` — has anyone hit this before?
-* `https://github.com/hyperpolymath/standards/issues` — for estate-wide problems.
+*Cause*: Agda older than 2.7.0.1.
+
+*Fix*: run the proof checks in the pinned Guix shell (see
+link:contributing.adoc[contributing]).
+
+== `just validate-repo-map` reports a stale map
+
+*Cause*: a tracked path was added, moved or removed.
+
+*Fix*: run `just repo-map` and commit `docs/architecture/REPOSITORY-MAP.adoc`.
+
+== `just crg-grade` prints `X`
+
+*Cause*: the template recipe reads `READINESS.md` at the root, which does
+not exist. The grade is in `docs/status/READINESS.adoc`.

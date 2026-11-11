@@ -1,105 +1,123 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-= mathesis
-:toc:
+= Mathesis
+:toc: preamble
+:icons: font
 
-The estate's maths section. It answers "where does that proof live?" for
-every hyperpolymath repository: which repos carry proofs, in which prover,
-whether the work reads as theory or engineering, which have holes or
-axioms, and where each repo's proof-status file is.
+Mathesis is the maths section of the hyperpolymath estate. It keeps an atlas
+of the mathematics in other repositories, the theory that no single system
+owns, and methods that apply mathematics to decisions. Each statement carries
+its evidence: Mathesis derives status from the receipts of the home
+repositories, and does not assert it.
 
-Proofs stay in their home repositories. mathesis points at them. Later it
-will also hold the Agda sources for theory that has no other natural home.
+The standards repository prescribes what must be proved
+(https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[PROOF-POLICY]).
+Each home repository proves its own claims and keeps their receipts. Mathesis
+describes what is proved, where, and how strongly.
 
-The rules for where a proof *should* live are not here: they are
-https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[the canonical standards/3-practice/PROOF-POLICY.adoc] (Creusot with Pearlite contracts, and Verus, for Rust; SPARK for Ada;
-Idris2 for APIs, ABIs and engineering properties, Agda for theory rechecked
-in Rocq and Lean). The working method is the proof-craft skill.
+== What it does
 
-== Where authority lives
+* *A census of proof files.* It reads each public repository in the frame
+  (`docs/atlas/census/repos.jsonl`) and records one row of counts for each
+  repository that has proof files of its own: provers, declarations, holes,
+  axioms. Each row names the commit that the census read and when.
+* *Generated atlas views.* A catalogue split into theory and engineering, an
+  A-Z view, an organisation view and a machine-readable index, all generated
+  from the census rows.
+* *A claims registry.* Claim pins point at one theorem in its home repository,
+  at a commit and a receipt digest. The canon receipt reader of PROOF-POLICY
+  §8.5.1 derives each Proof Witness Grade. No grade is typed by hand.
+* *Bridge candidates.* Recorded relations between artefacts in two
+  repositories, generated into one view.
+* *Home theory.* THY-1, reachability is monotone under additive features, is
+  proved in Agda and re-proved in Rocq and Lean. CI checks all three in a
+  pinned Guix shell.
+* *Applied systems.* Methods that apply mathematics to decisions, starting
+  with accounting and finance. Design documents only so far.
+* *Privacy by count.* The frame names public repositories only. The number of
+  private repositories in the listing is kept as one number.
 
-* link:docs/standards/README.adoc[Standards and authority map] — estate proof policy, proof/test evidence ownership, and Mathesis's limits.
-* link:docs/atlas/README.adoc[Discovery atlas] — the current generated, read-only first slice (repository index, not theorem-level certification).
-* link:docs/atlas/generated/registry.adoc[Claims registry, pilot slice]: theorem-level, grades *derived* from home-repository receipts at pinned commits; accepted in link:docs/decisions/0004-claims-registry.adoc[ADR 0004]; the canon reader of PROOF-POLICY §8.5.1 derives each grade.
-* link:docs/proposals/estate-mathematical-architecture.adoc[Estate mathematical architecture proposal] — the original long-term design brief, preserved but *not ratified*. Its proposed proof grades do not override the standards policy.
-* link:docs/proposals/proof-receipts-as-data.adoc[Proof receipts as data] — proposed, not adopted: machine-readable proof ledgers and CI receipts in home repositories, so Mathesis can derive Proof Witness Grades instead of transcribing them.
-* link:docs/architecture/REPOSITORY-MAP.adoc[Generated repository map] — current path inventory, not the mathematical architecture specification.
+[NOTE]
+.Planned
+====
+The theory shelf's admission rule and the token-lattice theorems, the applied
+shelf tied to the evidence rules, a published atlas, receipts in more home
+repositories, and a scheduled census. See
+link:docs/status/ROADMAP.adoc[the roadmap].
+====
 
-Mathesis references proofs in their home repositories. A census row or a green CI badge does not independently verify a theorem. Pin claims to source commits, checker versions, assumptions and verification receipts; report missing or inaccessible evidence explicitly.
+== Quick start
 
-== What is here
+The views check needs Bun, network access for the receipts, and a checkout of
+`metadatastician/standards` at the reader pin named in
+`scripts/registry/claims-registry.mjs`.
 
-link:applied-systems/README.adoc[Applied Systems] holds reusable applications of
-mathematical ideas to decisions, organisations and designed systems, starting
-with accounting and finance. It contains methods and synthetic examples;
-organisation-specific working material belongs in separate protected repositories.
+[source,bash]
+----
+export MATHESIS_STANDARDS=/path/to/standards
+just check-views
+bun scripts/atlas/census-atlas.mjs find agda
+----
 
-[cols="1,3"]
+The proof checks need Agda, Rocq and Lean. CI runs them in the pinned Guix
+shell; `just check` runs both halves.
+
+[source,bash]
+----
+guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check
+----
+
+Wondering how this works? See link:EXPLAINME.adoc[].
+
+== Repository layout
+
+[cols="1,3",options="header"]
 |===
-|`docs/atlas/generated/catalogue.adoc` |The catalogue: one row per repository with proof files of its own, split into theory and engineering. Generated; do not edit by hand.
-|`docs/atlas/census/` |What the catalogue is rendered from: `rows.jsonl` (one row of counts per repository, no file paths), `repos.jsonl` (the census input), `unreachable.jsonl`, `template-paths.txt` and `forks-with-own-proofs.txt`. Each `.jsonl` file is JSON Lines: one I-JSON/JCS record on each line, so a change to one row changes one line. Each row also names `commit`, the commit that the census read, and `censused_at`, the UTC time it read it.
-|`scripts/census/` |`run-census.sh` (whole census), `update-rows.sh` (refresh named repositories' rows only), `census-repo.sh` (one repo), `summarise.sh`, `build-rows.sh` (raw census to rows), `render-catalogue.sh` (rows to catalogue), and proof-craft's `proof-holes.sh`.
-|`Justfile` |`just check` (the golden path: every generated view matches its data, and the Agda, Rocq and Lean gates pass; `just test` runs it first), `just census`, `just catalogue`, `just catalogue-check` (the committed catalogue matches the committed data).
+|Path |Purpose
+
+|`docs/atlas/`
+|The atlas shelf: census data (`census/`), authored claim pins and bridge
+records (`claims/`), and generated views (`generated/`)
+
+|`scripts/census/`, `scripts/atlas/`, `scripts/registry/`
+|The census, the atlas views and the claims registry
+
+|`tests/census/`, `tests/atlas/`, `tests/registry/`, `tests/proofs/`
+|Their tests, with negative controls
+
+|`verification/proofs/`
+|Home theory sources: Agda, Rocq and Lean
+
+|`verification/receipts/`
+|The proof receipt of Mathesis
+
+|`applied-systems/`
+|The applied shelf
+
+|`docs/status/`
+|Roadmap, proof needs, proof status, readiness and test needs
+
+|`mathesis_chora.deed`
+|The repository deed: identity, boundaries, golden path
 |===
 
-== How the census works
+== Documentation
 
-. *List repositories.* `docs/atlas/census/repos.jsonl` is the input. Agent sessions build
-  it with the Claude Code remote `list_repos` tool, because the GitHub API is
-  not reachable from them.
-. *List proof files cheaply.* Each repository is cloned blobless with
-  `--no-checkout`, and its file names are filtered by prover extension:
-  Agda, Idris2, Lean, Rocq, Isabelle, TLA+, Dedukti/Lambdapi, SMT-LIB, TPTP,
-  SPARK, Why3, F*, Dafny and Alloy.
-. *Read only the proof files.* Only those files are checked out. Top-level
-  declaration names go to `decls.jsonl`, and proof-craft's `proof-holes.sh`
-  inventories holes, axioms, disabled checkers and policy breaches
-  (`holes.jsonl`).
-. *Set the template aside.* Files the RSR template ships
-  (`docs/atlas/census/template-paths.txt`) are boilerplate wherever they appear. The
-  catalogue counts only a repo's *own* files.
-. *Skip forks, unless their proofs are first-party.* A fork normally carries
-  someone else's work, so the census leaves forks out. A fork whose proof
-  files are the owner's own is named in
-  `docs/atlas/census/forks-with-own-proofs.txt`, with its reason, and is
-  censused like any other repository.
-. *Keep rows, not paths.* The raw, path-level census (clones, every proof file, every declaration, every hole finding, and a `summary.md`) goes to a scratch directory (`MATHESIS_WORK`) and is not committed. `build-rows.sh` folds it into one row of counts per repository, and only those rows are committed, so the data stays small and does not repeat other repositories' file paths.
+* link:EXPLAINME.adoc[EXPLAINME]: the evidence for each claim above, and the
+  proof ledger.
+* link:docs/atlas/README.adoc[Atlas]: the pipeline, the public frame and the
+  one-writer rule for census data.
+* link:docs/decisions/0004-claims-registry.adoc[ADR 0004]: the claims
+  registry.
+* link:docs/standards/README.adoc[Standards and authority map]: the limits of
+  Mathesis.
+* link:docs/status/ROADMAP.adoc[Roadmap] and
+  link:docs/status/PROOF-STATUS.adoc[proof status].
+* link:docs/proposals/mathesis-re-anchoring.adoc[Re-anchoring plan]: the
+  identity and the stages of work.
+* link:docs/contributing.adoc[Contributing] and
+  link:.github/SECURITY.md[security policy].
 
-== Reading the catalogue (first pass, 2026-10-26)
-
-The first census covered 476 repositories:
-
-* *Scope:* 462 repositories were cloned; 5 forks and 9 awesome-lists were
-  skipped. 275 have proof files, and 239 still have them once template
-  boilerplate is set aside.
-* *Unreached:* 37 private repositories could not be cloned. The catalogue
-  now gives the number of private repositories only, not their names.
-* *Possibly missing:* the listing returned only repositories pushed since
-  2026-09-15, so older, untouched repos may be absent. Add them to
-  `docs/atlas/census/repos.jsonl` and rerun.
-* *Theory or engineering* is a heuristic: more Agda, Lean, Rocq or Isabelle
-  files than Idris2 or SPARK files reads as theory. Confirm each row against
-  PROOF-POLICY.
-* *Hole, axiom, unsafe and policy counts* are textual candidates, not kernel
-  verdicts. The kernel is the authority. `import Mathlib` shows under
-  policy.
-* *Declaration counts* overcount Agda and Idris2:
-  every column-0 type signature counts, helpers included.
-* *Older template copies* survive as "own" files in some repos: for example
-  asdf-tool-plugins, whose plugins each carry a stubbed `Layout.idr`.
-* *Fixtures:* files under `tests/`, `fixtures/`, `corpus/` or `benches/` are
-  counted as fixtures. `examples/` is not, because some verifiers (Atoma)
-  keep real verification conditions there.
-
-== Next steps
-
-* Confirm the theory/engineering split per row, and record each repo's
-  obligations with the status vocabulary of PROOF-POLICY §5.
-* Theorem-level rows for the theory repos: statement, Agda source, Rocq
-  leg, Lean leg, route.
-* A scheduled CI job that reruns the census and fails on catalogue drift.
-* Reconcile the existing `mathesis_chora.deed` with the current estate conventions; it is already present, not a future placeholder.
-
-== Licence
+== License
 
 Code (`scripts/`, `Justfile`): MPL-2.0. Documentation and the catalogue:
-CC-BY-SA-4.0. See `LICENSES/`.
+CC-BY-SA-4.0. See link:LICENSE[] and `LICENSES/`.

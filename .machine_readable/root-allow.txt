@@ -28,6 +28,7 @@
 
 # ─── Baseline: every RSR repo has these ──────────────────────────────────────
 README.adoc
+EXPLAINME.adoc             # the evidence for each README claim; the README and EXPLAINME authoring standard puts it at the root
 LICENSE
 LICENSES/                  # REUSE licence texts, dual-licence model (code MPL-2.0 / docs CC-BY-SA-4.0)
 CHANGELOG.adoc             # AsciiDoc is the estate-standard documentation format

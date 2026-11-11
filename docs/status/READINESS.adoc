@@ -1,188 +1,109 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= Mathesis Component Readiness Assessment
+= Mathesis component readiness assessment
 
 *Standard:* link:https://github.com/hyperpolymath/standards/tree/main/component-readiness-grades[Component Readiness Grades (CRG) v2.0 STRICT] +
-*Assessed:* 2026-10-29 +
-*Assessor:* Jonathan D.A. Jewell +
-*Previous assessment:* _<date or "none">_
+*Assessed:* 2026-11-11 +
+*Assessor:* a Claude Code session (re-anchoring plan WO 3.4); provisional
+until the owner confirms it +
+*Previous assessment:* none (the file of 2026-10-29 was an unfilled form)
 
-*Current Grade:* X
+*Current Grade:* D
 
-This line is parsed by `just crg-grade` / `just crg-badge`. The grade above is
-the worst-graded in-scope component — *the project's weakest link sets its
-grade*. See the per-component table in §3.
+The grade is that of the weakest graded component in §2. `just crg-grade`
+and `just crg-badge` do not read this file: the template recipes look for
+`READINESS.md` at the root, which does not exist, so both print `X`.
 
-[NOTE]
-====
-*Honest grading.* Per CRG v2.0 Principle 4: grade as-is today, not
-aspirationally. Long alpha is discipline, not shame. Demote immediately if
-evidence doesn't support the claim.
-====
+== 1. Evidence
 
-'''
+Each value below was observed on 2026-11-11, on `main` at `f778a19`, unless
+it names a CI run.
 
-== 1. CRG v2.0 Grade Reference
-
-[cols="1,2,2,3,2", options="header"]
+[cols="2,3,3",options="header"]
 |===
-| Grade | Name | Release Stage | Stability Posture | Shorthand
+|Metric |Value |Source
 
-| X | Untested              | —         | —                      | —
-| F | Harmful / Wasteful    | —         | —                      | reject/delegate
-| E | Minimal / Salvageable | Pre-alpha | Unstable               | `pre-alpha`
-| D | Partial / Inconsistent| Alpha     | Unstable               | `alpha-unstable`
-| C | Self-Validated        | Alpha     | Stable in home context | `alpha-stable`
-| B | Broadly Validated     | Beta      | Stable for broad trial | `beta-stable`
-| A | Field-Proven          | Stable    | Stable                 | `stable`
-|===
+|Census tests
+|8 test files pass (21 named cases, and 2 files that report by exit status)
+|`tests/census/*.sh`, run locally
 
-*Evidence gates (v2.0 is stricter than v1.0):*
+|Atlas tests
+|13 pass, 0 fail
+|`bun test tests/atlas/census-atlas.test.mjs`, in `just check-views`
 
-* *D*: RSR-compliant + per-capability tests + documented scope. Test matrix
-  must cite counts and live in `docs/status/ROADMAP.adoc` or CI.
-* *C*: All of D, plus active dogfooding in home context with *no known
-  home-context failures over an evidence window*, plus *deep per-file and
-  per-directory annotation* (purpose, boundaries, invariants,
-  execution/test/proof surfaces, per-directory orientation READMEs).
-  `docs/status/ROADMAP.adoc` `== Dogfooding status` populated with concrete
-  "done — <evidence>" entries.
-* *B*: All of C, plus *six genuinely diverse external targets* with
-  feedback fed back. ROADMAP.adoc `== External targets` holds target identities
-  + dates + outcomes; `== Issues fed back` holds the closed-issue trail.
-  Internal-capability items do *not* count.
-* *A*: All of B, plus multi-source real-world external feedback confirming
-  value, no harm in the wild. ROADMAP.adoc `== Field signal` populated.
+|Registry tests
+|14 pass, 0 fail
+|`bun test tests/registry/`, in `just check-views`
 
-*Publication gate:* non-abstract implementation claims require *B+*.
-Below B, any publication must be explicitly abstract or provisional.
+|Views current
+|`just check-views` passes
+|run locally
 
-'''
+|Proof gate (Agda, Rocq, Lean, with axiom audit and planted controls)
+|Pass
+|CI run 43057783538, `main` at `b2cf524` (read in this session)
 
-== 2. Headline Evidence (as of 2026-10-29)
+|Escapes in proof code (`postulate`, `Admitted`, `sorry`, `believe_me`,
+`assert_total`, `unsafeCoerce`)
+|0. The only matches are comments and the README that forbid them.
+|`git grep -w` over `verification/proofs/`
 
-[cols="2,3,3", options="header"]
-|===
-| Metric | Value | Source
-
-| Test count | _<N>_ | `docs/status/ROADMAP.adoc` or CI
-| Formal-verification posture | _<N `believe_me` / `sorry` / `Admitted` — irreducible only>_ | grep of proof dirs
-| Dangerous patterns (`assert_total`, `unsafeCoerce`, `Obj.magic`) | _<N>_ | grep 2026-10-29
-| Per-unit README coverage | _<M/N (percentage)>_ | filesystem scan of unit dirs
-| CI status | _<workflow name + last green run>_ | `.github/workflows/`
-| RSR mandatory workflows | _<N/17>_ | `.github/workflows/`
-| Third-party badges (if any) | _<e.g. Glama AAA; Scorecard N/10>_ | external
-| LIVE deployment (if any) | _<URL + last health check>_ | production
+|RSR scaffold
+|`just validate-rsr` passes; the canon `check-rsr-profile.sh` reports that
+the scaffold matches the declared capabilities
+|run locally; the canon check at standards `e2a03dc`
 |===
 
-'''
+== 2. Component assessment
 
-== 3. Component Assessment
-
-All components graded *as-is today*, per CRG v2.0 Principle 4. Stability
-posture reflects the component's state *within its home context only*
-unless noted.
-
-[cols="2,1,1,3,3,2", options="header"]
+[cols="2,1,1,3,3",options="header"]
 |===
-| Component | Grade | Posture | Evidence Summary | Promotion blocker | Last Assessed
+|Component |Grade |Posture |Evidence summary |Promotion blocker
 
-| _<component 1>_ | X/F/E/D/C/B/A | _<shorthand>_ | _<what was checked + counts>_ | _<specific, actionable gap to next grade>_ | 2026-10-29
-| _<component 2>_ | … | … | … | … | 2026-10-29
-| _<component 3>_ | … | … | … | … | 2026-10-29
+|Census (`scripts/census/`)
+|D
+|alpha-unstable
+|8 test files pass; the scope and the one-writer rule are in
+`docs/atlas/README.adoc`; 249 rows from a frame of 465 public repositories
+|A dated dogfood log over an evidence window; per-file annotation; one
+public repository is not reached
+
+|Atlas views (`scripts/atlas/`)
+|D
+|alpha-unstable
+|13 tests pass; `just check-views` passes; CI runs `just check`
+|A dated dogfood log; per-file annotation
+
+|Claims registry (`scripts/registry/`)
+|D
+|alpha-unstable
+|14 tests pass; ADR 0004; 18 claim pins, 13 theorems, 1 graded `PWG-1`
+|The canon reader refuses the receipts of two homes; a dogfood log
+
+|Proof gate and home theory (`scripts/check-proofs.sh`,
+`verification/`)
+|D
+|alpha-unstable
+|CI passes with controls; THY-1 at `PWG-1` in three provers
+|A dogfood log; the template example proofs still sit in the gate (WO 4.1)
 |===
 
-*Rules of thumb for populating this table:*
+The applied shelf (`applied-systems/`) is not graded: it holds design
+documents and no executable component (WO 4.2).
 
-* One row per independently-gradable unit. If a subsystem can ship or break
-  independently, it gets its own row.
-* Evidence Summary must cite *numbers* (test counts, LOC, file counts) or
-  *paths* (e.g. `src/interface/Abi/Module.idr`), never vague claims.
-* Promotion blocker must be *actionable* — "add external consumer in home
-  context, then annotate" beats "needs more validation".
-* Re-assess every release cycle; date-stamp each row.
+== 3. What C needs
 
-'''
+CRG C adds two pieces of evidence to D:
 
-== 4. What's Needed for D → C
+. Active dogfooding in the home context with no known failure over an
+  evidence window. Mathesis keeps no dated dogfood log yet, and
+  `docs/status/ROADMAP.adoc` has no `== Dogfooding status` section.
+. Deep per-file and per-directory annotation. The census, atlas and registry
+  directories have no per-directory orientation README yet.
 
-CRG v2.0 requires two new pieces of evidence on top of D:
+== 4. Summary
 
-. *Active dogfooding in home context with no known home-context failures.*
-** Start date: _<date of first dogfood-log entry>_.
-** Home context: _<what "home" means for this project>_.
-** "No known failures" is a moving claim — must hold continuously across
-   the evidence window (recommended: 4 weeks, daily use).
-** Populate `== Dogfooding status` in `docs/status/ROADMAP.adoc` with one entry
-   per capability: `<capability> — done — <concrete evidence>`.
-
-. *Deep code and folder annotation.*
-** Per-directory orientation READMEs in every non-trivial source subtree.
-** Per-file header comments: purpose, boundaries, invariants,
-   execution/test/proof surface.
-** Per-unit (cartridge/panel/plugin/module) README covering: purpose,
-   tools, architecture-at-a-glance, build steps. Overview-level alone is
-   not sufficient — depth is required where a reviewer would otherwise
-   have to read source to orient.
-
-*Minimum first-ring targets for C promotion:* list the trunk components
-here. If these aren't C, nothing else can be.
-
-'''
-
-== 5. What's Needed for C → B
-
-Six *genuinely diverse* external targets with feedback fed back into the
-component. Candidate diversity axes:
-
-* Different language runtime (not just variants of the same one).
-* Different OS family (at least one must not be Linux).
-* Different hardware class (cloud / server / desktop / embedded / mobile).
-* Different auth posture (unauthenticated, API-key, vault-brokered, mTLS).
-* Different topology (star, mesh, peer-to-peer).
-* Different trust model (same-org, federated, adversarial).
-
-Populate `docs/status/ROADMAP.adoc`:
-
-* `== External targets` — target-id → `<date> — <outcome> — <contact/URL>`.
-* `== Issues fed back` — issue-id → `<date> — <external reporter> — <resolution>`.
-
-Six variations of the same use case do *not* count. Re-classify any items
-currently under other roadmap sections and move external-eligible ones
-into `== External targets`.
-
-'''
-
-== 6. What's Needed for B → A
-
-Real-world external feedback confirming value. Populate
-`== Field signal` in `docs/status/ROADMAP.adoc` with multi-source entries:
-
-* External users beyond the six B-targets.
-* Third-party writeups, talks, papers, or testimonials.
-* No unresolved safety / correctness incidents in the last 90 days.
-
-'''
-
-== 7. Summary (2026-10-29)
-
-* Project grade: _<grade>_. Why: _<1-2 line justification>_.
-* Delta since last assessment: _<what changed; none if first assessment>_.
-* Next milestone: _<specific promotion target + timeline>_.
-* Machine-readable grade line present (§ header) for `just crg-grade` / `just crg-badge`.
-
-'''
-
-== 8. Companion Artefacts
-
-* `docs/governance/CRG-CRITERIA.adoc` — grade definitions (boilerplate).
-* `docs/governance/CRG-AUDIT-<DATE>.adoc` — formal audit (populate from
-  `mathesis/docs/governance/CRG-AUDIT-TEMPLATE.adoc`).
-* `docs/practice/DOGFOOD-LOG.adoc` — dated dogfood evidence (required for C).
-* `docs/status/ROADMAP.adoc` — evidence journal (sections
-  `== Dogfooding status`, `== External targets`, `== Issues fed back`,
-  `== Field signal`, and a `Declared CRG grade:` line).
-* `*_chora.deed` (repo deed) — authoritative phase and maturity (`(status)`,
-  `(maturity)`).
-
-_Run `just crg-badge` to generate the shields.io badge for your README._
+* Project grade: D. Each graded component has tests that pass, a documented
+  scope, and an RSR-conformant scaffold; none has a dogfood evidence window.
+* Delta: first assessment.
+* Next: a dated dogfood log and per-directory annotation, then C.

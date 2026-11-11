@@ -13,7 +13,10 @@ const admissions = parseJsonl(read('../../docs/theory/admissions.jsonl'));
 const ledgerText = read('../../docs/theory/ledger.jsonl');
 const ledger = parseJsonl(ledgerText);
 const homeIds = rows.filter(r => r.repo === HOME && r.kind === 'theorem').map(r => r.id);
-const grades = new Map(homeIds.map(id => [id, 'PWG-1']));
+// The grades the ledger last recorded: grade currency needs the canon reader,
+// so `just registry-check` checks it, not this test.
+const grades = new Map([...fold(ledger)].map(([id, s]) => [id, s.pwg]));
+const synthetic = new Map(homeIds.map(id => [id, 'PWG-1']));
 
 test('the committed ledger is well formed and matches the admissions and pins', () => {
   expect(validateLedger(ledger)).toHaveLength(ledger.length);
@@ -22,7 +25,7 @@ test('the committed ledger is well formed and matches the admissions and pins', 
 });
 
 test('the writer appends admitted, changed and withdrawn entries, and nothing when nothing changed', () => {
-  const now = snapshot(rows, admissions, grades);
+  const now = snapshot(rows, admissions, synthetic);
   const first = pending([], now, '2026-11-11');
   expect(first.map(e => e.event)).toEqual(homeIds.map(() => 'admitted'));
   expect(first[0].seq).toBe(1);
@@ -46,6 +49,10 @@ test('a malformed ledger fails closed', () => {
   bad([{seq: 1, date: e.date, event: 'withdrawn', id: e.id}], /was not admitted/);
   bad([{...e, event: 'changed', changes: ['pwg']}], /not admitted/);
   bad([{...e, id: 'o/other#X'}], /names a home theorem/);
+  bad([{...e, receipt: {}}], /receipt is null/);
+  bad([{...e, receipt: []}], /receipt is null/);
+  bad([{...e, receipt: {...e.receipt, sha256: 'x'}}], /receipt is null/);
+  bad([{...e, receipt: {...e.receipt, extra: 1}}], /receipt is null/);
 });
 
 test('past entries are append-only', () => {
@@ -62,5 +69,8 @@ test('the offline check catches a stale admission, a missing theorem and a lefto
   expect(() => verifyOffline(ledger, rows, changedAdmission)).toThrow(/admission .* is stale/);
   expect(() => verifyOffline([], rows, admissions)).toThrow(/does not record/);
   expect(() => verifyOffline(ledger, rows, [])).toThrow(/has no admission/);
-  expect(sha256(jcs(admissions[0]))).toBe(ledger[0].admission_sha256);
+  const state = fold(ledger);
+  for (const a of admissions) expect(sha256(jcs(a))).toBe(state.get(a.id).admission_sha256);
+  const unpinned = rows.filter(r => !(r.repo === HOME && r.kind === 'theorem'));
+  expect(() => verifyOffline(ledger, unpinned, admissions)).toThrow(/no claim pin/);
 });

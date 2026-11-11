@@ -25,7 +25,6 @@ import {HOME} from './theory.mjs';
 
 const EVENTS = new Set(['admitted', 'changed', 'withdrawn']);
 const FIELDS = new Set(['seq', 'date', 'event', 'id', 'pwg', 'receipt', 'admission_sha256', 'changes', 'note']);
-const RECEIPT_FIELDS = new Set(['path', 'sha256', 'commit']);
 const CHANGE_KEYS = new Set(['pwg', 'receipt', 'admission']);
 
 const need = (ok, message) => {
@@ -70,6 +69,13 @@ export function snapshot(rows, admissions, grades) {
   return out;
 }
 
+// A receipt pin: exactly a path, a SHA-256 of the receipt and a git commit.
+const isReceipt = r =>
+  r !== null && typeof r === 'object' && !Array.isArray(r) &&
+  jcs(Object.keys(r).sort(compareUtf16)) === '["commit","path","sha256"]' &&
+  typeof r.path === 'string' && r.path !== '' &&
+  /^[0-9a-f]{64}$/.test(r.sha256) && /^[0-9a-f]{40}$/.test(r.commit);
+
 // Throw unless the ledger is well formed: closed fields, seq 1..n in order,
 // a date on each entry, and events that follow the life of each theorem.
 export function validateLedger(ledger) {
@@ -89,7 +95,7 @@ export function validateLedger(ledger) {
       return;
     }
     need(typeof e.pwg === 'string' && /^(PWG-1|PWG-2ii|PWG-2i|PWG-3|ungraded)$/.test(e.pwg), `pwg is a derived grade: ${where}`);
-    need(e.receipt === null || (typeof e.receipt === 'object' && Object.keys(e.receipt).every(k => RECEIPT_FIELDS.has(k))), `receipt is null or {path, sha256, commit}: ${where}`);
+    need(e.receipt === null || isReceipt(e.receipt), `receipt is null or {path, sha256, commit}: ${where}`);
     need(typeof e.admission_sha256 === 'string' && /^[0-9a-f]{64}$/.test(e.admission_sha256), `admission_sha256 is a SHA-256: ${where}`);
     if (e.event === 'admitted') {
       need(!live.has(e.id), `Admitted twice without a withdrawal: ${where}`);
@@ -158,7 +164,11 @@ export function verifyOffline(ledger, rows, admissions) {
     need(jcs(now.receipt) === jcs(s.receipt), `The ledger's receipt for ${row.id} is stale; run: just theory-ledger`);
     need(now.admission_sha256 === s.admission_sha256, `The ledger's admission for ${row.id} is stale; run: just theory-ledger`);
   }
-  for (const id of state.keys()) need(byId.has(id), `The ledger still holds ${id}, which has no admission; run: just theory-ledger`);
+  const pinned = new Set(rows.filter(r => r.repo === HOME && r.kind === 'theorem').map(r => r.id));
+  for (const id of state.keys()) {
+    need(byId.has(id), `The ledger still holds ${id}, which has no admission; run: just theory-ledger`);
+    need(pinned.has(id), `The ledger still holds ${id}, which has no claim pin; run: just theory-ledger`);
+  }
 }
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');

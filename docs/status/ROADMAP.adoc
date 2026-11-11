@@ -153,9 +153,14 @@ One pull request that changes census rows is open at a time (atlas README,
   generates `docs/theory/generated/index.adoc`. All template example proofs
   and the six template stubs under `docs/theory/` are removed (owner rulings
   2026-11-11).
-* Next, by owner ruling: an append-only ledger of the theory work, written
-  only by a `just theory-ledger` recipe and checked in CI, in its own pull
-  request.
+* WO 4.1 merged (pull request 79).
+* The theory ledger (owner ruling 2026-11-11): `docs/theory/ledger.jsonl`,
+  append-only, written only by `just theory-ledger`. `just registry-check`
+  fails when the ledger is behind or a past entry changed; the `must` clause
+  `theory-ledger-current` states the invariant (approved by the owner).
+* The IANA registration drafts of DEED, K9 and k9-coordination are
+  corrected in a separate session on the standards repository; filing is
+  the owner's act.
 * Finding: the `intend` contract still marks stage 3 `in_progress` and
   stage 4 `declared`; a contract edit needs owner review.
 
@@ -194,7 +199,7 @@ anchors `c81cb84`
 |The three shelves: the theory admission rule and the token-lattice
 theorems, the applied shelf tied to the evidence spine, the published atlas
 (needs a ruling)
-|In progress: WO 4.1 in review
+|In progress: WO 4.1 merged; the theory ledger in review
 
 |5
 |Scale: receipts in the home repositories, the bridge lock pilot, a

@@ -768,4 +768,11 @@ registry:
 # Fail if the committed registry view is stale (needs MATHESIS_STANDARDS, as above)
 registry-check:
     bun scripts/registry/claims-registry.mjs check
+    bun scripts/registry/theory-ledger.mjs verify
     bun test tests/registry/
+
+# Append each change of the theory shelf to docs/theory/ledger.jsonl, the only
+# way the ledger changes (needs MATHESIS_STANDARDS, as above). A note tells the
+# story: just theory-ledger "THY-2 admitted after its Lean leg landed"
+theory-ledger note="":
+    bun scripts/registry/claims-registry.mjs ledger {{ if note == "" { "" } else { "--note " + quote(note) } }}

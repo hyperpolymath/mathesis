@@ -139,7 +139,7 @@ contradict it*. A contradiction named here is honest; one the reader finds for
 themselves is not.
 
 * `README.adoc` — the aspirational claims this file is measured against.
-* `docs/EXPLAINME.adoc` — the mechanism.
+* `EXPLAINME.adoc`: the mechanism.
 * `docs/AUDIT.adoc` — the standing conformance audit.
 * `*_chora.deed` (repo deed) — machine-readable repo metadata (AI allocation + ply tree).
 * `<any status document, dashboard or percentage that disagrees with the state

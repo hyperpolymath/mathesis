@@ -1,91 +1,60 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <6759885+hyperpolymath@users.noreply.github.com>
-= Contributing — Mathesis
-:revdate: 2026-MM-DD
+= Contributing to Mathesis
 
-== Audience
+This guide is for a person or an agent who changes Mathesis. To read the
+atlas, see link:usage.adoc[usage]. Read `CLAUDE.md` and the deed
+`mathesis_chora.deed` first: they state the identity, the boundaries and the
+golden path.
 
-Developers working *on* `Mathesis`. For consumers (people calling
-or depending on it) see link:./usage.adoc[usage.adoc].
+== Tools
 
-== Local-dev setup
+* `just` 1.56.0 and the other tools that `mise.lock` pins, each with its
+  checksum.
+* Bun, for the atlas and the registry.
+* Nickel 1.18.0, for `just validate-claude-md` and `just validate-coapt`.
+* Agda, Rocq and Lean for the proof checks. CI takes them from the Guix
+  revision that `build/channels.scm` pins (`build/manifest.scm`).
 
-Prerequisites — the minimum versions and where to get them:
-
-* `<tool 1>` v`<version>` — `<install instruction>`.
-* `<tool 2>` v`<version>` — `<install instruction>`.
-* GPG signing key configured (estate policy — all commits must be
-  signed). See
-  link:https://github.com/hyperpolymath/standards/blob/main/docs/secure-coding-training.md[standards/docs/secure-coding-training.md].
-
-One-shot setup:
+== The golden path
 
 [source,bash]
 ----
-git clone git@github.com:hyperpolymath/Mathesis.git
-cd Mathesis
-just setup       # installs deps, sets up hooks
-just test        # runs the full test suite
+export MATHESIS_STANDARDS=/path/to/standards
+just check-views
+guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
 ----
 
-== Running tests
+`just check` runs both halves; CI runs it in the pinned Guix shell. A stale
+view or a failing proof fails it.
 
-* **Unit**: `just test-unit` — fast, no I/O.
-* **Integration**: `just test-int` — uses real services (database,
-  HTTP, etc.). Estate policy: prefer real over mocked
-  (see `feedback_integration_tests_real_db` in maintainer's memory).
-* **Property**: `just test-prop` — randomised, slower; budget
-  documented in `docs/proof-debt.md` if applicable.
-* **Full**: `just test` — runs all of the above.
+== Rules of this repository
 
-== Code style
+* *One writer for census data.* Only `just census` and `just update-rows`
+  write rows and the not-reached list; record open census work in
+  `docs/status/ROADMAP.adoc` first (see `docs/atlas/README.adoc`).
+* *A public frame.* `docs/atlas/census/repos.jsonl` holds public
+  repositories only. Never write the name of a private repository anywhere.
+* *No grade by hand.* Claim pins carry no grade; the registry derives each
+  grade from a receipt.
+* *The deed has one writer.* Change `mathesis_chora.deed` only with
+  `scripts/deed-clause.sh`, then run `just claude-md` and `just coapt`.
+* *Contractiles are sensitive.* The owner reviews each clause before it
+  lands.
+* *Signed commits.* Every commit is signed.
+* *Generated files.* Regenerate `CLAUDE.md`, the coaptation receipt, the
+  views and `docs/architecture/REPOSITORY-MAP.adoc` with their tools; never
+  edit them by hand.
 
-We enforce style via CI (governance-reusable.yml from hyperpolymath/standards).
-Locally:
+== Decisions
 
-[source,bash]
-----
-just fmt         # auto-format
-just lint        # static checks
-----
-
-* All commits must be **GPG-signed** (CI enforces; see
-  link:https://github.com/hyperpolymath/standards[standards]).
-* All source files must carry an **SPDX-License-Identifier** header
-  (CI enforces).
-* Conventional commits — `feat`, `fix`, `chore`, `refactor`, `docs`,
-  `test`, `ci`, `revert` (CHANGELOG is auto-generated from these
-  via link:https://github.com/hyperpolymath/standards/blob/main/.github/workflows/changelog-reusable.yml[`changelog-reusable.yml`]).
-
-== Branching & PR workflow
-
-. Branch off `main` as `claude/<topic>` (for AI agents) or
-  `<initials>/<topic>` (for humans).
-. Make focused, narrow commits — one logical change per commit.
-. Open a PR against `main`.
-. **Enable auto-merge immediately** on every PR you open
-  (`gh pr merge <num> --auto --squash`) — estate standing policy
-  (see standards#196 audit and policies).
-. CI must be green. The PR auto-merges when checks pass + reviews land.
-
-== Adding a new dependency
-
-. State the *why* in the PR body — what does this dependency unlock?
-. Check provenance (maintained, audited, no malicious history).
-. Pin to a SHA, not a tag.
-. Update `docs/architecture.adoc#Dependencies`.
-
-== Adding an ADR
-
-When you make a non-obvious design decision, write it down:
-
-. Copy `docs/decisions/0001-template.adoc` → `0002-<slug>.adoc`.
-. Fill in: Context, Decision, Consequences, Alternatives.
-. Link the ADR from the README or relevant code as a comment.
+Record a non-obvious design decision as an ADR in `docs/decisions/`, from
+`0001-template.adoc`. Decisions that are the owner's go to the owner first.
 
 == Reporting issues
 
-* Bugs in `Mathesis`: file at `hyperpolymath/Mathesis/issues`.
-* Estate-wide concerns (policy, conventions, CI): file at
-  `hyperpolymath/standards/issues`.
+* Mathesis: https://github.com/hyperpolymath/mathesis/issues.
+* Estate policy and canon: https://github.com/metadatastician/standards/issues.
+* Security: see link:../.github/SECURITY.md[SECURITY.md]; do not file a
+  public issue.

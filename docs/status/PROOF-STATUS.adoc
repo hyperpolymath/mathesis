@@ -1,73 +1,38 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-// Template: rsr-template-repo/docs/status/PROOF-STATUS.adoc
-// Tracks proof completion. Requirements defined in PROOF-NEEDS.adoc
-= Proof Status — MATHESIS
+= Proof status of Mathesis
+
+The obligations are listed in link:PROOF-NEEDS.adoc[PROOF-NEEDS]. A grade is
+derived from a receipt and is never typed by hand: the claims registry
+(`docs/atlas/generated/registry.adoc`) derives each grade through the canon
+reader of PROOF-POLICY §8.5.1.
 
 == Summary
 
-[cols="2,1,1,1,1,1", options="header"]
+[cols="2,1,1,1",options="header"]
 |===
-| Category | Total | Done | In Progress | Blocked | Remaining
+|Obligation |Status |Derived grade |Evidence
 
-| ABI/FFI (ABI) | 5 | 0 | 0 | 0 | 5
-| Typing (TP) | 2 | 0 | 0 | 0 | 2
-| Invariant (INV) | 0 | 0 | 0 | 0 | 0
-| Security (SEC) | 0 | 0 | 0 | 0 | 0
-| Concurrency (CONC) | 0 | 0 | 0 | 0 | 0
-| Algorithm (ALG) | 0 | 0 | 0 | 0 | 0
-| Domain (DOM) | 0 | 0 | 0 | 0 | 0
-| *Total* | *7* | *0* | *0* | *0* | *7*
-|===
+|THY-1
+|Discharged
+|`PWG-1`
+|The receipt `verification/receipts/theory_praxis.deed`; the record below
 
-*Overall*: 0 of 7 tracked obligations proven. (Counts, not a percentage:
-PROOF-POLICY §8 grades are derived from receipts and are never flattened.)
+|The token-lattice theorems (WO 4.1)
+|Open
+|-
+|Not yet stated in a prover
 
-== Proofs Done
-
-// Format:
-// | ID | Proof | Prover | File | Date | Verified By |
-// | ABI-1 | Non-null pointer proofs | Idris2 | verification/proofs/idris2/ABI/Pointers.idr | 2026-XX-XX | idris2 --check |
-
-[cols="1,3,1,3,1,2", options="header"]
-|===
-| ID | Proof | Prover | File | Date | Verified By
-
-| — | No proofs completed yet | — | — | — | —
+|The applied invariants (WO 4.2)
+|Open
+|-
+|Not yet stated
 |===
 
-== Proofs In Progress
-
-[cols="1,3,1,2,1,2", options="header"]
-|===
-| ID | Proof | Prover | Assignee | Started | Blocker
-
-| — | — | — | — | — | —
-|===
-
-== Proofs Blocked
-
-[cols="1,3,2,3", options="header"]
-|===
-| ID | Proof | Blocked By | Notes
-
-| — | — | — | —
-|===
-
-== Proofs Remaining
-
-[cols="1,3,1,1,1,1", options="header"]
-|===
-| ID | Proof | Category | Prover | Priority | Est. Effort
-
-| ABI-1 | Non-null pointer proofs | ABI | Idris2 | P1 | 2h
-| ABI-2 | Memory layout correctness | ABI | Idris2 | P1 | 4h
-| ABI-3 | Platform type size proofs | ABI | Idris2 | P1 | 2h
-| ABI-4 | FFI function return type proofs | ABI | Idris2 | P1 | 2h
-| ABI-5 | C ABI compliance | ABI | Idris2 | P1 | 4h
-| TP-1 | Core data type well-formedness | TP | Idris2 | P1 | 4h
-| TP-2 | Public API type safety | TP | Lean4 | P2 | 4h
-|===
+*Overall*: 1 of 3 obligations discharged; 2 open. These are counts, not a
+percentage: PROOF-POLICY §8 grades are derived from receipts and are never
+flattened. The template example proofs are not obligations (see
+link:PROOF-NEEDS.adoc[PROOF-NEEDS]).
 
 == Theory theorems
 
@@ -244,34 +209,30 @@ dependency units unify features separately, and the theorem applies to
 each unit's graph.
 |===
 
-== Verification Commands
+== Verification commands
 
 [source,bash]
 ----
-# Check all Idris2 proofs
-just proof-check-idris2
+# The Agda, Rocq and Lean gates, with the axiom audit (needs the provers;
+# CI runs them in the pinned Guix shell)
+guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
 
-# Check all Lean4 proofs
-just proof-check-lean4
-
-# Check all Agda proofs
-just proof-check-agda
-
-# Check all Coq proofs
-just proof-check-coq
-
-# Run all proof checks
-just proof-check-all
-
-# Scan for dangerous patterns
-panic-attack assail --proofs-only
+# The planted controls: each must fail the gate
+bash tests/proofs/gate_controls_test.sh agda
 ----
 
 == Changelog
 
-[cols="1,3,1", options="header"]
+[cols="1,3",options="header"]
 |===
-| Date | Change | By
+|Date |Change
 
-| 2026-04-04 | Initial proof status tracking | Template
+|2026-11-10
+|THY-1 receipts earned again at Agda 2.7.0.1 and Lean 4.29.0 in the pinned
+Guix shell; the receipt derives `PWG-1`.
+
+|2026-11-11
+|The template obligations ABI-1 to ABI-5, TP-1 and TP-2 leave the lists:
+they never applied to Mathesis (re-anchoring plan WO 3.4, owner ruling
+2026-11-11).
 |===

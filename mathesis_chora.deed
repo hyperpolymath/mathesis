@@ -633,14 +633,16 @@
           :strictness "high")
         ; Files that are strictly allowed to exist at the root. CLAUDE.md is the
         ; generated arrival pack; git/Claude/pre-commit all read it from the ROOT.
+        ; EXPLAINME.adoc sits at the root by the README and EXPLAINME authoring
+        ; standard (owner ruling 2026-11-11, re-anchoring plan WO 3.4).
         ; The pattern ".*" allows hidden dotfiles implicitly; RRA checks specific
         ; dotfile rules below.
         (allow-list
-          :files ("README.adoc" "CHANGELOG.adoc" "Justfile" "LICENSE" "mathesis_chora.deed" "CITATION.cff" "CLAUDE.md")
+          :files ("README.adoc" "EXPLAINME.adoc" "CHANGELOG.adoc" "Justfile" "LICENSE" "mathesis_chora.deed" "CITATION.cff" "CLAUDE.md")
           :patterns (".*"))
         ; Relocation rules: move heavy prose out of the root
         (relocations
-          (move :pattern "*.adoc" :dest "docs/" :except ("README.adoc" "CHANGELOG.adoc"))
+          (move :pattern "*.adoc" :dest "docs/" :except ("README.adoc" "EXPLAINME.adoc" "CHANGELOG.adoc"))
           (move :pattern "GOVERNANCE.*" :dest "docs/")
           (move :pattern "ARCHITECTURE.*" :dest "docs/")
           (move :file "MAINTAINERS.adoc" :dest "docs/"))
@@ -1025,12 +1027,18 @@
               "tests/golden/check_controls_test.sh"
               "verification/proofs/agda/FeatureReachability.agda"
               "verification/proofs/coq/FeatureReachability.v"
-              "verification/proofs/lean4/FeatureReachability.lean")
+              "verification/proofs/lean4/FeatureReachability.lean"
+              "EXPLAINME.adoc")
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed"
                 "src/interface/" "benches/" "build/container/Containerfile"
                 "tests/ffi_strings_test.sh"
                 ".github/workflows/rust-ci.yml" ".github/workflows/release.yml")
+      ; .github/labels.json and .github/label-classifier.json: their
+      ; _generated_from no longer names a private repository (WO 3.5).
+      ; docs/EXPLAINME.adoc is a pointer to the root EXPLAINME (WO 3.4).
       :diverged ("mathesis_chora.deed" "docs/status/ROADMAP.adoc"
+                 ".github/labels.json" ".github/label-classifier.json"
+                 "docs/EXPLAINME.adoc" ".machine_readable/root-allow.txt"
                  "Justfile" "scripts/run-proven-suite.sh" "tests/run_proven_suite_test.sh"
                  "tests/proven_suite_test.sh"
                  ".github/workflows/actions.lock")))

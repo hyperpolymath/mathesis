@@ -1,0 +1,279 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Mathesis: EXPLAINME
+:toc: preamble
+:icons: font
+
+This file backs each claim of link:README.adoc[the README] with the files
+that implement it and an honest caveat. It is for a reader who wants the
+evidence before they rely on Mathesis.
+
+Each result below names how it was observed: "run on 2026-11-11" is a local
+run in the session that wrote this file, on `main` at `f778a19`; "CI run" is
+a GitHub Actions run whose result that session read.
+
+== A census of proof files
+
+[quote, README.adoc]
+____
+It reads each public repository in the frame
+(`docs/atlas/census/repos.jsonl`) and records one row of counts for each
+repository that has proof files of its own: provers, declarations, holes,
+axioms. Each row names the commit that the census read and when.
+____
+
+How this is implemented::
+`link:scripts/census/run-census.sh[]` censuses the whole frame, and
+`link:scripts/census/update-rows.sh[]` refreshes named repositories or, with
+`--frame`, drops entries outside the public frame. `census-repo.sh` clones
+each repository blobless and checks out its proof files only;
+`build-rows.sh` folds the raw output into one row per repository. The frame
+holds 465 public repositories; 249 have rows (54 theory, 195 engineering).
+The method and the one-writer rule are in
+link:docs/atlas/README.adoc[the atlas README].
+
+Caveat::
+Counts are textual: declarations are found by keyword and signature rules,
+and hole and axiom counts come from proof-craft's `proof-holes.sh`. The
+kernel of each home repository is the authority. "Theory" and "engineering"
+is a first-pass heuristic by prover. One public repository could not be
+cloned in the last census.
+
+== Generated atlas views
+
+[quote, README.adoc]
+____
+A catalogue split into theory and engineering, an A-Z view, an organisation
+view and a machine-readable index, all generated from the census rows.
+____
+
+How this is implemented::
+`link:scripts/census/render-catalogue.sh[]` writes
+`docs/atlas/generated/catalogue.adoc`; `link:scripts/atlas/census-atlas.mjs[]`
+writes `az.adoc`, `organisations.adoc` and `index.json`, and its `check` fails
+on a stale view, a non-public frame record or a malformed private count.
+`just check-views` passed (run on 2026-11-11), with the 13 atlas tests of
+`link:tests/atlas/census-atlas.test.mjs[]`.
+
+Caveat::
+None currently known.
+
+== A claims registry
+
+[quote, README.adoc]
+____
+Claim pins point at one theorem in its home repository,
+at a commit and a receipt digest. The canon receipt reader of PROOF-POLICY
+§8.5.1 derives each Proof Witness Grade. No grade is typed by hand.
+____
+
+How this is implemented::
+Pins are authored in `docs/atlas/claims/claims.jsonl` (18 claims from 3
+repositories). `link:scripts/registry/claims-registry.mjs[]` fetches each
+receipt at its pinned commit, checks its digest, and calls `readProofReceipt`
+from a standards checkout whose file digest it also checks. The view is
+`docs/atlas/generated/registry.adoc`; ADR 0004 records the design.
+`just registry-check` passed with 14 tests (run on 2026-11-11). The `must`
+contract clause `no-hand-typed-grade` checks that no pin carries a grade.
+
+Caveat::
+Of 13 theorems, 1 is at `PWG-1` (THY-1) and 12 are `ungraded`. The canon
+reader refuses the current receipts of two home repositories, so their pins
+derive no grade until one side changes (an open finding in
+link:docs/status/ROADMAP.adoc[the roadmap]).
+
+== Bridge candidates
+
+[quote, README.adoc]
+____
+Recorded relations between artefacts in two
+repositories, generated into one view.
+____
+
+How this is implemented::
+`docs/atlas/claims/bridges.jsonl` holds 2 candidate records;
+`claims-registry.mjs` renders `docs/atlas/generated/bridges.adoc`, and
+`just registry-check` fails on a stale view.
+
+Caveat::
+These are candidates. The bridge lock of the re-anchoring plan (WO 5.2) does
+not exist yet, so no bridge is checked against both homes.
+
+== Home theory
+
+[quote, README.adoc]
+____
+THY-1, reachability is monotone under additive features, is
+proved in Agda and re-proved in Rocq and Lean. CI checks all three in a
+pinned Guix shell.
+____
+
+How this is implemented::
+The sources are `link:verification/proofs/agda/FeatureReachability.agda[]`,
+`link:verification/proofs/coq/FeatureReachability.v[]` and
+`link:verification/proofs/lean4/FeatureReachability.lean[]`. The receipt is
+`link:verification/receipts/theory_praxis.deed[]`.
+`link:scripts/check-proofs.sh[]` compiles each module and audits its axioms;
+`.github/workflows/agda-proof-policy.yml` runs it in the Guix shell pinned by
+`build/channels.scm` and `build/manifest.scm`, with planted controls
+(`tests/proofs/gate_controls_test.sh`). CI run 43057783538 on `main` at
+`b2cf524` passed. See the <<proof-ledger>>.
+
+Caveat::
+The proof is about a graph model. That the model matches Cargo's feature
+resolution is argued, not proved.
+
+== Applied systems
+
+[quote, README.adoc]
+____
+Methods that apply mathematics to decisions, starting
+with accounting and finance. Design documents only so far.
+____
+
+How this is implemented::
+`link:applied-systems/README.adoc[]` and its subdirectories: a management
+accounting design, a decision record, an event map and evidence guidance.
+
+Caveat::
+No executable model, data schema or worked example exists yet (WO 4.2).
+
+== Privacy by count
+
+[quote, README.adoc]
+____
+The frame names public repositories only. The number of
+private repositories in the listing is kept as one number.
+____
+
+How this is implemented::
+`docs/atlas/census/private-count.json` records 40 private repositories in
+the listing of 2026-11-09. Both census writers drop any entry outside the
+public frame, and `census-atlas.mjs check` refuses a non-public frame record
+(`link:tests/census/update_rows_frame_test.sh[]`, 6 cases, passed on
+2026-11-11). The `must` clause `no-private-name` states the rule.
+
+Caveat::
+The git history still holds the names (owner ruling D-2 (a): no rewrite).
+
+== Dogfooded across the account
+
+[cols="1,2,2",options="header"]
+|===
+|Technology or pattern |Used here |Also used in
+
+|Repository deed (`*_chora.deed`) with one reader and one writer
+|`mathesis_chora.deed`, read by `scripts/deed-field.sh`, written only by
+`scripts/deed-clause.sh`
+|link:https://github.com/hyperpolymath/rsr-template-repo[rsr-template-repo]
+
+|k9 contractiles and the coaptation receipt
+|`.machine_readable/contractiles/`, `.machine_readable/coaptation/`
+|link:https://github.com/hyperpolymath/rsr-template-repo[rsr-template-repo]
+
+|Proof receipts read by the canon reader (PROOF-POLICY §8.5.1)
+|`verification/receipts/theory_praxis.deed`, `scripts/registry/`
+|link:https://github.com/metadatastician/standards[standards]
+
+|I-JSON/JCS data, one record per line
+|`docs/atlas/census/*.jsonl`, `docs/atlas/claims/*.jsonl`
+|link:https://github.com/hyperpolymath/ijson-jcs[ijson-jcs]
+
+|The postulate scan over the import cone of an Agda module
+|`scripts/scan-postulates.sh`, called by `scripts/check-proofs.sh`
+|link:https://github.com/hyperpolymath/januskey[januskey]
+|===
+
+== Known gaps
+
+[CAUTION]
+====
+Badges: the authoring standard asks for OpenSSF Best Practices and Scorecard
+badges on a public repository. The README carries none, because no Best
+Practices project identifier is recorded for Mathesis.
+====
+
+[CAUTION]
+====
+Template example proofs: `verification/proofs/idris2/`,
+`verification/proofs/tlaplus/`, `verification/proofs/agda/Properties.agda`,
+`verification/proofs/coq/TypeSafety.v` and
+`verification/proofs/lean4/ApiTypes.lean` come from the RSR template. They
+are not Mathesis obligations. WO 4.1 of the re-anchoring plan removes them.
+====
+
+[CAUTION]
+====
+Contract probes: the `must` contract states six Mathesis invariants with
+probes, but no runner executes `must` probes yet. CI enforces the same rules
+through `just check`.
+====
+
+== Evidence index
+
+[cols="2,3",options="header"]
+|===
+|Path |Proves
+
+|`tests/census/`
+|Row folding, status-document ranking, the proof-holes scanner, the update
+guard and the public frame (8 test files, all passed on 2026-11-11)
+
+|`tests/atlas/census-atlas.test.mjs`
+|View determinism, row validation, the public frame (13 tests)
+
+|`tests/registry/`
+|Registry derivation through fixture receipts (14 tests)
+
+|`tests/proofs/gate_controls_test.sh`
+|A planted `postulate`, `Admitted` and `sorry` each fail the proof gate (CI)
+
+|`tests/golden/check_controls_test.sh`
+|`just check` fails on a stale view and on a failing proof (CI)
+|===
+
+[[proof-ledger]]
+== Proof ledger
+
+The receipt `verification/receipts/theory_praxis.deed` is the
+machine-readable ledger; this table cites it.
+
+[cols="2,1,2,2,2",options="header"]
+|===
+|Obligation |Status |Checker (version, flags) |Where |Trust boundary
+
+|THY-1: reachability is monotone under additive features (Agda leg)
+|proven
+|Agda 2.7.0.1, `--safe --without-K --cubical-compatible`
+|`verification/proofs/agda/FeatureReachability.agda:Cargo.absent-under-all-features`
+|The graph model only. `Agda.Primitive` postulates `Level`, `lzero`, `lsuc`
+and `_⊔_` as builtins.
+
+|THY-1, Rocq leg (re-proved, correspondence `RECONCILED`)
+|proven
+|Rocq 8.18.0, `coqc`; `Print Assumptions` closed
+|`verification/proofs/coq/FeatureReachability.v:absent_under_all_features`
+|The graph model only
+
+|THY-1, Lean leg (re-proved, correspondence `RECONCILED`)
+|proven
+|Lean 4.29.0, `lean`; no axiom
+|`verification/proofs/lean4/FeatureReachability.lean:absentUnderAllFeatures`
+|The graph model only
+
+|The graph model matches Cargo's feature resolution
+|argued
+|-
+|`docs/status/PROOF-STATUS.adoc`, THY-1 "Why"
+|Not formalised
+
+|The token-lattice theorems (owner ruling D-10: their home is Mathesis)
+|open
+|-
+|`docs/proposals/mathesis-research-programme.adoc`
+|Not yet stated in a prover (WO 4.1)
+|===
+
+Proofs: 3 proven of 5; 1 argued, 1 open. The registry derives `PWG-1` for
+THY-1 from the receipt. The checker versions are those that CI asserts in the
+Guix shell (CI run 43057783538).

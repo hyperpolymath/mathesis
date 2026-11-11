@@ -4,7 +4,11 @@
 
 == Current Status
 
-Initial development phase.
+Phase `incubating`, maturity `experimental` (the deed's `(status)` and
+`(maturity)`). The re-anchoring plan
+(`docs/proposals/mathesis-re-anchoring.adoc`) is at stage 3, "tell the
+truth". The stages are under <<stages>>; the rulings that steer them are
+under <<rulings>>.
 
 === Applied Systems (2026-11-07)
 
@@ -113,19 +117,89 @@ One pull request that changes census rows is open at a time (atlas README,
   `repos.jsonl` keeps its 465 public records. `private-count.json` records
   that the listing of 2026-11-09 counted 40 private repositories. The 40
   private entries leave `unreachable.jsonl` and the catalogue. No row changes.
+  Merged (pull request 74).
 
-== Milestones
+=== Re-anchoring: stage 3 (2026-11-11)
 
-=== v0.1.0 - Foundation
-* [ ] Core functionality
-* [ ] Basic documentation
-* [ ] CI/CD pipeline
+* WO 3.1, the deed: merged (pull request 73). The owner reviewed the clause
+  text first.
+* WO 3.2, capabilities: merged (pull request 75), done by a Sonnet session
+  under doctrine 16. Seven vestigial modules left; `validate-rsr` took the
+  template's own fix (rsr-template-repo `fb4f67e`).
+* WO 3.5, private names: merged (pull request 74), before WO 3.3 by owner
+  ruling. The template leak in `.github/labels.json` is reported as
+  rsr-template-repo issue 326.
+* WO 3.3, contracts: merged (pull request 76). The coaptation band reads
+  amber: three committed stages are open. The owner accepted that reading.
+* WO 3.4, entry documents: this change. Next: WO 3.6, the affirmation.
+* New findings, each for the owner:
+** The `dust` contract keeps a clause damaged by the template's name pass
+   ("No references to mathesis in generic template files"). Its probe passes
+   vacuously: the directory that it searches does not exist.
+** `build/container/compose.yaml` still names the Containerfile that WO 3.2
+   removed.
+** `scripts/merge-actions-lock.rs` lost its only CI check when WO 3.2
+   removed `rust-ci.yml` (owner ruling in that session).
+** The coaptation advice text in `.machine_readable/coaptation/coapt.ncl`
+   carries a U+2014 character into each generated receipt.
+** The merge that joined WO 3.2 and WO 3.5 dropped two entries of
+   `(variant (paths :diverged))`. WO 3.4 restores them.
 
-=== v1.0.0 - Stable Release
-* [ ] Full feature set
-* [ ] Comprehensive tests
-* [ ] Production ready
+[[stages]]
+== Stages
 
-== Future Directions
+The stages of the re-anchoring plan. Each status comes from a merged pull
+request or a run named in it.
 
-_To be determined based on community feedback._
+[cols="1,3,1",options="header"]
+|===
+|Stage |Goal |Status
+
+|0
+|Stop the conflicts: triage the open pull requests, one writer for census
+data
+|Done
+
+|1
+|Close the holes: gate the catalogue and the arrival pack, close the proof
+gate gap, Agda, Rocq and Lean in CI, the receipt of Mathesis
+|Done
+
+|2
+|One pipeline: JSON Lines with provenance, the canon reader, the
+`docs/atlas/` paths, the bridge view, `just check`
+|Done
+
+|3
+|Tell the truth: deed, capabilities, contracts, entry documents, no private
+names, affirmation
+|In progress: WO 3.1, 3.2, 3.3 and 3.5 merged; WO 3.4 in review; WO 3.6
+next
+
+|4
+|The three shelves: the theory admission rule and the token-lattice
+theorems, the applied shelf tied to the evidence spine, the published atlas
+(needs a ruling)
+|Declared
+
+|5
+|Scale: receipts in the home repositories, the bridge lock pilot, a
+scheduled census, a view of what each repository owes
+|Declared
+|===
+
+[[rulings]]
+== Rulings
+
+* D-1 to D-8 (2026-11-10): the decisions of the re-anchoring plan, each ruled
+  arm (a). The plan records them under "Decisions for the owner".
+* D-10 (2026-11-09, ECHIDNA proof-route plan in the standards repository):
+  the token-lattice theory lives in Mathesis. Its theorems are the next
+  content of the theory shelf (WO 4.1); their statements are in
+  `docs/proposals/mathesis-research-programme.adoc`.
+* Stage 3 (2026-11-11), through the selector: the WO 3.1 clause text; `(meta
+  :type)` stays `library` and the `groove` integration stays; WO 3.2 on a
+  Sonnet session; the census writers enforce the public frame; WO 3.5 before
+  WO 3.3; the contract text, `must` severity `critical`, probes with
+  "probe-deferred" accepted, amber band accepted; WO 3.4: true proof
+  obligations only, EXPLAINME at the root, CI runs may be cited when labelled.

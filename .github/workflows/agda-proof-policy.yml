@@ -29,6 +29,10 @@ env:
   AGDA_VERSION: "2.7.0.1"
   ROCQ_VERSION: "8.18.0"
   LEAN_VERSION: "4.29.0"
+  JUST_VERSION: "1.56.0"
+  JUST_SHA256: "fa2a8ec1015d9df5330941ade12437488fc40d33f9c9f8cd4eb70a26de11b639"
+  BUN_VERSION: "1.4.4"
+  BUN_SHA256: "bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c"
 
 jobs:
   proof-lanes:
@@ -92,3 +96,46 @@ jobs:
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
             bash scripts/check-proofs.sh lean4
             bash tests/proofs/gate_controls_test.sh lean4'
+
+      # The golden path (re-anchoring plan WO 2.5): `just check` runs the view
+      # checks (catalogue, census tests, atlas, claims registry, bridges) and the
+      # three proof gates in one recipe, then its controls show that a stale view
+      # and a failing proof each fail it. just and Bun come as checksum-pinned
+      # release archives; the registry reads receipts with the pinned canon reader.
+      - name: Install just and Bun (checksum-pinned release archives)
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          b="$RUNNER_TEMP/golden-bin"; mkdir -p "$b"; cd "$RUNNER_TEMP"
+          curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/casey/just/releases/download/${JUST_VERSION}/just-${JUST_VERSION}-x86_64-unknown-linux-musl.tar.gz" --output just.tar.gz
+          echo "${JUST_SHA256}  just.tar.gz" | sha256sum --check --strict
+          tar -xzf just.tar.gz -C "$b" just
+          curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64.zip" --output bun.zip
+          echo "${BUN_SHA256}  bun.zip" | sha256sum --check --strict
+          unzip -q -j bun.zip bun-linux-x64/bun -d "$b"
+          echo "$b" >> "$GITHUB_PATH"
+
+      - name: Canon proof-receipt reader (metadatastician/standards, pinned)
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          r="$RUNNER_TEMP/receipt-reader"
+          git init -q "$r"
+          git -C "$r" remote add origin https://github.com/metadatastician/standards.git
+          git -C "$r" config core.sparseCheckout true
+          printf '1-formats/deed/tools/\n' > "$r/.git/info/sparse-checkout"
+          git -C "$r" fetch -q --depth 1 origin be39f900665fb7c042c05d1165da018adc1860f4
+          git -C "$r" checkout -q FETCH_HEAD
+
+      - name: Golden path (just check), then its controls
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
+        env:
+          MATHESIS_STANDARDS: ${{ runner.temp }}/receipt-reader
+        run: |
+          guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
+            just --version
+            bun --version
+            just check
+            bash tests/golden/check_controls_test.sh'

@@ -134,7 +134,10 @@ clean-all: clean
 # (unit tests in src/main.zig, test/integration_test.zig). It compiles only after
 # `just repo-init` has filled the template tokens, so an un-initialised template
 # fails here loudly instead of reporting a pass over nothing.
-test: provision::test
+# It runs `check` first (re-anchoring plan WO 2.5), so a stale view or a
+# failing proof fails it.
+# Run the golden-path checks, then every detected language's tests
+test: check provision::test
 
 # Run tests with verbose output
 test-verbose: provision::test
@@ -715,6 +718,20 @@ uncloak:
     fi
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
+
+# The Mathesis golden path (re-anchoring plan WO 2.5). CI runs it in the pinned
+# Guix (agda-proof-policy.yml). A stale view or a failing proof fails.
+# Golden path: every generated view matches its data, every gated proof checks
+check: check-views check-proofs
+
+# Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
+# Views current: catalogue, census tests, atlas, claims registry and bridges
+check-views: catalogue-check census-test atlas-check registry-check
+
+# Needs agda, coqc and lean, e.g. in the pinned Guix:
+#   guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
+# Proofs check: the Agda, Rocq and Lean gates
+check-proofs: proof-check-agda proof-check-coq proof-check-lean4
 
 # Re-run the proof census over docs/atlas/census/repos.jsonl and regenerate the
 # catalogue and the atlas built from the same rows (CI checks both, so a census

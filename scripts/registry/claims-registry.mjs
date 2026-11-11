@@ -226,13 +226,12 @@ async function main() {
   const views = [[viewFile, render(derived)], [bridgesView, renderBridges(bridges)]];
   if (cmd === 'build') {
     await mkdir(path.dirname(viewFile), {recursive: true});
-    for (const [file, body] of views) await writeFile(file, body);
+    await Promise.all(views.map(([file, body]) => writeFile(file, body)));
     console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims) and ${path.relative(root, bridgesView)} (${bridges.length} bridges)`);
   } else {
-    for (const [file, body] of views) {
-      const committed = await readFile(file, 'utf8').catch(() => '');
-      if (committed !== body) throw new Error(`${path.relative(root, file)} is stale; run: bun scripts/registry/claims-registry.mjs build`);
-    }
+    const committed = await Promise.all(views.map(([file]) => readFile(file, 'utf8').catch(() => '')));
+    const stale = views.filter(([, body], i) => committed[i] !== body).map(([file]) => path.relative(root, file));
+    if (stale.length) throw new Error(`${stale.join(', ')} stale; run: bun scripts/registry/claims-registry.mjs build`);
     console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges)`);
   }
 }

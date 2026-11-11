@@ -757,11 +757,13 @@ atlas-find query:
     bun scripts/atlas/census-atlas.mjs find "{{query}}"
 
 # Theorem-level claims registry (ADR 0004): fetch each pinned receipt, derive
-# Proof Witness Grades, and write docs/registry/registry.adoc
+# Proof Witness Grades with the canon reader, and write docs/registry/registry.adoc.
+# Needs MATHESIS_STANDARDS: a metadatastician/standards checkout at the reader pin
+# (READER in scripts/registry/claims-registry.mjs).
 registry:
     bun scripts/registry/claims-registry.mjs build
 
-# Fail if the committed registry view is stale or a receipt overstates its grade
+# Fail if the committed registry view is stale (needs MATHESIS_STANDARDS, as above)
 registry-check:
     bun scripts/registry/claims-registry.mjs check
     bun test tests/registry/claims-registry.test.mjs

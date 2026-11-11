@@ -5,6 +5,11 @@
 Status: *proposed, not adopted* (2026-11-09). This proposal asks for a decision
 before anything is built. It changes no gate, schema or catalogue row.
 
+NOTE: 2026-11-10 (re-anchoring plan WO 2.2): PROOF-POLICY §8.5.1 now settles
+the receipt format and the reader. The reader is `readProofReceipt` in
+standards `1-formats/deed/tools/deed_lint.js`, and the Mathesis claims
+registry uses it. Experiments E1 to E6 below stay open.
+
 PROOF-POLICY §8.4 says a Proof Witness Grade is *derived from receipts, never
 asserted*, and §8.5 says Mathesis may catalogue grades by deriving them from the
 home repository's receipts. Today no repository's grades can be derived:

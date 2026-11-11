@@ -8,11 +8,12 @@ Date: 2026-11-09
 
 === Status
 
-*Proposed — awaiting owner ratification.* Nothing here is estate policy until
-the owner rules on it. Ratification is the owner's merge of the pull request
-that introduces this file, with this Status changed to `Accepted (ratified by
-owner <date>)` in the same change. Until then the registry view
-(`docs/registry/registry.adoc`) says on its face that the slice is proposed.
+*Accepted (ratified by owner 2026-11-10).* The owner ruled through the
+selector on 2026-11-10 that the change which amends this record to name the
+canon reader (re-anchoring plan WO 2.2) also sets this status, and that the
+owner's merge of that change is the ratification. Until then the status was
+"Proposed, awaiting owner ratification", and the registry view said that the
+slice was proposed.
 
 === Context
 
@@ -70,36 +71,45 @@ commit, or `null` when it has none.
 
 A record holds *no grade, token, leg or flag*. Those are read from the receipt.
 
-==== Derivation (PROOF-POLICY §8.1–§8.2)
+==== Derivation (the canon reader, PROOF-POLICY §8.5.1)
+
+Amended 2026-11-10 (re-anchoring plan WO 2.2, owner ruling D-5 (a)). The
+registry has no grading rule of its own. The canon reader of PROOF-POLICY
+§8.5.1 derives each grade: `readProofReceipt` in `metadatastician/standards`
+`1-formats/deed/tools/deed_lint.js`. The registry pins the reader by its
+standards commit and by the sha256 of that file (`READER` in
+`scripts/registry/claims-registry.mjs`), and refuses any other file.
 
 For each record, the tool fetches the receipt at `source_commit`, refuses it
 if its sha256 differs from the pinned digest, and derives:
 
 . not a theorem → `ungraded` (§8.1);
-. no receipt, or the claim absent from it → `ungraded`;
-. the receipt's flags lack any of `--safe --without-K --cubical-compatible` →
-  `ungraded` (§2.1 is a condition of `PWG-3`);
-. the Agda token is not `proven` or `proven-with-postulates` → `ungraded`;
-. otherwise `PWG-3`, `PWG-2i` or `PWG-2ii` by the number of legs whose §2.2
-  state is `RECONCILED`. A leg's route never counts on its own.
+. no receipt → `ungraded`;
+. the reader refuses the receipt → `ungraded`, with the reader's reason. This
+  includes a receipt that records a `:pwg` its legs and receipts do not support
+  (drift, §8.4), and a receipt that is not in the §8.5.1 shape;
+. the receipt is for another repository, or the claim is absent from it →
+  `ungraded`;
+. otherwise the grade that the reader derives for the claim, from `PWG-3` to
+  `PWG-1` (§8.2).
 
-`PWG-1` is never derived in this slice: it needs a current receipt for every
-counted witness, and the slice reads only the Agda-side receipt.
-
-Two kinds of disagreement are reported. A receipt that asserts a `:pwg` its
-evidence does not support is *drift* (§8.4) and fails the check. A receipt that
-still uses the pre-§8 vocabulary (`:grade "grade-3"`) is a visible *finding*,
-not a failure: the vocabulary changed after the receipt was written.
+Until this amendment the registry carried its own copy of the §8.2 rules, read
+only the Agda side, and never derived `PWG-1`.
 
 ==== View, gate and tooling
 
 * `docs/registry/registry.adoc` is generated (`just registry`) and checked
-  (`just registry-check`, and CI `proven-tests.yml`): stale view, digest
-  mismatch, or drift fails. The view opens with a §8.4.7 census line.
+  (`just registry-check`, and CI `proven-tests.yml`): a stale view, a digest
+  mismatch, or a reader that is not the pinned file fails. A receipt that the
+  reader refuses shows as `ungraded` with the reader's reason. The view opens
+  with a §8.4.7 census line.
 * The tool is Bun, beside the atlas (`scripts/atlas/census-atlas.mjs`), with
   hermetic tests (`tests/registry/claims-registry.test.mjs`, `--receipts-dir`
-  fixtures): the ladder, each withheld reason, drift versus legacy finding,
-  digest refusal, validation failures, and "never a percentage".
+  fixtures in the §8.5.1 shape): the grades that the reader derives, each
+  withheld reason, a refused receipt, the reader pin, digest refusal,
+  validation failures, and "never a percentage". The tests and the tool need
+  `MATHESIS_STANDARDS`, a standards checkout at the reader pin, and fail
+  without it.
 * Receipts are fetched from `raw.githubusercontent.com` at the pinned commit,
   never vendored (AUTHORITY: receipts stay home).
 
@@ -118,6 +128,12 @@ derivation gives *0 of 12 theorems graded*, and says why:
 
 That the pilot reports zero is the point: it is what the evidence supports today.
 
+On 2026-11-10 (WO 2.2) the reader still gives 0 of the 12 pilot theorems a
+grade. It refuses the secret-types receipt at `eee4e40` ("unexpected clause
+(identity) in the receipt"): the receipt predates the §8.5.1 shape. The same
+change adds `hyperpolymath/mathesis#THY-1`, pinned at `9aa1662`, the commit
+that holds its CI receipts. The reader derives `PWG-1` for it.
+
 === Alternatives considered
 
 * *Store grades in the registry.* Rejected: §8.4 and §8.5 forbid assigning
@@ -135,9 +151,10 @@ That the pilot reports zero is the point: it is what the evidence supports today
 
 * Mathesis can answer "which theorems, at which grade, why not higher" for the
   piloted repositories, with every answer traceable to a commit and a digest.
-* A home repository whose receipt overstates its grade turns this repository's
-  CI red. That is intended (§8.4.2: "a gate or a bot may recompute it at any
-  time and reports the computed value").
+* A home repository whose receipt overstates its grade shows as `ungraded`,
+  with the reader's reason, in the view (§8.4.2: "a gate or a bot may recompute
+  it at any time and reports the computed value"). Until the WO 2.2 amendment
+  it turned this repository's CI red instead.
 * The census rows and the atlas are unchanged; the registry sits beside them.
 * After ratification, in order:
   . Lintel: move its real ledger into `docs/status/PROOF-STATUS.adoc`, retire

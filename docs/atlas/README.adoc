@@ -20,8 +20,8 @@ Proof declarations, axioms and holes are *counts found by the original census*.
 They are not kernel-check receipts; source files are not included in the
 summarised rows, so this atlas must not invent per-theorem names, evidence,
 proof status, assumptions, equivalence, or independent verification.
-The next slice requires a separately reviewed, source-anchored claims registry;
-it is proposed in link:../decisions/0004-claims-registry.adoc[ADR 0004]
+The next slice is a separately reviewed, source-anchored claims registry,
+accepted in link:../decisions/0004-claims-registry.adoc[ADR 0004]
 (pilot view: link:../registry/registry.adoc[`docs/registry/registry.adoc`]).
 No private-source records are added or published by this generator.
 

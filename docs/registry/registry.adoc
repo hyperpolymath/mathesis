@@ -4,22 +4,25 @@
 = Claims registry (pilot slice)
 
 Each row is a claim in its home repository at a pinned commit. The grade is
-*derived* here from that repository's receipt by PROOF-POLICY §8.2, never
+*derived* here from that repository's receipt by the canon reader of
+PROOF-POLICY §8.5.1 (`metadatastician/standards` at `be39f900665f`), never
 assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still
-owe their Rocq and Lean legs. Status of this slice: proposed in
-link:../decisions/0004-claims-registry.adoc[ADR 0004], not ratified.
+owe their Rocq and Lean legs. Status of this slice: accepted in
+link:../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.
 
-Census: 0 at `PWG-1`, 0 at `PWG-2ii`, 0 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 12 theorems. 5 demonstrations and assumptions are listed and not graded.
+Census: 1 at `PWG-1`, 0 at `PWG-2ii`, 0 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 13 theorems. 5 demonstrations and assumptions are listed and not graded.
 
 [cols="2,1,1,4,3",options="header"]
 |===
-|Claim |Kind |PWG |Statement (home repository's wording) |Why not higher; findings
+|Claim |Kind |PWG |Statement (home repository's wording) |Why not higher
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-1] at `eee4e4038503` |theorem |`ungraded` |TINI at the two-point lattice: two finishing runs of a well-typed command from low-equivalent stores end low-equivalent, fuels independent (`SecretTypes.Noninterference`: `tini`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/mathesis/blob/9aa1662da5b2ac4a0e37b9f75a151bb312a8cbea/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#THY-1] at `9aa1662da5b2` |theorem |`PWG-1` |In a dependency graph whose edges are guarded by features closed under Horn rules, and by an arbitrary per-target condition, a node unreachable with every feature requested is unreachable under any request, on each target (`Cargo.absent-under-all-features`). The general form is `Monotone.reach-mono`: reachability over a monotone family of edge sets is monotone. (`FeatureReachability`: `Cargo.absent-under-all-features`, `Monotone.reach-mono`) |—
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-2] at `eee4e4038503` |theorem |`ungraded` |Public expressions read the same in low-equivalent stores (`SecretTypes.Noninterference`: `eval-low`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-1] at `eee4e4038503` |theorem |`ungraded` |TINI at the two-point lattice: two finishing runs of a well-typed command from low-equivalent stores end low-equivalent, fuels independent (`SecretTypes.Noninterference`: `tini`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-3] at `eee4e4038503` |theorem |`ungraded` |Confinement: under a secret program counter the public variable is unchanged, loops included (`SecretTypes.Noninterference`: `confine`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-2] at `eee4e4038503` |theorem |`ungraded` |Public expressions read the same in low-equivalent stores (`SecretTypes.Noninterference`: `eval-low`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
+
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-3] at `eee4e4038503` |theorem |`ungraded` |Confinement: under a secret program counter the public variable is unchanged, loops included (`SecretTypes.Noninterference`: `confine`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 
 |https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-4] at `eee4e4038503` |demonstration |`ungraded` |The typing side-condition is load-bearing: an explicit and an implicit flow are each refused and each actually leaks |demonstration, not a theorem (§8.1)
 
@@ -27,11 +30,11 @@ Census: 0 at `PWG-1`, 0 at `PWG-2ii`, 0 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`
 
 |https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-6] at `eee4e4038503` |demonstration |`ungraded` |Laws census: generic TINI uses exactly the two upper-bound laws and the observer's down-closure (law-ablation certificate) |demonstration, not a theorem (§8.1)
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-7] at `eee4e4038503` |theorem |`ungraded` |TINI over the Lattice record: for every variable set with decidable equality, lattice, labelling and down-closed observer, two finishing runs of a well-typed command from stores agreeing on what the observer sees end agreeing on it (`SecretTypes.Noninterference.Generic`: `tini`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-7] at `eee4e4038503` |theorem |`ungraded` |TINI over the Lattice record: for every variable set with decidable equality, lattice, labelling and down-closed observer, two finishing runs of a well-typed command from stores agreeing on what the observer sees end agreeing on it (`SecretTypes.Noninterference.Generic`: `tini`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-8] at `eee4e4038503` |theorem |`ungraded` |Each census law is necessary: dropping an upper-bound law or observer down-closure admits a well-typed leaking program; transitivity is necessary for principal observers (`SecretTypes.Countermodels`: `NoUpper₁.refutes`, `NoUpper₂.refutes`, `NoDownClosure.refutes`, `NoTrans.refutes`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-8] at `eee4e4038503` |theorem |`ungraded` |Each census law is necessary: dropping an upper-bound law or observer down-closure admits a well-typed leaking program; transitivity is necessary for principal observers (`SecretTypes.Countermodels`: `NoUpper₁.refutes`, `NoUpper₂.refutes`, `NoDownClosure.refutes`, `NoTrans.refutes`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 
-|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-9] at `eee4e4038503` |theorem |`ungraded` |If an observer sees finishing versus not finishing, termination-sensitive noninterference is false for the current typing rules (`SecretTypes.Noninterference.OutcomeVisibility`: `termination-sensitive-fails`) |not under the §2.1 invocation (missing --cubical-compatible); *Finding:* receipt uses the pre-§8 vocabulary (grade-3); derived ungraded
+|https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-9] at `eee4e4038503` |theorem |`ungraded` |If an observer sees finishing versus not finishing, termination-sensitive noninterference is false for the current typing rules (`SecretTypes.Noninterference.OutcomeVisibility`: `termination-sensitive-fails`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 
 |https://github.com/metadatastician/lintel/blob/a0f2bae9cac07cd97b2395d10d0eb05f8ae1c7d1/README.adoc[metadatastician/lintel#A-1] at `a0f2bae9cac0` |assumption |`ungraded` |Non-collusion: no party holds both the proxy and the target role (the gap is proved: collusion-gap) |assumption, not a theorem (§8.1)
 

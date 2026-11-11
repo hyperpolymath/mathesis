@@ -125,7 +125,7 @@ let base    = import "../_base.ncl" in
   # -------------------------------------------------------------------
   declaration = {
     preamble = "# SPDX-License-Identifier: MPL-2.0\n# Mustfile — Physical state contract for mathesis\n# Author: Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>\n#\n# What MUST be true about this repository. Hard requirements.\n# Run with: must check\n# Fix with: must fix (where a deterministic fix exists)\n",
-    abstract = "Physical-state invariants for mathesis. This is the canonical\nRSR template repository. These are hard requirements — CI and pre-commit\nhooks fail if any check fails.",
+    abstract = "Physical-state invariants for Mathesis. The template invariants come\nfirst. The section \"Mathesis Invariants\" states the rules of the atlas and\nthe theory shelf. No runner executes these probes yet: the contractile CLI\nhas never been built, so the CI gate named in each note enforces the rule.",
     prose = [
       {
         section = "Template Integrity",
@@ -238,6 +238,52 @@ let base    = import "../_base.ncl" in
         description = "All commits must be signed",
         probe = "git verify-commit HEAD",
         severity = 'critical,
+      },
+      {
+        id = "views-current",
+        section = "Mathesis Invariants",
+        description = "Each generated view matches its data",
+        probe = "bash scripts/census/render-catalogue.sh docs/atlas/census | diff -q docs/atlas/generated/catalogue.adoc - >/dev/null && bun scripts/atlas/census-atlas.mjs check >/dev/null",
+        severity = 'critical,
+        notes = "The probe checks the catalogue and the atlas offline. The registry and bridge views need network access and a standards checkout, so `just check` covers them in CI (agda-proof-policy.yml).",
+      },
+      {
+        id = "no-private-name",
+        section = "Mathesis Invariants",
+        description = "No private repository is named: the frame holds public records only, and each row and each not-reached entry belongs to the frame",
+        probe = "[ \"$(jq -s 'map(select(.visibility != \"public\")) | length' docs/atlas/census/repos.jsonl)\" = 0 ] && bun scripts/atlas/census-atlas.mjs check >/dev/null",
+        severity = 'critical,
+        notes = "Ruling D-2 (a): private repositories are a count in docs/atlas/census/private-count.json. The probe prints no name. just atlas-check enforces the same rule in CI.",
+      },
+      {
+        id = "no-hand-typed-grade",
+        section = "Mathesis Invariants",
+        description = "No grade is typed by hand: claim pins and bridge records carry no PWG grade; the registry derives each grade from a receipt",
+        probe = "! grep -q 'PWG-' docs/atlas/claims/claims.jsonl docs/atlas/claims/bridges.jsonl",
+        severity = 'critical,
+        notes = "ADR 0004 and re-anchoring plan WO 2.2 and WO 2.4. A receipt of a home repository records its own grade; Mathesis reads it through the canon reader.",
+      },
+      {
+        id = "receipts-stay-home",
+        section = "Mathesis Invariants",
+        description = "Receipts stay in their homes: the only proof receipt in this repository is the receipt of Mathesis",
+        probe = "[ \"$(git ls-files -z '*.deed' | xargs -0 grep -l '^ *:profile proof-receipt')\" = verification/receipts/theory_praxis.deed ]",
+        severity = 'critical,
+      },
+      {
+        id = "home-theorem-has-receipt",
+        section = "Mathesis Invariants",
+        description = "Each theorem whose home is Mathesis has a receipt: each claim of the receipt has a claim pin, and each Mathesis claim pin names a claim of its receipt",
+        probe = "R=verification/receipts/theory_praxis.deed; C=docs/atlas/claims/claims.jsonl; grep -o '(claim :id \"[^\"]*\"' \"$R\" | cut -d'\"' -f2 | while read -r c; do jq -e --arg id \"hyperpolymath/mathesis#$c\" 'select(.id == $id)' \"$C\" >/dev/null || exit 1; done && jq -r 'select(.repo == \"hyperpolymath/mathesis\") | \"\\(.receipt.path) \\(.id | sub(\"^.*#\"; \"\"))\"' \"$C\" | while read -r p c; do grep -q \"(claim :id \\\"$c\\\"\" \"$p\" || exit 1; done",
+        severity = 'critical,
+      },
+      {
+        id = "rows-have-provenance",
+        section = "Mathesis Invariants",
+        description = "Each census row names the commit it read and the time it read it",
+        probe = "[ \"$(jq -s 'map(select((.commit | test(\"^[0-9a-f]{40}$\") | not) or (.censused_at | test(\"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$\") | not))) | length' docs/atlas/census/rows.jsonl)\" = 0 ]",
+        severity = 'critical,
+        notes = "Re-anchoring plan WO 2.1. A row without either field makes jq fail, and the probe fails closed.",
       },
     ],
   },

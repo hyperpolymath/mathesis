@@ -48,12 +48,10 @@
   # The `boolean_gate_provenance` grade (a witness carrying its source hash) is a
   # declared capability awaiting a descriptile that actually carries such evidence.
 
-  # --- INTEND: a committed intent realised by the descriptive self-model ---
-  "intend.repo-initialization" = {
-    kind = "descriptile",
-    witnesses = [{ fact = "ecosystem.type", op = 'equals, arg = "repository-template" }],
-    note = "the deed (ecosystem :position-type) declares this repo IS a template ⇒ the init intent is realised",
-  },
+  # --- INTEND: no descriptile witness. The Mathesis intents are the stages of
+  # the re-anchoring plan (WO 3.3); each done stage carries its own probe, and
+  # no deed fact attests a stage. The template intent "repo-initialization",
+  # witnessed by (ecosystem :position-type "repository-template"), was removed.
 
   # --- ADJUST: accessibility/hygiene posture (advisory; never gates) ---
   # The ANCHOR identity block still carries Mathesis; for the template

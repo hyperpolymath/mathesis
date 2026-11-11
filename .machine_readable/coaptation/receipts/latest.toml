@@ -6,13 +6,13 @@
 [receipt]
 schema = "hyperpolymath.coaptation/1"
 repo = "mathesis"
-band = "green"
-proposed-action = "none — the descriptile self-model coapts with the contractile set-point within tolerance."
+band = "amber"
+proposed-action = "advisory — soft drift within bands (posture/intend). Open an advisory issue; no re-anchor."
 
 [coverage]
-clauses-total = 52
+clauses-total = 57
 descriptile-witnessed = 2
-probe-deferred-to-hunt = 26
+probe-deferred-to-hunt = 32
 must-trust-unmeasured-gaps = 0
 note = "Yard sees descriptile evidence only; probe-deferred obligations need a Hunt-tier run for a full hard-gate."
 
@@ -21,7 +21,7 @@ grade = "boolean_gate / boolean_gate_provenance"
 witnessed = 1
 refuted = 0
 unmeasured-gaps = 0
-probe-deferred = 26
+probe-deferred = 32
 gate = "pass"
 
 [reading.adjust]
@@ -31,9 +31,9 @@ posture-ok = true
 
 [reading.intend]
 grade = "tropical (min-plus distance-to-north-star; wishes excluded)"
-committed-intents = 3
-distance = 2
-within-tolerance = true
+committed-intents = 6
+distance = 3
+within-tolerance = false
 
 [reading.bust]
 grade = "alarm (recognised break)"
@@ -44,13 +44,12 @@ grade = "expected (planned exnovation)"
 items = 7
 
 [clauses]
-intend.repo-initialization = "intent:done"
-intend.contractile-completeness = "intent:in_progress"
-intend.automation-scripts = "intent:in_progress"
-intend.cross-repo-validation = "wish:declared"
-intend.automated-substitution = "wish:declared"
-intend.formal-verification = "wish:declared"
-intend.ecosystem-visualization = "wish:declared"
+intend.stage-0-stop-the-conflicts = "intent:done"
+intend.stage-1-close-the-holes = "intent:done"
+intend.stage-2-one-pipeline = "intent:done"
+intend.stage-3-tell-the-truth = "intent:in_progress"
+intend.stage-4-three-shelves = "intent:declared"
+intend.stage-5-scale = "intent:declared"
 must.license-present = "probe-deferred"
 must.readme-present = "probe-deferred"
 must.security-policy = "probe-deferred"
@@ -66,6 +65,12 @@ must.self-validating-structure = "probe-deferred"
 must.no-placeholder-values = "probe-deferred"
 must.no-untracked-contractiles = "probe-deferred"
 must.signed-commits = "probe-deferred"
+must.views-current = "probe-deferred"
+must.no-private-name = "probe-deferred"
+must.no-hand-typed-grade = "probe-deferred"
+must.receipts-stay-home = "probe-deferred"
+must.home-theorem-has-receipt = "probe-deferred"
+must.rows-have-provenance = "probe-deferred"
 trust.no-secrets-committed = "probe-deferred"
 trust.no-private-keys = "probe-deferred"
 trust.no-tokens-in-source = "probe-deferred"
@@ -98,5 +103,5 @@ bust.sync-drift-between-repos = "latent"
 bust.contractile-parse-error = "latent"
 
 [provenance]
-contractiles = "intend@7439f6b04d89 must@3ace42669b5d trust@9cf409076c92 adjust@f7e9bafc614e dust@bdb7dea20424 bust@4de1f1b3bc91"
+contractiles = "intend@89c97164fbff must@b2888ac670fb trust@484d6509ce86 adjust@f7e9bafc614e dust@bdb7dea20424 bust@4de1f1b3bc91"
 descriptiles = "deed@7182c2cc6635 anchor@11df55a6aaeb"

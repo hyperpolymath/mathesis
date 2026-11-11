@@ -168,7 +168,11 @@ run_zig_ffi_tests() {
 }
 
 if command -v zig >/dev/null 2>&1; then
-  run_lane "Zig FFI ABI layout & memory-leak unit tests" run_zig_ffi_tests
+  if [ -d src/interface/ffi ]; then
+    run_lane "Zig FFI ABI layout & memory-leak unit tests" run_zig_ffi_tests
+  else
+    printf '==> [proven-suite] Zig FFI unit tests: not applicable (no src/interface/ffi)\n'
+  fi
 elif [ "$REQUIRE_ZIG" -eq 1 ]; then
   printf '    INERT/SETUP (2): zig compiler required (--require-zig) but missing on PATH\n' >&2
   setup_failures=$((setup_failures + 1))

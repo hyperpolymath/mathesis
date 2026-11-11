@@ -15,7 +15,6 @@ for tool in bash dirname mkdir mktemp rm find sort seq date env; do
   ln -s "$(command -v "$tool")" "$work/bin/$tool"
 done
 cp "$repo/scripts/run-proven-suite.sh" "$work/tree/scripts/"
-cp "$repo/benches/template_bench.sh" "$work/tree/benches/"
 printf 'module Proof\n%%default total\n' > "$work/tree/src/Proof.idr"
 cat > "$work/lane" <<'SH'
 #!/usr/bin/env bash
@@ -81,32 +80,8 @@ jq -e '.entries[0].provenance == "Static-Checked"' "$work/rejected.json" >/dev/n
   || fail 'failed typecheck was labelled Actually-Proven'
 echo 'PASS: proof provenance is promoted only after successful typechecking'
 
-bench="$work/tree/benches/template_bench.sh"
-run 0 "$bench" --json "$work/tree"
-jq -e '.schema_version == 1 and .suite == "proven-bench" and .commit == "unknown"
-  and [.results[].name] == ["escape_hatches","ijson_jcs","required_contexts","root_shape"]
-  and all(.results[]; .checksum == true and .iterations == 5 and .median_ns > 0)' \
-  "$work/out" >/dev/null || fail 'JSON benchmark contract is wrong'
-for name in check-escape-hatches.sh check-ijson-jcs.sh check-required-contexts.sh check-root-shape.sh; do
-  [[ "$(grep -cFx "$name" "$LANE_CALLS")" -eq 6 ]] || fail "$name needs one warmup plus five samples"
-done
-cp "$work/out" "$work/bench.json"
-bun "$repo/scripts/ijson-jcs-cli.js" check < "$work/bench.json" || fail 'benchmark JSON is not canonical'
-FAIL_GATE=check-root-shape.sh run 1 "$bench" "$work/tree" json
-jq -e '(.results | length) == 4
-  and all(.results[]; .checksum == (.name != "root_shape"))' "$work/out" >/dev/null \
-  || fail 'failed workload was omitted or timed as clean'
-run 0 "$bench" --csv "$work/tree"
-[[ "$(head -1 "$work/out")" == 'workload,iterations,median_ns,checksum' ]] || fail 'CSV header changed'
-[[ "$(wc -l < "$work/out")" -eq 5 ]] || fail 'CSV must contain all four workloads'
-run 2 "$bench" --json "$work/missing-tree"
-rm "$work/tree/scripts/check-escape-hatches.sh"
-run 2 "$bench" --json "$work/tree"
-[[ ! -s "$work/out" && ! -s "$LANE_CALLS" ]] || fail 'missing workload wrote timings or ran partial benchmark'
-echo 'PASS: benchmark outputs, warmups, failure checksums, and missing-workload refusal'
-
 # Exercise --bench at the runner boundary without running real repository
-# checks. The direct benchmark serialization is exercised above.
+# checks.
 cp "$work/lane" "$work/tree/scripts/check-escape-hatches.sh"
 run 2 "$runner" --bench
 grep -qF 'jq required for --bench' "$work/err" || fail 'missing benchmark dependency did not cause setup failure'

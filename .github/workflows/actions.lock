@@ -70,15 +70,8 @@ workflows:
     '.github/workflows/quality.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         - 'editorconfig-checker/action-editorconfig-checker@51f63319f592f97930c73d9c46184d20bd206393'
-    '.github/workflows/release.yml':
-        - 'actions/attest-build-provenance@v4.2.2'
-        - 'actions/checkout@v7.0.1'
-        - 'actions/upload-artifact@v7.0.2'
-        - 'softprops/action-gh-release@v3.0.4'
     '.github/workflows/rsr-compliance-canary.yml':
         - 'actions/checkout@v7.0.1'
-    '.github/workflows/rust-ci.yml':
-        - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
     '.github/workflows/scorecard.yml':
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
         - 'github/codeql-action@b96794f015dfd88f77b49b1c93e0fa7110f94c63'
@@ -100,18 +93,6 @@ workflows:
     '.github/workflows/workflow-linter.yml':
         - 'actions/checkout@v7.0.1'
 dependencies:
-    'actions/attest-build-provenance@v4.2.2':
-        ref: 'v4.2.2'
-        commit: 'sha1-4d101475d8b20a2381f78447822ac1eab6504dd8'
-        owner_id: 44036562
-        repo_id: 760702757
-        uses:
-            - 'actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d'
-    'actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d':
-        ref: 'v4.2.1'
-        commit: 'sha1-508db95dd578ae2727ebd6217d5ba78e4fbda05d'
-        owner_id: 44036562
-        repo_id: 760701061
     'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9':
         ref: 'v6.1.0'
         commit: 'sha1-55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
@@ -153,11 +134,6 @@ dependencies:
         owner_id: 44036562
         repo_id: 192625955
     'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9':
-        ref: 'v7.0.2'
-        commit: 'sha1-cf430e030ddbb5b0abf93d22962f4752f3646cd9'
-        owner_id: 44036562
-        repo_id: 192625955
-    'actions/upload-artifact@v7.0.2':
         ref: 'v7.0.2'
         commit: 'sha1-cf430e030ddbb5b0abf93d22962f4752f3646cd9'
         owner_id: 44036562
@@ -214,11 +190,6 @@ dependencies:
         commit: 'sha1-0c5077e51419868618aeaa5fe8019c62421857d6'
         owner_id: 108928776
         repo_id: 512644635
-    'softprops/action-gh-release@v3.0.4':
-        ref: 'v3.0.4'
-        commit: 'sha1-8a0cd651e5b2365bd640854a3fa5dfc70e4875f3'
-        owner_id: 2242
-        repo_id: 204253808
     'sonarsource/sonarqube-scan-action@v8.4.1':
         ref: 'v8.4.1'
         commit: 'sha1-e805d875275f728fac1885b413934be6d7c63f65'

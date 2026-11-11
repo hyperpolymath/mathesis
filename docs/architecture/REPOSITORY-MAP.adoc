@@ -121,10 +121,6 @@ predecessors did.
 | yes
 | owner-requested reusable applications area (2026-11-07)
 
-| `benches/`
-| optional
-| Cargo-conventional at package root
-
 | `build/`
 | yes
 | build orchestration: just/ phase modules, container/, docs-seed/, templates/, guix.scm (canon 1.2.1 guix-primary template_ref = build/)
@@ -241,8 +237,6 @@ your own repo - but do not read their emptiness as neglect here.
 | `src/core/`
 | `src/definitions/`
 | `src/errors/`
-| `src/interface/generated/`
-| `src/interface/generated/abi/`
 | `verification/benchmarks/`
 | `verification/coverage/`
 | `verification/fuzzing/`

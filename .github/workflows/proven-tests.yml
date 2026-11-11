@@ -69,7 +69,7 @@ jobs:
       - name: Mathesis census tests (offline fixtures) and catalogue currency
         run: |
           for t in tests/census/*.sh; do bash "$t"; done
-          bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
+          bash scripts/census/render-catalogue.sh docs/atlas/census | diff -u docs/atlas/generated/catalogue.adoc -
       # The claims registry (docs/decisions/0004-claims-registry.adoc): the canon
       # reader re-derives every grade from the home repositories' receipts at
       # their pinned commits (fetched, digest-checked). The check fails if the

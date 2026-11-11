@@ -716,7 +716,7 @@ uncloak:
 
 # ── mathesis: estate maths catalogue ──────────────────────────────────────
 
-# Re-run the proof census over docs/catalogue/census/repos.jsonl and regenerate the
+# Re-run the proof census over docs/atlas/census/repos.jsonl and regenerate the
 # catalogue and the atlas built from the same rows (CI checks both, so a census
 # that refreshes one leaves the other stale)
 census:
@@ -730,19 +730,19 @@ update-rows +repos:
 
 # Re-list every blob the RSR template has shipped at its template paths, in any commit
 template-blobs:
-    bash scripts/census/template-blobs.sh docs/catalogue/census/template-paths.txt > docs/catalogue/census/template-blobs.tsv
+    bash scripts/census/template-blobs.sh docs/atlas/census/template-paths.txt > docs/atlas/census/template-blobs.tsv
 
 # Offline census tests: row folding, status documents, template blobs, scanner, Rust proofs
 census-test:
     for t in tests/census/*.sh; do bash "$t" || exit 1; done
 
-# Re-render docs/catalogue/catalogue.adoc from the committed census rows
+# Re-render docs/atlas/generated/catalogue.adoc from the committed census rows
 catalogue:
-    bash scripts/census/render-catalogue.sh docs/catalogue/census > docs/catalogue/catalogue.adoc
+    bash scripts/census/render-catalogue.sh docs/atlas/census > docs/atlas/generated/catalogue.adoc
 
 # Fail if the committed catalogue does not match the committed census rows
 catalogue-check:
-    bash scripts/census/render-catalogue.sh docs/catalogue/census | diff -u docs/catalogue/catalogue.adoc -
+    bash scripts/census/render-catalogue.sh docs/atlas/census | diff -u docs/atlas/generated/catalogue.adoc -
 
 # Mathesis read-only census discovery views and agent retrieval
 atlas-build:
@@ -757,7 +757,7 @@ atlas-find query:
     bun scripts/atlas/census-atlas.mjs find "{{query}}"
 
 # Theorem-level claims registry (ADR 0004): fetch each pinned receipt, derive
-# Proof Witness Grades with the canon reader, and write docs/registry/registry.adoc.
+# Proof Witness Grades with the canon reader, and write docs/atlas/generated/registry.adoc.
 # Needs MATHESIS_STANDARDS: a metadatastician/standards checkout at the reader pin
 # (READER in scripts/registry/claims-registry.mjs).
 registry:

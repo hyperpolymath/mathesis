@@ -3,14 +3,13 @@
 
 This is a *generated, read-only directory of proof-source repositories*, not yet a
 complete alphabetic mathematical concept atlas. It derives from
-`docs/catalogue/census/catalogue-rows.jsonl` and never alters
+`docs/atlas/census/rows.jsonl` and never alters
 or reclassifies the source census. Each row names the commit that the census read
 (`commit`) and the time it read it (`censused_at`, UTC), so each count has a
 source. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 
-The first views are A–Z repositories, theory-versus-engineering census class,
-and owner/organisation grouping. `index.json` is machine-readable. The CLI
+The views are the catalogue (split by census class), A–Z repositories, owner/organisation grouping and the claims registry. The separate class view was removed on 2026-11-10 (WO 2.3): it repeated the catalogue with fewer columns. `index.json` is machine-readable. The CLI
 supports source discovery and a bounded context pack suitable for agents.
 
 Run with Bun: `bun scripts/atlas/census-atlas.mjs build`, `check`,
@@ -22,7 +21,7 @@ summarised rows, so this atlas must not invent per-theorem names, evidence,
 proof status, assumptions, equivalence, or independent verification.
 The next slice is a separately reviewed, source-anchored claims registry,
 accepted in link:../decisions/0004-claims-registry.adoc[ADR 0004]
-(pilot view: link:../registry/registry.adoc[`docs/registry/registry.adoc`]).
+(pilot view: link:generated/registry.adoc[`docs/atlas/generated/registry.adoc`]).
 No private-source records are added or published by this generator.
 
 == One writer for census data
@@ -30,7 +29,7 @@ No private-source records are added or published by this generator.
 Census rows change in one way only: `just census` (the whole frame) or
 `just update-rows OWNER/REPO...` (named repositories). Both rebuild the
 catalogue and this atlas from the same rows. Nobody edits
-`catalogue-rows.jsonl`, `unreachable.jsonl` or the generated views by hand.
+`rows.jsonl`, `unreachable.jsonl` or the generated views by hand.
 Only one pull request that changes rows is open at a time; record it under
 "Open census work" in link:../status/ROADMAP.adoc[`ROADMAP.adoc`] before it
 opens. The deed states the same rule in `(bot-directives (census-writer))`.

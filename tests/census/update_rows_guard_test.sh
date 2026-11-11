@@ -6,15 +6,15 @@
 set -euo pipefail
 root=$(cd "$(dirname "$0")/../.." && pwd)
 t=$(mktemp -d); trap 'rm -rf "$t"' EXIT
-mkdir -p "$t/scripts/census" "$t/docs/catalogue/census"
+mkdir -p "$t/scripts/census" "$t/docs/atlas/census"
 cp "$root/scripts/census/"*.sh "$t/scripts/census/"
-c=$t/docs/catalogue/census
+c=$t/docs/atlas/census
 cat > "$c/repos.jsonl" <<'J'
 {"fork":false,"full_name":"o/public","pushed_at":"2026-11-10T00:00:00Z","visibility":"public"}
 {"fork":false,"full_name":"o/hidden","pushed_at":"2026-11-10T00:00:00Z","visibility":"private"}
 {"fork":true,"full_name":"o/fork","pushed_at":"2026-11-10T00:00:00Z","visibility":"public"}
 J
-: > "$c/catalogue-rows.jsonl"; : > "$c/unreachable.jsonl"; : > "$c/forks-with-own-proofs.txt"
+: > "$c/rows.jsonl"; : > "$c/unreachable.jsonl"; : > "$c/forks-with-own-proofs.txt"
 before=$(cat "$c"/*.jsonl | sha256sum)
 fail=0
 expect_refusal() { # want-message name...

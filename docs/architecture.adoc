@@ -10,13 +10,13 @@ Mathesis is the estate's mathematical source-discovery and proof-orientation ind
 
 [source,text]
 ----
-Repository census input (docs/catalogue/census/repos.jsonl)
+Repository census input (docs/atlas/census/repos.jsonl)
   -> scripts/census/ (source and prover-file discovery)
   -> corpus counts, holes/unsafe candidates, reachability observations
-  -> docs/catalogue/census/catalogue-rows.jsonl
-  -> generated docs/catalogue/catalogue.adoc
+  -> docs/atlas/census/rows.jsonl
+  -> generated docs/atlas/generated/catalogue.adoc
   -> scripts/atlas/census-atlas.mjs
-  -> docs/atlas/generated/ (A-Z, class, owner; index.json)
+  -> docs/atlas/generated/ (catalogue, A-Z, owner, registry; index.json)
   -> lookup and bounded context-pack commands
 ----
 
@@ -35,7 +35,7 @@ The census counts and classifies observed files. It does not establish that Agda
 | Home mathematical repository at a concrete revision, with actual proof-checker outputs and assumptions
 
 | Census and derived atlas views
-| link:catalogue/catalogue.adoc[Mathesis census] and link:atlas/README.adoc[atlas declaration of scope]
+| link:atlas/generated/catalogue.adoc[Mathesis census] and link:atlas/README.adoc[atlas declaration of scope]
 
 | General test evidence and fixture requirements
 | https://github.com/hyperpolymath/proven-tests-and-benches[proven-tests-and-benches] and the canonical estate testing policy

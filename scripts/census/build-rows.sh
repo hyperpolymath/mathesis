@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # Fold the raw, path-level census into one row per repository.
 #
-# Usage: build-rows.sh RAW_DIR TEMPLATE > catalogue-rows.jsonl
+# Usage: build-rows.sh RAW_DIR TEMPLATE > rows.jsonl
 #   RAW_DIR   files.jsonl, holes.jsonl, decls.jsonl, repos-with-status.jsonl,
 #             meta.jsonl
 #             (written by census-repo.sh + summarise.sh; not committed)

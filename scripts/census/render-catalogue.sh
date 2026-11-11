@@ -3,7 +3,7 @@
 # Render the catalogue (AsciiDoc) from the committed census rows.
 #
 # Usage: render-catalogue.sh CENSUS_DIR > catalogue.adoc
-#   CENSUS_DIR holds catalogue-rows.jsonl (build-rows.sh), repos.jsonl and
+#   CENSUS_DIR holds rows.jsonl (build-rows.sh), repos.jsonl and
 #   unreachable.jsonl. Output depends on those files only, so
 #   `just catalogue-check` can prove the committed catalogue is current.
 set -euo pipefail
@@ -17,7 +17,7 @@ table() { # $1 = class
     map(select(.class == $c))
     | sort_by(-.own_files, .repo)[]
     | "\n|https://github.com/\(.repo)[\(.repo)] |\(.own_files) |\(.fixture_files) |\(.provers) |\(.declarations) |\(.holes) |\(.axioms) |\(.unsafe) |\(.policy) |\(if .status_doc == "" then "—" else "`" + .status_doc + "`" end)"
-  ' "$C/catalogue-rows.jsonl"
+  ' "$C/rows.jsonl"
   echo '|==='
 }
 

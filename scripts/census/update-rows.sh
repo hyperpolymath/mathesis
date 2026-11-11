@@ -6,7 +6,7 @@
 # Usage: update-rows.sh OWNER/REPO...
 #
 # Each named repository is censused exactly as run-census.sh would census
-# it. Its row in catalogue-rows.jsonl is replaced, added, or removed when it
+# it. Its row in rows.jsonl is replaced, added, or removed when it
 # no longer has proof files of its own. Every other row is left as it is.
 # Raw output goes to MATHESIS_WORK (default: a fresh temporary directory)
 # and is not committed. Every name is checked before any clone. A name must
@@ -15,7 +15,7 @@
 # forks-with-own-proofs.txt.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
-census=$here/../../docs/catalogue/census
+census=$here/../../docs/atlas/census
 [ $# -gt 0 ] || { echo "usage: update-rows.sh OWNER/REPO..." >&2; exit 2; }
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
@@ -47,12 +47,12 @@ bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$work/new-row
 jq -R . "$work/census-list.txt" | jq -s . > "$work/names.json"
 jq -cS -s --slurpfile new "$work/new-rows.jsonl" --slurpfile names "$work/names.json" '
   map(select(.repo as $r | $names[0] | index($r) | not)) + $new | sort_by(.repo)[]
-' "$census/catalogue-rows.jsonl" > "$work/rows.jsonl"
-mv "$work/rows.jsonl" "$census/catalogue-rows.jsonl"
+' "$census/rows.jsonl" > "$work/rows.jsonl"
+mv "$work/rows.jsonl" "$census/rows.jsonl"
 # A named repository was reached, so it leaves the "not reached" list.
 jq -cS --slurpfile names "$work/names.json" \
   'select(.repo as $r | $names[0] | index($r) | not)' \
   "$census/unreachable.jsonl" > "$work/unreach.jsonl"
 mv "$work/unreach.jsonl" "$census/unreachable.jsonl"
-bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
+bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/atlas/generated/catalogue.adoc"
 echo "update-rows: refreshed $(wc -l < "$work/census-list.txt") repo(s); raw census kept in $work"

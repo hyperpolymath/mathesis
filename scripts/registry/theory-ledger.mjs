@@ -32,11 +32,18 @@ const need = (ok, message) => {
   if (!ok) throw new Error(message);
 };
 
-// RFC 8785 serialisation of parsed JSON (keys in UTF-16 order).
+// UTF-16 code-unit order, the key order of RFC 8785.
+function compareUtf16(a, b) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+// RFC 8785 serialisation of parsed JSON.
 export function jcs(v) {
   if (Array.isArray(v)) return '[' + v.map(jcs).join(',') + ']';
   if (v !== null && typeof v === 'object') {
-    return '{' + Object.keys(v).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).map(k => JSON.stringify(k) + ':' + jcs(v[k])).join(',') + '}';
+    return '{' + Object.keys(v).sort(compareUtf16).map(k => JSON.stringify(k) + ':' + jcs(v[k])).join(',') + '}';
   }
   return JSON.stringify(v);
 }
@@ -105,24 +112,25 @@ export function fold(ledger) {
   return out;
 }
 
+// The entry that takes one theorem from its recorded state `was` to `now`
+// (either may be undefined), or null when nothing changed.
+function entryFor(id, was, now) {
+  if (!was) return {event: 'admitted', id, ...now};
+  if (!now) return {event: 'withdrawn', id};
+  const changes = [];
+  if (was.pwg !== now.pwg) changes.push('pwg');
+  if (jcs(was.receipt) !== jcs(now.receipt)) changes.push('receipt');
+  if (was.admission_sha256 !== now.admission_sha256) changes.push('admission');
+  return changes.length ? {event: 'changed', id, ...now, changes} : null;
+}
+
 // The entries that bring the ledger up to `current`, in id order.
 export function pending(ledger, current, date, note) {
   const before = fold(ledger);
-  const ids = [...new Set([...before.keys(), ...current.keys()])].sort();
+  const ids = [...new Set([...before.keys(), ...current.keys()])].sort(compareUtf16);
   const out = [];
   for (const id of ids) {
-    const was = before.get(id);
-    const now = current.get(id);
-    let entry = null;
-    if (!was) entry = {event: 'admitted', id, ...now};
-    else if (!now) entry = {event: 'withdrawn', id};
-    else {
-      const changes = [];
-      if (was.pwg !== now.pwg) changes.push('pwg');
-      if (jcs(was.receipt) !== jcs(now.receipt)) changes.push('receipt');
-      if (was.admission_sha256 !== now.admission_sha256) changes.push('admission');
-      if (changes.length) entry = {event: 'changed', id, ...now, changes};
-    }
+    const entry = entryFor(id, before.get(id), current.get(id));
     if (entry) out.push({seq: ledger.length + out.length + 1, date, ...entry, ...(note ? {note} : {})});
   }
   return out;

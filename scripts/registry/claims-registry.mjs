@@ -30,7 +30,6 @@ import {readJsonl} from '../atlas/census-atlas.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
-import {execFileSync} from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
@@ -42,16 +41,16 @@ const admissionsFile = path.join(root, 'docs/theory/admissions.jsonl');
 const theoryView = path.join(root, 'docs/theory/generated/index.adoc');
 const ledgerFile = path.join(root, 'docs/theory/ledger.jsonl');
 
-// The theory ledger as it stands on main, for the append-only check. A fetch
-// that fails stops the check: an unchecked ledger is not a passing one. No
-// --depth: on a full clone, a depth fetch would make the clone shallow.
-function ledgerOnMain() {
-  execFileSync('git', ['-C', root, 'fetch', '--quiet', 'origin', 'main'], {stdio: ['ignore', 'ignore', 'inherit']});
-  try {
-    return execFileSync('git', ['-C', root, 'show', 'FETCH_HEAD:docs/theory/ledger.jsonl'], {encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']});
-  } catch {
-    return ''; // main has no ledger yet: every entry is new
-  }
+// The theory ledger as it stands on main, for the append-only check, read
+// over HTTPS like the receipts (no subprocess, and the local clone is left
+// as it is). A 404 means main has no ledger yet, so every entry is new; any
+// other failure stops the check: an unchecked ledger is not a passing one.
+const LEDGER_ON_MAIN = 'https://raw.githubusercontent.com/hyperpolymath/mathesis/main/docs/theory/ledger.jsonl';
+async function ledgerOnMain() {
+  const res = await fetch(LEDGER_ON_MAIN);
+  if (res.status === 404) return '';
+  if (!res.ok) throw new Error(`could not fetch ${LEDGER_ON_MAIN}: HTTP ${res.status}`);
+  return res.text();
 }
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
@@ -263,7 +262,7 @@ async function main() {
     if (stale.length) throw new Error(`${stale.join(', ')} stale; run: bun scripts/registry/claims-registry.mjs build`);
     const due = pending(ledger, current, '0000-00-00');
     if (due.length) throw new Error(`docs/theory/ledger.jsonl is behind by ${due.length} entries; run: just theory-ledger`);
-    checkAppendOnly(ledgerOnMain(), await readFile(ledgerFile, 'utf8'));
+    checkAppendOnly(await ledgerOnMain(), await readFile(ledgerFile, 'utf8'));
     console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges, ${admissions.length} admissions); the theory ledger is current and append-only (${ledger.length} entries)`);
   }
 }

@@ -1028,9 +1028,11 @@
               "verification/proofs/lean4/FeatureReachability.lean")
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed"
                 "src/interface/" "benches/" "build/container/Containerfile"
+                "tests/ffi_strings_test.sh"
                 ".github/workflows/rust-ci.yml" ".github/workflows/release.yml")
       :diverged ("mathesis_chora.deed" "docs/status/ROADMAP.adoc"
                  "Justfile" "scripts/run-proven-suite.sh" "tests/run_proven_suite_test.sh"
+                 "tests/proven_suite_test.sh"
                  ".github/workflows/actions.lock")))
   ; provenance — what this repo was minted FROM. Written once, at mint,
   ; by build/just/repo-init.just. Tools that want "what is this repo" read

@@ -24,6 +24,16 @@ accepted in link:../decisions/0004-claims-registry.adoc[ADR 0004]
 (pilot view: link:generated/registry.adoc[`docs/atlas/generated/registry.adoc`]).
 No private-source records are added or published by this generator.
 
+== A public frame
+
+The frame `census/repos.jsonl` holds public repositories only. The listing
+also counts private repositories; `census/private-count.json` keeps that
+number and the date of the listing, and no file names them (ruling D-2 (a)
+of the re-anchoring plan). `just atlas-check` fails on a frame record that is
+not public and on a "not reached" entry outside the frame. After each
+refresh of the frame, run `just update-rows --frame`: it drops each row and
+each "not reached" entry outside the public frame, without a clone.
+
 == One writer for census data
 
 Census rows change in one way only: `just census` (the whole frame) or

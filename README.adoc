@@ -71,8 +71,8 @@ The first census covered 476 repositories:
 * *Scope:* 462 repositories were cloned; 5 forks and 9 awesome-lists were
   skipped. 275 have proof files, and 239 still have them once template
   boilerplate is set aside.
-* *Unreached:* 37 private repositories could not be cloned and are listed at
-  the end of the catalogue, among them `cut-calculus`.
+* *Unreached:* 37 private repositories could not be cloned. The catalogue
+  now gives the number of private repositories only, not their names.
 * *Possibly missing:* the listing returned only repositories pushed since
   2026-09-15, so older, untouched repos may be absent. Add them to
   `docs/atlas/census/repos.jsonl` and rerun.

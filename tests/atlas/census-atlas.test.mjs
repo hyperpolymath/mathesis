@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 import {test,expect} from 'bun:test';
 import {readFileSync} from 'node:fs';
-import {validate,validateVisibility,find,pack,render,parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
+import {validate,validateVisibility,validateFrame,find,pack,render,parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 const rows=parseJsonl(readFileSync(new URL('../../docs/atlas/census/rows.jsonl',import.meta.url),'utf8'));
 test('existing corpus validated without modifying provenance',()=>{expect(validate(rows)).toHaveLength(rows.length);expect(rows.some(r=>r.repo==='catachresis-colloquium/IDApTIK')).toBe(true);});
 test('duplicate source identity is rejected',()=>{expect(()=>validate([...rows,rows[0]])).toThrow(/duplicate/);});
@@ -17,3 +17,4 @@ test('A-Z display sorts by repository component, not owner',()=>{const v=render(
 test('full context budget cannot omit mandatory caveat',()=>{expect(()=>pack(rows,'idris2',100)).toThrow(/budget too small/);expect(JSON.stringify(pack(rows,'idris2',5000),null,2).length+1).toBeLessThanOrEqual(5000);});
 test('JSON Lines input: one record per line, LF at the end, no blank line',()=>{expect(parseJsonl('')).toEqual([]);expect(parseJsonl('{"a":1}\n{"a":2}\n')).toEqual([{a:1},{a:2}]);expect(()=>parseJsonl('{"a":1}')).toThrow(/no LF/);expect(()=>parseJsonl('{"a":1}\n\n{"a":2}\n')).toThrow(/blank/);expect(()=>parseJsonl('[{"a":1},\n')).toThrow();});
 test('each row names its source commit and census time',()=>{for(const r of rows){expect(r.commit).toMatch(/^[0-9a-f]{40}$/);expect(r.censused_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);}const {commit,censused_at,...bare}=rows[0];expect(()=>validate([bare])).toThrow(/source commit/);expect(()=>validate([{...rows[0],commit:'HEAD'}])).toThrow(/source commit/);expect(()=>validate([{...rows[0],censused_at:'2026-11-10'}])).toThrow(/census time/);});
+test('the frame names public repositories only, and counts the private ones',()=>{const read=f=>readFileSync(new URL('../../docs/atlas/census/'+f,import.meta.url),'utf8');const repos=parseJsonl(read('repos.jsonl')),unreachable=parseJsonl(read('unreachable.jsonl')),count=JSON.parse(read('private-count.json'));expect(validateFrame(repos,unreachable,count)).toHaveLength(repos.length);expect(()=>validateFrame([...repos,{...repos[0],full_name:'o/hidden',visibility:'private'}],unreachable,count)).toThrow(/Nonpublic frame record/);expect(()=>validateFrame(repos,[...unreachable,{repo:'o/unlisted'}],count)).toThrow(/outside the public frame/);expect(()=>validateFrame(repos,unreachable,{...count,private_repositories:'40'})).toThrow(/private-count/);expect(()=>validateFrame(repos,unreachable,{...count,names:[]})).toThrow(/private-count/);});

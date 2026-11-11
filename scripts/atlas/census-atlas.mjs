@@ -4,8 +4,9 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const rowsFile=path.join(root,'docs/atlas/census/rows.jsonl');
-const reposFile=path.join(root,'docs/atlas/census/repos.jsonl');
+const censusDir=path.join(root,'docs/atlas/census');
+const rowsFile=path.join(censusDir,'rows.jsonl');
+const reposFile=path.join(censusDir,'repos.jsonl');
 const output=path.join(root,'docs/atlas/generated');
 const validClass=new Set(['theory','engineering']);
 const clean=s=>String(s).replaceAll('|',String.raw`\|`).replaceAll('\n',' ');
@@ -53,6 +54,16 @@ export function validateVisibility(rows,repos){
   for(const r of rows)if(visibility.get(r.repo)!=='public')throw new Error(`Nonpublic or unlisted census source: ${r.repo}`);
   return rows;
 }
+// The frame is public (ruling D-2 (a)): a private repository is a count in
+// private-count.json, never a name. A not-reached entry must be a frame record.
+export function validateFrame(repos,unreachable,privateCount){
+  for(const r of repos)if(r.visibility!=='public')throw new Error('Nonpublic frame record (count it in private-count.json instead)');
+  const framed=new Set(repos.map(r=>r.full_name));
+  for(const u of unreachable)if(!framed.has(u.repo))throw new Error('Not-reached entry outside the public frame');
+  const keys=Object.keys(privateCount??{}).sort().join(',');
+  if(keys!=='listed,listing_commit,private_repositories'||!Number.isSafeInteger(privateCount.private_repositories)||privateCount.private_repositories<0||!/^\d{4}-\d{2}-\d{2}$/.test(privateCount.listed)||!/^[0-9a-f]{7,40}$/.test(privateCount.listing_commit))throw new Error('Invalid private-count.json');
+  return repos;
+}
 export function find(rows,query){
   const terms=query.toLocaleLowerCase('en').trim().split(/\s+/).filter(Boolean);
   return [...rows].filter(r=>terms.every(t=>[r.repo,r.class,r.provers,r.status_doc].some(x=>String(x??'').toLocaleLowerCase('en').includes(t)))).sort((a,b)=>order(a.repo,b.repo));
@@ -83,7 +94,9 @@ export function render(rows){
 async function main(){
   const [cmd,...args]=process.argv.slice(2);
   const rows=validate(await readJsonl(rowsFile));
-  validateVisibility(rows,await readJsonl(reposFile));
+  const repos=await readJsonl(reposFile);
+  validateVisibility(rows,repos);
+  validateFrame(repos,await readJsonl(path.join(censusDir,'unreachable.jsonl')),JSON.parse(await readFile(path.join(censusDir,'private-count.json'),'utf8')));
   const views=render(rows);
   if(cmd==='build'){
     await mkdir(output,{recursive:true});

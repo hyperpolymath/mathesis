@@ -1040,7 +1040,10 @@
               "verification/proofs/coq/FeatureReachability.v"
               "verification/proofs/lean4/FeatureReachability.lean")
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed")
-      :diverged ("mathesis_chora.deed" "docs/status/ROADMAP.adoc")))
+      ; .github/labels.json and .github/label-classifier.json: their
+      ; _generated_from no longer names a private repository (WO 3.5).
+      :diverged ("mathesis_chora.deed" "docs/status/ROADMAP.adoc"
+                 ".github/labels.json" ".github/label-classifier.json")))
   ; provenance — what this repo was minted FROM. Written once, at mint,
   ; by build/just/repo-init.just. Tools that want "what is this repo" read
   ; the rest of the deed; tools that want "where did it come from" read this.

@@ -4,6 +4,8 @@
 # whole census, then re-render the catalogue.
 #
 # Usage: update-rows.sh OWNER/REPO...
+#        update-rows.sh --frame   (no clone: drop rows and not-reached
+#                                  entries outside the public frame)
 #
 # Each named repository is censused exactly as run-census.sh would census
 # it. Its row in rows.jsonl is replaced, added, or removed when it
@@ -16,7 +18,23 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 census=$here/../../docs/atlas/census
-[ $# -gt 0 ] || { echo "usage: update-rows.sh OWNER/REPO..." >&2; exit 2; }
+[ $# -gt 0 ] || { echo "usage: update-rows.sh OWNER/REPO... | --frame" >&2; exit 2; }
+# --frame applies the frame without a clone. A row or an unreachable entry
+# must belong to a public record of repos.jsonl (ruling D-2 (a)): drop the
+# others, then re-render the catalogue. Run it after each frame refresh.
+if [ "$1" = --frame ]; then
+  [ $# -eq 1 ] || { echo "usage: update-rows.sh --frame" >&2; exit 2; }
+  pub=$(mktemp); trap 'rm -f "$pub" "$census"/*.jsonl.new' EXIT
+  jq -c 'select(.visibility == "public") | .full_name' "$census/repos.jsonl" | jq -s . > "$pub"
+  for f in rows unreachable; do
+    jq -cS --slurpfile p "$pub" 'select(.repo as $r | $p[0] | index($r))' \
+      "$census/$f.jsonl" > "$census/$f.jsonl.new"
+    mv "$census/$f.jsonl.new" "$census/$f.jsonl"
+  done
+  bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/atlas/generated/catalogue.adoc"
+  echo "update-rows: applied the frame: $(wc -l < "$census/rows.jsonl") rows, $(wc -l < "$census/unreachable.jsonl") not reached"
+  exit 0
+fi
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
 cp "$census/repos.jsonl" "$work/repos.jsonl"

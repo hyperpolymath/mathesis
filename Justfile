@@ -766,4 +766,4 @@ registry:
 # Fail if the committed registry view is stale (needs MATHESIS_STANDARDS, as above)
 registry-check:
     bun scripts/registry/claims-registry.mjs check
-    bun test tests/registry/claims-registry.test.mjs
+    bun test tests/registry/

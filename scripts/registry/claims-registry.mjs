@@ -27,11 +27,14 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
+import {validateBridges, renderBridges} from './bridges.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
 const reposFile = path.join(root, 'docs/atlas/census/repos.jsonl');
 const viewFile = path.join(root, 'docs/atlas/generated/registry.adoc');
+const bridgesFile = path.join(root, 'docs/atlas/claims/bridges.jsonl');
+const bridgesView = path.join(root, 'docs/atlas/generated/bridges.adoc');
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
@@ -216,17 +219,21 @@ async function main() {
   }
   const i = args.indexOf('--receipts-dir');
   const receiptsDir = i >= 0 ? path.resolve(args[i + 1]) : null;
-  const rows = validate(await readJsonl(claimsFile), await readJsonl(reposFile));
+  const inventory = await readJsonl(reposFile);
+  const rows = validate(await readJsonl(claimsFile), inventory);
+  const bridges = validateBridges(await readJsonl(bridgesFile), inventory);
   const derived = await deriveAll(rows, receiptsDir, await loadReader());
-  const view = render(derived);
+  const views = [[viewFile, render(derived)], [bridgesView, renderBridges(bridges)]];
   if (cmd === 'build') {
     await mkdir(path.dirname(viewFile), {recursive: true});
-    await writeFile(viewFile, view);
-    console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims)`);
+    for (const [file, body] of views) await writeFile(file, body);
+    console.log(`WROTE ${path.relative(root, viewFile)} (${rows.length} claims) and ${path.relative(root, bridgesView)} (${bridges.length} bridges)`);
   } else {
-    const committed = await readFile(viewFile, 'utf8').catch(() => '');
-    if (committed !== view) throw new Error(`${path.relative(root, viewFile)} is stale; run: bun scripts/registry/claims-registry.mjs build`);
-    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); view matches (${rows.length} claims)`);
+    for (const [file, body] of views) {
+      const committed = await readFile(file, 'utf8').catch(() => '');
+      if (committed !== body) throw new Error(`${path.relative(root, file)} is stale; run: bun scripts/registry/claims-registry.mjs build`);
+    }
+    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges)`);
   }
 }
 

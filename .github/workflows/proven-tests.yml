@@ -80,7 +80,7 @@ jobs:
           MATHESIS_STANDARDS: ${{ runner.temp }}/receipt-reader
         run: |
           bun scripts/registry/claims-registry.mjs check
-          bun test tests/registry/claims-registry.test.mjs
+          bun test tests/registry/
       - name: Install verified Nickel 1.18.0 (K9 L2 semantics)
         run: |
           set -euo pipefail

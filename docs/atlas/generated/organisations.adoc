@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-// GENERATED from census/catalogue-rows.jsonl; do not hand-edit.
+// GENERATED from census/rows.jsonl; do not hand-edit.
 = Estate organisation view
 
 == catachresis-colloquium

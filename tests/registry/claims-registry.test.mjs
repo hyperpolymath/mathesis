@@ -12,8 +12,8 @@ import path from 'node:path';
 import {validate, loadReader, derive, deriveAll, render, READER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
-const rows = JSON.parse(readFileSync(new URL('../../docs/registry/claims.json', import.meta.url), 'utf8'));
-const inventory = parseJsonl(readFileSync(new URL('../../docs/catalogue/census/repos.jsonl', import.meta.url), 'utf8'));
+const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
+const inventory = parseJsonl(readFileSync(new URL('../../docs/atlas/census/repos.jsonl', import.meta.url), 'utf8'));
 
 const commit = 'a'.repeat(40);
 const theorem = {id: 'o/r#T-1', repo: 'o/r', claim: 'T-1', kind: 'theorem', statement: 'a statement of some length',

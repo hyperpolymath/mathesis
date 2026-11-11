@@ -223,7 +223,7 @@ Residual assumptions: none in any leg.
 below, and CI runs that reader on each change. The claims registry lists
 the claim as `hyperpolymath/mathesis#THY-1` and shows the grade that the
 same reader derives
-(link:../registry/registry.adoc[`docs/registry/registry.adoc`]).
+(link:../atlas/generated/registry.adoc[`docs/atlas/generated/registry.adoc`]).
 
 |`pwg`
 |`1` (since 2026-11-10): `PWG-2ii`, and every counted witness has a current

@@ -44,7 +44,7 @@ not a second ledger.
 
 ==== Record (the schema)
 
-`docs/registry/claims.json` is one I-JSON/JCS array. Each record has exactly
+`docs/atlas/claims/claims.jsonl` is JSON Lines: one I-JSON/JCS record on each line. Each record has exactly
 these fields; `scripts/registry/claims-registry.mjs` `validate` enforces them
 and the tests prove each failure.
 
@@ -54,7 +54,7 @@ and the tests prove each failure.
 
 |`id` |`<owner>/<repo>#<claim>`; unique.
 |`repo` |The home repository. It must be `public` in
-`docs/catalogue/census/repos.jsonl`: the registry never names a private
+`docs/atlas/census/repos.jsonl`: the registry never names a private
 repository, so it cannot leak one (brief §7).
 |`claim` |The claim's id in the home repository's proof-status file (`N-7`, `L-6`).
 |`kind` |`theorem` (graded, §8.1), `demonstration` (a TESTED example) or `assumption`
@@ -98,7 +98,7 @@ only the Agda side, and never derived `PWG-1`.
 
 ==== View, gate and tooling
 
-* `docs/registry/registry.adoc` is generated (`just registry`) and checked
+* `docs/atlas/generated/registry.adoc` is generated (`just registry`) and checked
   (`just registry-check`, and CI `proven-tests.yml`): a stale view, a digest
   mismatch, or a reader that is not the pinned file fails. A receipt that the
   reader refuses shows as `ungraded` with the reader's reason. The view opens

@@ -4,8 +4,8 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const rowsFile=path.join(root,'docs/catalogue/census/catalogue-rows.jsonl');
-const reposFile=path.join(root,'docs/catalogue/census/repos.jsonl');
+const rowsFile=path.join(root,'docs/atlas/census/rows.jsonl');
+const reposFile=path.join(root,'docs/atlas/census/repos.jsonl');
 const output=path.join(root,'docs/atlas/generated');
 const validClass=new Set(['theory','engineering']);
 const clean=s=>String(s).replaceAll('|',String.raw`\|`).replaceAll('\n',' ');
@@ -70,16 +70,15 @@ export function pack(rows,query,limit=5000){
 }
 export function render(rows){
   const ordered=[...rows].sort((a,b)=>order(a.repo,b.repo));
-  const header='// SPDX-License-Identifier: CC-BY-SA-4.0\n// GENERATED from census/catalogue-rows.jsonl; do not hand-edit.\n';
+  const header='// SPDX-License-Identifier: CC-BY-SA-4.0\n// GENERATED from census/rows.jsonl; do not hand-edit.\n';
   const line=r=>`* \u0060${clean(r.repo)}\u0060 — ${clean(r.class)}; ${r.own_files} own proof files, ${r.declarations} detected declarations; provers: ${clean(r.provers)}`;
   const alphabet=[...new Set(ordered.map(r=>r.repo.split('/')[1][0].toLocaleUpperCase('en')))].sort(order);
   const byName=[...ordered].sort((a,b)=>order(a.repo.split('/')[1],b.repo.split('/')[1])||order(a.repo,b.repo));
   const az=header+'= A–Z proof-source directory\n\n'+alphabet.map(letter=>`== ${letter}\n\n${byName.filter(r=>r.repo.split('/')[1][0].toLocaleUpperCase('en')===letter).map(line).join('\n')}\n`).join('\n');
-  const classes=header+'= Census classifications\n\n'+[...validClass].map(c=>`== ${c}\n\n${ordered.filter(r=>r.class===c).map(line).join('\n')}\n`).join('\n');
   const owners=[...new Set(ordered.map(r=>r.repo.split('/')[0]))].sort(order);
   const estates=header+'= Estate organisation view\n\n'+owners.map(owner=>`== ${owner}\n\n${ordered.filter(r=>r.repo.startsWith(owner+'/')).map(line).join('\n')}\n`).join('\n');
-  const index=jcs({schema:'mathesis.census-atlas/0.1',source:'docs/catalogue/census/catalogue-rows.jsonl',verification:'not_asserted',count:ordered.length,records:ordered})+'\n';
-  return {'az.adoc':az,'classes.adoc':classes,'organisations.adoc':estates,'index.json':index};
+  const index=jcs({schema:'mathesis.census-atlas/0.1',source:'docs/atlas/census/rows.jsonl',verification:'not_asserted',count:ordered.length,records:ordered})+'\n';
+  return {'az.adoc':az,'organisations.adoc':estates,'index.json':index};
 }
 async function main(){
   const [cmd,...args]=process.argv.slice(2);

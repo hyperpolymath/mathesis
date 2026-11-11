@@ -34,4 +34,4 @@ tests/workflows/julia_library_test.sh      # PACKAGE_UUID brace-token fixture
 tests/workflows/resolve_template_pin_test.sh  # template-slug fixtures
 
 # Estate census is evidence, not generated template identity.
-docs/catalogue/census/repos.jsonl
+docs/atlas/census/repos.jsonl

@@ -4,8 +4,8 @@
 #
 # Usage: run-census.sh [REPO_LIST]
 #   REPO_LIST: one OWNER/REPO per line. Default: every non-fork repo in
-#   docs/catalogue/census/repos.jsonl, plus the forks named in
-#   docs/catalogue/census/forks-with-own-proofs.txt. Refresh repos.jsonl
+#   docs/atlas/census/repos.jsonl, plus the forks named in
+#   docs/atlas/census/forks-with-own-proofs.txt. Refresh repos.jsonl
 #   first when repos are added; the GitHub listing is not scriptable from
 #   agent sessions, so it is an input. To refresh only some rows, use
 #   update-rows.sh.
@@ -15,7 +15,7 @@
 # Only the per-repo rows and the rendered catalogue are written into the repo.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
-census=$here/../../docs/catalogue/census
+census=$here/../../docs/atlas/census
 work=${MATHESIS_WORK:-$(mktemp -d)}
 mkdir -p "$work"
 cp "$census/repos.jsonl" "$work/repos.jsonl"
@@ -32,6 +32,6 @@ while IFS= read -r repo; do
 done < "$list"
 MATHESIS_DATA=$work bash "$here/summarise.sh"
 jq -cS -s 'sort_by(.repo)[]' "$work/unreachable.jsonl" > "$census/unreachable.jsonl"
-bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$census/catalogue-rows.jsonl"
-bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/catalogue/catalogue.adoc"
+bash "$here/build-rows.sh" "$work" "$census/template-blobs.tsv" > "$census/rows.jsonl"
+bash "$here/render-catalogue.sh" "$census" > "$here/../../docs/atlas/generated/catalogue.adoc"
 echo "raw census kept in $work"

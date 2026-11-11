@@ -18,7 +18,7 @@ row='"axioms":0,"censused_at":"2026-11-10T00:00:00Z","class":"theory","commit":"
 printf '{%s,"repo":"o/kept"}\n{%s,"repo":"o/gone"}\n' "$row" "$row" > "$c/rows.jsonl"
 printf '%s\n' '{"error":"x","exit":128,"repo":"o/hidden"}' '{"error":"x","exit":128,"repo":"o/lost"}' > "$c/unreachable.jsonl"
 fail=0
-check() { if eval "$2"; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
+check() { local name=$1 test=$2; if eval "$test"; then echo "PASS: $name"; else echo "FAIL: $name"; fail=1; fi; }
 PATH="/nonexistent-git:$PATH" bash "$t/scripts/census/update-rows.sh" --frame > /dev/null
 check "rows outside the frame are dropped" '[ "$(jq -r .repo "$c/rows.jsonl")" = o/kept ]'
 check "not-reached entries outside the frame are dropped" '[ "$(jq -r .repo "$c/unreachable.jsonl")" = o/lost ]'

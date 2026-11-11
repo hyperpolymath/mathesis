@@ -60,7 +60,7 @@ export function validateFrame(repos,unreachable,privateCount){
   for(const r of repos)if(r.visibility!=='public')throw new Error('Nonpublic frame record (count it in private-count.json instead)');
   const framed=new Set(repos.map(r=>r.full_name));
   for(const u of unreachable)if(!framed.has(u.repo))throw new Error('Not-reached entry outside the public frame');
-  const keys=Object.keys(privateCount??{}).sort().join(',');
+  const keys=Object.keys(privateCount??{}).sort(compareUtf16).join(',');
   if(keys!=='listed,listing_commit,private_repositories'||!Number.isSafeInteger(privateCount.private_repositories)||privateCount.private_repositories<0||!/^\d{4}-\d{2}-\d{2}$/.test(privateCount.listed)||!/^[0-9a-f]{7,40}$/.test(privateCount.listing_commit))throw new Error('Invalid private-count.json');
   return repos;
 }

@@ -13,7 +13,7 @@ framed=$(jq -s length "$C/repos.jsonl")
 private=$(jq -er '.private_repositories | numbers' "$C/private-count.json")
 listed=$(jq -er '.listed | strings' "$C/private-count.json")
 missed=$(jq -r '"* " + .repo' "$C/unreachable.jsonl")
-[ -n "$missed" ] || missed="None."
+[[ -n "$missed" ]] || missed="None."
 
 table() { # $1 = class
   echo '[cols="3,1,1,4,1,1,1,1,1,3",options="header"]'

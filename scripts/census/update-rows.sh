@@ -18,12 +18,12 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 census=$here/../../docs/atlas/census
-[ $# -gt 0 ] || { echo "usage: update-rows.sh OWNER/REPO... | --frame" >&2; exit 2; }
+[[ $# -gt 0 ]] || { echo "usage: update-rows.sh OWNER/REPO... | --frame" >&2; exit 2; }
 # --frame applies the frame without a clone. A row or an unreachable entry
 # must belong to a public record of repos.jsonl (ruling D-2 (a)): drop the
 # others, then re-render the catalogue. Run it after each frame refresh.
-if [ "$1" = --frame ]; then
-  [ $# -eq 1 ] || { echo "usage: update-rows.sh --frame" >&2; exit 2; }
+if [[ "$1" = --frame ]]; then
+  [[ $# -eq 1 ]] || { echo "usage: update-rows.sh --frame" >&2; exit 2; }
   pub=$(mktemp); trap 'rm -f "$pub" "$census"/*.jsonl.new' EXIT
   jq -c 'select(.visibility == "public") | .full_name' "$census/repos.jsonl" | jq -s . > "$pub"
   for f in rows unreachable; do

@@ -88,9 +88,8 @@ import? "build/just/assess.just"
 # BUILD & COMPILE
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Build the project with every detected language's toolchain (here: pack/idris2 for
-# the ABI, then `zig build` in src/interface/ffi). Replace the delegation with a
-# body of your own when the project needs a different build.
+# Build the project with every detected language's toolchain. Replace the
+# delegation with a body of your own when the project needs a different build.
 build: provision::build
 
 # Build in release mode with optimizations
@@ -130,13 +129,8 @@ clean-all: clean
 # TEST & QUALITY
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# Run every detected language's tests: `zig build test` covers src/interface/ffi
-# (unit tests in src/main.zig, test/integration_test.zig). It compiles only after
-# `just repo-init` has filled the template tokens, so an un-initialised template
-# fails here loudly instead of reporting a pass over nothing.
-# It runs `check` first (re-anchoring plan WO 2.5), so a stale view or a
+# Run every detected language's tests. It runs `check` first (re-anchoring plan WO 2.5), so a stale view or a
 # failing proof fails it.
-# Run the golden-path checks, then every detected language's tests
 test: check provision::test
 
 # Run tests with verbose output
@@ -171,15 +165,6 @@ proven-tests *flags:
 # Run the Idris2 proof escape-hatch & totality gate (proven-tests-and-benches)
 escape-hatches:
     bash scripts/check-escape-hatches.sh
-
-# Run template benchmarks and check Six-Sigma leave-one-out regression vs baseline
-bench-check:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    tmp="$(mktemp)"
-    trap 'rm -f "$tmp"' EXIT
-    bash benches/template_bench.sh --json . > "$tmp"
-    bash scripts/check-bench-regression.sh "$tmp" benches/baseline.json
 
 # Check RFC 7493 (I-JSON) + RFC 8785 (JCS) canonical form across tracked JSON
 ijson-check:

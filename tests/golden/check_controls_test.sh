@@ -19,13 +19,13 @@ copy() { # a fresh copy of the tracked files
 }
 
 expect_fail() { # name dir recipe want
-  local out
-  if out=$(cd "$2" && just "$3" 2>&1); then
-    echo "FAIL: $1: just $3 passed"; fail=1
-  elif [[ "$out" != *"$4"* ]]; then
-    printf 'FAIL: %s: just %s failed for another reason:\n%s\n' "$1" "$3" "$(tail -5 <<<"$out")"; fail=1
+  local name=$1 dir=$2 recipe=$3 want=$4 out
+  if out=$(cd "$dir" && just "$recipe" 2>&1); then
+    echo "FAIL: $name: just $recipe passed"; fail=1
+  elif [[ "$out" != *"$want"* ]]; then
+    printf 'FAIL: %s: just %s failed for another reason:\n%s\n' "$name" "$recipe" "$(tail -5 <<<"$out")"; fail=1
   else
-    echo "PASS: $1: just $3 fails"
+    echo "PASS: $name: just $recipe fails"
   fi
 }
 

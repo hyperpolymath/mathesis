@@ -13,6 +13,14 @@ An agent drafted this record and the statement comparison it cites. Neither
 has been reviewed by the owner yet, so neither counts as independent
 corroboration.
 
+NOTE: 2026-11-10 (re-anchoring plan WO 2.4): the grades below are an agent's
+reading of the receipts on 2026-11-09. No machine derived them. The canon
+reader of PROOF-POLICY §8.5.1 is now the only source of a grade in Mathesis,
+and the claims registry
+(link:../../atlas/generated/registry.adoc[`docs/atlas/generated/registry.adoc`])
+pins no echidna claim yet. Read these grades as history, not as a current
+record.
+
 The plan these rows come from is
 https://github.com/metadatastician/standards/blob/main/docs/ULTRAPLAN-ECHIDNA-PROOF-ROUTE-2026-11-04.adoc[the echidna proof-route ultraplan]
 (ladder rows in brackets; v0.2.4 is metadatastician/standards#1434).

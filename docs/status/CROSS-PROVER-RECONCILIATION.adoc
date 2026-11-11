@@ -1,223 +1,53 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
-= Cross-prover proof reconciliation — working policy
-:revdate: 2026-11-09
-:toc:
-:sectnums:
+= Cross-prover reconciliation (pointer)
+:revdate: 2026-11-10
 
-== Scope and authority
+This file was the hand-written reconciliation register of Mathesis. On
+2026-11-10 (re-anchoring plan WO 2.4) its parts moved to the places that own
+them. The file stays at this path because other repositories cite it. The
+last version of the register is in the history of this file.
 
-This is a *research and verification policy*, not a claim that proofs across
-languages have already been reconciled. Mathesis indexes proof evidence and
-relationships; it does not become the authoritative proof kernel for its
-independent source repositories. ECHIDNA is the intended longer-term
-reconciliation automation, not an already complete cross-prover translator.
+== Where each part is now
 
-Maintain a source theorem's statement, premises, universe/type discipline,
-prover version, module, revision and proof assumptions before porting it.
-Preserve existing Idris2, Coq and Lean gates during migration. If a proof
-cannot be translated faithfully, create an independent Agda proof of an
-explicitly compared statement. An Agda proof of a *weaker* proposition never
-silently replaces the original theorem.
+The policy::
+The canonical Agda invocation is PROOF-POLICY §2.1. The correspondence
+evidence for Lean and Rocq, and the status vocabulary (`NOT-INVENTORIED` to
+`QUARANTINED`), are PROOF-POLICY §2.2. Proof Witness Grades are PROOF-POLICY
+§8. See
+https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc[metadatastician/standards `3-practice/PROOF-POLICY.adoc`].
+A correspondence state is not a grade, and a grade is not a correspondence
+state.
 
-== Canonical Agda gate
+Grades::
+Mathesis types no grade by hand. The claims registry derives each grade from
+the home repository's receipt with the canon reader of PROOF-POLICY §8.5.1:
+link:../atlas/generated/registry.adoc[`docs/atlas/generated/registry.adoc`],
+from the pins in `docs/atlas/claims/claims.jsonl`. The Mathesis row of the old
+register is now the claim `hyperpolymath/mathesis#THY-1` there.
 
-Use the documented Agda CLI spelling, with capital K:
+Bridges::
+A relation between artefacts in two repositories is a bridge record in
+`docs/atlas/claims/bridges.jsonl`, with the generated view
+link:../atlas/generated/bridges.adoc[`docs/atlas/generated/bridges.adoc`].
+The two cross-repository rows of the old register are candidates there: the
+squeakwell R3 and R9 merge laws (echo-types and verisimdb), and the MaxPlus
+rows of choreographic-types (choreographic-types and tropical-types).
 
-[source,shell]
-----
-agda --safe --without-K --cubical-compatible <Module.agda>
-----
-
-Agda's manual specifies `--without-K`; `--cubical-compatible` implies
-it but does **not** activate full `--cubical` support. This policy
-requires all three flags explicitly at checked entrypoints and CI.
-File-level OPTIONS pragmas may reinforce but not replace the command.
-Pin/record a compatible Agda and standard-library pair for each corpus.
-Imported libraries must satisfy the applicable safe / without-K /
-cubical-compatible compatibility requirements. Do not bypass a failing
-import with `--allow-unsolved-metas`, `--type-in-type`, `postulate`
-or unsafe compiler switches.
-
-A module dependent on genuinely full Cubical Agda must be recorded
-as an explicit proof-profile exception for review; do not claim it
-passed the default profile. A failed migration remains *unreconciled*,
-rather than being hidden, skipped or relabelled `PROVEN`.
-
-In this repo `scripts/check-proofs.sh agda` is the manifest-coverage
-hard gate; `just proof-check-agda` invokes it. Its command is the
-canonical source for local and CI checks.
-
-== Independent Coq and Lean inspection
-
-Coq and Lean independently check statements or explicitly specified
-witness translations where there is a trustworthy conversion. Neither
-kernel automatically verifies arbitrary Agda terms, and equal theorem
-names do not establish semantic agreement.
-
-For every claimed cross-prover correspondence, record:
-
-* a stable theorem identifier and owning repository;
-* the exact *proposition and premises* in each prover (including any
-  translation of equality, quotients, guardedness, universe levels,
-  modalities, partiality and effects);
-* the revision, prover version, library dependencies, build command
-  and observed CI/runner result for each;
-* whether the relation is `same-statement`, `refinement`,
-  `conditional-transport`, `countermodel` or `unassessed`;
-* the *bridge justification* (theorem, checked translation or
-  explicit semantic comparison) plus any unproved side conditions;
-* whether the result is model-level only, runtime-refined or
-  externally warranted. A type-checked proof is not independent
-  evidence about physical reality.
-
-The strongest possible status requires both a justified correspondence
-and independently verified targets; two successful local builds alone
-do not satisfy it.
-
-== Status vocabulary (never collapse)
-
-[cols="2,4",options="header"]
-|===
-|Status |Meaning
-|NOT-INVENTORIED |The theorem and exact statement have not been recovered
-|INVENTORIED |Original claim, source and dependencies located, without fresh compilation evidence
-|AGDA-PENDING |Translation/reproof proposed; full Agda command has not succeeded
-|AGDA-VERIFIED |Exact Agda artefact checked with the policy flags at a recorded revision
-|COQ-CHECKED |Corresponding Coq module checked, but cross-prover equivalence NOT implied
-|LEAN-CHECKED |Corresponding Lean module checked, but cross-prover equivalence NOT implied
-|BRIDGE-PENDING |Both sides may compile, but proposition correspondence or side conditions are unproved
-|RECONCILED |All stated targets checked and the declared correspondence obligation discharged
-|COUNTEREXAMPLE |A soundly evidenced mismatch, inconsistency or refuting instance
-|QUARANTINED |Known failure kept visible with issue, reason and a recheck path
-|===
-
-A proof can have multiple statuses: a successful independent proof is
-not inherently a verified Agda–Lean–Coq bridge. Use separate fields
-when publishing a machine-readable register.
-
-These statuses are *correspondence states*. A theorem's *Proof Witness
-Grade* (`PWG-3`, `PWG-2i`, `PWG-2ii`, `PWG-1`) is a separate field, derived
-from these states and the kernel receipts. Its rules are in
-https://github.com/metadatastician/standards/blob/main/3-practice/PROOF-POLICY.adoc#proof-witness-grades[PROOF-POLICY §8].
-A recheck leg raises the grade only once it is `RECONCILED`. A
-`COQ-CHECKED`, `LEAN-CHECKED` or `BRIDGE-PENDING` leg does not raise it.
-Never write a grade into a status field, and never write a status into the
-grade field.
-
-== Source-anchored first reconciliation targets
-
-[cols="2,3,3",options="header"]
-|===
-|Owner |Already checked in reconnaissance |Next task, not an established result
-|VCL-UT |The current proof corpus is Idris2; VCL-UT has distinct safety, transition and epistemic obligations |Inventory exact Idris propositions and port/reprove the smallest soundness lemma before any claim of 3-prover agreement
-|Kategoria |The alpha route includes Idris2 parametric polymorphism demos; multiple type mechanisms are independently scoped |Choose the concrete theorem and theory; do not translate a feature checklist into a purported theorem
-|nextgen-typing / Echo |Agda `Verification.agda` imports Echo; historical modules use `--safe --without-K` |Recheck compatible Echo and stdlib under all three policy flags; record mismatches
-|trope-checker / invariant-path |Graded-loss algebra and evidence/sortal distinctions carry independent open obligations |Compare exact theorem claims, not an assumed type–trope identity or triangulation
-|Mathesis |Manifest-driven per-prover gate and proof inventory; historical Agda manifest only attested `--safe` |Run full-mode check and attach genuine run receipt; only then advance status
-|ECHIDNA |Dogfood Agda corpus and meta-checker CI have separate commands; MetaChecker contains at least one stale 'funext' exception comment |Enforce uniform invocation and audit all imports/assumptions before marking Agda verified
-|januskey |Four theory roots (`Reversibility`, `TransactionAtomicity`, `SingleActiveLog`, `Epistemic`) checked in CI under the canonical flags plus `--no-libraries --ignore-interfaces --double-check`, Agda 2.6.4.3, sibling `resource-algebra` pinned by commit; the gate scans the import cone for postulates and refuses seven expected-rejection fixtures. T-1 is re-proved in core Rocq and Lean with its statement comparison recorded |Recheck the four remaining `PWG-3` rows (G-1, T-2, T-3, E-1m) in Rocq and Lean. The Rust TransactionManager refines the abstract log only by transcription (januskey T-10, OPEN)
-|echo-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (stdlib v2.3 `8326c74`, absolute-zero `f486c29`): all five non-cubical entrypoints pass; the `All` cone is 125 local modules with no escape. Recipes pass no `--cubical-compatible`; file pragmas carry it in 131 of 137 files. `EchoImageFactorizationPropCubical` is checked in full Cubical through its pragma. No Rocq or Lean leg |Put the canonical flags in recipes and CI; give the cubical island a reviewed profile; record receipts in the home `PROOF-STATUS` for the eligible theorems (`Echo-comp-iso`, `cancel-iso`, `Echo-comp-pent-Σ-assoc`, `echo↔fib`, `A↔ΣEcho`, `echo-pullback-univ`, `GCLaws`, `no-section-of-collapsing-map`)
-|secret-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (builtins only): `SecretTypes.All` passes; 2/2 rejection fixtures refused. Its own `-W error` fails under the canonical flags unless `-W noUnsupportedIndexedMatch` is added. Rocq and Lean files present are RSR template files |Adopt the canonical flags; re-run at the pinned Agda 2.6.4.3; record receipts for N-1, N-2, N-3, N-7, N-8
-|epistemic-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: all 22 `src` modules and `CanonicalEcho` pass; 13/13 rejection fixtures refused |Re-run at the pinned Agda 2.6.4.3; record receipts; refresh the stale module counts in `PROOF-STATUS`
-|residual-evidence-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: `All`, both comparisons and `Correspondence` pass; 9/9 rejection fixtures refused |Re-run at the pinned Agda 2.6.4.3; record receipts for the Core, Context and Composition laws
-|choreographic-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`: both roots pass with all `src` modules in cone; 5/5 rejection fixtures refused. The MaxPlus rows are said to equal tropical-types' Lean instance; that is not proved |Re-run at the pinned Agda 2.6.4.3; record receipts; state the MaxPlus correspondence as `BRIDGE-PENDING`
-|occupancy-types |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible` (resource-algebra `0b338c9`): passes; 2/2 rejection fixtures refused. The Agda check is not called by any workflow, recipe or script. Under its pinned Lean 4.15.0, `StackcertCore.lean` does not compile (type errors in the proof of `cert_sound`) |Wire the Agda check first; move R-6 to TESTED; repair `stackcert` under Lean 4.15.0 or retract the README claim that it compiles
-|absolute-zero |Local run 2026-11-09, Agda 2.6.3, cold, under `--safe --without-K --cubical-compatible`, stdlib 1.7.3 (its CI) and 2.3 (what echo-types consumes): the four modules pass. Most CNO lemmas are vacuous; `cno-composition` and OND1–OND5 carry content. The archived Lean uses Mathlib |Grade only `cno-composition` and OND1–OND5; record the stdlib pin; mark the archived Coq and Lean sections as archived
-|affinescript |No Agda source for any theory theorem. Coq 8.18: all 20 `formal/` files build and all 137 assertions are closed under the global context; several hold by definition. Idris2 0.7.0: the Solo core proves progress and preservation. The 23 staged files under `proposals/` pass the canonical flags but are unwired |Owner chooses the Agda home (AffineScript completion plan, question 17); port `QttSemiring` first; compare the Rocq statements and record the bridge. The repo's proof ledger is in `docs/EXPLAINME.adoc`
-|===
-
-Existing proof statuses in these repos are historical evidence, not
-automatic proof of compliance with the new mode. Do not make all
-repos depend on Mathesis or ECHIDNA to build their local proofs.
-
-== Graduation / rollout
-
-. Update direct Agda entrypoints and CI commands *in each owning repo*.
-. Recheck first-party modules and all imported dependencies under the
-  new invocation. Record errors without weakening the gate.
-. Inventory a theorem and obtain a full-mode Agda receipt.
-. Reprove or inspect the corresponding proposition in Lean and Coq.
-. Prove/validate the bridge (or label it `BRIDGE-PENDING`).
-. Add the receipt and unresolved proof assumptions to the registry.
-. Only later automate the reconciliation with ECHIDNA.
-
-The central register below is currently a *todo list*: **no new
-full-mode runs or cross-prover reconciliations were observed during
-this policy edit**. CI must supply the evidence before any result
-is relabelled.
-
-On 2026-11-09 the rows for echo-types, secret-types, epistemic-types,
-residual-evidence-types, choreographic-types, occupancy-types, absolute-zero and
-affinescript were added from local runs (hyperpolymath/mathesis#24, landed
-2026-11-10; its januskey rows are not carried, because the januskey rows above
-come from CI). Those runs are
-reconnaissance: they used Agda 2.6.3, while four of these repositories pin
-2.6.4.3, and they are not receipts recorded in the home repositories. So no
-of those rows moved past `AGDA-PENDING`, and no grade is derived.
-
-== Register format (initially not reconciled)
-
-First populated rows (2026-11-09): the squeakwell recovery ladder, from
-https://github.com/hyperpolymath/squeakwell[squeakwell] `PROOF-STATUS.adoc`
-(which holds the per-rung receipts: Coq 8.18.0, Agda 2.7.0.1 with pinned
-libraries, Lean 4.35.0). Statuses below are *correspondence states*; the Agda
-and Coq legs were checked in one local session and the owning repositories'
-CI must confirm them on merge (verisimdb#350, tropical-types#67, the echo-types
-PR). None of these rows is RECONCILED: the Agda↔Rocq relation for the merge
-laws is a refinement (pointwise vs. function equality), not same-statement.
-The catalogue in `docs/catalogue/` is census-generated from `main` and will
-pick up the new files when the census is rerun after those PRs merge; it is
-not hand-edited here.
-
-
-[cols="2,2,2,2,3",options="header"]
-|===
-|Owner |Candidate |Agda |Coq / Lean |Correspondence
-|Mathesis |Properties example |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|VCL-UT |L0–L10 / transition corpus |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|Kategoria |Selected typed mechanism theorem (TBD) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|ECHIDNA |Meta-checker / dogfood Agda |AGDA-PENDING |Existing separate prover corpora; theorem matches not audited |BRIDGE-PENDING
-|nextgen-typing |EchoTyping / Verification |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|squeakwell (R3, R9 merge laws) |Partial sections: guarded fill inflationary / not monotone; resolve-parametric merge comm/assoc/idem |AGDA-VERIFIED (echo-types `EchoPartialSection.agda`, Agda 2.7.0.1, pinned stdlib/absolute-zero, 2026-11-09 local run) |COQ-CHECKED (verisimdb `formal/Recovery.v`, Coq 8.18.0; `functional_extensionality_dep` whitelisted) |BRIDGE-PENDING — refinement: Agda states the laws pointwise, Rocq as function equalities under funext; no checked translation yet
-|squeakwell (R8 narrowing) |Fibre of a pairing = intersection of fibres; `narrow-shrinks` on `FiberSize-fin` |AGDA-VERIFIED (echo-types `EchoFibreIntersection.agda`, same run) |NOT-INVENTORIED (no Rocq/Lean statement) |n/a — single-prover theorem
-|squeakwell (R10 progress / termination) |Lexicographic progress on the (missing-count, conflict-count) pair; nine-round fixpoint; `winner_some`, `conflict_refl` explicit |AGDA-PENDING (not stated; needs the finite octad) |COQ-CHECKED (`Recovery.v`: `step_progress`, `iter_9_fixpoint`) |BRIDGE-PENDING
-|squeakwell (R5–R7 tropical) |`weightedResidueMeasure`; hub ceiling under `OneTop` (refuted at MaxPlus); `reachGrade` monotone in matrix and observed set |AGDA-PENDING (not stated) |LEAN-CHECKED (tropical-types `Resource/HubCeiling.lean`, Lean 4.35.0; axioms propext/Quot.sound only) |BRIDGE-PENDING
-|januskey |G-1 Reversibility (Loss grade algebra) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
-|januskey |T-1 `rollback-restores` |AGDA-VERIFIED |COQ-CHECKED, LEAN-CHECKED (both re-proved; Rocq 8.18, Lean 4.35, no Mathlib) |RECONCILED
-|januskey |T-2 `lifecycle-preserves-good` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
-|januskey |T-3 `at-most-one-active` |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
-|januskey |E-1m epistemic model (`Epistemic.agda`) |AGDA-VERIFIED |NOT-INVENTORIED |BRIDGE-PENDING
-|echo-types |Composition and fibration headlines (`All` cone) |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|secret-types |TINI and countermodels (N-1, N-2, N-3, N-7, N-8) |AGDA-PENDING |NOT-INVENTORIED (template files only) |BRIDGE-PENDING
-|epistemic-types |Ordered-group and Kripke rows |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|residual-evidence-types |Core, Context and Composition laws |AGDA-PENDING |NOT-INVENTORIED |BRIDGE-PENDING
-|choreographic-types |K, W, T, Y, A, B and E rows |AGDA-PENDING |MaxPlus said to match a tropical-types Lean instance; not audited |BRIDGE-PENDING
-|occupancy-types |R-1, R-3, R-4 |AGDA-PENDING (unwired) |Lean `stackcert` fails to compile at its 4.15.0 pin |BRIDGE-PENDING
-|absolute-zero |`cno-composition`, OND1–OND5 |AGDA-PENDING |Archived; the Lean uses Mathlib |BRIDGE-PENDING
-|affinescript |QTT semiring laws, STLC and records progress and preservation, Solo core |INVENTORIED (no Agda source) |COQ-CHECKED (Coq 8.18, 2026-11-09); Lean none; Solo core in Idris2 |BRIDGE-PENDING
-|trope-checker |Theorem B, Targets 1–4 |AGDA-VERIFIED: `proofs.yml` run 42623339243 at `c0eb4f1`, log `PASS: All.agda + Smoke.agda typecheck (--safe --without-K --cubical-compatible)`, Agda 2.7.0.1 + stdlib v2.0 pinned by SHA-256 |Rocq: none exists (ADR 0005 D5 removed the template). Lean: states no part of Theorem B |BRIDGE-PENDING (no leg to bridge to)
-|trope-checker |O1-carrier atom factorisation, tropical factorisations, grade-algebra boundary |No Agda source states them |LEAN-CHECKED (kernel-accepted; `[propext]` for `GradeR.atom_factorization`). Rocq: none. The whole Lean package imports Mathlib, which PROOF-POLICY §2 forbids for a recheck leg |BRIDGE-PENDING
-|proof-burrower |`Burrow/Trust.agda`, `Burrow/Ledger.agda` (DOM-1, DOM-2) |AGDA-PENDING (a 2026-11-09 re-check passed under the policy flags; no receipt is committed in that repository and no CI job runs it) |NOT-INVENTORIED |BRIDGE-PENDING
-|===
-
-The januskey rows are evidence-backed, not a todo. januskey owns these theorems
-and records them in `PROOF-NEEDS.adoc` §Proof Witness Grades and
-`docs/theory/PROOF-GRADES.adoc` (leg records per PROOF-POLICY §8.5). Derived
-from those records and their receipts, its census is `PWG-2ii` 1 (T-1) and
-`PWG-3` 4 (G-1, T-2, T-3, E-1m), of 5; none rests on an axiom. The `PWG-3`
-receipt is the `agda-proofs.yml` run on januskey `main`: the first to carry the
-import cone and the postulate scan is
-https://github.com/hyperpolymath/januskey/actions/runs/42633520061[run 42633520061]
-at `05ade7862f7f95d618c53bef73a82e71c1700925` (Agda 2.6.4.3, `--safe
---without-K --cubical-compatible`, `resource-algebra` pinned at
-`cf9235c532712a783a404c359a1055f40134794a`). T-1's Rocq and Lean legs were
-re-proved by hand, because Agda2Dedukti cannot read Agda 2.6.4.3 modules.
-januskey records their statement comparison, and checks them in the same
-workflow's "Rocq and Lean recheck legs" job. This register catalogues
-januskey's grades and assigns none.
-
-References:
-https://agda.readthedocs.io/en/v2.7.0.1/language/cubical-compatible.html[Agda cubical-compatible];
-https://github.com/hyperpolymath/vcl-ut[owned VCL-UT gate];
-https://github.com/hyperpolymath/kategoria[Kategoria];
-https://github.com/hyperpolymath/echidna[ECHIDNA].
+The other rows::
+The other rows were to-do items inside one repository. Each home repository
+owns its claims and records their status in its own status document. The
+catalogue names that document for each repository
+(link:../atlas/generated/catalogue.adoc[`docs/atlas/generated/catalogue.adoc`],
+column "Proof-status doc"). On 2026-11-10 the canon reader accepted no
+receipt from these repositories, so the registry pins none of their claims.
+The homes are:
++
+`hyperpolymath/absolute-zero`, `hyperpolymath/affinescript`,
+`hyperpolymath/choreographic-types`, `hyperpolymath/echidna`,
+`hyperpolymath/echo-types`, `hyperpolymath/epistemic-types`,
+`hyperpolymath/invariant-path`, `hyperpolymath/januskey`,
+`hyperpolymath/kategoria`, `hyperpolymath/nextgen-typing`,
+`hyperpolymath/occupancy-types`, `hyperpolymath/proof-burrower`,
+`hyperpolymath/residual-evidence-types`, `hyperpolymath/secret-types`,
+`hyperpolymath/squeakwell` (rungs R5 to R8 and R10),
+`hyperpolymath/trope-checker` and `hyperpolymath/vcl-ut`.

@@ -9,7 +9,7 @@ or reclassifies the source census. Each row names the commit that the census rea
 source. A–Z means repository-name order, not a claim
 that these are all the mathematical concepts relevant to the estate.
 
-The views are the catalogue (split by census class), A–Z repositories, owner/organisation grouping and the claims registry. The separate class view was removed on 2026-11-10 (WO 2.3): it repeated the catalogue with fewer columns. `index.json` is machine-readable. The CLI
+The views are the catalogue (split by census class), A–Z repositories, owner/organisation grouping, the claims registry and the bridge candidates (`generated/bridges.adoc`, from `claims/bridges.jsonl`). The separate class view was removed on 2026-11-10 (WO 2.3): it repeated the catalogue with fewer columns. `index.json` is machine-readable. The CLI
 supports source discovery and a bounded context pack suitable for agents.
 
 Run with Bun: `bun scripts/atlas/census-atlas.mjs build`, `check`,

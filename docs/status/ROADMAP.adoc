@@ -145,6 +145,20 @@ One pull request that changes census rows is open at a time (atlas README,
 ** The merge that joined WO 3.2 and WO 3.5 dropped two entries of
    `(variant (paths :diverged))`. WO 3.4 restores them.
 
+=== Re-anchoring: stage 4 (2026-11-11)
+
+* WO 4.1, the theory shelf: `docs/theory/README.adoc` states the admission
+  rule. `docs/theory/admissions.jsonl` holds one authored record for each
+  home theorem; `claims-registry.mjs` checks it against the claim pins and
+  generates `docs/theory/generated/index.adoc`. All template example proofs
+  and the six template stubs under `docs/theory/` are removed (owner rulings
+  2026-11-11).
+* Next, by owner ruling: an append-only ledger of the theory work, written
+  only by a `just theory-ledger` recipe and checked in CI, in its own pull
+  request.
+* Finding: the `intend` contract still marks stage 3 `in_progress` and
+  stage 4 `declared`; a contract edit needs owner review.
+
 [[stages]]
 == Stages
 
@@ -173,14 +187,14 @@ gate gap, Agda, Rocq and Lean in CI, the receipt of Mathesis
 |3
 |Tell the truth: deed, capabilities, contracts, entry documents, no private
 names, affirmation
-|In progress: WO 3.1, 3.2, 3.3 and 3.5 merged; WO 3.4 in review; WO 3.6
-next
+|Done: WO 3.1 to 3.6 merged (pull requests 73 to 78); the affirmation
+anchors `c81cb84`
 
 |4
 |The three shelves: the theory admission rule and the token-lattice
 theorems, the applied shelf tied to the evidence spine, the published atlas
 (needs a ruling)
-|Declared
+|In progress: WO 4.1 in review
 
 |5
 |Scale: receipts in the home repositories, the bridge lock pilot, a

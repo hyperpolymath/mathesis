@@ -105,7 +105,8 @@ not exist yet, so no bridge is checked against both homes.
 ____
 THY-1, reachability is monotone under additive features, is
 proved in Agda and re-proved in Rocq and Lean. CI checks all three in a
-pinned Guix shell.
+pinned Guix shell. A theorem enters the theory shelf only under a stated
+admission rule, and a generated index lists each one with its dependant.
 ____
 
 How this is implemented::
@@ -117,7 +118,10 @@ The sources are `link:verification/proofs/agda/FeatureReachability.agda[]`,
 `.github/workflows/agda-proof-policy.yml` runs it in the Guix shell pinned by
 `build/channels.scm` and `build/manifest.scm`, with planted controls
 (`tests/proofs/gate_controls_test.sh`). CI run 43057783538 on `main` at
-`b2cf524` passed. See the <<proof-ledger>>.
+`b2cf524` passed. See the <<proof-ledger>>. The admission rule is in
+`link:docs/theory/README.adoc[]`; `link:scripts/registry/theory.mjs[]` checks
+each record in `docs/theory/admissions.jsonl` against the claim pins and
+renders `docs/theory/generated/index.adoc` with the grade the registry derives.
 
 Caveat::
 The proof is about a graph model. That the model matches Cargo's feature
@@ -195,15 +199,6 @@ Practices project identifier is recorded for Mathesis.
 
 [CAUTION]
 ====
-Template example proofs: `verification/proofs/idris2/`,
-`verification/proofs/tlaplus/`, `verification/proofs/agda/Properties.agda`,
-`verification/proofs/coq/TypeSafety.v` and
-`verification/proofs/lean4/ApiTypes.lean` come from the RSR template. They
-are not Mathesis obligations. WO 4.1 of the re-anchoring plan removes them.
-====
-
-[CAUTION]
-====
 Contract probes: the `must` contract states six Mathesis invariants with
 probes, but no runner executes `must` probes yet. CI enforces the same rules
 through `just check`.
@@ -223,7 +218,7 @@ guard and the public frame (8 test files, all passed on 2026-11-11)
 |View determinism, row validation, the public frame (13 tests)
 
 |`tests/registry/`
-|Registry derivation through fixture receipts (14 tests)
+|Registry derivation through fixture receipts, and the admissions of the theory shelf (17 tests)
 
 |`tests/proofs/gate_controls_test.sh`
 |A planted `postulate`, `Admitted` and `sorry` each fail the proof gate (CI)
@@ -271,7 +266,7 @@ and `_⊔_` as builtins.
 |open
 |-
 |`docs/proposals/mathesis-research-programme.adoc`
-|Not yet stated in a prover (WO 4.1)
+|Not yet stated in a prover (next on the theory shelf)
 |===
 
 Proofs: 3 proven of 5; 1 argued, 1 open. The registry derives `PWG-1` for

@@ -283,15 +283,8 @@
         (directory :id "report-unit-quality" :ply 3 :path "docs/reports/quality" :description "Specialised repository for quality findings and evidence.")
         (directory :id "report-unit-security" :ply 3 :path "docs/reports/security" :description "Specialised repository for security findings and evidence."))
       (directory :id "standards-unit" :ply 2 :path "docs/standards" :description "Standards unit for high-rigor verification.")
-      (directory :id "theory-track" :ply 2 :path "docs/theory" :description "Documentation track for domain-specific theory and research foundations.\nCategorised by discipline."
-        (canonical-locations :computing "computing/" :formalisms "formalisms/" :mathematics "mathematics/" :ontologies "ontologies/" :other "other/" :socio_technical "socio-technical/")
-        :invariants ("Theoretical claims MUST reference established academic or technical formalisms")
-        (directory :id "theory-unit-computing" :ply 3 :path "docs/theory/computing" :description "Theoretical foundation for computing.")
-        (directory :id "theory-unit-formalisms" :ply 3 :path "docs/theory/formalisms" :description "Theoretical foundation for formalisms.")
-        (directory :id "theory-unit-mathematics" :ply 3 :path "docs/theory/mathematics" :description "Theoretical foundation for mathematics.")
-        (directory :id "theory-unit-ontologies" :ply 3 :path "docs/theory/ontologies" :description "Theoretical foundation for ontologies.")
-        (directory :id "theory-unit-other" :ply 3 :path "docs/theory/other" :description "Theoretical foundation for other.")
-        (directory :id "theory-unit-socio-technical" :ply 3 :path "docs/theory/socio-technical" :description "Theoretical foundation for socio technical."))
+      (directory :id "theory-track" :ply 2 :path "docs/theory" :description "The theory shelf: the admission rule (README.adoc), the authored\nadmission records (admissions.jsonl) and the generated theorem index\n(generated/index.adoc). Re-anchoring plan WO 4.1."
+        :invariants ("A theorem enters only when the admission rule of README.adoc holds" "Each theorem whose home is Mathesis has an admission record and a receipt"))
       (directory :id "whitepapers-track" :ply 2 :path "docs/whitepapers" :description "Unit for strategic publications and whitepapers. Categorised by target\naudience: Academic, Industry, and Outreach."
         (canonical-locations :academic "academic/" :industry "industry/" :outreach "outreach/")
         :invariants ("Each sub-track MUST have a clear audience definition in its README")
@@ -362,12 +355,12 @@
         "The theory theorems whose home is Mathesis (THY-1)"
         "The applied methods in applied-systems/"
         ))
-    ; Measured 2026-11-11 over the tracked files. Rust, Idris2 and TLA+ are
-    ; template material (verification/proofs/idris2/, verification/proofs/tlaplus/,
-    ; scripts/*.rs). WO 3.2 removed the Zig and Idris2 seam (src/interface/);
-    ; WO 4.1 of the re-anchoring plan decides which of the rest stay.
+    ; Measured 2026-11-11 over the tracked files. Idris2 remains for the
+    ; coaptation core (.machine_readable/coaptation/core/), Rust for the
+    ; template tools (scripts/*.rs). WO 3.2 removed the Zig seam; WO 4.1
+    ; removed the template example proofs, the last TLA+ file among them.
     (implementation-policy
-      :allowed ("JavaScript on Bun" "Shell" "AWK" "jq" "Just" "Nickel" "Guile Scheme (Guix)" "Agda" "Rocq" "Lean 4" "AsciiDoc" "Rust" "Idris2" "Zig" "TLA+")
+      :allowed ("JavaScript on Bun" "Shell" "AWK" "jq" "Just" "Nickel" "Guile Scheme (Guix)" "Agda" "Rocq" "Lean 4" "AsciiDoc" "Rust" "Idris2")
       :forbidden ("Node.js" "npm" "Nix" "Python" "Go" "TypeScript" "ReScript"))
     ; `just check` is the recipe that CI runs in the pinned Guix shell
     ; (agda-proof-policy.yml, re-anchoring plan WO 2.5).
@@ -1032,7 +1025,12 @@
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed"
                 "src/interface/" "benches/" "build/container/Containerfile"
                 "tests/ffi_strings_test.sh"
-                ".github/workflows/rust-ci.yml" ".github/workflows/release.yml")
+                ".github/workflows/rust-ci.yml" ".github/workflows/release.yml"
+                "verification/proofs/idris2/" "verification/proofs/tlaplus/"
+                "verification/proofs/agda/Properties.agda" "verification/proofs/coq/TypeSafety.v"
+                "verification/proofs/lean4/ApiTypes.lean"
+                "docs/theory/computing/" "docs/theory/formalisms/" "docs/theory/mathematics/"
+                "docs/theory/ontologies/" "docs/theory/other/" "docs/theory/socio-technical/")
       ; .github/labels.json and .github/label-classifier.json: their
       ; _generated_from no longer names a private repository (WO 3.5).
       ; docs/EXPLAINME.adoc is a pointer to the root EXPLAINME (WO 3.4).
@@ -1041,7 +1039,10 @@
                  "docs/EXPLAINME.adoc" ".machine_readable/root-allow.txt"
                  "Justfile" "scripts/run-proven-suite.sh" "tests/run_proven_suite_test.sh"
                  "tests/proven_suite_test.sh"
-                 ".github/workflows/actions.lock")))
+                 ".github/workflows/actions.lock"
+                 "docs/theory/README.adoc" "verification/proofs/README.adoc"
+                 "verification/proofs/agda/MANIFEST" "verification/proofs/coq/MANIFEST"
+                 "verification/proofs/lean4/MANIFEST")))
   ; provenance — what this repo was minted FROM. Written once, at mint,
   ; by build/just/repo-init.just. Tools that want "what is this repo" read
   ; the rest of the deed; tools that want "where did it come from" read this.

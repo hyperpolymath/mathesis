@@ -1,60 +1,37 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= Formal Verification Proofs
+= Formal verification proofs
 
-This directory contains formal proofs organised by proof assistant.
+The sources of the theorems whose home is Mathesis, one directory for each
+prover. The admission rule and the theorem index are in
+link:../../docs/theory/README.adoc[the theory shelf].
 
-== Directory Structure
+[cols="1,3",options="header"]
+|===
+|Path |Contents
 
-[source]
-----
-proofs/
-├── idris2/          # Idris2 proofs (ABI, dependent types)
-│   ├── ABI/         # ABI-specific proofs (mandatory)
-│   │   ├── Pointers.idr    # Non-null pointer safety
-│   │   ├── Layout.idr      # Memory layout correctness
-│   │   ├── Platform.idr    # Platform type size proofs
-│   │   ├── Foreign.idr     # FFI return type proofs
-│   │   └── Compliance.idr  # C ABI compliance
-│   └── Types.idr    # Core data type well-formedness
-├── lean4/           # Lean4 proofs (algebra, lattices)
-│   └── ApiTypes.lean
-├── agda/            # Agda proofs (induction, metatheory)
-│   └── Properties.agda
-├── coq/             # Coq proofs (type systems, compilation)
-│   └── TypeSafety.v
-└── tlaplus/         # TLA+ specs (distributed protocols)
-    └── StateMachine.tla
-----
+|`agda/`
+|The Agda source of truth (PROOF-POLICY §1)
 
-== Verification Commands
+|`coq/`
+|The Rocq re-proofs
+
+|`lean4/`
+|The Lean re-proofs
+
+|`<prover>/MANIFEST`
+|The modules that the proof gate checks (`gated`)
+|===
+
+== Checking
+
+`scripts/check-proofs.sh <prover>` compiles each gated module and then audits
+its axioms. CI runs it in the pinned Guix shell through `just check-proofs`:
 
 [source,bash]
 ----
-just proof-check-all       # Run all proof checkers
-just proof-check-idris2    # Idris2 only
-just proof-check-lean4     # Lean4 only
-just proof-check-agda      # Agda only
-just proof-check-coq       # Coq only
+guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
 ----
 
-== Banned Patterns
-
-The following MUST NOT appear in any proof file:
-
-- `believe_me` (Idris2)
-- `assert_total` (Idris2)
-- `postulate` (Idris2/Agda)
-- `sorry` (Lean4)
-- `Admitted` (Coq)
-- `unsafeCoerce` (Haskell)
-
-CI enforces this via `panic-attack assail --proofs-only`.
-
-== Adding New Proofs
-
-1. Choose the appropriate prover (see PROOF-NEEDS.md)
-2. Create the `.idr`/`.lean`/`.agda`/`.v`/`.tla` file in the right directory
-3. Ensure `%default total` (Idris2) or equivalent
-4. Run the verification command
-5. Update PROOF-STATUS.md
+The template example proofs (Idris2, TLA+ and one example each for Agda,
+Rocq and Lean) were removed in WO 4.1 of the re-anchoring plan.

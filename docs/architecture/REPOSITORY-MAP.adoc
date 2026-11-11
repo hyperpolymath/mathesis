@@ -223,13 +223,6 @@ your own repo - but do not read their emptiness as neglect here.
 | `docs/reports/performance/`
 | `docs/reports/quality/`
 | `docs/reports/security/`
-| `docs/theory/`
-| `docs/theory/computing/`
-| `docs/theory/formalisms/`
-| `docs/theory/mathematics/`
-| `docs/theory/ontologies/`
-| `docs/theory/other/`
-| `docs/theory/socio-technical/`
 | `docs/whitepapers/academic/`
 | `docs/whitepapers/industry/`
 | `examples/`

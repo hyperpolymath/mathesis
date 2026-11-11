@@ -30,7 +30,8 @@ describes what is proved, where, and how strongly.
   repositories, generated into one view.
 * *Home theory.* THY-1, reachability is monotone under additive features, is
   proved in Agda and re-proved in Rocq and Lean. CI checks all three in a
-  pinned Guix shell.
+  pinned Guix shell. A theorem enters the theory shelf only under a stated
+  admission rule, and a generated index lists each one with its dependant.
 * *Applied systems.* Methods that apply mathematics to decisions, starting
   with accounting and finance. Design documents only so far.
 * *Privacy by count.* The frame names public repositories only. The number of
@@ -39,7 +40,7 @@ describes what is proved, where, and how strongly.
 [NOTE]
 .Planned
 ====
-The theory shelf's admission rule and the token-lattice theorems, the applied
+The token-lattice theorems of the theory shelf, the applied
 shelf tied to the evidence rules, a published atlas, receipts in more home
 repositories, and a scheduled census. See
 link:docs/status/ROADMAP.adoc[the roadmap].
@@ -89,6 +90,10 @@ records (`claims/`), and generated views (`generated/`)
 
 |`verification/receipts/`
 |The proof receipt of Mathesis
+
+|`docs/theory/`
+|The theory shelf: the admission rule, the admission records and the
+generated theorem index
 
 |`applied-systems/`
 |The applied shelf

@@ -33,7 +33,7 @@ watch)
 ladder, starting with the chain of PROOF-POLICY §5. Ruling D-10 puts their
 home in Mathesis.
 |Agda, re-checked in Rocq and Lean
-|Open (WO 4.1)
+|Open (next on the theory shelf)
 |Statements: `docs/proposals/mathesis-research-programme.adoc`
 
 |To be allocated
@@ -46,16 +46,9 @@ home in Mathesis.
 No Mathesis obligation concerns an ABI or an FFI: since WO 3.2 the deed
 declares neither capability.
 
-[NOTE]
-.Template example proofs
-====
-`verification/proofs/idris2/`, `verification/proofs/tlaplus/`,
-`verification/proofs/agda/Properties.agda`,
-`verification/proofs/coq/TypeSafety.v` and
-`verification/proofs/lean4/ApiTypes.lean` come from the RSR template. They
-are examples, not Mathesis obligations. WO 4.1 of the re-anchoring plan
-removes them.
-====
+The template example proofs of the RSR template (Idris2, TLA+, and one
+example each for Agda, Rocq and Lean) were removed in WO 4.1 of the
+re-anchoring plan. They were never Mathesis obligations.
 
 == Banned patterns
 

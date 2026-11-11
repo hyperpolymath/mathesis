@@ -53,6 +53,38 @@ Initial development phase.
   to fail on the old gate. Under Lean 4.29.0 `simp` brought `propext` into
   `ApiTypes.lean`, which now proves both laws by `rfl`.
 
+=== Re-anchoring: handoff after stage 2 (2026-11-10)
+
+Stage 0, stage 1 and stage 2 of the re-anchoring plan
+(`docs/proposals/mathesis-re-anchoring.adoc`) are done. A new session starts at
+stage 3. It reads the plan, this file, `docs/status/PROOF-STATUS.adoc` and the
+deed first.
+
+* Stage 2: WO 2.1 (census data as JSON Lines, with `commit` and `censused_at`
+  for each row), WO 2.2 (the registry on the canon reader; ADR 0004
+  accepted), WO 2.3 (the paths of `docs/atlas/`), WO 2.4 (bridge candidates
+  in `docs/atlas/claims/bridges.jsonl`; the reconciliation register is a
+  pointer file), WO 2.5 (`just check`, run in the Guix job, with controls).
+* Next: stage 3, "tell the truth": WO 3.1 (correct the deed; the owner
+  reviews the clause text before it lands), WO 3.2, WO 3.3 (needs a
+  ruling), WO 3.4 and WO 3.5 (private names). Then stage 4 and stage 5.
+* Open findings, each for the owner:
+** The canon reader refuses the current receipts of `hyperpolymath/secret-types`
+   and `metadatastician/lintel` ("unexpected clause (identity) in the
+   receipt"). Until one side changes, the registry pins no claim from them.
+** `hyperpolymath/proven-cicd` is public in `docs/atlas/census/repos.jsonl`
+   but cannot be cloned (census of 2026-11-10). It is in the "not reached"
+   list.
+** Two branches that change two adjacent census rows still conflict in git.
+** `just ijson-check` fails on `.machine_readable/coaptation/clauses.json` and
+   `facts.json`, on `main` before stage 2 too.
+** `scripts/check-proofs.sh` needs Agda 2.7.0.1 (`--print-agda-data-dir`);
+   Agda 2.6.3 fails it.
+** The three Guix findings above are not yet reported to Guix; that report is
+   the owner's call.
+** The atlas README and the README carry U+2014 characters from before this
+   work; the estate rule forbids them in new text.
+
 === Open census work
 
 One pull request that changes census rows is open at a time (atlas README,
@@ -75,6 +107,7 @@ One pull request that changes census rows is open at a time (atlas README,
   The census data moves to JSON Lines, and each row gains `commit` and
   `censused_at`. One full census fills both fields, with the scanner rules
   of 2026-11-10 for every row.
+  Merged.
 
 == Milestones
 

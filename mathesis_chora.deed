@@ -120,27 +120,37 @@
   (maturity
     :level experimental
     :since "2026-10-29")
-  ; Fill in what this repo IS and IS NOT, and the repos it relates to.
-  ; :relationship is one of standard-source build-tooling validation-tooling
-  ; signing-tooling verification-tooling minted-from registry.
+  ; What Mathesis IS and IS NOT: re-anchoring plan, "The proposed identity"
+  ; (owner ruling D-1 (a), 2026-11-10). :relationship is one of
+  ; standard-source build-tooling validation-tooling signing-tooling
+  ; verification-tooling minted-from registry. No (related … registry) edge:
+  ; registration in gv-clade-index is the owner's act and has not happened.
   (ecosystem
     :project "mathesis"
     :ecosystem "hyperpolymath"
     :position-type "knowledge-atlas"
-    :purpose "Index and connect mathematical concepts, proof sources, assumptions and evidence across repositories without asserting unverified equivalence or proof status."
-    :not ()
+    :purpose "The maths section of the estate: an atlas of the mathematics in other repositories, the theory that no single system owns, and methods that apply mathematics to decisions. Each statement carries its evidence. Mathesis derives status from the receipts of the home repositories and does not assert it."
+    :not ("a prover or a proof kernel: the checker of the home repository decides"
+          "the proof policy: PROOF-POLICY in standards decides"
+          "the identity registry: gv-clade-index decides"
+          "the map of the type family: nextgen-typing coordinates that map and its glossary"
+          "a copy of the proofs or receipts of other repositories"
+          "a grade authority: it derives a grade and does not assign one"
+          "a store for private or organisation-specific case material"
+          "the RSR template: the template is its lineage only")
     :pipeline-position "discovery-and-evidence-navigation"
-    :chain "source-repositories -> census -> reviewed mathematical atlas -> proof tooling and researchers"
+    :chain "standards prescribes -> home repositories prove and keep receipts -> mathesis describes (census, claim pins, receipts read through the canon reader) -> researchers and proof tooling"
     :coordination standards
-    (related :name "rsr-template-repo" :relationship minted-from :notes "the template this repo was minted from by just repo-init"))
+    (related :name "rsr-template-repo" :relationship minted-from :notes "the template this repo was minted from by just repo-init")
+    (related :name "standards" :relationship standard-source :notes "PROOF-POLICY and its receipt reader readProofReceipt, which the claims registry calls; the canon pin of this deed"))
   ; <<< repo-identity
   ; Meta: mapping meta-ecosystem-to-repo-deed. A minted repo keeps this
   ; clause (self-name pass applied) and edits it as its own.
   (meta
     :version "0.1.0"
-    :last-updated "2026-04-11"
+    :last-updated "2026-11-11"
     :type library
-    :languages ()
+    :languages (javascript shell agda rocq lean4 nickel guile)
     :license MPL-2.0
     :author "Jonathan D.A. Jewell (hyperpolymath)"
     :build-tool just
@@ -197,9 +207,9 @@
     (methodology :instructions-clause "bot-directives" :default-mode hybrid))
   (manifest
     :version "0.1.0"
-    :last-updated "2026-10-29"
-    :project "Mathesis"
-    :purpose "Canonical RSR (Rhodium Standard Repository) template — governance, CI/CD, machine-readable metadata, ABI/FFI seam and formal-verification scaffolding that hyperpolymath projects are instantiated from."
+    :last-updated "2026-11-11"
+    :project "mathesis"
+    :purpose "The maths section of the estate: an atlas of the mathematics in other repositories, the theory that no single system owns, and methods that apply mathematics to decisions, each statement with its evidence."
     (agent :name CLAUDE :role "proofs, compilers, repo-local implementation, CI/CD, formal verification, Rust/Idris2/Zig")
     (agent :name CHATGPT :role "prose, papers, publication review, standards docs, outreach drafts, letters")
     (agent :name GEMINI :role "estate audits, cross-repo sweeps, long-context triage, pattern detection")
@@ -344,30 +354,38 @@
       "Provide a stable golden path and invariant contract for release readiness."
       )
     (metadata
-      :version "1.0.0"
-      :last-updated "2026-10-29")
+      :version "1.1.0"
+      :last-updated "2026-11-11")
     (identity
       :project "Mathesis"
       ; language | library | service | tool
       :kind "tool"
-      :one-sentence "Estate-wide mathematical knowledge atlas and proof census"
+      :one-sentence "The maths section of the estate: an atlas of proofs in other repositories, theory that no single system owns, and applied methods, each with its evidence"
       :domain "mathematical knowledge discovery and proof evidence")
+    ; What Mathesis owns. Grades, proofs and receipts belong to the home
+    ; repositories; the proof policy belongs to standards (ecosystem :not).
     (semantic-authority
       :policy "canonical"
       :owns (
-        "Project semantics and specification"
-        "Invariant definitions and contractiles"
-        "Reference implementation behavior"
+        "The atlas vocabulary and record model: census row, claim pin, receipt, bridge"
+        "The census rows and the claim pins"
+        "The theory theorems whose home is Mathesis (THY-1)"
+        "The applied methods in applied-systems/"
         ))
+    ; Measured 2026-11-11 over the tracked files. Rust, Idris2, Zig and TLA+
+    ; are template material (src/interface/, verification/proofs/idris2/,
+    ; verification/proofs/tlaplus/, scripts/*.rs); WO 3.2 and WO 4.1 of the
+    ; re-anchoring plan decide which of them stay.
     (implementation-policy
-      :allowed ("Rust" "Idris2" "Zig" "Scheme" "Shell" "Just" "AsciiDoc" "Markdown")
-      :forbidden ("Node.js" "npm"))
+      :allowed ("JavaScript on Bun" "Shell" "AWK" "jq" "Just" "Nickel" "Guile Scheme (Guix)" "Agda" "Rocq" "Lean 4" "AsciiDoc" "Rust" "Idris2" "Zig" "TLA+")
+      :forbidden ("Node.js" "npm" "Nix" "Python" "Go" "TypeScript" "ReScript"))
+    ; `just check` is the recipe that CI runs in the pinned Guix shell
+    ; (agda-proof-policy.yml, re-anchoring plan WO 2.5).
     (golden-path
-      :smoke-test-command ("just test" "just quality")
+      :smoke-test-command ("just check")
       :success-criteria (
-        "Core tests pass"
-        "Quality gates pass"
-        "No unresolved critical security findings"
+        "Every generated view matches its data: catalogue, census tests, atlas, claims registry, bridges"
+        "Every gated proof checks in the pinned Guix shell, with no axiom, Admitted, sorry or postulate in its cone"
         ))
     (satellite-policy
       :must-pin-upstream #t
@@ -375,10 +393,11 @@
       :must-have-anchor #t
       :must-have-golden-path #t)
     (semantic-authority-files
-      :language-spec "SPECIFICATION.md"
-      :formal-proofs "docs/proofs/PROOFS.adoc"
-      :type-theory "docs/theory/THEORY.adoc"
-      :algorithms "docs/theory/ALGORITHMS.adoc"))
+      :identity "docs/proposals/mathesis-re-anchoring.adoc"
+      :atlas "docs/atlas/README.adoc"
+      :claims-registry "docs/decisions/0004-claims-registry.adoc"
+      :formal-proofs "docs/status/PROOF-STATUS.adoc"
+      :authority-limits "docs/standards/AUTHORITY.adoc"))
   ; NEUROSYM — neurosymbolic integration metadata: the meaning of operations.
   ; Configuration for Hypatia scanning and symbolic reasoning.
   (neurosym
@@ -506,7 +525,7 @@
     (methodology
       (metadata
         :version "1.0.0"
-        :last-updated "2026-10-29"
+        :last-updated "2026-11-11"
         :spec "https://github.com/hyperpolymath/standards/blob/main/1-formats/a2ml/agentic/docs/ADR-002-methodology-layer.adoc")
       ; ============================================================================
       ; MODE SELECTION
@@ -552,35 +571,20 @@
         (unique-strength
           :description "Source-grounded mathematical discovery that preserves source repository ownership and separates proof declarations from independently checked verification evidence."
           :deepen-not-broaden #t)
-        ; ============================================================================
-        ; DIVERGENT INVARIANTS
-        ; ============================================================================
-        ; Constraints that divergent mode must NOT violate.
-        ; These are the riverbanks — diverge within them, not across.
-        ; "Amplify uniqueness" means deepen, not broaden.
-        ;
-        ; Test before any divergent action:
-        ;   "Does this deepen the existing strength, or add a parallel strength?"
-        ;   If parallel → stop. Note as cross-project insight.
+        ; DIVERGENT INVARIANTS: constraints that divergent mode must not
+        ; violate. Each rule below is already in force: the source is named.
         (divergent-invariants
-          ; Customise per project. Examples:
-          ; "Idris2 only for formal verification — no Lean4, Coq, Agda",
-          ; "believe_me count must remain zero",
-          ; "FFI architecture: Idris2 → RefC → Zig → C ABI (no shortcuts)",
-          :rules ())
-        ; Optional: language invariant for the core strength
-        ; If set, divergent mode will not introduce other languages for this purpose
-        ; language-invariant = "idris2"
-        ; ============================================================================
-        ; CONSTRAINT HINTS
-        ; ============================================================================
-        ; Help Phase 0 find the critical chain faster.
+          :rules ("No grade is typed by hand. The registry derives each grade from the receipt of the home repository through the canon reader (ADR 0004, re-anchoring plan WO 2.2 and WO 2.4)."
+                  "Proofs and receipts stay in their home repositories. Mathesis pins them and reads them; it does not copy them."
+                  "No view states a status that a receipt does not support."
+                  "Census rows change only through just census or just update-rows (census-writer below)."))
+        ; CONSTRAINT HINTS: help Phase 0 find the critical chain faster.
         ; Updated at session end with newly discovered constraints.
         (known-constraints
-          ; Customise per project. Examples:
-          ; "End-to-end build has never been verified",
-          ; "libproject.so does not exist yet — all bindings call stubs",
-          :constraints ())
+          :constraints ("The proof checks need the pinned Guix shell (build/channels.scm, build/manifest.scm): Agda 2.7.0.1, Rocq 8.18.0, Lean 4.29.0. CI runs them there."
+                        "just check-views needs Bun, network access for the receipts, and a standards checkout in MATHESIS_STANDARDS."
+                        "just validate-claude-md and just validate-coapt need Nickel (CI pins 1.18.0)."
+                        "The open findings of each session are in docs/status/ROADMAP.adoc."))
         ; ============================================================================
         ; STATE FILE VALIDATION
         ; ============================================================================
@@ -618,15 +622,16 @@
         :total-components 0
         :visited-components 0
         :coverage-percent 0))
-    ; debt — Meander debt list
-    ; Things found but not fixed. Carried between sessions.
-    ; Becomes the next session's Phase 0 input.
+    ; debt: things found but not fixed, carried between sessions. The list
+    ; itself is the open findings in docs/status/ROADMAP.adoc, so that one
+    ; file holds it and two lists cannot drift.
     ;
     ; Reference: ADR-002 (methodology layer) in hyperpolymath/standards
     (debt
       (metadata
         :version "1.0.0"
-        :last-updated "2026-10-29"))
+        :last-updated "2026-11-11")
+      :recorded-in "docs/status/ROADMAP.adoc")
     ; rra — directives for Robot Repo Automaton (RRA) enforcing the Platonic Ideal root.
     (rra
       :target "robot-repo-automaton"
@@ -666,79 +671,11 @@
       :hand-edit-rows #f
       :open-row-pull-requests-max 1
       :open-work-recorded-in "docs/status/ROADMAP.adoc"))
-  ; Optional ecosystem integrations.
-  ; Each clause is opt-in; delete the ones your project does not use.
+  ; Optional ecosystem integrations. Re-anchoring plan WO 3.1 removed the
+  ; feedback-o-tron, proven, verisimdb and vexometer clauses, because no tool
+  ; here reads them. The owner kept groove (ruling 2026-11-11), in case
+  ; Mathesis later serves the atlas over an API; its :port stays 0 until then.
   (integrations
-    ; OPTIONAL: Feedback-o-Tron Integration — Autonomous Bug Reporting
-    ; Delete this clause if your project does not use feedback-o-tron.
-    (feedback-o-tron
-      (integration
-        :name "feedback-o-tron"
-        :type "bug-reporter"
-        :repository "https://github.com/hyperpolymath/feedback-o-tron")
-      (reporting-config
-        :platforms ("github" "gitlab" "bugzilla")
-        :deduplication #t
-        :audit-logging #t
-        :auto-file-upstream "on-external-dependency-failure"))
-    ; OPTIONAL: Proven Integration — Formally Verified Safety Library
-    ; Delete this clause if your project does not use the proven library.
-    ; See https://github.com/hyperpolymath/proven for details.
-    (proven
-      (integration
-        :name "proven"
-        :type "safety-library"
-        :repository "https://github.com/hyperpolymath/proven"
-        :version "1.2.0")
-      (binding-policy
-        :approach "thin-ffi-wrapper"
-        :unsafe-patterns "replace-with-proven-equivalent"
-        :modules-available (
-          "SafeMath"
-          "SafeString"
-          "SafeJSON"
-          "SafeURL"
-          "SafeRegex"
-          "SafeSQL"
-          "SafeFile"
-          "SafeTemplate"
-          "SafeCrypto"
-          ))
-      (adoption-guidance
-        :priority "high"
-        :scope "all-string-json-url-crypto-operations"
-        :migration "incremental — replace unsafe patterns as encountered"))
-    ; OPTIONAL: VeriSimDB Feed — Cross-Repo Analytics Data Store
-    ; Delete this clause if your project does not feed data to VeriSimDB.
-    ; See https://github.com/hyperpolymath/nextgen-databases for details.
-    (verisimdb
-      (integration
-        :name "verisimdb"
-        :type "data-feed"
-        :repository "https://github.com/hyperpolymath/nextgen-databases"
-        :data-store "verisimdb-data")
-      (feed-config
-        :emit-scan-results #t
-        :emit-build-metrics #t
-        :emit-dependency-graph #t
-        :format "hexad"
-        :destination "verisimdb-data/feeds/"))
-    ; OPTIONAL: Vexometer Integration — Irritation Surface Analysis
-    ; Delete this clause if your project does not use vexometer.
-    (vexometer
-      (integration
-        :name "vexometer"
-        :type "friction-measurement"
-        :repository "https://github.com/hyperpolymath/vexometer")
-      (measurement-config
-        :dimensions 10
-        :emit-isa-reports #t
-        :lazy-eliminator #t
-        :satellite-interventions #t)
-      (hooks
-        :cli-tools "measure-on-error"
-        :ui-panels "measure-on-interaction"
-        :build-failures "measure-on-failure"))
     ; groove — Groove Protocol manifest: the API surfaces this project exposes
     ; Consumed by the Groove bridge /
     ; zig-unified-api-adapter for snap-on/snap-off service discovery. Edit it to
@@ -1072,7 +1009,7 @@
   (variant
     :project "mathesis"
     :schema-version "0.1.0"
-    :last-updated "2026-10-29"
+    :last-updated "2026-11-11"
     :parent "hyperpolymath/rsr-template-repo"
     ; template tip at mint
     :parent-pin "4e663535bd939a6d9ed840aef2b6849434901b04"
@@ -1081,8 +1018,27 @@
     :direction "generated-from-core"
     (normalise :rules "action-pins self-name")
     ; Files a minted repo owns from birth are (paths :diverged …).
+    ; :added is measured: scripts/check-variant-drift.sh against the template
+    ; at :parent-pin, 2026-11-11, listed every tracked path below as absent
+    ; from the parent. A directory entry (trailing /) is wholly Mathesis.
     (paths
-      :added ()
+      :added ("applied-systems/" "docs/atlas/" "docs/catalogue/" "docs/registry/"
+              "scripts/atlas/" "scripts/census/" "scripts/registry/"
+              "tests/atlas/" "tests/census/" "tests/registry/" "tests/proofs/"
+              "verification/receipts/"
+              ".github/workflows/agda-proof-policy.yml"
+              "docs/architecture.adoc" "docs/contributing.adoc" "docs/troubleshooting.adoc" "docs/usage.adoc"
+              "docs/decisions/0001-template.adoc" "docs/decisions/0004-claims-registry.adoc"
+              "docs/proposals/estate-mathematical-architecture.adoc" "docs/proposals/mathesis-re-anchoring.adoc"
+              "docs/proposals/mathesis-research-programme.adoc" "docs/proposals/proof-receipts-as-data.adoc"
+              "docs/reports/audit/echidna-proof-route-2026-11-09.adoc"
+              "docs/standards/AUTHORITY.adoc"
+              "docs/status/CROSS-PROVER-RECONCILIATION.adoc"
+              "scripts/scan-postulates.sh"
+              "tests/golden/check_controls_test.sh"
+              "verification/proofs/agda/FeatureReachability.agda"
+              "verification/proofs/coq/FeatureReachability.v"
+              "verification/proofs/lean4/FeatureReachability.lean")
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed")
       :diverged ("mathesis_chora.deed" "docs/status/ROADMAP.adoc")))
   ; provenance — what this repo was minted FROM. Written once, at mint,

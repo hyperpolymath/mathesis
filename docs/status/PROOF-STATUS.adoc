@@ -24,14 +24,15 @@ reader of PROOF-POLICY §8.5.1.
 |Not yet stated in a prover
 
 |APP-1 to APP-4, the cohort model of the applied shelf (WO 4.2)
-|Open
+|Agda leg proved; Rocq and Lean legs open
 |-
-|Stated in `docs/status/PROOF-NEEDS.adoc`; the model and its three worked
-examples check in Agda, but no theorem is stated in Agda yet
+|`verification/proofs/agda/Applied/Missing.agda`, `Cash.agda` and
+`IntLaws.agda`, gated in CI. No receipt yet: a grade needs all three legs
 |===
 
 *Overall*: 1 of 6 obligations discharged; 5 open (the token-lattice theorems
-count as one). These are counts, not a
+count as one). APP-1 to APP-4 have their Agda leg; each stays open until its
+Rocq and Lean legs land. These are counts, not a
 percentage: PROOF-POLICY §8 grades are derived from receipts and are never
 flattened. The template example proofs were removed in WO 4.1.
 

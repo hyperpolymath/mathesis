@@ -65,4 +65,5 @@ costs and floors in each mode, so you can compare the results.
 * Rates do not carry uncertainty. To explore it, write two examples with
   different rates.
 * The model checks each worked example exactly. The general properties
-  (obligations APP-1 to APP-4 in `docs/status/PROOF-NEEDS.adoc`) are open.
+  (obligations APP-1 to APP-4 in `docs/status/PROOF-NEEDS.adoc`) are proved
+  in Agda for every mode; the Rocq and Lean re-proofs are open.

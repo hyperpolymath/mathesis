@@ -7,3 +7,7 @@ verification/proofs/agda|Applied/IntNumber.agda|gated| applied shelf: integer ar
 verification/proofs/agda|Applied/Example/Approximate.agda|gated| generated: worked example, mode approximate, one input missing
 verification/proofs/agda|Applied/Example/Exact.agda|gated| generated: worked example, mode exact
 verification/proofs/agda|Applied/Example/Simple.agda|gated| generated: worked example, mode simple
+verification/proofs/agda|Applied/Status.agda|gated| applied shelf: the order of evidence statuses and what a given value needs (APP-1, APP-4)
+verification/proofs/agda|Applied/Missing.agda|gated| applied shelf: APP-1 missing propagates, APP-4 status never upgrades (any number structure)
+verification/proofs/agda|Applied/Cash.agda|gated| applied shelf: APP-2 cash identity, APP-3 the funding gap is sound and least (ordered abelian groups)
+verification/proofs/agda|Applied/IntLaws.agda|gated| applied shelf: the integer instance is an ordered abelian group, so APP-2 and APP-3 apply to the examples

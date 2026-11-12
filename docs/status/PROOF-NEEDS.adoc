@@ -42,40 +42,45 @@ missing input is missing, in every period after it too, and never zero. A
 verdict is "no" on a known breach and otherwise missing when any value it
 depends on is missing; it is never "yes" then
 |Agda, re-checked in Rocq and Lean
-|Open: stated here, not yet in Agda (WO 4.2)
-|`verification/proofs/agda/Applied/Cohort.agda`
+|Agda leg proved; Rocq and Lean legs open (WO 4.2)
+|`verification/proofs/agda/Applied/Missing.agda`
 
 |APP-2
-|Cash identity: when every input is present, the closing cash of the last
-period equals the opening cash plus all receipts minus all payments
+|Cash identity: the closing cash of the last period equals the opening cash
+plus, summed over the periods, receipts minus payments; when a value is
+missing, both sides are missing
 |Agda, re-checked in Rocq and Lean
-|Open: stated here, not yet in Agda (WO 4.2)
-|`verification/proofs/agda/Applied/Cohort.agda`
+|Agda leg proved; Rocq and Lean legs open (WO 4.2)
+|`verification/proofs/agda/Applied/Cash.agda` (`cash-identity`)
 
 |APP-3
 |The funding gap is sound and least: adding the gap to the opening cash
 keeps every closing balance at or above its floor, and no smaller
 non-negative amount does
 |Agda, re-checked in Rocq and Lean
-|Open: stated here, not yet in Agda (WO 4.2)
-|`verification/proofs/agda/Applied/Cohort.agda`
+|Agda leg proved; Rocq and Lean legs open (WO 4.2)
+|`verification/proofs/agda/Applied/Cash.agda` (`gap-sound`, `gap-least`)
 
 |APP-4
 |Status never upgrades: the evidence status of an output is never stronger
 than the weakest status of the inputs that it depends on
 |Agda, re-checked in Rocq and Lean
-|Open: stated here, not yet in Agda (WO 4.2)
-|`verification/proofs/agda/Applied/Cohort.agda`
+|Agda leg proved; Rocq and Lean legs open (WO 4.2)
+|`verification/proofs/agda/Applied/Missing.agda`
 |===
 
 APP-1 to APP-4 are about the cohort model of the applied shelf (re-anchoring
 plan WO 4.2, owner rulings 2026-11-12). Each statement would be true of any
 implementation of the model, so each is theory by PROOF-POLICY §1: proved in
-Agda and re-checked in Rocq and Lean. The model is written over an abstract
-number structure, so APP-2 and APP-3 need only its laws, not the laws of one
-number type. They are not theory-shelf admissions: no estate rule depends on
-them yet. Each worked example is already checked by Agda; a checked example is
-not a proof of the property.
+Agda and re-checked in Rocq and Lean. They are not theory-shelf admissions:
+no estate rule depends on them yet.
+
+The Agda leg holds for the model as it runs. APP-1 and APP-4 hold for any
+number structure: one statement carries both (`Covers`, in
+`Applied/Status.agda`). APP-2 and APP-3 hold for any ordered abelian group
+(`Laws`, in `Applied/Cash.agda`), and `Applied/IntLaws.agda` proves that
+the integer instance of the worked examples is one. Every module is in the
+gated Agda manifest, with no postulate in its import cone.
 
 No Mathesis obligation concerns an ABI or an FFI: since WO 3.2 the deed
 declares neither capability.

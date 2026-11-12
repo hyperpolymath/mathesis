@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
 import {test, expect} from 'bun:test';
 import {readFileSync} from 'node:fs';
-import {VIEWS, frontPage, checkLinks, htmlPath, GITHUB} from '../../scripts/site/site.mjs';
+import {VIEWS, frontPage, checkLinks, htmlPath, findAsciidoctor, GITHUB} from '../../scripts/site/site.mjs';
 
 const root = new URL('../../', import.meta.url).pathname;
 const read = f => readFileSync(root + f, 'utf8');
@@ -49,4 +49,9 @@ test('a missing anchor fails, and absolute and in-page links pass', () => {
   expect(run('<a href="y.html#nope">y</a>', ['docs/a/y.html'], []).errors[0]).toMatch(/no anchor/);
   const ids = () => new Set(['top']);
   expect(run('<a href="#top">t</a><a href="https://example.org/x">e</a>', [], [], 'docs/a/x.html', ids).errors).toEqual([]);
+});
+
+test('asciidoctor is found only in an absolute directory of PATH', () => {
+  expect(findAsciidoctor({ASCIIDOCTOR: '/x/asciidoctor'})).toBe('/x/asciidoctor');
+  expect(() => findAsciidoctor({PATH: 'relative/dir'})).toThrow(/not found/);
 });

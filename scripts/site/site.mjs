@@ -92,7 +92,8 @@ export function checkLinks(page, html, siteHas, repoHas, idsOf) {
     if (url === '' || url.startsWith('#') && !url.slice(1)) return whole;
     if (/^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith('//')) return whole;
     const frag = url.includes('#') ? url.slice(url.indexOf('#')) : '';
-    const rel = url.replace(/[?#].*$/, '');
+    const cut = url.search(/[?#]/);
+    const rel = cut < 0 ? url : url.slice(0, cut);
     if (rel === '') { // in-page anchor
       if (frag.length > 1 && !idsOf(page).has(decodeURIComponent(frag.slice(1)))) errors.push(`${page}: no anchor ${frag}`);
       return whole;
@@ -117,8 +118,18 @@ const walk = (root, dir = '') => readdirSync(path.join(root, dir)).flatMap(n => 
   return statSync(path.join(root, rel)).isDirectory() ? walk(root, rel) : [rel];
 });
 
+// Find asciidoctor in the absolute directories of PATH (or take ASCIIDOCTOR), and
+// run it by its absolute path, so no relative PATH entry can pick the program.
+export function findAsciidoctor(env = process.env) {
+  if (env.ASCIIDOCTOR) return env.ASCIIDOCTOR;
+  for (const d of (env.PATH || '').split(path.delimiter)) {
+    if (path.isAbsolute(d) && existsSync(path.join(d, 'asciidoctor'))) return path.join(d, 'asciidoctor');
+  }
+  throw new Error('asciidoctor not found in an absolute directory of PATH (set ASCIIDOCTOR to its path)');
+}
+
 function asciidoctor(args) {
-  const r = spawnSync('asciidoctor', ['-S', 'safe', '-B', '/', '--failure-level=WARN', '-a', 'nofooter', '-a', 'webfonts!', ...args], {encoding: 'utf8'});
+  const r = spawnSync(findAsciidoctor(), ['-S', 'safe', '-B', '/', '--failure-level=WARN', '-a', 'nofooter', '-a', 'webfonts!', ...args], {encoding: 'utf8'});
   if (r.error) throw new Error(`asciidoctor not runnable: ${r.error.message}`);
   process.stderr.write(r.stderr || '');
   if (r.status !== 0) throw new Error(`asciidoctor failed (status ${r.status})`);

@@ -131,7 +131,7 @@ clean-all: clean
 
 # Run every detected language's tests. It runs `check` first (re-anchoring plan WO 2.5), so a stale view or a
 # failing proof fails it.
-test: check provision::test
+test: check site-test provision::test
 
 # Run tests with verbose output
 test-verbose: provision::test
@@ -707,7 +707,7 @@ uncloak:
 # The Mathesis golden path (re-anchoring plan WO 2.5). CI runs it in the pinned
 # Guix (agda-proof-policy.yml). A stale view or a failing proof fails.
 # Golden path: every generated view matches its data, every gated proof checks
-check: check-views check-proofs
+check: check-views site-check check-proofs
 
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
 # Views current: catalogue, census tests, atlas, claims registry, bridges and
@@ -788,3 +788,24 @@ applied-build:
 applied-check:
     bun scripts/applied/cohort.mjs check
     bun test tests/applied/
+
+# ── mathesis: static site of the generated views (re-anchoring plan WO 4.3) ──
+
+# Build the site into OUT (default: a fresh temp dir; never a tracked path).
+# BUILD ONLY: nothing deploys. Needs asciidoctor (in the pinned Guix shell) and
+# bun. It fails on any Asciidoctor warning and on any broken relative link.
+site out="":
+    bun scripts/site/site.mjs build {{out}}
+
+# Build the site into a temp dir, then discard it. `check` runs this, so CI
+# builds the site on every pull request and push to main.
+site-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    out="$(mktemp -d)"
+    trap 'rm -rf "$out"' EXIT
+    bun scripts/site/site.mjs build "$out"
+
+# Test the front-page generator and the link check (no asciidoctor needed)
+site-test:
+    bun test tests/site/

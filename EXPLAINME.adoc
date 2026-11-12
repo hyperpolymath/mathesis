@@ -135,7 +135,7 @@ Methods that apply mathematics to decisions, starting
 with accounting and finance. A shared input schema keeps missing apart from
 zero. A cohort model in Agda has three number modes and three synthetic
 worked examples, each checked by Agda. Its four general properties are proved
-in Agda; the Rocq and Lean re-proofs are next.
+in Agda and re-proved in Rocq and Lean.
 ____
 
 How this is implemented::
@@ -152,7 +152,7 @@ fails it.
 
 Caveat::
 Its four general properties (APP-1 to APP-4) are proved in Agda for the
-model as it runs; the Rocq and Lean re-proofs are open. The examples are synthetic and say nothing about any
+model as it runs, and re-proved in Rocq and Lean. The examples are synthetic and say nothing about any
 organisation. The management-accounting design has no model yet.
 
 == Privacy by count
@@ -289,14 +289,20 @@ cash identity, the funding gap, status never upgrades), Agda leg
 |The model only. APP-2 and APP-3 rest on the laws that `IntLaws.agda`
 proves for the integer instance
 
-|APP-1 to APP-4, Rocq and Lean legs
-|open
-|-
-|-
-|Not yet re-proved (WO 4.2, third pull request)
+|APP-1 to APP-4, Rocq leg (re-proved)
+|proven
+|Rocq 8.18.0, `coqc`; `Print Assumptions` closed
+|`verification/proofs/coq/Cohort.v`
+|The model only, as in Agda
+
+|APP-1 to APP-4, Lean leg (re-proved)
+|proven
+|Lean 4.29.0, `lean`; no axiom
+|`verification/proofs/lean4/Cohort.lean`
+|The model only, as in Agda
 |===
 
-Proofs, counted by leg: 7 proven of 17; 1 argued, 9 open (the token-lattice
+Proofs, counted by leg: 15 proven of 17; 1 argued, 1 open (the token-lattice
 theorems count as one; APP-1 to APP-4 count one for each prover). The registry derives `PWG-1` for
 THY-1 from the receipt. The checker versions are those that CI asserts in the
 Guix shell (CI run 43057783538).

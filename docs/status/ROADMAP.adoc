@@ -191,7 +191,14 @@ One pull request that changes census rows is open at a time (atlas README,
    for the model as it runs.
 ** The two local helpers of `cohortAt` became top-level functions, so that
    the proofs can name them. The worked examples are unchanged.
-** Next: the Rocq and Lean re-proofs (third pull request).
+** Merged (pull request 83).
+* WO 4.2, third pull request: the Rocq and Lean re-proofs of APP-1 to APP-4,
+  with the integer laws: `verification/proofs/coq/Cohort.v` (82 theorems,
+  `Print Assumptions` closed) and `verification/proofs/lean4/Cohort.lean`
+  (95 theorems, no axiom). Each restates the Agda definitions clause for
+  clause; `docs/status/PROOF-STATUS.adoc` records the comparison. WO 4.2 is
+  then done. Next: receipts for APP-1 to APP-4, from a CI run on the merged
+  commit, then WO 4.3 (needs a ruling).
 * WO 4.3, publish the atlas (owner rulings 2026-11-12): site built in CI;
   deploy waits for the 2026-11-24 hold and an owner ruling.
 ** `just site OUT` writes one generated front page, then renders it and the
@@ -249,8 +256,8 @@ anchors `c81cb84`
 |The three shelves: the theory admission rule and the token-lattice
 theorems, the applied shelf tied to the evidence spine, the published atlas
 (needs a ruling)
-|In progress: WO 4.1, the theory ledger and WO 4.2 (1 of 3) merged; the
-Agda proofs of WO 4.2 in review
+|In progress: WO 4.1, the theory ledger and WO 4.2 (2 of 3) merged; the
+Rocq and Lean re-proofs of WO 4.2 in review
 
 |5
 |Scale: receipts in the home repositories, the bridge lock pilot, a

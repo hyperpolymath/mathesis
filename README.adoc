@@ -36,15 +36,15 @@ describes what is proved, where, and how strongly.
   with accounting and finance. A shared input schema keeps missing apart from
   zero. A cohort model in Agda has three number modes and three synthetic
   worked examples, each checked by Agda. Its four general properties are proved
-  in Agda; the Rocq and Lean re-proofs are next.
+  in Agda and re-proved in Rocq and Lean.
 * *Privacy by count.* The frame names public repositories only. The number of
   private repositories in the listing is kept as one number.
 
 [NOTE]
 .Planned
 ====
-The token-lattice theorems of the theory shelf, the Rocq and Lean re-proofs
-of the cohort model (APP-1 to APP-4), a published atlas, receipts in more home
+The token-lattice theorems of the theory shelf, receipts for the cohort model
+proofs (APP-1 to APP-4), a published atlas, receipts in more home
 repositories, and a scheduled census. See
 link:docs/status/ROADMAP.adoc[the roadmap].
 ====

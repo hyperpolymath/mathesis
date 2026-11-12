@@ -31,5 +31,5 @@ The cohort model (`verification/proofs/agda/Applied/Cohort.agda`) is the first
 test of these ideas. Each value carries its evidence status, a missing value
 stays missing, and every worked example is checked by Agda. Its general
 properties (obligations APP-1 to APP-4 in `docs/status/PROOF-NEEDS.adoc`) are
-proved in Agda; the Rocq and Lean re-proofs are open. A check of a model on an example is not a proof of the model, and neither
+proved in Agda and re-proved in Rocq and Lean. A check of a model on an example is not a proof of the model, and neither
 establishes the truth of real inputs.

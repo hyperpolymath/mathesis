@@ -1021,6 +1021,7 @@
               "verification/proofs/agda/FeatureReachability.agda"
               "verification/proofs/coq/FeatureReachability.v"
               "verification/proofs/lean4/FeatureReachability.lean"
+              "verification/proofs/coq/Cohort.v" "verification/proofs/lean4/Cohort.lean"
               "EXPLAINME.adoc"
               "docs/theory/admissions.jsonl" "docs/theory/ledger.jsonl" "docs/theory/generated/"
               "scripts/applied/" "tests/applied/" "verification/proofs/agda/Applied/")

@@ -24,15 +24,14 @@ reader of PROOF-POLICY §8.5.1.
 |Not yet stated in a prover
 
 |APP-1 to APP-4, the cohort model of the applied shelf (WO 4.2)
-|Agda leg proved; Rocq and Lean legs open
+|Proved in Agda, Rocq and Lean
 |-
-|`verification/proofs/agda/Applied/Missing.agda`, `Cash.agda` and
-`IntLaws.agda`, gated in CI. No receipt yet: a grade needs all three legs
+|The record below. No receipt yet, so no grade is derived
 |===
 
-*Overall*: 1 of 6 obligations discharged; 5 open (the token-lattice theorems
-count as one). APP-1 to APP-4 have their Agda leg; each stays open until its
-Rocq and Lean legs land. These are counts, not a
+*Overall*: 5 of 6 obligations are proved in all three provers; THY-1 alone has
+a receipt and a derived grade. The token-lattice theorems (counted as one) are
+open. These are counts, not a
 percentage: PROOF-POLICY §8 grades are derived from receipts and are never
 flattened. The template example proofs were removed in WO 4.1.
 
@@ -211,6 +210,62 @@ dependency units unify features separately, and the theorem applies to
 each unit's graph.
 |===
 
+== Applied obligations
+
+=== APP-1 to APP-4: the cohort model of the applied shelf
+
+[cols="1,3"]
+|===
+|Statements
+|`docs/status/PROOF-NEEDS.adoc`, rows APP-1 to APP-4.
+
+|Agda (source of truth)
+|`verification/proofs/agda/Applied/`: `Cohort` (the model), `Status` and
+`Missing` (APP-1, APP-4), `Cash` (APP-2, APP-3, for any ordered abelian
+group), `IntNumber` and `IntLaws` (the integer instance and its laws).
+`--safe --without-K --cubical-compatible`; no postulate in any import cone.
+
+|Rocq leg
+|`PROVEN`, route `re-proved`. `verification/proofs/coq/Cohort.v`, Rocq
+8.18.0. The gate's `Print Assumptions` finds all 82 theorems closed under
+the global context. The standard library's `PeanoNat` and `Lia` prove the
+natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
+file.
+
+|Lean leg
+|`PROVEN`, route `re-proved`. `verification/proofs/lean4/Cohort.lean`,
+Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 95
+theorems. No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
+
+|Statement correspondence (§2.2)
+|Compared by reading, item by item. Each target restates every Agda
+definition with the same constructors, fields and clauses, and states every
+Agda theorem with the same hypotheses and conclusions (Agda `cash-identity`
+is `cash_identity`, and so on). The differences are encoding only:
+
+* Agda's `_<_` and `_-_` on Nat are `natLt` and `monus`, with the same
+  clauses, recursive on the second argument as Agda's are, so that the
+  same terms reduce.
+* Lean compiles overlapping patterns with `propext`, so `meet`,
+  `zipWith`, `kand` and `denominator` list their cases without overlap;
+  `zipWith` and `kand` split their first argument first, as Agda's do.
+  Each is the same function.
+* Agda's `n div suc m` is `Nat.div` (Rocq) or `/` (Lean): each rounds
+  down and gives 0 for a zero divisor.
+* `T b` is `b = true`. The proof-relevant records `Covers`, `Bounded`
+  and `Yes` are existential propositions, so every result is a theorem
+  that the axiom audit inspects. `All` and `Any` stay functions on lists.
+* The integers are Agda's (`pos`, `negsuc` and the same operations), not
+  the standard `Z` or `Int`: Lean's `Int` lemmas use `propext`.
+
+Residual assumptions: none in any leg.
+
+|Machine receipt (§8.5.1)
+|None yet. The receipt `verification/receipts/theory_praxis.deed` records
+THY-1 only. Adding APP-1 to APP-4 needs receipts from a CI run on the merged
+commit, so no grade is derived for them yet.
+|===
+
 == Verification commands
 
 [source,bash]
@@ -232,6 +287,10 @@ bash tests/proofs/gate_controls_test.sh agda
 |2026-11-10
 |THY-1 receipts earned again at Agda 2.7.0.1 and Lean 4.29.0 in the pinned
 Guix shell; the receipt derives `PWG-1`.
+
+|2026-11-12
+|APP-1 to APP-4 proved in Agda (with the laws of the integer instance), then
+re-proved in Rocq and Lean (re-anchoring plan WO 4.2). No receipt yet.
 
 |2026-11-11
 |The template obligations ABI-1 to ABI-5, TP-1 and TP-2 leave the lists:

@@ -7,6 +7,8 @@
 # them unmergeable at today's docstring-coverage baseline. Raise it per repo only
 # once that repo's coverage clears the threshold.
 reviews:
+  # No "review skipped" status comments, such as "Draft PR not reviewed".
+  review_status: false
   pre_merge_checks:
     docstrings:
       mode: warning
@@ -14,3 +16,7 @@ reviews:
   finishing_touches:
     docstrings:
       enabled: true
+# No automatic "Issue Planner" comments on new issues.
+issue_enrichment:
+  auto_enrich:
+    enabled: false

@@ -176,7 +176,22 @@ One pull request that changes census rows is open at a time (atlas README,
    that depends on it stays missing. A golden-path control shows that the
    gate fails when a missing output is read as zero.
 ** APP-1 to APP-4 are recorded as open in `docs/status/PROOF-NEEDS.adoc`.
-   Next: the Agda proofs, then the Rocq and Lean re-proofs.
+   Merged (pull request 81).
+* WO 4.2, second pull request: the Agda proofs of APP-1 to APP-4, gated in
+  CI with no postulate in any import cone.
+** `Applied/Status.agda` and `Applied/Missing.agda`: APP-1 and APP-4, for any
+   number structure. If an output is given with status u, every input that it
+   depends on is given with a status at least u. Once a closing balance is
+   missing, every later one is missing; a "yes" verdict needs every period to
+   be a known "yes"; a known breach decides the verdict.
+** `Applied/Cash.agda`: APP-2 (cash identity) and APP-3 (the funding gap is
+   sound and least), for any ordered abelian group (`Laws`).
+** `Applied/IntLaws.agda`: the integer instance of the worked examples is an
+   ordered abelian group (owner ruling 2026-11-12), so APP-2 and APP-3 hold
+   for the model as it runs.
+** The two local helpers of `cohortAt` became top-level functions, so that
+   the proofs can name them. The worked examples are unchanged.
+** Next: the Rocq and Lean re-proofs (third pull request).
 * Open item for the owner (ruling 2026-11-12): none of the JSON Lines data
   files declares a licence; JSON has no comment syntax. The owner will write
   one `REUSE.toml` rule at the root that covers all of them (doctrine 6: a
@@ -222,8 +237,8 @@ anchors `c81cb84`
 |The three shelves: the theory admission rule and the token-lattice
 theorems, the applied shelf tied to the evidence spine, the published atlas
 (needs a ruling)
-|In progress: WO 4.1 and the theory ledger merged; WO 4.2 in review (1 of
-3 pull requests)
+|In progress: WO 4.1, the theory ledger and WO 4.2 (1 of 3) merged; the
+Agda proofs of WO 4.2 in review
 
 |5
 |Scale: receipts in the home repositories, the bridge lock pilot, a
@@ -253,4 +268,5 @@ scheduled census, a view of what each repository owes
   example; the model in Agda, proved; all four invariants recorded; a shared
   schema; three number modes for different users, with guidance; JSON Lines as
   the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
-  requests.
+  requests; the laws of the integer instance proved in the second pull
+  request.

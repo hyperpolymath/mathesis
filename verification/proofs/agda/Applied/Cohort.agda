@@ -145,6 +145,17 @@ applyRate : Nat → Nat → Rate → Nat
 applyRate scale x (perMille m)   = (((x div scale) *ℕ m) div 1000) *ℕ scale
 applyRate scale x (fraction n d) = (x *ℕ n) div d
 
+-- The members who join a modelled cohort, multiplied by the scale.
+joined : Nat → Val Nat → Val Rate → Val Nat
+joined scale contacts conversion =
+  zipWith (applyRate scale) (map (λ n → n *ℕ scale) contacts) conversion
+
+-- The members after k renewals, multiplied by the scale.
+renewed : Nat → Val Nat → Val Rate → Nat → Val Nat
+renewed scale start retention zero    = start
+renewed scale start retention (suc k) =
+  zipWith (applyRate scale) (renewed scale start retention k) retention
+
 -- Active members of one cohort in period t (counted from 1), multiplied by
 -- the scale.
 cohortAt : Nat → Nat → Cohort → Val Nat
@@ -152,13 +163,8 @@ cohortAt scale t (observed start counts) =
   if t <ℕ start then pure 0
   else map (λ n → n *ℕ scale) (at (t ∸ start) counts)
 cohortAt scale t (modelled start contacts conversion retention) =
-  if t <ℕ start then pure 0 else renew (t ∸ start)
-  where
-  joined : Val Nat
-  joined = zipWith (applyRate scale) (map (λ n → n *ℕ scale) contacts) conversion
-  renew : Nat → Val Nat
-  renew zero    = joined
-  renew (suc k) = zipWith (applyRate scale) (renew k) retention
+  if t <ℕ start then pure 0
+  else renewed scale (joined scale contacts conversion) retention (t ∸ start)
 
 sumAt : Nat → Nat → List Cohort → Val Nat
 sumAt scale t []       = pure 0

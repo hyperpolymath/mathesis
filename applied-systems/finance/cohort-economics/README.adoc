@@ -41,5 +41,6 @@ link:../../methods/input-schema.adoc[input schema], and its expected outputs.
 `just applied-build` writes link:generated/examples.adoc[the worked examples]
 and one Agda module for each example. Agda accepts that module only if the
 model computes every expected output, missing ones included. The general
-properties of the model are open proof obligations APP-1 to APP-4 in
+properties of the model, APP-1 to APP-4, are proved in Agda (Rocq and Lean
+re-proofs open); see
 `docs/status/PROOF-NEEDS.adoc`.

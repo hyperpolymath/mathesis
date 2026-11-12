@@ -595,6 +595,14 @@ party check it?
 * A possible repeat. `januskey`, `valence-shell` and `absolute-zero` each
   prove that undo in reverse order restores a state. *Reading* of the survey:
   no file compares the three statements.
+* A tested bridge between two implementations of one statistical model
+  (added 2026-11-12). `hyperpolymath/MetaManifold-WebUI` at `5a89914` fits
+  the two-group multinomial logit with its own Julia code and with the R
+  package MGLM. Its `test/unit/test_differential.jl` checks both against one
+  closed form, statement S-MN under Q-2.6, and against each other: estimates
+  agree to 1e-6 and standard errors to a relative 1e-6. The bridge is
+  `tested-only`. No prover is an endpoint, so it is not a record in
+  `docs/atlas/claims/bridges.jsonl`, which takes Agda, Rocq and Lean only.
 
 === Research questions
 
@@ -629,6 +637,42 @@ corroboration, rather than duplicated presentations of one witness".
 re-proved leg can be a second argument. In a trust expression, two legs are
 independent with respect to an assumption when they do not share it. A
 comparison that one reader wrote for both legs is a shared assumption.
+
+Q-2.6 Can a statistical oracle become theory?::
+Two statements came out of the work on upstream issue #22 of
+`MetaManifold-WebUI`. Each holds for any implementation, so each is theory by
+PROOF-POLICY §1. Neither is proved; their status is `tested-only`.
++
+*S-MN.* Fit the baseline-category multinomial logit to counts in two groups
+A and B, with an intercept and a group term, and reference taxon r. Let
+S~gj~ be the pooled count of taxon j in group g, and let all four of S~Aj~,
+S~Ar~, S~Bj~ and S~Br~ be positive. Then the maximum-likelihood
+group coefficient of taxon j is log(S~Bj~/S~Br~) − log(S~Aj~/S~Ar~), and the
+inverse observed information gives it the variance
+1/S~Aj~ + 1/S~Ar~ + 1/S~Bj~ + 1/S~Br~. Two implementations meet it to 1e-8
+(`5a89914`, the test named above).
++
+*S-DM.* In Dirichlet-multinomial regression with a log link on every taxon's
+Dirichlet parameter, the contrast b~j~ − b~r~ of two group coefficients does
+not change when the same constant is added to every taxon's coefficient. So
+the contrast does not depend on the direction in which a group's total
+concentration grows. As the concentrations of both groups grow without
+bound, the contrast tends to the multinomial estimate of S-MN. In one
+simulation on multinomial counts, MGLM's contrasts matched the multinomial
+ones to about 1e-5 and its standard errors were 0.15% larger. This is an
+observation, not a proof. With one group flat and the other overdispersed
+the limit is not the multinomial: in a second simulation the contrasts
+differed from S-MN by up to 0.13 and the standard errors were 6 to 7 times
+larger. So the statement needs both groups.
++
+*Reading:* S-MN is an oracle that any implementation of the model can be
+tested against. If it were proved, a test that uses it would rest on a
+theorem instead of on agreement between programs. S-DM is an equivalence at a
+boundary. Its dependant is the rule in both MetaManifold-WebUI branches that
+marks Dirichlet-multinomial rows `boundary`, and that calls their estimates the
+multinomial ones only when both groups are flat.
+Neither statement meets the admission rule of `docs/theory/README.adoc` until
+it is proved in Agda and re-proved in Rocq and Lean.
 
 === First experiments
 

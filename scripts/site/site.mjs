@@ -14,7 +14,7 @@
 //     repository fails. A relative link to a repository file that is not in
 //     the site becomes an absolute GitHub link at `main`.
 import {readFileSync, writeFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, statSync} from 'node:fs';
-import {spawnSync} from 'node:child_process';
+import {spawnSync} from 'node:child_process'; // hypatia:ignore js_exec_sync -- argv array, no shell; the program is an absolute path and every argument is a constant or a repository path
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 

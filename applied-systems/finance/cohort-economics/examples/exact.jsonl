@@ -1,0 +1,60 @@
+{"description":"Rates are exact fractions. A member count can be a fraction: it is an expected value, not a head count. Nothing is rounded, so the funding gap is exact to a fraction of a penny.","kind":"example","mode":"exact","name":"exact","period_length":"one month; each month end is a renewal date","periods":["P1","P2","P3","P4"],"synthetic":true,"title":"Exact fractions (mode exact)"}
+{"description":"The first recruitment campaign.","id":"A","kind":"cohort","start":"P1"}
+{"description":"A second, smaller campaign two months later.","id":"B","kind":"cohort","start":"P3"}
+{"access":"public","depends_on":[],"description":"Cash at the start of P1","evidence_status":"illustrative","id":"opening_cash","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"pence","value":600000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Cash received from each active member in each period","evidence_status":"illustrative","id":"price","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"pence per member per period","value":1500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Avoidable cost of each active member in each period","evidence_status":"illustrative","id":"unit_cost","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"pence per member per period","value":400,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Support time that each active member needs in each period","evidence_status":"illustrative","id":"support_minutes","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"minutes per member per period","value":30,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Fixed payments in the period","evidence_status":"illustrative","id":"fixed_cost","kind":"input","owner":"mathesis","period":"P1","source":"synthetic","unit":"pence","value":350000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Fixed payments in the period","evidence_status":"illustrative","id":"fixed_cost","kind":"input","owner":"mathesis","period":"P2","source":"synthetic","unit":"pence","value":350000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Fixed payments in the period","evidence_status":"illustrative","id":"fixed_cost","kind":"input","owner":"mathesis","period":"P3","source":"synthetic","unit":"pence","value":350000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Fixed payments in the period","evidence_status":"illustrative","id":"fixed_cost","kind":"input","owner":"mathesis","period":"P4","source":"synthetic","unit":"pence","value":350000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Agreed minimum cash at the end of the period","evidence_status":"illustrative","id":"cash_floor","kind":"input","owner":"mathesis","period":"P1","source":"synthetic","unit":"pence","value":200000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Agreed minimum cash at the end of the period","evidence_status":"illustrative","id":"cash_floor","kind":"input","owner":"mathesis","period":"P2","source":"synthetic","unit":"pence","value":200000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Agreed minimum cash at the end of the period","evidence_status":"illustrative","id":"cash_floor","kind":"input","owner":"mathesis","period":"P3","source":"synthetic","unit":"pence","value":200000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Agreed minimum cash at the end of the period","evidence_status":"illustrative","id":"cash_floor","kind":"input","owner":"mathesis","period":"P4","source":"synthetic","unit":"pence","value":200000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Support time available in the period","evidence_status":"illustrative","id":"capacity_minutes","kind":"input","owner":"mathesis","period":"P1","source":"synthetic","unit":"minutes","value":7500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Support time available in the period","evidence_status":"illustrative","id":"capacity_minutes","kind":"input","owner":"mathesis","period":"P2","source":"synthetic","unit":"minutes","value":7500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Support time available in the period","evidence_status":"illustrative","id":"capacity_minutes","kind":"input","owner":"mathesis","period":"P3","source":"synthetic","unit":"minutes","value":7500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Support time available in the period","evidence_status":"illustrative","id":"capacity_minutes","kind":"input","owner":"mathesis","period":"P4","source":"synthetic","unit":"minutes","value":7500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"People that the campaign of cohort A reaches","evidence_status":"illustrative","id":"A.contacts","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"people","value":2000,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Contacts of cohort A who join","evidence_status":"illustrative","id":"A.conversion","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"fraction","value":"1/10","verified_on":null}
+{"access":"public","depends_on":[],"description":"Members of cohort A who renew at each renewal date","evidence_status":"illustrative","id":"A.retention","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"fraction","value":"17/20","verified_on":null}
+{"access":"public","depends_on":[],"description":"People that the campaign of cohort B reaches","evidence_status":"illustrative","id":"B.contacts","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"people","value":1500,"verified_on":null}
+{"access":"public","depends_on":[],"description":"Contacts of cohort B who join","evidence_status":"illustrative","id":"B.conversion","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"fraction","value":"2/25","verified_on":null}
+{"access":"public","depends_on":[],"description":"Members of cohort B who renew at each renewal date","evidence_status":"illustrative","id":"B.retention","kind":"input","owner":"mathesis","period":null,"source":"synthetic","unit":"fraction","value":"4/5","verified_on":null}
+{"evidence_status":"illustrative","id":"members","kind":"expected","period":"P1","value":200}
+{"evidence_status":"illustrative","id":"receipts","kind":"expected","period":"P1","value":300000}
+{"evidence_status":"illustrative","id":"payments","kind":"expected","period":"P1","value":430000}
+{"evidence_status":"illustrative","id":"closing","kind":"expected","period":"P1","value":470000}
+{"evidence_status":"illustrative","id":"shortfall","kind":"expected","period":"P1","value":-270000}
+{"evidence_status":"illustrative","id":"hours","kind":"expected","period":"P1","value":6000}
+{"evidence_status":"illustrative","id":"cash_ok","kind":"expected","period":"P1","value":true}
+{"evidence_status":"illustrative","id":"capacity_ok","kind":"expected","period":"P1","value":true}
+{"evidence_status":"illustrative","id":"members","kind":"expected","period":"P2","value":170}
+{"evidence_status":"illustrative","id":"receipts","kind":"expected","period":"P2","value":255000}
+{"evidence_status":"illustrative","id":"payments","kind":"expected","period":"P2","value":418000}
+{"evidence_status":"illustrative","id":"closing","kind":"expected","period":"P2","value":307000}
+{"evidence_status":"illustrative","id":"shortfall","kind":"expected","period":"P2","value":-107000}
+{"evidence_status":"illustrative","id":"hours","kind":"expected","period":"P2","value":5100}
+{"evidence_status":"illustrative","id":"cash_ok","kind":"expected","period":"P2","value":true}
+{"evidence_status":"illustrative","id":"capacity_ok","kind":"expected","period":"P2","value":true}
+{"evidence_status":"illustrative","id":"members","kind":"expected","period":"P3","value":"264.5"}
+{"evidence_status":"illustrative","id":"receipts","kind":"expected","period":"P3","value":396750}
+{"evidence_status":"illustrative","id":"payments","kind":"expected","period":"P3","value":455800}
+{"evidence_status":"illustrative","id":"closing","kind":"expected","period":"P3","value":247950}
+{"evidence_status":"illustrative","id":"shortfall","kind":"expected","period":"P3","value":-47950}
+{"evidence_status":"illustrative","id":"hours","kind":"expected","period":"P3","value":7935}
+{"evidence_status":"illustrative","id":"cash_ok","kind":"expected","period":"P3","value":true}
+{"evidence_status":"illustrative","id":"capacity_ok","kind":"expected","period":"P3","value":false}
+{"evidence_status":"illustrative","id":"members","kind":"expected","period":"P4","value":"218.825"}
+{"evidence_status":"illustrative","id":"receipts","kind":"expected","period":"P4","value":"328237.5"}
+{"evidence_status":"illustrative","id":"payments","kind":"expected","period":"P4","value":437530}
+{"evidence_status":"illustrative","id":"closing","kind":"expected","period":"P4","value":"138657.5"}
+{"evidence_status":"illustrative","id":"shortfall","kind":"expected","period":"P4","value":"61342.5"}
+{"evidence_status":"illustrative","id":"hours","kind":"expected","period":"P4","value":"6564.75"}
+{"evidence_status":"illustrative","id":"cash_ok","kind":"expected","period":"P4","value":false}
+{"evidence_status":"illustrative","id":"capacity_ok","kind":"expected","period":"P4","value":true}
+{"evidence_status":"illustrative","id":"cash_verdict","kind":"expected","period":null,"value":false}
+{"evidence_status":"illustrative","id":"capacity_verdict","kind":"expected","period":null,"value":false}
+{"evidence_status":"illustrative","id":"gap","kind":"expected","period":null,"value":"61342.5"}

@@ -36,12 +36,46 @@ home in Mathesis.
 |Open (next on the theory shelf)
 |Statements: `docs/proposals/mathesis-research-programme.adoc`
 
-|To be allocated
-|The invariants of the applied shelf that merit a proof
-|Not chosen
-|Open: not yet stated (WO 4.2)
-|`applied-systems/`
+|APP-1
+|Missing propagates: in the cohort model, an output that depends on a
+missing input is missing, in every period after it too, and never zero. A
+verdict is "no" on a known breach and otherwise missing when any value it
+depends on is missing; it is never "yes" then
+|Agda, re-checked in Rocq and Lean
+|Open: stated here, not yet in Agda (WO 4.2)
+|`verification/proofs/agda/Applied/Cohort.agda`
+
+|APP-2
+|Cash identity: when every input is present, the closing cash of the last
+period equals the opening cash plus all receipts minus all payments
+|Agda, re-checked in Rocq and Lean
+|Open: stated here, not yet in Agda (WO 4.2)
+|`verification/proofs/agda/Applied/Cohort.agda`
+
+|APP-3
+|The funding gap is sound and least: adding the gap to the opening cash
+keeps every closing balance at or above its floor, and no smaller
+non-negative amount does
+|Agda, re-checked in Rocq and Lean
+|Open: stated here, not yet in Agda (WO 4.2)
+|`verification/proofs/agda/Applied/Cohort.agda`
+
+|APP-4
+|Status never upgrades: the evidence status of an output is never stronger
+than the weakest status of the inputs that it depends on
+|Agda, re-checked in Rocq and Lean
+|Open: stated here, not yet in Agda (WO 4.2)
+|`verification/proofs/agda/Applied/Cohort.agda`
 |===
+
+APP-1 to APP-4 are about the cohort model of the applied shelf (re-anchoring
+plan WO 4.2, owner rulings 2026-11-12). Each statement would be true of any
+implementation of the model, so each is theory by PROOF-POLICY §1: proved in
+Agda and re-checked in Rocq and Lean. The model is written over an abstract
+number structure, so APP-2 and APP-3 need only its laws, not the laws of one
+number type. They are not theory-shelf admissions: no estate rule depends on
+them yet. Each worked example is already checked by Agda; a checked example is
+not a proof of the property.
 
 No Mathesis obligation concerns an ABI or an FFI: since WO 3.2 the deed
 declares neither capability.

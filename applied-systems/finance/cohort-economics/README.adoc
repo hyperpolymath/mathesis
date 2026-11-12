@@ -27,3 +27,19 @@ Sensitivity analysis should report conversion, renewal retention and workload
 together with minimum cash, the period of cumulative payback (if reached),
 full-cost result and capacity excess. Do not call an infeasible workload case
 viable merely because its financial column is positive.
+
+== Model and worked examples
+
+The cohort model is `verification/proofs/agda/Applied/Cohort.agda`: active
+members, receipts, payments, closing cash, the shortfall below the cash floor,
+support minutes, the floor and capacity verdicts, and the funding gap. Every
+value can be missing and carries an evidence status. The model has three number
+modes; link:modes.adoc[Number modes] says which one to use.
+
+Each file in `examples/` is one synthetic worked example: its inputs, in the
+link:../../methods/input-schema.adoc[input schema], and its expected outputs.
+`just applied-build` writes link:generated/examples.adoc[the worked examples]
+and one Agda module for each example. Agda accepts that module only if the
+model computes every expected output, missing ones included. The general
+properties of the model are open proof obligations APP-1 to APP-4 in
+`docs/status/PROOF-NEEDS.adoc`.

@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Number modes of the cohort model
+
+The cohort model has three number modes. Each example names one mode. The
+model is the same in each mode: only the way that it gets the active members
+changes. Choose the mode from what you know and what you need.
+
+[cols="1,2,2,2",options="header"]
+|===
+|Mode |You enter |The model does |Use it when
+
+|`simple`
+|The active members that you count (or plan) in each period
+|No rates and no rounding: it uses your counts as they are
+|You want the plainest correct answer, or you are not sure which mode to use.
+Start here.
+
+|`approximate`
+|Contacts, and a conversion and a retention rate as whole numbers per 1000
+|Counts whole members: at each step it rounds down
+|An estimate is enough, and you think in rates, for example "about 85 in 100
+renew".
+
+|`exact`
+|Contacts, and the rates as exact fractions, for example `17/20`
+|Keeps every value exact. A member count can be a fraction: it is an expected
+value, not a head count
+|You compare scenarios closely, or the rounding of the approximate mode
+changes a decision.
+|===
+
+== The same model in every mode
+
+* Every value can be missing. An output that depends on a missing input stays
+  missing; it does not become zero.
+* Each value has an evidence status. An output is never more certain than the
+  inputs that it depends on.
+* A verdict ("the cash floor holds in every period") is yes, no or missing. A
+  known breach makes it "no", even when a later period is missing.
+* Money is in pence. The funding gap is the least amount that, added to the
+  opening cash, keeps the cash at or above the floor at the end of every
+  period.
+
+== How the modes differ
+
+In mode `approximate`, a cohort with 2000 contacts and a conversion of 100 per
+1000 has 200 members. With a retention of 850 per 1000, it has 170 members
+after the first renewal and 144 after the second (144.5 rounded down).
+
+In mode `exact`, the same cohort has 170 members after the first renewal and
+144.5 after the second. The half member is part of an expected value. The
+model reaches this result without fractions: it multiplies every quantity by
+one common denominator, works in whole numbers, and divides at the end. So
+nothing is rounded at any step.
+
+The examples in link:generated/examples.adoc[the worked examples] use the same
+costs and floors in each mode, so you can compare the results.
+
+== Limits
+
+* The period and the renewal date are the same: each period ends with a
+  renewal. State the period length in the example.
+* A rate stays the same at each renewal. A rate that changes is not yet
+  modelled.
+* Rates do not carry uncertainty. To explore it, write two examples with
+  different rates.
+* The model checks each worked example exactly. The general properties
+  (obligations APP-1 to APP-4 in `docs/status/PROOF-NEEDS.adoc`) are open.

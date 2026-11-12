@@ -23,6 +23,7 @@ Do not copy a private case here merely by changing its name.
 |link:decision-science/README.adoc[Decision science] |Event chains, uncertainty and the value of additional information.
 |link:organisational-design/README.adoc[Organisational design] |Capacity, role design, service safeguards and implementation constraints.
 |link:methods/evidence-and-assumptions.adoc[Evidence and assumptions] |Shared conventions for status, provenance, units and uncertainty.
+|link:methods/input-schema.adoc[Input schema] |One record for each model input, with its evidence status; missing is never zero.
 |link:methods/types-and-assurance.adoc[Types and assurance] |Research questions connecting types to reliable applied models.
 |===
 

@@ -29,6 +29,7 @@ import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex} from './theory.mjs';
+import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
@@ -38,6 +39,19 @@ const bridgesFile = path.join(root, 'docs/atlas/claims/bridges.jsonl');
 const bridgesView = path.join(root, 'docs/atlas/generated/bridges.adoc');
 const admissionsFile = path.join(root, 'docs/theory/admissions.jsonl');
 const theoryView = path.join(root, 'docs/theory/generated/index.adoc');
+const ledgerFile = path.join(root, 'docs/theory/ledger.jsonl');
+
+// The theory ledger as it stands on main, for the append-only check, read
+// over HTTPS like the receipts (no subprocess, and the local clone is left
+// as it is). A 404 means main has no ledger yet, so every entry is new; any
+// other failure stops the check: an unchecked ledger is not a passing one.
+const LEDGER_ON_MAIN = 'https://raw.githubusercontent.com/hyperpolymath/mathesis/main/docs/theory/ledger.jsonl';
+async function ledgerOnMain() {
+  const res = await fetch(LEDGER_ON_MAIN);
+  if (res.status === 404) return '';
+  if (!res.ok) throw new Error(`could not fetch ${LEDGER_ON_MAIN}: HTTP ${res.status}`);
+  return res.text();
+}
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
@@ -216,8 +230,8 @@ export function render(derived) {
 
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
-  if (cmd !== 'build' && cmd !== 'check') {
-    console.error('usage: claims-registry.mjs build|check [--receipts-dir DIR]');
+  if (!['build', 'check', 'ledger'].includes(cmd)) {
+    console.error('usage: claims-registry.mjs build|check|ledger [--receipts-dir DIR] [--note TEXT]');
     process.exit(2);
   }
   const i = args.indexOf('--receipts-dir');
@@ -227,6 +241,16 @@ async function main() {
   const bridges = validateBridges(await readJsonl(bridgesFile), inventory);
   const admissions = validateAdmissions(await readJsonl(admissionsFile), rows, inventory);
   const derived = await deriveAll(rows, receiptsDir, await loadReader());
+  const ledger = validateLedger(await readJsonl(ledgerFile));
+  const current = snapshot(rows, admissions, new Map(derived.map(d => [d.row.id, d.pwg])));
+  if (cmd === 'ledger') {
+    const n = args.indexOf('--note');
+    const note = n >= 0 ? args[n + 1] : undefined;
+    const add = pending(ledger, current, new Date().toISOString().slice(0, 10), note);
+    if (add.length) await writeFile(ledgerFile, [...ledger, ...add].map(e => jcs(e) + '\n').join(''));
+    console.log(`theory ledger: ${add.length} new entries, ${ledger.length + add.length} in all`);
+    return;
+  }
   const views = [[viewFile, render(derived)], [bridgesView, renderBridges(bridges)], [theoryView, renderTheoryIndex(derived, admissions)]];
   if (cmd === 'build') {
     await Promise.all(views.map(([file]) => mkdir(path.dirname(file), {recursive: true})));
@@ -236,7 +260,10 @@ async function main() {
     const committed = await Promise.all(views.map(([file]) => readFile(file, 'utf8').catch(() => '')));
     const stale = views.filter(([, body], i) => committed[i] !== body).map(([file]) => path.relative(root, file));
     if (stale.length) throw new Error(`${stale.join(', ')} stale; run: bun scripts/registry/claims-registry.mjs build`);
-    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges, ${admissions.length} admissions)`);
+    const due = pending(ledger, current, '0000-00-00');
+    if (due.length) throw new Error(`docs/theory/ledger.jsonl is behind by ${due.length} entries; run: just theory-ledger`);
+    checkAppendOnly(await ledgerOnMain(), await readFile(ledgerFile, 'utf8'));
+    console.log(`PASS: claims registry derived from ${new Set(rows.map(r => r.repo + '@' + r.source_commit)).size} pinned source(s); views match (${rows.length} claims, ${bridges.length} bridges, ${admissions.length} admissions); the theory ledger is current and append-only (${ledger.length} entries)`);
   }
 }
 

@@ -285,6 +285,14 @@ let base    = import "../_base.ncl" in
         severity = 'critical,
         notes = "Re-anchoring plan WO 2.1. A row without either field makes jq fail, and the probe fails closed.",
       },
+      {
+        id = "theory-ledger-current",
+        section = "Mathesis Invariants",
+        description = "The theory ledger records each home theorem's current admission and receipt pin, and only `just theory-ledger` writes it",
+        probe = "bun scripts/registry/theory-ledger.mjs verify >/dev/null",
+        severity = 'critical,
+        notes = "Owner ruling 2026-11-11. The probe is offline. just registry-check (part of just check) also checks the derived grade, and that the ledger on main is a prefix of this one (append-only).",
+      },
     ],
   },
 

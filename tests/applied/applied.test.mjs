@@ -29,6 +29,11 @@ test('the input schema keeps missing apart from zero', () => {
   bad({...input, evidence_status: 'guessed'}, /evidence_status/);
   bad({...input, access: 'secret'}, /access/);
   bad({...input, extra: 1}, /unknown field/);
+  bad({...input, evidence_status: 'verified', verified_on: '2026-02-31'}, /verified_on is a date/);
+  bad({...input, evidence_status: 'verified', verified_on: '2026-13-01'}, /verified_on is a date/);
+  bad({...input, depends_on: ['???']}, /depends_on lists input ids/);
+  bad({...input, value: true}, /a number or text/);
+  bad({...input, value: {n: 1}}, /a number or text/);
   const {unit, ...noUnit} = input;
   bad(noUnit, /missing field unit/);
 });
@@ -48,6 +53,10 @@ test('the example validator fails closed', () => {
   bad(swap('A.retention', {value: 1001}), /from 0 to 1000/);
   bad(swap('A.retention', {evidence_status: 'reported'}), /not evidence about an organisation/);
   bad(swap('A.retention', {access: 'restricted'}), /public inputs only/);
+  bad(swap('A.retention', {source: 'organisation ledger'}), /"synthetic"/);
+  bad(swap('support_minutes', {value: -2}), /support_minutes@null is a whole number/);
+  bad(recs.map(r => (r.kind === 'input' && r.id === 'capacity_minutes' && r.period === 'P2' ? {...r, value: -1} : r)), /capacity_minutes@P2 is a whole number/);
+  expect(() => validateExample([{...recs[0], name: 'Approximate'}, ...recs.slice(1)], 'Approximate')).toThrow(/lower-case/);
   bad([{...recs[0], synthetic: false}, ...recs.slice(1)], /synthetic by construction/);
   bad([{...recs[0], mode: 'exact'}, ...recs.slice(1)], /fraction/);
   bad(recs.filter(r => !(r.kind === 'expected' && r.id === 'closing' && r.period === 'P4')), /no expected closing for P4/);

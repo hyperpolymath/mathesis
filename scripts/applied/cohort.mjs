@@ -38,6 +38,8 @@ const ROW_OUTPUTS = ['members', 'receipts', 'payments', 'closing', 'shortfall', 
 const SUMMARY_OUTPUTS = new Set(['cash_verdict', 'capacity_verdict', 'gap']);
 const TRUTHS = new Set(['cash_ok', 'capacity_ok', 'cash_verdict', 'capacity_verdict']);
 const SYNTHETIC = new Set(['illustrative', 'missing']);
+// Support time cannot be negative; money can.
+const MINUTES = new Set(['support_minutes', 'capacity_minutes']);
 const EXAMPLE_FIELDS = ['description', 'kind', 'mode', 'name', 'period_length', 'periods', 'synthetic', 'title'];
 const COHORT_FIELDS = ['description', 'id', 'kind', 'start'];
 const EXPECTED_FIELDS = ['evidence_status', 'id', 'kind', 'period', 'value'];
@@ -69,6 +71,8 @@ function validateHeader(ex, name) {
   need(ex?.kind === 'example', `${name}: the first record is the example record`);
   closed(ex, EXAMPLE_FIELDS, `${name}: example`);
   need(ex.name === name, `${name}: the example name matches the file name`);
+  // Lower case only, so that no two examples get the same Agda module name.
+  need(/^[a-z][a-z0-9]*$/.test(name), `${name}: an example name is lower-case letters and digits`);
   need(MODES.includes(ex.mode), `${name}: mode is one of ${MODES.join(', ')}`);
   need(ex.synthetic === true, `${name}: a public example is synthetic by construction`);
   for (const k of ['title', 'description', 'period_length']) need(text(ex[k]), `${name}: ${k} is text`);
@@ -88,6 +92,7 @@ function addCohort(acc, r, where) {
 function addInput(acc, r, where) {
   validateInput(r, where);
   need(r.access === 'public', `${where} (${r.id}): Mathesis holds public inputs only`);
+  need(r.source === 'synthetic', `${where} (${r.id}): the source of an input of a public example is "synthetic"`);
   need(SYNTHETIC.has(r.evidence_status),
     `${where} (${r.id}): a synthetic input is illustrative (or missing); it is not evidence about an organisation`);
   const key = `${r.id}@${r.period}`;
@@ -115,8 +120,9 @@ const ADD = {cohort: addCohort, input: addInput, expected: addExpected};
 // The inputs that a mode reads, each with its unit and the form of its value.
 function wantedInputs(ex, cohorts, periodIndex) {
   const wanted = new Map();
-  for (const [id, unit] of Object.entries(COMMON)) wanted.set(`${id}@null`, {unit, form: 'integer'});
-  for (const [id, unit] of Object.entries(PER_PERIOD)) for (const p of ex.periods) wanted.set(`${id}@${p}`, {unit, form: 'integer'});
+  const form = id => (MINUTES.has(id) ? 'natural' : 'integer');
+  for (const [id, unit] of Object.entries(COMMON)) wanted.set(keyOf(id, null), {unit, form: form(id)});
+  for (const [id, unit] of Object.entries(PER_PERIOD)) for (const p of ex.periods) wanted.set(keyOf(id, p), {unit, form: form(id)});
   const rate = ex.mode === 'approximate' ? {unit: 'per 1000', form: 'permille'} : {unit: 'fraction', form: 'fraction'};
   for (const c of cohorts) {
     if (ex.mode === 'simple') {
@@ -277,9 +283,11 @@ export function renderView(examples) {
     'say which mode to use.',
   ];
   for (const {ex, cohorts, inputs, expected} of examples) {
-    out.push('', `== ${ex.title}`, '', `Mode: \`${ex.mode}\`. Periods: ${ex.periods.join(', ')} (${ex.period_length}).`, '', ex.description, '');
-    out.push('Cohorts:', '', ...cohorts.map(c => `* ${c.id}, from ${c.start}: ${c.description}`));
-    out.push('', '.Inputs', '[cols="2,1,2,1,1",options="header"]', '|===', '|Input |Period |Unit |Value |Status', '');
+    out.push(
+      '', `== ${ex.title}`, '', `Mode: \`${ex.mode}\`. Periods: ${ex.periods.join(', ')} (${ex.period_length}).`, '', ex.description, '',
+      'Cohorts:', '', ...cohorts.map(c => `* ${c.id}, from ${c.start}: ${c.description}`),
+      '', '.Inputs', '[cols="2,1,2,1,1",options="header"]', '|===', '|Input |Period |Unit |Value |Status', '',
+    );
     for (const r of inputs.values()) {
       out.push(`|${cell(r.description)} (\`${r.id}\`)`, `|${r.period ?? 'all'}`, `|${cell(r.unit)}`, `|${cell(shown(r))}`, `|${r.evidence_status}`, '');
     }

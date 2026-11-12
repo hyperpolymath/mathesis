@@ -48,6 +48,6 @@ f="$d/applied-systems/finance/cohort-economics/examples/approximate.jsonl"
 grep -qF '{"evidence_status":"missing","id":"closing","kind":"expected","period":"P4","value":null}' "$f"
 sed -i 's/{"evidence_status":"missing","id":"closing","kind":"expected","period":"P4","value":null}/{"evidence_status":"illustrative","id":"closing","kind":"expected","period":"P4","value":0}/' "$f"
 (cd "$d" && just --quiet applied-build >/dev/null)
-expect_fail "missing read as zero" "$d" check-proofs "Approximate.agda"
+expect_fail "missing read as zero" "$d" check-proofs "Applied/Example/Approximate.agda FAIL"
 
 exit "$fail"

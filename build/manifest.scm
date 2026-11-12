@@ -16,4 +16,6 @@
        ;; Provers for the proof lanes (re-anchoring plan WO 1.4, ruling D-8 (a)).
        ;; No agda-stdlib: its Guix package does not build, and no proof here
        ;; imports it (owner ruling 2026-11-10).
-       "agda" "coq" "lean4"))
+       "agda" "coq" "lean4"
+       ;; Static site of the generated views (re-anchoring plan WO 4.3).
+       "ruby-asciidoctor"))

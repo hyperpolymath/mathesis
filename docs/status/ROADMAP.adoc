@@ -199,6 +199,18 @@ One pull request that changes census rows is open at a time (atlas README,
   clause; `docs/status/PROOF-STATUS.adoc` records the comparison. WO 4.2 is
   then done. Next: receipts for APP-1 to APP-4, from a CI run on the merged
   commit, then WO 4.3 (needs a ruling).
+* WO 4.3, publish the atlas (owner rulings 2026-11-12): site built in CI;
+  deploy waits for the 2026-11-24 hold and an owner ruling.
+** `just site OUT` writes one generated front page, then renders it and the
+   seven generated views with Asciidoctor (pinned Guix shell,
+   `ruby-asciidoctor`). `just check` builds the site into a temp dir, so the
+   Guix job builds it on every pull request and push to main.
+** The build fails on any Asciidoctor warning and on any broken relative link.
+   A link to a repository file outside the site becomes a GitHub link at `main`.
+** Not done, by ruling: no deploy job and no Pages settings change. Stage 1
+   must hold two weeks, so deploy is possible on or after 2026-11-24, after a
+   fresh owner question. `.github/workflows/pages.yml` stays as it is; the
+   deploy pull request replaces it.
 * Open item for the owner (ruling 2026-11-12): none of the JSON Lines data
   files declares a licence; JSON has no comment syntax. The owner will write
   one `REUSE.toml` rule at the root that covers all of them (doctrine 6: a

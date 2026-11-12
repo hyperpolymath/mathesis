@@ -2,3 +2,4 @@
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
 # Ground-truthed 2026-07-17 with Lean leanprover/lean4:v4.15.0 (via elan).
 verification/proofs/lean4|FeatureReachability.lean|gated| THY-1 Lean leg, re-proved; core only; #print axioms: none
+verification/proofs/lean4|Cohort.lean|gated| APP-1 to APP-4 Lean leg, re-proved, with the integer laws; core only; no axiom

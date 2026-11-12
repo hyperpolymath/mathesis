@@ -66,4 +66,4 @@ costs and floors in each mode, so you can compare the results.
   different rates.
 * The model checks each worked example exactly. The general properties
   (obligations APP-1 to APP-4 in `docs/status/PROOF-NEEDS.adoc`) are proved
-  in Agda for every mode; the Rocq and Lean re-proofs are open.
+  in Agda for every mode, and re-proved in Rocq and Lean.

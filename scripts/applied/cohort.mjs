@@ -35,13 +35,14 @@ const COMMON = {
 };
 const PER_PERIOD = {fixed_cost: 'pence', cash_floor: 'pence', capacity_minutes: 'minutes'};
 const ROW_OUTPUTS = ['members', 'receipts', 'payments', 'closing', 'shortfall', 'hours', 'cash_ok', 'capacity_ok'];
-const SUMMARY_OUTPUTS = ['cash_verdict', 'capacity_verdict', 'gap'];
+const SUMMARY_OUTPUTS = new Set(['cash_verdict', 'capacity_verdict', 'gap']);
 const TRUTHS = new Set(['cash_ok', 'capacity_ok', 'cash_verdict', 'capacity_verdict']);
-const SYNTHETIC = ['illustrative', 'missing'];
+const SYNTHETIC = new Set(['illustrative', 'missing']);
 const EXAMPLE_FIELDS = ['description', 'kind', 'mode', 'name', 'period_length', 'periods', 'synthetic', 'title'];
 const COHORT_FIELDS = ['description', 'id', 'kind', 'start'];
 const EXPECTED_FIELDS = ['evidence_status', 'id', 'kind', 'period', 'value'];
 
+const keyOf = (id, period) => `${id}@${period}`;
 const need = (ok, message) => {
   if (!ok) throw new Error(message);
 };
@@ -87,7 +88,7 @@ function addCohort(acc, r, where) {
 function addInput(acc, r, where) {
   validateInput(r, where);
   need(r.access === 'public', `${where} (${r.id}): Mathesis holds public inputs only`);
-  need(SYNTHETIC.includes(r.evidence_status),
+  need(SYNTHETIC.has(r.evidence_status),
     `${where} (${r.id}): a synthetic input is illustrative (or missing); it is not evidence about an organisation`);
   const key = `${r.id}@${r.period}`;
   need(!acc.inputs.has(key), `${where}: duplicate input ${key}`);
@@ -97,10 +98,10 @@ function addInput(acc, r, where) {
 function addExpected(acc, r, where) {
   closed(r, EXPECTED_FIELDS, where);
   const isRow = ROW_OUTPUTS.includes(r.id);
-  need(isRow || SUMMARY_OUTPUTS.includes(r.id), `${where}: unknown output ${r.id}`);
+  need(isRow || SUMMARY_OUTPUTS.has(r.id), `${where}: unknown output ${r.id}`);
   const periodOk = isRow ? acc.periodIndex.has(r.period) : r.period === null;
   need(periodOk, `${where} (${r.id}): period is ${isRow ? 'a period label' : 'null'}`);
-  need(SYNTHETIC.includes(r.evidence_status), `${where} (${r.id}): an output of synthetic inputs is illustrative or missing`);
+  need(SYNTHETIC.has(r.evidence_status), `${where} (${r.id}): an output of synthetic inputs is illustrative or missing`);
   need((r.evidence_status === 'missing') === (r.value === null), `${where} (${r.id}): a missing output has the value null, and only a missing one`);
   if (r.value !== null && TRUTHS.has(r.id)) need(typeof r.value === 'boolean', `${where} (${r.id}): the value is true or false`);
   if (r.value !== null && !TRUTHS.has(r.id)) parseNumber(r.value, `${where} (${r.id})`);
@@ -172,7 +173,7 @@ const status = r => (r.evidence_status === 'missing' ? null : r.evidence_status)
 const val = (r, term) => (r.value === null ? 'missing' : `given ${status(r)} ${term(r.value)}`);
 const paren = s => (s.includes(' ') ? `(${s})` : s);
 const list = items => (items.length ? `${items.map(paren).join(' ∷ ')} ∷ []` : '[]');
-const rate = (mode, v) => (mode === 'approximate' ? `(perMille ${v})` : `(fraction ${v.split('/').join(' ')})`);
+const rate = (mode, v) => (mode === 'approximate' ? `(perMille ${v})` : `(fraction ${v.replaceAll('/', ' ')})`);
 const AGDA_FIELD = {
   members: 'members', receipts: 'receipts', payments: 'payments', closing: 'closing', shortfall: 'shortfall',
   hours: 'hours', cash_ok: 'cashOk', capacity_ok: 'capacityOk', cash_verdict: 'cashVerdict',
@@ -196,12 +197,14 @@ export function renderAgda(v, source) {
   const cohortTerm = c => {
     const start = periodIndex.get(c.start);
     if (ex.mode === 'simple') {
-      const counts = ex.periods.slice(start - 1).map(p => val(get(`${c.id}.active@${p}`), x => String(x)));
+      const counts = ex.periods.slice(start - 1).map(p => val(get(keyOf(`${c.id}.active`, p)), String));
       return `observed ${start} (${list(counts)})`;
     }
-    const contacts = val(get(`${c.id}.contacts@null`), x => String(x));
+    const contacts = val(get(keyOf(`${c.id}.contacts`, null)), String);
     const r = key => val(get(key), x => rate(ex.mode, x));
-    return `modelled ${start} ${paren(contacts)} ${paren(r(`${c.id}.conversion@null`))} ${paren(r(`${c.id}.retention@null`))}`;
+    const conversion = paren(r(keyOf(`${c.id}.conversion`, null)));
+    const retention = paren(r(keyOf(`${c.id}.retention`, null)));
+    return `modelled ${start} ${paren(contacts)} ${conversion} ${retention}`;
   };
   const out = [
     '{-# OPTIONS --safe --without-K --cubical-compatible #-}',
@@ -240,12 +243,14 @@ export function renderAgda(v, source) {
   for (const p of ex.periods) {
     out.push('', `-- Period ${p}`);
     for (const id of ROW_OUTPUTS) {
-      out.push(`_ : check result ${periodIndex.get(p)} ${AGDA_FIELD[id]} ${expect(expected.get(`${id}@${p}`))} ≡ true`, '_ = refl');
+      const e = expect(expected.get(keyOf(id, p)));
+      out.push(`_ : check result ${periodIndex.get(p)} ${AGDA_FIELD[id]} ${e} ≡ true`, '_ = refl');
     }
   }
   out.push('', '-- Over all periods');
   for (const id of SUMMARY_OUTPUTS) {
-    out.push(`_ : checkSummary result ${AGDA_FIELD[id]} ${expect(expected.get(`${id}@null`))} ≡ true`, '_ = refl');
+    const e = expect(expected.get(keyOf(id, null)));
+    out.push(`_ : checkSummary result ${AGDA_FIELD[id]} ${e} ≡ true`, '_ = refl');
   }
   return out.join('\n') + '\n';
 }
@@ -253,7 +258,12 @@ export function renderAgda(v, source) {
 // --------------------------------------------------------------- AsciiDoc view
 
 const cell = s => String(s).replaceAll('|', String.raw`\|`).replaceAll('\n', ' ');
-const shown = r => (r.value === null ? '_missing_' : typeof r.value === 'boolean' ? (r.value ? 'yes' : 'no') : String(r.value));
+const shown = r => {
+  if (r.value === null) return '_missing_';
+  if (r.value === true) return 'yes';
+  if (r.value === false) return 'no';
+  return String(r.value);
+};
 
 export function renderView(examples) {
   const out = [
@@ -268,8 +278,7 @@ export function renderView(examples) {
   ];
   for (const {ex, cohorts, inputs, expected} of examples) {
     out.push('', `== ${ex.title}`, '', `Mode: \`${ex.mode}\`. Periods: ${ex.periods.join(', ')} (${ex.period_length}).`, '', ex.description, '');
-    out.push('Cohorts:', '');
-    for (const c of cohorts) out.push(`* ${c.id}, from ${c.start}: ${c.description}`);
+    out.push('Cohorts:', '', ...cohorts.map(c => `* ${c.id}, from ${c.start}: ${c.description}`));
     out.push('', '.Inputs', '[cols="2,1,2,1,1",options="header"]', '|===', '|Input |Period |Unit |Value |Status', '');
     for (const r of inputs.values()) {
       out.push(`|${cell(r.description)} (\`${r.id}\`)`, `|${r.period ?? 'all'}`, `|${cell(r.unit)}`, `|${cell(shown(r))}`, `|${r.evidence_status}`, '');
@@ -277,7 +286,7 @@ export function renderView(examples) {
     out.push('|===', '', '.Outputs', '[cols="1,1,1,1,1,1,1,1,1",options="header"]', '|===',
       '|Period |Members |Receipts |Payments |Closing cash |Shortfall below floor |Support minutes |Floor met |Capacity met', '');
     for (const p of ex.periods) {
-      out.push(`|${p}`, ...ROW_OUTPUTS.map(id => `|${cell(shown(expected.get(`${id}@${p}`)))}`), '');
+      out.push(`|${p}`, ...ROW_OUTPUTS.map(id => `|${cell(shown(expected.get(keyOf(id, p))))}`), '');
     }
     out.push('|===', '');
     const s = id => shown(expected.get(`${id}@null`));
@@ -292,13 +301,11 @@ export function renderView(examples) {
 export async function loadExamples() {
   const files = (await readdir(path.join(root, EXAMPLES))).filter(f => f.endsWith('.jsonl')).sort();
   need(files.length > 0, `${EXAMPLES}: no examples`);
-  const out = [];
-  for (const f of files) {
+  return Promise.all(files.map(async f => {
     const rel = `${EXAMPLES}/${f}`;
     const records = parseJsonl(await readFile(path.join(root, rel), 'utf8'), rel);
-    out.push({rel, v: validateExample(records, path.basename(f, '.jsonl'))});
-  }
-  return out;
+    return {rel, v: validateExample(records, path.basename(f, '.jsonl'))};
+  }));
 }
 
 export async function views() {
@@ -308,6 +315,17 @@ export async function views() {
   return files;
 }
 
+async function write(rel, body) {
+  const file = path.join(root, rel);
+  await mkdir(path.dirname(file), {recursive: true});
+  await writeFile(file, body);
+}
+
+async function current(rel, body) {
+  const now = await readFile(path.join(root, rel), 'utf8').catch(() => null);
+  need(now === body, `${rel} is stale; run: just applied-build`);
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [cmd] = process.argv.slice(2);
   try {
@@ -315,16 +333,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const files = await views();
     const onDisk = (await readdir(path.join(root, AGDA_DIR)).catch(() => [])).map(f => `${AGDA_DIR}/${f}`).filter(f => f.endsWith('.agda'));
     for (const f of onDisk) need(files.has(f), `${f} has no example; remove it or add the example`);
-    for (const [rel, body] of files) {
-      const file = path.join(root, rel);
-      if (cmd === 'build') {
-        await mkdir(path.dirname(file), {recursive: true});
-        await writeFile(file, body);
-      } else {
-        const now = await readFile(file, 'utf8').catch(() => null);
-        need(now === body, `${rel} is stale; run: just applied-build`);
-      }
-    }
+    await Promise.all([...files].map(([rel, body]) => (cmd === 'build' ? write(rel, body) : current(rel, body))));
     console.log(cmd === 'build' ? `wrote ${files.size} files` : `PASS: the ${files.size} generated files of the cohort examples are current`);
   } catch (e) {
     console.error('ERROR: ' + e.message);

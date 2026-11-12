@@ -132,15 +132,27 @@ resolution is argued, not proved.
 [quote, README.adoc]
 ____
 Methods that apply mathematics to decisions, starting
-with accounting and finance. Design documents only so far.
+with accounting and finance. A shared input schema keeps missing apart from
+zero. A cohort model in Agda has three number modes and three synthetic
+worked examples, each checked by Agda; its general properties are open.
 ____
 
 How this is implemented::
 `link:applied-systems/README.adoc[]` and its subdirectories: a management
-accounting design, a decision record, an event map and evidence guidance.
+accounting design, a decision record, an event map and evidence guidance. The
+input schema (`link:applied-systems/methods/input-schema.adoc[]`, enforced by
+`scripts/applied/inputs.mjs`) gives each input an evidence status and keeps
+missing apart from zero. The cohort model
+(`verification/proofs/agda/Applied/Cohort.agda`) has three number modes and
+three synthetic worked examples; the Agda gate checks every expected output of
+each, missing ones included, and a control in
+`tests/golden/check_controls_test.sh` shows that a missing value read as zero
+fails it.
 
 Caveat::
-No executable model, data schema or worked example exists yet (WO 4.2).
+The examples are checked, not the model: its general properties (APP-1 to
+APP-4) are open. The examples are synthetic and say nothing about any
+organisation. The management-accounting design has no model yet.
 
 == Privacy by count
 
@@ -267,8 +279,16 @@ and `_⊔_` as builtins.
 |-
 |`docs/proposals/mathesis-research-programme.adoc`
 |Not yet stated in a prover (next on the theory shelf)
+
+|APP-1 to APP-4: the cohort model of the applied shelf (missing propagates,
+cash identity, the funding gap, status never upgrades)
+|open
+|-
+|`docs/status/PROOF-NEEDS.adoc`; model `verification/proofs/agda/Applied/Cohort.agda`
+|Stated in prose; the worked examples are checked, the properties are not
 |===
 
-Proofs: 3 proven of 5; 1 argued, 1 open. The registry derives `PWG-1` for
+Proofs: 3 proven of 9; 1 argued, 5 open (the token-lattice theorems count as
+one). The registry derives `PWG-1` for
 THY-1 from the receipt. The checker versions are those that CI asserts in the
 Guix shell (CI run 43057783538).

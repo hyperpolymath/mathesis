@@ -1022,7 +1022,8 @@
               "verification/proofs/coq/FeatureReachability.v"
               "verification/proofs/lean4/FeatureReachability.lean"
               "EXPLAINME.adoc"
-              "docs/theory/admissions.jsonl" "docs/theory/ledger.jsonl" "docs/theory/generated/")
+              "docs/theory/admissions.jsonl" "docs/theory/ledger.jsonl" "docs/theory/generated/"
+              "scripts/applied/" "tests/applied/" "verification/proofs/agda/Applied/")
       :removed ("archetypes/" "build/docs-seed/" "build/templates/" "rsr-template-repo_chora.deed"
                 "src/interface/" "benches/" "build/container/Containerfile"
                 "tests/ffi_strings_test.sh"

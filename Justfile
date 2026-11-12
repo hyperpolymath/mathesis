@@ -710,8 +710,9 @@ uncloak:
 check: check-views check-proofs
 
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
-# Views current: catalogue, census tests, atlas, claims registry and bridges
-check-views: catalogue-check census-test atlas-check registry-check
+# Views current: catalogue, census tests, atlas, claims registry, bridges and
+# the worked cohort examples
+check-views: catalogue-check census-test atlas-check registry-check applied-check
 
 # Needs agda, coqc and lean, e.g. in the pinned Guix:
 #   guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
@@ -776,3 +777,14 @@ registry-check:
 # story: just theory-ledger "THY-2 admitted after its Lean leg landed"
 theory-ledger note="":
     bun scripts/registry/claims-registry.mjs ledger {{ if note == "" { "" } else { "--note " + quote(note) } }}
+
+# Regenerate the Agda checks and the view of the worked cohort examples
+# (applied shelf, re-anchoring plan WO 4.2) from their JSON Lines
+applied-build:
+    bun scripts/applied/cohort.mjs build
+
+# Fail if a generated file of the cohort examples is stale; test the input
+# schema and the example validator. Agda checks the examples in check-proofs.
+applied-check:
+    bun scripts/applied/cohort.mjs check
+    bun test tests/applied/

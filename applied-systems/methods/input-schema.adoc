@@ -1,0 +1,96 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Input schema
+
+One record for each input of an applied model. The fields are the ones that
+link:evidence-and-assumptions.adoc[Evidence and assumptions] asks for.
+`scripts/applied/inputs.mjs` enforces the schema; the worked cohort examples
+are its first users. Store records as JSON Lines, one record on each line, in
+I-JSON serialised by JCS.
+
+[cols="1,1,3",options="header"]
+|===
+|Field |Type |Meaning
+
+|`kind`
+|`"input"`
+|The record type.
+
+|`id`
+|dotted name
+|What the input is, for example `opening_cash` or `A.retention`. One id can
+have one record for each period.
+
+|`description`
+|text
+|What the value means, in words.
+
+|`unit`
+|text
+|The unit, for example `pence` or `minutes per member per period`.
+
+|`period`
+|text or null
+|The period that the value applies to. Null when it applies to every period.
+
+|`source`
+|text
+|Where the value comes from. Every input in this repository is `synthetic`.
+
+|`owner`
+|text
+|Who answers for the value.
+
+|`evidence_status`
+|one of the five below
+|How well the value is established.
+
+|`verified_on`
+|date or null
+|The last verification date. A `verified` input must have one.
+
+|`depends_on`
+|list of ids
+|The inputs that this value is derived from.
+
+|`access`
+|`public` or `restricted`
+|Who may see the value. This is independent of the evidence status: public
+does not mean verified, and restricted does not mean true. Mathesis holds
+public inputs only.
+
+|`value`
+|number, text or null
+|The value. The model that reads the input says which form it takes.
+|===
+
+== Evidence status
+
+[cols="1,3",options="header"]
+|===
+|Status |Meaning
+
+|`verified` |Checked against an identified source for a stated date and definition.
+|`reported` |Attributed to a person or document; not independently established.
+|`estimate` |Derived by a stated method, with uncertainty and limitations.
+|`illustrative` |Invented to explore behaviour; not evidence about an organisation.
+|`missing` |The value is not known.
+|===
+
+== Missing is not zero
+
+A missing input has the status `missing` and the value `null`. The validator
+refuses a missing input with the value `0` or `""`, and a `null` value with any
+other status. A required input that has no record at all is an error too:
+write the record and mark it missing.
+
+An output that depends on a missing input is missing. It does not become zero.
+The cohort model keeps this rule in every number mode. The rule is stated as
+obligation APP-1 in link:../../docs/status/PROOF-NEEDS.adoc[the proof needs].
+
+== Synthetic examples
+
+A public example is synthetic by construction. Its inputs are `illustrative`
+(or `missing`), because invented values are not evidence about an
+organisation. Its outputs are therefore `illustrative` or `missing` too: an
+output is never more certain than the inputs that it depends on (obligation
+APP-4).

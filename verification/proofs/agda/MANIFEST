@@ -2,3 +2,8 @@
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
 # Prior check (2026-07-17): agda --safe only; full 2026-11 policy pending CI.
 verification/proofs/agda|FeatureReachability.agda|gated| additive features: reachability monotone in the requested set (no library imports)
+verification/proofs/agda|Applied/Cohort.agda|gated| applied shelf: the cohort model, missing values and evidence status (WO 4.2; Agda.Builtin only)
+verification/proofs/agda|Applied/IntNumber.agda|gated| applied shelf: integer arithmetic of the cohort model and the checks of its worked examples
+verification/proofs/agda|Applied/Example/Approximate.agda|gated| generated: worked example, mode approximate, one input missing
+verification/proofs/agda|Applied/Example/Exact.agda|gated| generated: worked example, mode exact
+verification/proofs/agda|Applied/Example/Simple.agda|gated| generated: worked example, mode simple

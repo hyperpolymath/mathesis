@@ -18,8 +18,8 @@ under <<rulings>>.
   decision record, event map and shared evidence/type-assurance guidance.
 * No private case data, executable model, empirical validation or formal proof
   is claimed by this documentation contribution.
-* Next: define a minimal data schema and a synthetic worked implementation;
-  allocate and record proof obligations when executable work begins.
+* Next (2026-11-12, WO 4.2): the input schema, the cohort model in Agda and
+  three synthetic worked examples are in review; see the stage 4 entry.
 
 === First theory theorem (2026-11-09)
 
@@ -158,6 +158,29 @@ One pull request that changes census rows is open at a time (atlas README,
   append-only, written only by `just theory-ledger`. `just registry-check`
   fails when the ledger is behind or a past entry changed; the `must` clause
   `theory-ledger-current` states the invariant (approved by the owner).
+  Merged (pull request 80).
+* WO 4.2, the applied shelf, in three pull requests (owner rulings
+  2026-11-12). This is the first:
+** The input schema (`applied-systems/methods/input-schema.adoc`, enforced by
+   `scripts/applied/inputs.mjs`): the fields of the evidence rules, with
+   missing kept apart from zero.
+** The cohort model, `verification/proofs/agda/Applied/Cohort.agda`, over an
+   abstract number structure. Three number modes (simple, approximate,
+   exact), with guidance in
+   `applied-systems/finance/cohort-economics/modes.adoc`. Mode exact works in
+   whole numbers over one common denominator, so all three modes run on one
+   integer instance.
+** Three synthetic worked examples in JSON Lines. `just applied-build`
+   generates one Agda module for each, and the Agda gate checks every expected
+   output. In the approximate example one input is missing, and every output
+   that depends on it stays missing. A golden-path control shows that the
+   gate fails when a missing output is read as zero.
+** APP-1 to APP-4 are recorded as open in `docs/status/PROOF-NEEDS.adoc`.
+   Next: the Agda proofs, then the Rocq and Lean re-proofs.
+* Open item for the owner (ruling 2026-11-12): none of the JSON Lines data
+  files declares a licence; JSON has no comment syntax. The owner will write
+  one `REUSE.toml` rule at the root that covers all of them (doctrine 6: a
+  licence declaration is a manual, owner-only change).
 * The IANA registration drafts of DEED, K9 and k9-coordination are
   corrected in a separate session on the standards repository; filing is
   the owner's act.
@@ -199,7 +222,8 @@ anchors `c81cb84`
 |The three shelves: the theory admission rule and the token-lattice
 theorems, the applied shelf tied to the evidence spine, the published atlas
 (needs a ruling)
-|In progress: WO 4.1 merged; the theory ledger in review
+|In progress: WO 4.1 and the theory ledger merged; WO 4.2 in review (1 of
+3 pull requests)
 
 |5
 |Scale: receipts in the home repositories, the bridge lock pilot, a
@@ -222,3 +246,11 @@ scheduled census, a view of what each repository owes
   WO 3.3; the contract text, `must` severity `critical`, probes with
   "probe-deferred" accepted, amber band accepted; WO 3.4: true proof
   obligations only, EXPLAINME at the root, CI runs may be cited when labelled.
+* Stage 4 (2026-11-11 and 2026-11-12), through the selector: all template
+  proofs and theory stubs removed; admissions with an append-only ledger,
+  written by a recipe; the ledger `must` clause; stage 4 pull requests may be
+  merged when every check is green. WO 4.2: cohort economics as the worked
+  example; the model in Agda, proved; all four invariants recorded; a shared
+  schema; three number modes for different users, with guidance; JSON Lines as
+  the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
+  requests.

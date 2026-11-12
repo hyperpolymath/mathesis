@@ -177,6 +177,10 @@ One pull request that changes census rows is open at a time (atlas README,
    gate fails when a missing output is read as zero.
 ** APP-1 to APP-4 are recorded as open in `docs/status/PROOF-NEEDS.adoc`.
    Next: the Agda proofs, then the Rocq and Lean re-proofs.
+* Open item for the owner (ruling 2026-11-12): none of the JSON Lines data
+  files declares a licence; JSON has no comment syntax. The owner will write
+  one `REUSE.toml` rule at the root that covers all of them (doctrine 6: a
+  licence declaration is a manual, owner-only change).
 * The IANA registration drafts of DEED, K9 and k9-coordination are
   corrected in a separate session on the standards repository; filing is
   the owner's act.

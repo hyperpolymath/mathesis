@@ -2,3 +2,4 @@
 # Format: <source-root>|<module-relative-to-source-root>|gated|quarantine|<note>
 # Ground-truthed 2026-07-17 with coqc.
 verification/proofs/coq|FeatureReachability.v|gated| THY-1 Rocq leg, re-proved; prelude only; Print Assumptions: closed
+verification/proofs/coq|Cohort.v|gated| APP-1 to APP-4 Rocq leg, re-proved, with the integer laws; stdlib Lia only; Print Assumptions: closed

@@ -104,11 +104,15 @@ EOF
 
 # A negative control declares itself: a line comment `EXPECT: <pattern>` in the
 # file names the error the home gate expects when it rejects the file.
-is_control() { grep -qE '^[[:space:]]*(--|//|#)[[:space:]]*EXPECT:[[:space:]]*[^[:space:]]' "$1" 2>/dev/null; }
-emit() { # lang class marker file line text
-  if [ "$2" != control ] && is_control "$DIR/$4"; then set -- "$1" control "$3" "$4" "$5" "$6"; fi
-  jq -cnS --arg lang "$1" --arg class "$2" --arg marker "$3" --arg file "$4" \
-        --argjson line "$5" --arg text "$6" \
+is_control() {
+  local path=$1
+  grep -qE '^[[:space:]]*(--|//|#)[[:space:]]*EXPECT:[[:space:]]*[^[:space:]]' "$path" 2>/dev/null
+}
+emit() {
+  local lang=$1 class=$2 marker=$3 file=$4 line=$5 text=$6
+  if [[ $class != control ]] && is_control "$DIR/$file"; then class=control; fi
+  jq -cnS --arg lang "$lang" --arg class "$class" --arg marker "$marker" --arg file "$file" \
+        --argjson line "$line" --arg text "$text" \
         '{lang:$lang,class:$class,marker:$marker,file:$file,line:$line,text:$text}'
 }
 
@@ -221,7 +225,10 @@ if [ "$SUMMARY" = 1 ]; then
   jq -rs 'group_by(.lang+" "+.class) | map("\(.[0].lang) \(.[0].class): \(length)") | .[]' "$OUT" >&2
 fi
 
-count() { jq -s --arg c "$1" '[.[] | select(.class!="control" and ($c=="any" or .class==$c))] | length' "$OUT"; }
+count() {
+  local wanted=$1
+  jq -s --arg c "$wanted" '[.[] | select(.class!="control" and ($c=="any" or .class==$c))] | length' "$OUT"
+}
 case "$FAIL_ON" in
   none) exit 0 ;;
   hole) [ "$(count hole)" -eq 0 ] ;;

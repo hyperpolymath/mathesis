@@ -19,7 +19,7 @@ Prose.agda:4 axiom postulate
 Real.agda:3 axiom postulate
 WANT
 )
-[ "$got" = "$want" ] || { echo "FAIL: control classification differs"; diff <(printf '%s\n' "$want") <(printf '%s\n' "$got") || true; exit 1; }
+[[ "$got" == "$want" ]] || { echo "FAIL: control classification differs"; diff <(printf '%s\n' "$want") <(printf '%s\n' "$got") || true; exit 1; }
 rm "$F/Real.agda" "$F/Prose.agda"
 bash "$SCAN" --fail-on any "$F" >/dev/null || { echo "FAIL: a control alone must not fail --fail-on any"; exit 1; }
 echo "PASS: negative-control findings classed control, real and prose-only files still axioms"

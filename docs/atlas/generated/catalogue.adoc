@@ -83,9 +83,9 @@ than one.
 
 |https://github.com/hyperpolymath/nextgen-typing[hyperpolymath/nextgen-typing] |16 |11 |agda 3, lean 6, rocq 7 |118 |4 |0 |0 |0 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |15 |0 |agda 15 |63 |0 |1 |0 |0 |`proofs/PROOF-STATUS.md`
+|https://github.com/hyperpolymath/CompositionalDA.jl[hyperpolymath/CompositionalDA.jl] |15 |0 |agda 15 |63 |0 |0 |0 |0 |`proofs/PROOF-STATUS.md`
 
-|https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |1 |0 |6 |`proofs/PROOF-STATUS.md`
+|https://github.com/hyperpolymath/ExactCounts.jl[hyperpolymath/ExactCounts.jl] |15 |0 |agda 15 |236 |0 |0 |0 |0 |`proofs/PROOF-STATUS.md`
 
 |https://github.com/hyperpolymath/gitbot-fleet[hyperpolymath/gitbot-fleet] |15 |3 |agda 2, lean 4, rocq 3, idris2 6 |82 |5 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -103,7 +103,7 @@ than one.
 
 |https://github.com/hyperpolymath/CompositionalCounts.jl[hyperpolymath/CompositionalCounts.jl] |10 |0 |agda 10 |184 |0 |0 |0 |0 |—
 
-|https://github.com/hyperpolymath/ExactTests.jl[hyperpolymath/ExactTests.jl] |9 |0 |agda 9 |44 |0 |1 |0 |1 |—
+|https://github.com/hyperpolymath/ExactTests.jl[hyperpolymath/ExactTests.jl] |9 |0 |agda 9 |44 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/boinc-boinc[hyperpolymath/boinc-boinc] |8 |0 |lean 8 |46 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

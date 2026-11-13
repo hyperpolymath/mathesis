@@ -11,6 +11,12 @@
 #   axiom   trusted base grows (postulate, Axiom, #[trusted], pragma Assume, …)
 #   unsafe  a checker is switched off (TERMINATING, Unset Guard Checking, SPARK_Mode Off, …)
 #   policy  estate rule broken (import Mathlib, Agda file without --safe)
+#   control a finding inside a declared negative control: a file whose own header
+#           carries a line comment `EXPECT: <pattern>`, the home repository's
+#           statement that the checker must reject it for that reason (for
+#           example CompositionalDA.jl proofs/agda/reject/). It is reported, not
+#           dropped, but it is not a hole, axiom, unsafe or policy count and does
+#           not affect --fail-on: the home gate is what rejects it.
 #
 # This is a textual scan: it finds candidates, it does not decide them. A
 # kernel-level audit (#print axioms, Print Assumptions, gnatprove report,
@@ -34,7 +40,7 @@ while [ $# -gt 0 ]; do
     --fail-on) FAIL_ON=${2:-}; shift 2 ;;
     --summary) SUMMARY=1; shift ;;
     --exclude) EXTRA_EX+=("$2"); shift 2 ;;
-    -h|--help) sed -n '3,22p' "$0"; exit 0 ;;
+    -h|--help) sed -n '3,28p' "$0"; exit 0 ;;
     -*) echo "unknown option: $1" >&2; exit 2 ;;
     *) DIR=$1; shift ;;
   esac
@@ -96,9 +102,17 @@ dedukti~*.dk,*.lp~^\s*(//|\(;)~hole~admit~\badmit(ted)?\b
 EOF
 )
 
-emit() { # lang class marker file line text
-  jq -cnS --arg lang "$1" --arg class "$2" --arg marker "$3" --arg file "$4" \
-        --argjson line "$5" --arg text "$6" \
+# A negative control declares itself: a line comment `EXPECT: <pattern>` in the
+# file names the error the home gate expects when it rejects the file.
+is_control() {
+  local path=$1
+  grep -qE '^[[:space:]]*(--|//|#)[[:space:]]*EXPECT:[[:space:]]*[^[:space:]]' "$path" 2>/dev/null
+}
+emit() {
+  local lang=$1 class=$2 marker=$3 file=$4 line=$5 text=$6
+  if [[ $class != control ]] && is_control "$DIR/$file"; then class=control; fi
+  jq -cnS --arg lang "$lang" --arg class "$class" --arg marker "$marker" --arg file "$file" \
+        --argjson line "$line" --arg text "$text" \
         '{lang:$lang,class:$class,marker:$marker,file:$file,line:$line,text:$text}'
 }
 
@@ -211,7 +225,10 @@ if [ "$SUMMARY" = 1 ]; then
   jq -rs 'group_by(.lang+" "+.class) | map("\(.[0].lang) \(.[0].class): \(length)") | .[]' "$OUT" >&2
 fi
 
-count() { jq -s --arg c "$1" '[.[] | select($c=="any" or .class==$c)] | length' "$OUT"; }
+count() {
+  local wanted=$1
+  jq -s --arg c "$wanted" '[.[] | select(.class!="control" and ($c=="any" or .class==$c))] | length' "$OUT"
+}
 case "$FAIL_ON" in
   none) exit 0 ;;
   hole) [ "$(count hole)" -eq 0 ] ;;

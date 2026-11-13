@@ -53,7 +53,7 @@ echo "| proof artefact files | $nfiles |"
 echo "| declarations extracted | $ndecls |"
 echo "| hole-scanner findings | $(wc -l < holes.jsonl) |"
 echo
-echo "Hole classes (from proof-holes.sh): hole = unfinished proof, axiom = trusted base grows, unsafe = checker switched off, policy = estate rule (Agda without --safe, import Mathlib)."
+echo "Hole classes (from proof-holes.sh): hole = unfinished proof, axiom = trusted base grows, unsafe = checker switched off, policy = estate rule (Agda without --safe, import Mathlib), control = a finding inside a declared negative control (a file whose header has an EXPECT: line; reported, not counted)."
 echo
 echo "## Repos with artefacts (sorted by declarations)"
 echo

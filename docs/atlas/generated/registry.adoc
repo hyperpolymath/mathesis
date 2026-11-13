@@ -5,18 +5,18 @@
 
 Each row is a claim in its home repository at a pinned commit. The grade is
 *derived* here from that repository's receipt by the canon reader of
-PROOF-POLICY §8.5.1 (`metadatastician/standards` at `be39f900665f`), never
+PROOF-POLICY §8.5.1 (`metadatastician/standards` at `e5a39d7e5c66`), never
 assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still
 owe their Rocq and Lean legs. Status of this slice: accepted in
 link:../../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.
 
-Census: 1 at `PWG-1`, 0 at `PWG-2ii`, 0 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 13 theorems. 5 demonstrations and assumptions are listed and not graded.
+Census: 0 at `PWG-1`, 0 at `PWG-2ii`, 0 at `PWG-2i`, 0 at `PWG-3`, 13 `ungraded`, of 13 theorems. 5 demonstrations and assumptions are listed and not graded.
 
 [cols="2,1,1,4,3",options="header"]
 |===
 |Claim |Kind |PWG |Statement (home repository's wording) |Why not higher
 
-|https://github.com/hyperpolymath/mathesis/blob/9aa1662da5b2ac4a0e37b9f75a151bb312a8cbea/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#THY-1] at `9aa1662da5b2`; the receipt describes `336768958d01` |theorem |`PWG-1` |In a dependency graph whose edges are guarded by features closed under Horn rules, and by an arbitrary per-target condition, a node unreachable with every feature requested is unreachable under any request, on each target (`Cargo.absent-under-all-features`). The general form is `Monotone.reach-mono`: reachability over a monotone family of edge sets is monotone. (`FeatureReachability`: `Cargo.absent-under-all-features`, `Monotone.reach-mono`) |—
+|https://github.com/hyperpolymath/mathesis/blob/9aa1662da5b2ac4a0e37b9f75a151bb312a8cbea/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#THY-1] at `9aa1662da5b2` |theorem |`ungraded` |In a dependency graph whose edges are guarded by features closed under Horn rules, and by an arbitrary per-target condition, a node unreachable with every feature requested is unreachable under any request, on each target (`Cargo.absent-under-all-features`). The general form is `Monotone.reach-mono`: reachability over a monotone family of edge sets is monotone. (`FeatureReachability`: `Cargo.absent-under-all-features`, `Monotone.reach-mono`) |the canon reader refuses the receipt: a receipt of the agda leg of claim "THY-1" is current and is missing :inputs-sha256 (§8.5.1)
 
 |https://github.com/hyperpolymath/secret-types/blob/eee4e4038503f098c31181e792f66834eda5f523/PROOF-STATUS.adoc[hyperpolymath/secret-types#N-1] at `eee4e4038503` |theorem |`ungraded` |TINI at the two-point lattice: two finishing runs of a well-typed command from low-equivalent stores end low-equivalent, fuels independent (`SecretTypes.Noninterference`: `tini`) |the canon reader refuses the receipt: unexpected clause (identity) in the receipt
 

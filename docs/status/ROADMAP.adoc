@@ -220,6 +220,21 @@ One pull request that changes census rows is open at a time (atlas README,
   the owner's act.
 * Finding: the `intend` contract still marks stage 3 `in_progress` and
   stage 4 `declared`; a contract edit needs owner review.
+* Receipts under the new PROOF-POLICY §8.5.1 to §8.5.3 (owner rulings
+  2026-11-13; standards PRs 1534 and 1545, merged at `e5a39d7`): every current
+  receipt records its inputs manifest, its inputs digest and its axioms; an
+  `(echo …)` record carries a receipt across a squash or rebase; the home gate
+  and consumers run the shared git checker.
+** First change: the Mathesis receipt is written again from CI run
+   43498592499 on main `034f215`. It adds APP-1 to APP-4 and earns THY-1
+   again; the reader derives `PWG-1` for all five, and `just receipt-check`
+   (the home gate, in `just check`) passes. The registry pins the new reader
+   and catalogues a `PWG-1` only when the git checks hold. Until the next
+   change, the registry shows THY-1 as `ungraded`, because its claim pin names
+   the old receipt; the theory ledger records this.
+** Next change: the claim pins of THY-1 and APP-1 to APP-4 (applied shelf, a
+   new `shelf` field), and of secret-types at the commit that holds its
+   manifest receipt (re-anchoring plan WO 5.1).
 
 [[stages]]
 == Stages

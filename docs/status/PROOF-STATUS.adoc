@@ -26,7 +26,7 @@ reader of PROOF-POLICY §8.5.1.
 |APP-1 to APP-4, the cohort model of the applied shelf (WO 4.2)
 |Proved in Agda, Rocq and Lean
 |-
-|The record below. No receipt yet, so no grade is derived
+|The record below. The receipt derives `PWG-1` (2026-11-13)
 |===
 
 *Overall*: 5 of 6 obligations are proved in all three provers; THY-1 alone has
@@ -83,10 +83,13 @@ missing crate as missing from every build.
   monotonicity step.
 * Axioms: none.
 * Receipt state: superseded on 2026-11-10 by the CI receipt below.
-* CI receipt (current): Agda 2.7.0.1 in the pinned Guix (`8edb9da`), same
-  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
-  unchanged, and the log reports no postulate in the cone (`Agda.Primitive`,
-  `FeatureReachability`).
+* CI receipt (superseded on 2026-11-13): Agda 2.7.0.1 in the pinned Guix
+  (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
+  The file SHA-256 is unchanged, and the log reports no postulate in the cone
+  (`Agda.Primitive`, `FeatureReachability`).
+* CI receipt (current, 2026-11-13): the same, at main `034f215`, run
+  43498592499. It records the inputs manifest and the axioms (none) that
+  PROOF-POLICY §8.5.1 now requires (standards `e5a39d7`).
 
 |Rocq leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -194,7 +197,7 @@ same reader derives
 |`pwg`
 |`1` (since 2026-11-10): `PWG-2ii`, and every counted witness has a current
 receipt from one headless, isolated, pinned CI run on the exact source commit
-`336768958d01` (PROOF-POLICY §8.2). The grade holds while those receipts stay
+(PROOF-POLICY §8.2): `336768958d01` until 2026-11-13, `034f215` since. The grade holds while those receipts stay
 current: a later commit that breaks a leg, or a run that cannot be repeated,
 drops it (§8.4). Before 2026-11-10 it was `2ii`, because each receipt came
 from a local run.
@@ -261,9 +264,14 @@ is `cash_identity`, and so on). The differences are encoding only:
 Residual assumptions: none in any leg.
 
 |Machine receipt (§8.5.1)
-|None yet. The receipt `verification/receipts/theory_praxis.deed` records
-THY-1 only. Adding APP-1 to APP-4 needs receipts from a CI run on the merged
-commit, so no grade is derived for them yet.
+|`verification/receipts/theory_praxis.deed`, with THY-1. The current receipts
+come from CI run 43498592499 on main `034f215` (Agda 2.7.0.1, Rocq 8.18.0,
+Lean 4.29.0, pinned Guix `8edb9da`). Each records the inputs manifest of its
+prover and no axiom. The canon reader at standards `e5a39d7` derives `PWG-1`
+for each of APP-1 to APP-4, and the shared git checker (`just receipt-check`)
+passes. The Rocq and Lean legs are `RECONCILED` by the comparison above, done
+by reading. The trusted base gains `Char` and `String`, the postulates that
+`Applied/IntLaws` reaches through `Agda.Builtin.Int`.
 |===
 
 == Verification commands
@@ -283,6 +291,14 @@ bash tests/proofs/gate_controls_test.sh agda
 [cols="1,3",options="header"]
 |===
 |Date |Change
+
+|2026-11-13
+|The receipt is written again under PROOF-POLICY §8.5.1 at standards
+`e5a39d7`: each current receipt records its inputs manifest and its axioms.
+THY-1 is earned again, and APP-1 to APP-4 are added, from CI run 43498592499
+on main `034f215`. The reader derives `PWG-1` for all five. The claims
+registry shows THY-1 as `ungraded` until its claim pin moves to the new
+receipt (the next change).
 
 |2026-11-10
 |THY-1 receipts earned again at Agda 2.7.0.1 and Lean 4.29.0 in the pinned

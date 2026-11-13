@@ -92,6 +92,15 @@ if its sha256 differs from the pinned digest, and derives:
   `ungraded`;
 . otherwise the grade that the reader derives for the claim, from `PWG-3` to
   `PWG-1` (§8.2).
+. a `PWG-1` stays only when the git checks of §8.5.3 hold (amendment
+  2026-11-13): the shared checker of the pinned standards commit
+  (`scripts/check-proof-receipt.sh`, pinned by digest with the digest script
+  that it calls, `CHECKER` in `scripts/registry/claims-registry.mjs`) runs
+  against a clone of the home repository that holds its pull-request heads.
+  It checks that the receipt's `:source-commit` is on the default branch, that
+  each current receipt's inputs manifest holds at its commit, and that each
+  echo's witness holds at both ends. If a check fails or cannot run, the
+  registry catalogues `PWG-2ii` and records why (§8.5.2).
 
 Until this amendment the registry carried its own copy of the §8.2 rules, read
 only the Agda side, and never derived `PWG-1`.

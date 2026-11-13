@@ -22,7 +22,9 @@
 // the reader at READER.commit; the reader's sha256 must equal READER.sha256.
 // --receipts-dir DIR reads receipts from DIR/<owner>__<repo>@<commit>/<path>
 // instead of fetching them (the tests use it; CI fetches).
-import {readFile, writeFile, mkdir} from 'node:fs/promises';
+import {readFile, writeFile, mkdir, mkdtemp} from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
@@ -60,9 +62,19 @@ const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
 // that is not this file is refused, so a grade never comes from an unpinned rule.
 export const READER = {
   repository: 'metadatastician/standards',
-  commit: 'be39f900665fb7c042c05d1165da018adc1860f4',
+  commit: 'e5a39d7e5c66f9d24d7e0ffa3f8dbd01f2d42d9d',
   path: '1-formats/deed/tools/deed_lint.js',
-  sha256: 'f7e2b91905f0d99e5cabab59385073afb695be8b9f2d0591257a6a6fd62e25e3',
+  sha256: '37ff85be499b35dd9d74399e05d9ae1e57ccf095362c355f93e04b3bbf4c9491',
+};
+
+// The git checks of PROOF-POLICY §8.5.3, from the same standards commit as the
+// reader. A PWG-1 is catalogued only when the checker passes against a clone of
+// the home repository; the checker calls the digest script, so both are pinned.
+export const CHECKER = {
+  path: 'scripts/check-proof-receipt.sh',
+  sha256: '831f5a43c906c3edc8cfa68ab5fe13c37e7a41b35e40068481d988d887f4bd3f',
+  digest: 'scripts/proof-inputs-sha256.sh',
+  digestSha256: 'dfc6dde01a3a79df638eebe4cad0eae584d8f17280077e149174c0667e9508f4',
 };
 
 // ── Validation of the registry rows ──────────────────────────────────────────
@@ -155,20 +167,82 @@ async function loadReceipt(row, receiptsDir) {
   return text;
 }
 
+// ── The git checks of PROOF-POLICY §8.5.3 ────────────────────────────────────
+
+// A consumer catalogues a PWG-1 only when the git checks hold against the home
+// repository; otherwise it catalogues the grade without PWG-1 (PWG-2ii, §8.5.2)
+// and records why. `check` is {ok, reason}.
+export function withGitCheck(d, check) {
+  if (d.pwg !== 'PWG-1' || check.ok) return d;
+  return {...d, pwg: 'PWG-2ii', reasons: [...d.reasons, `§8.5.3 git checks: ${check.reason}; catalogued without PWG-1`]};
+}
+
+const run = (cmd, args) => spawnSync(cmd, args, {encoding: 'utf8'});
+
+// The path of the pinned checker, after the digest checks of both pinned
+// scripts in the standards checkout.
+export async function checkerScript(standardsDir = process.env.MATHESIS_STANDARDS) {
+  const pinned = async (rel, sha) => {
+    const file = path.resolve(standardsDir, rel);
+    const digest = createHash('sha256').update(await readFile(file)).digest('hex');
+    if (digest !== sha) throw new Error(`${file} is not the pinned script (sha256 ${digest}, pinned ${sha} at ${READER.commit})`);
+    return file;
+  };
+  await pinned(CHECKER.digest, CHECKER.digestSha256);
+  return pinned(CHECKER.path, CHECKER.sha256);
+}
+
+// The shared checker of the standards checkout, after the digest checks of both
+// pinned scripts. It returns (row, text) => {ok, reason}, cloning each home
+// repository once, with the pull-request heads that a squashed echo source needs.
+export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) {
+  const script = await checkerScript(standardsDir);
+  const work = await mkdtemp(path.join(tmpdir(), 'mathesis-git-'));
+  const clones = new Map();
+  const clone = repo => {
+    if (!clones.has(repo)) {
+      const dir = path.join(work, repo.replace('/', '__'));
+      const steps = [
+        ['git', ['clone', '-q', '--filter=blob:none', '--no-checkout', `https://github.com/${repo}`, dir]],
+        ['git', ['-C', dir, 'fetch', '-q', 'origin', '+refs/pull/*/head:refs/pull/*/head']],
+      ];
+      const failed = steps.map(([c, a]) => run(c, a)).find(r => r.status !== 0);
+      const head = failed ? null : run('git', ['-C', dir, 'symbolic-ref', '--short', 'refs/remotes/origin/HEAD']);
+      clones.set(repo, failed || head.status !== 0
+        ? {reason: `could not clone ${repo}: ${(failed || head).stderr.trim().split('\n').pop()}`}
+        : {dir, branch: head.stdout.trim()});
+    }
+    return clones.get(repo);
+  };
+  return async (row, text) => {
+    const c = clone(row.repo);
+    if (!c.dir) return {ok: false, reason: c.reason};
+    const file = path.join(await mkdtemp(path.join(work, 'r-')), path.basename(row.receipt.path));
+    await writeFile(file, text);
+    const r = run('bash', [script, '--branch', c.branch, file, c.dir]);
+    if (r.status === 0) return {ok: true};
+    const why = `${r.stdout}${r.stderr}`.trim().split('\n').filter(l => !l.startsWith('ok ')).slice(-2).join('; ');
+    return {ok: false, reason: `check-proof-receipt.sh exit ${r.status}: ${why}`};
+  };
+}
+
 // Derive every row, reading each distinct receipt once. A receipt that the
 // reader refuses gives `ungraded` with the reader's reason; a receipt that
-// cannot be fetched or fails its digest stops the run.
-export async function deriveAll(rows, receiptsDir, readProofReceipt) {
+// cannot be fetched or fails its digest stops the run. Each receipt that gives
+// a PWG-1 goes once through `gitCheck` (§8.5.3); with none, no PWG-1 is
+// catalogued.
+export async function deriveAll(rows, receiptsDir, readProofReceipt, gitCheck = null) {
   const cache = new Map();
   const out = [];
   for (const row of rows) {
     let read = null;
+    let key = null;
     if (row.receipt !== null) {
-      const key = `${row.repo}@${row.source_commit}/${row.receipt.path}`;
+      key = `${row.repo}@${row.source_commit}/${row.receipt.path}`;
       if (!cache.has(key)) {
         const text = await loadReceipt(row, receiptsDir);
         try {
-          cache.set(key, {record: readProofReceipt(text, path.basename(row.receipt.path))});
+          cache.set(key, {record: readProofReceipt(text, path.basename(row.receipt.path)), text});
         } catch (e) {
           if (!['LintError', 'ProofReceiptError'].includes(e?.name)) throw e;
           cache.set(key, {refusal: String(e)});
@@ -176,7 +250,14 @@ export async function deriveAll(rows, receiptsDir, readProofReceipt) {
       }
       read = cache.get(key);
     }
-    out.push({row, ...derive(row, read)});
+    const d = derive(row, read);
+    if (d.pwg === 'PWG-1') {
+      const entry = cache.get(key);
+      entry.git ??= gitCheck ? await gitCheck(row, entry.text) : {ok: false, reason: 'no git check ran'};
+      out.push({row, ...withGitCheck(d, entry.git)});
+    } else {
+      out.push({row, ...d});
+    }
   }
   return out;
 }
@@ -230,8 +311,15 @@ export function render(derived) {
 
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
+  if (cmd === 'receipt') {
+    // The home gate (§8.5.3): the git checks on the receipt of Mathesis itself,
+    // against this clone. origin/main needs its history (CI fetches it).
+    const receipt = path.join(root, 'verification/receipts/theory_praxis.deed');
+    const r = spawnSync('bash', [await checkerScript(), '--branch', 'origin/main', receipt, root], {stdio: 'inherit'});
+    process.exit(r.status ?? 2);
+  }
   if (!['build', 'check', 'ledger'].includes(cmd)) {
-    console.error('usage: claims-registry.mjs build|check|ledger [--receipts-dir DIR] [--note TEXT]');
+    console.error('usage: claims-registry.mjs build|check|ledger|receipt [--receipts-dir DIR] [--note TEXT]');
     process.exit(2);
   }
   const i = args.indexOf('--receipts-dir');
@@ -240,7 +328,7 @@ async function main() {
   const rows = validate(await readJsonl(claimsFile), inventory);
   const bridges = validateBridges(await readJsonl(bridgesFile), inventory);
   const admissions = validateAdmissions(await readJsonl(admissionsFile), rows, inventory);
-  const derived = await deriveAll(rows, receiptsDir, await loadReader());
+  const derived = await deriveAll(rows, receiptsDir, await loadReader(), receiptsDir ? null : await gitChecker());
   const ledger = validateLedger(await readJsonl(ledgerFile));
   const current = snapshot(rows, admissions, new Map(derived.map(d => [d.row.id, d.pwg])));
   if (cmd === 'ledger') {

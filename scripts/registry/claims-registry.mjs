@@ -23,6 +23,7 @@
 // --receipts-dir DIR reads receipts from DIR/<owner>__<repo>@<commit>/<path>
 // instead of fetching them (the tests use it; CI fetches).
 import {readFile, writeFile, mkdir, mkdtemp} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
@@ -177,7 +178,16 @@ export function withGitCheck(d, check) {
   return {...d, pwg: 'PWG-2ii', reasons: [...d.reasons, `§8.5.3 git checks: ${check.reason}; catalogued without PWG-1`]};
 }
 
-const run = (cmd, args) => spawnSync(cmd, args, {encoding: 'utf8'});
+// A program in an absolute directory of PATH, run by its absolute path, so that no
+// relative PATH entry can pick the program.
+export function findTool(name, env = process.env) {
+  for (const d of (env.PATH || '').split(path.delimiter)) {
+    if (path.isAbsolute(d) && existsSync(path.join(d, name))) return path.join(d, name);
+  }
+  throw new Error(`${name} not found in an absolute directory of PATH`);
+}
+
+const run = (cmd, args) => spawnSync(findTool(cmd), args, {encoding: 'utf8'});
 
 // The path of the pinned checker, after the digest checks of both pinned
 // scripts in the standards checkout.
@@ -226,40 +236,32 @@ export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) 
   };
 }
 
+// The reader's record of one receipt text: {record, text} or {refusal}.
+function readReceipt(text, row, readProofReceipt) {
+  try {
+    return {record: readProofReceipt(text, path.basename(row.receipt.path)), text};
+  } catch (e) {
+    if (!['LintError', 'ProofReceiptError'].includes(e?.name)) throw e;
+    return {refusal: String(e)};
+  }
+}
+
+const receiptKey = row => (row.receipt === null ? null : `${row.repo}@${row.source_commit}/${row.receipt.path}`);
+
 // Derive every row, reading each distinct receipt once. A receipt that the
 // reader refuses gives `ungraded` with the reader's reason; a receipt that
 // cannot be fetched or fails its digest stops the run. Each receipt that gives
 // a PWG-1 goes once through `gitCheck` (§8.5.3); with none, no PWG-1 is
 // catalogued.
 export async function deriveAll(rows, receiptsDir, readProofReceipt, gitCheck = null) {
-  const cache = new Map();
-  const out = [];
-  for (const row of rows) {
-    let read = null;
-    let key = null;
-    if (row.receipt !== null) {
-      key = `${row.repo}@${row.source_commit}/${row.receipt.path}`;
-      if (!cache.has(key)) {
-        const text = await loadReceipt(row, receiptsDir);
-        try {
-          cache.set(key, {record: readProofReceipt(text, path.basename(row.receipt.path)), text});
-        } catch (e) {
-          if (!['LintError', 'ProofReceiptError'].includes(e?.name)) throw e;
-          cache.set(key, {refusal: String(e)});
-        }
-      }
-      read = cache.get(key);
-    }
-    const d = derive(row, read);
-    if (d.pwg === 'PWG-1') {
-      const entry = cache.get(key);
-      entry.git ??= gitCheck ? await gitCheck(row, entry.text) : {ok: false, reason: 'no git check ran'};
-      out.push({row, ...withGitCheck(d, entry.git)});
-    } else {
-      out.push({row, ...d});
-    }
-  }
-  return out;
+  const once = list => [...new Map(list.map(row => [receiptKey(row), row]))];
+  const reads = new Map(await Promise.all(once(rows.filter(receiptKey)).map(async ([key, row]) =>
+    [key, readReceipt(await loadReceipt(row, receiptsDir), row, readProofReceipt)])));
+  const derived = rows.map(row => ({row, ...derive(row, reads.get(receiptKey(row)) ?? null)}));
+  const graded = derived.filter(d => d.pwg === 'PWG-1').map(d => d.row);
+  const checks = new Map(await Promise.all(once(graded).map(async ([key, row]) =>
+    [key, gitCheck ? await gitCheck(row, reads.get(key).text) : {ok: false, reason: 'no git check ran'}])));
+  return derived.map(d => (d.pwg === 'PWG-1' ? withGitCheck(d, checks.get(receiptKey(d.row))) : d));
 }
 
 // ── Rendering ────────────────────────────────────────────────────────────────
@@ -315,7 +317,7 @@ async function main() {
     // The home gate (§8.5.3): the git checks on the receipt of Mathesis itself,
     // against this clone. origin/main needs its history (CI fetches it).
     const receipt = path.join(root, 'verification/receipts/theory_praxis.deed');
-    const r = spawnSync('bash', [await checkerScript(), '--branch', 'origin/main', receipt, root], {stdio: 'inherit'});
+    const r = spawnSync(findTool('bash'), [await checkerScript(), '--branch', 'origin/main', receipt, root], {stdio: 'inherit'});
     process.exit(r.status ?? 2);
   }
   if (!['build', 'check', 'ledger'].includes(cmd)) {

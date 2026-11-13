@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {validate, loadReader, derive, deriveAll, withGitCheck, render, READER} from '../../scripts/registry/claims-registry.mjs';
+import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, render, READER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -154,4 +154,9 @@ test('a PWG-1 is catalogued only when the git checks of §8.5.3 hold', async () 
   expect(both.map(d => d.pwg)).toEqual(['PWG-1', 'PWG-1']);
   expect(calls).toBe(1);
   expect((await deriveAll([row], dir, readProofReceipt))[0].pwg).toBe('PWG-2ii');
+});
+
+test('git and bash run only from an absolute directory of PATH', () => {
+  expect(path.isAbsolute(findTool('bash'))).toBe(true);
+  expect(() => findTool('bash', {PATH: 'relative/bin'})).toThrow(/not found in an absolute directory/);
 });

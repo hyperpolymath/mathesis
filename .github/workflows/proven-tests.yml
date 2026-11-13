@@ -56,8 +56,8 @@ jobs:
           git init -q "$r"
           git -C "$r" remote add origin https://github.com/metadatastician/standards.git
           git -C "$r" config core.sparseCheckout true
-          printf '1-formats/deed/tools/\n' > "$r/.git/info/sparse-checkout"
-          git -C "$r" fetch -q --depth 1 origin be39f900665fb7c042c05d1165da018adc1860f4
+          printf '1-formats/deed/tools/\nscripts/check-proof-receipt.sh\nscripts/proof-inputs-sha256.sh\n' > "$r/.git/info/sparse-checkout"
+          git -C "$r" fetch -q --depth 1 origin e5a39d7e5c66f9d24d7e0ffa3f8dbd01f2d42d9d
           git -C "$r" checkout -q FETCH_HEAD
           for f in verification/receipts/*_praxis.deed; do
             bun "$r/1-formats/deed/tools/deed_lint.js" --proof-receipt-json "$f"

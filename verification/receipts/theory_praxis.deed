@@ -1,35 +1,61 @@
 ;; SPDX-License-Identifier: CC-BY-SA-4.0
 ;; SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
-;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1), written from the THY-1
-;; record in docs/status/PROOF-STATUS.adoc (re-anchoring plan WO 1.5). The
-;; current receipts come from one CI run of the proof lanes in the pinned Guix
-;; (WO 1.4, Guix 8edb9da). Its log records, for each witness, the checker and
-;; its version, the invocation, the SHA-256 of the file, the result and the
-;; axioms reported. The local runs of 2026-11-09 stay as superseded receipts.
-;; The reader in standards 1-formats/deed/tools/deed_lint.js derives the grade:
+;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1, standards e5a39d7),
+;; written from the records of THY-1 and APP-1 to APP-4 in
+;; docs/status/PROOF-STATUS.adoc. The current receipts come from one CI run of
+;; the proof lanes in the pinned Guix (Guix 8edb9da) on main 034f215: run
+;; 43498592499. Its log records, for each gated module, the checker and its
+;; version, the SHA-256 of the file, the result and the axioms reported (none).
+;; Each current receipt carries the inputs manifest of its prover: the union of
+;; the first-party files that the graded roots read, from
+;;   standards scripts/proof-inputs-sha256.sh --manifest 034f215 PATH...
+;; One manifest per prover, because §8.5.1 allows one digest for one commit and
+;; one prover. Earlier receipts stay as superseded receipts, each with a reason.
+;; The reader derives the grade, and the shared git checker does the §8.5.3
+;; checks (just receipt-check):
 ;;   bun deed_lint.js --proof-receipt-json verification/receipts/theory_praxis.deed
-;; The trusted base is the Agda.Primitive block of the import cone that
-;; agda --dependency-graph reports for FeatureReachability; Agda 2.6.3 and
-;; 2.7.0.1 postulate the same four names there (checked 2026-11-10).
+;;   check-proof-receipt.sh --branch origin/main verification/receipts/theory_praxis.deed .
+;; The trusted base is each prover-supplied postulate that the Agda import
+;; cones reach (agda --dependency-graph): the four of Agda.Primitive, and Char
+;; and String, which Applied/IntLaws reaches through Agda.Builtin.Int. Agda
+;; 2.7.0.1 postulates these six (its lib/prim sources, read 2026-11-13).
 (praxis-deed
   :schema-version "1.0.0"
   :canonical-name "mathesis-theory-receipt"
   :beholding-chora #u5"estate/chora"
   :profile proof-receipt
   :repository "hyperpolymath/mathesis"
-  :source-commit "336768958d01257caae14cb81fb54197c2617d97"
+  :source-commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
   (trusted-base
     (primitive :prover agda :module "Agda.Primitive" :name "Level" :binding "BUILTIN LEVEL")
     (primitive :prover agda :module "Agda.Primitive" :name "lzero" :binding "BUILTIN LEVELZERO")
     (primitive :prover agda :module "Agda.Primitive" :name "lsuc" :binding "BUILTIN LEVELSUC")
-    (primitive :prover agda :module "Agda.Primitive" :name "_⊔_" :binding "BUILTIN LEVELMAX"))
+    (primitive :prover agda :module "Agda.Primitive" :name "_⊔_" :binding "BUILTIN LEVELMAX")
+    (primitive :prover agda :module "Agda.Builtin.Char" :name "Char" :binding "BUILTIN CHAR")
+    (primitive :prover agda :module "Agda.Builtin.String" :name "String" :binding "BUILTIN STRING"))
   (claim :id "THY-1" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
-               :state current)
+               :state superseded
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
       (receipt :run "local run, 2026-11-09"
                :commit "f68b78d6ceb8d3c83f96f5ab8e57779442a8834f"
                :checker "agda 2.6.3 (Ubuntu 24.04 agda package)"
@@ -37,11 +63,22 @@
                :state superseded
                :reason "replaced by the CI receipt in the pinned Guix, Agda 2.7.0.1"))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc FeatureReachability.v"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc FeatureReachability.v"
-               :state current)
+               :state superseded
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
       (receipt :run "local run, 2026-11-09"
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "coqc 8.18.0 (Ubuntu 24.04 coq package)"
@@ -49,14 +86,186 @@
                :state superseded
                :reason "replaced by the CI receipt in the pinned Guix"))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean FeatureReachability.lean"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean FeatureReachability.lean"
-               :state current)
+               :state superseded
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
       (receipt :run "local run, 2026-11-09"
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "lean 4.15.0 (11651562caae, release archive)"
                :invocation "lean FeatureReachability.lean"
                :state superseded
-               :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0"))))
+               :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0")))
+  (claim :id "APP-1" :pwg PWG-1 :foundation-diverse #f
+    (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
+    (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
+    (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
+  (claim :id "APP-2" :pwg PWG-1 :foundation-diverse #f
+    (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
+    (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
+    (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
+  (claim :id "APP-3" :pwg PWG-1 :foundation-diverse #f
+    (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
+    (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
+    (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
+  (claim :id "APP-4" :pwg PWG-1 :foundation-diverse #f
+    (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
+    (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
+    (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
+               :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))))))

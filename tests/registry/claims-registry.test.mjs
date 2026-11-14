@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {validate, loadReader, derive, deriveAll, render, READER} from '../../scripts/registry/claims-registry.mjs';
+import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -28,8 +28,15 @@ beforeAll(async () => { readProofReceipt = await loadReader(); });
 // that leg's current receipt.
 const fixture = ({repo = 'o/r', pwg = 'PWG-3', invocation = 'agda --safe --without-K --cubical-compatible M.agda',
   rocq = null, lean = null, rocqAt = commit, leanAt = commit} = {}) => {
-  const run = (prover, at, inv) =>
-    `      (receipt :run "ci" :commit "${at}" :checker "${prover}" :invocation "${inv}" :state current))\n`;
+  // Each current receipt lists its inputs (standards e5a39d7): one manifest line,
+  // the digest of that manifest, and an empty axioms clause.
+  const run = (prover, at, inv) => {
+    const line = `${'c'.repeat(64)}  ${prover}/M\n`;
+    const digest = createHash('sha256').update(line).digest('hex');
+    return `      (receipt :run "ci" :commit "${at}" :checker "${prover}" :invocation "${inv}"\n` +
+      `               :inputs-sha256 "${digest}" :state current (axioms)\n` +
+      `               (inputs-manifest (file :path "${prover}/M" :sha256 "${'c'.repeat(64)}"))))\n`;
+  };
   const leg = (prover, state, at) => state === null ? '' :
     `    (leg :prover ${prover} :route re-proved :token proven :state ${state}\n` + run(prover, at, `${prover} M`);
   return ';; SPDX-License-Identifier: CC-BY-SA-4.0\n(praxis-deed\n  :schema-version "1.0.0"\n' +
@@ -108,6 +115,9 @@ test('deriveAll reads each receipt once, and refuses a receipt that does not mat
   const good = {...theorem, receipt: {path: 'r_praxis.deed', sha256: createHash('sha256').update(text).digest('hex')}};
   expect((await deriveAll([good], dir, readProofReceipt))[0].pwg).toBe('PWG-3');
   await expect(deriveAll([{...good, receipt: {path: 'r_praxis.deed', sha256: 'b'.repeat(64)}}], dir, readProofReceipt)).rejects.toThrow(/digest mismatch/);
+  // Each row is checked against its own pin: a second row with a wrong digest for
+  // the same receipt is not hidden behind the first.
+  await expect(deriveAll([good, {...good, id: 'o/r#T-1b', receipt: {path: 'r_praxis.deed', sha256: 'b'.repeat(64)}}], dir, readProofReceipt)).rejects.toThrow(/digest mismatch/);
 });
 
 test('the view is a census with its denominator, never a percentage, and is deterministic', () => {
@@ -125,4 +135,56 @@ test('a row names the commit that its receipt describes when it differs from the
   const v = render([{row: {...theorem, source_commit: at}, pwg: 'PWG-1', reasons: [], evidence: commit}]);
   expect(v).toContain(`at \`${at.slice(0, 12)}\`; the receipt describes \`${commit.slice(0, 12)}\``);
   expect(render([{row: theorem, pwg: 'PWG-1', reasons: [], evidence: commit}])).not.toContain('the receipt describes');
+});
+
+test('a PWG-1 is catalogued only when the git checks of §8.5.3 hold', async () => {
+  const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'})));
+  expect(withGitCheck(one, {ok: true})).toEqual(one);
+  const capped = withGitCheck(one, {ok: false, reason: 'the source commit is not on origin/main'});
+  expect(capped.pwg).toBe('PWG-2ii');
+  expect(capped.reasons.join()).toContain('§8.5.3 git checks: the source commit is not on origin/main; catalogued without PWG-1');
+  const three = derive(theorem, read(fixture()));
+  expect(withGitCheck(three, {ok: false, reason: 'x'})).toEqual(three);
+  // deriveAll runs the check once per receipt, and with no check it catalogues no PWG-1.
+  const dir = mkdtempSync(path.join(tmpdir(), 'registry-'));
+  const text = fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'});
+  mkdirSync(path.join(dir, `o__r@${commit}`), {recursive: true});
+  writeFileSync(path.join(dir, `o__r@${commit}`, 'r_praxis.deed'), text);
+  const row = {...theorem, receipt: {path: 'r_praxis.deed', sha256: createHash('sha256').update(text).digest('hex')}};
+  let calls = 0;
+  const ok = async () => { calls += 1; return {ok: true}; };
+  const both = await deriveAll([row, {...row, id: 'o/r#T-1b'}], dir, readProofReceipt, ok);
+  expect(both.map(d => d.pwg)).toEqual(['PWG-1', 'PWG-1']);
+  expect(calls).toBe(1);
+  expect((await deriveAll([row], dir, readProofReceipt))[0].pwg).toBe('PWG-2ii');
+});
+
+test('git and bash run only from an absolute directory of PATH', () => {
+  expect(path.isAbsolute(findTool('bash'))).toBe(true);
+  expect(() => findTool('bash', {PATH: 'relative/bin'})).toThrow(/not found in an absolute directory/);
+});
+
+test('a git check that cannot run gives a failed result, not a crash', async () => {
+  const check = await gitChecker();
+  const saved = process.env.PATH;
+  process.env.PATH = '';
+  try {
+    const r = await check({...theorem, receipt: {path: 'r_praxis.deed', sha256: 'a'.repeat(64)}}, fixture());
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/could not clone o\/r: git not found in an absolute directory of PATH/);
+  } finally {
+    process.env.PATH = saved;
+    await check.cleanup();
+  }
+});
+
+test('the checker runs only beside the pinned canon reader', async () => {
+  const std = mkdtempSync(path.join(tmpdir(), 'mathesis-std-'));
+  for (const rel of [READER.path, CHECKER.path, CHECKER.digest]) {
+    mkdirSync(path.dirname(path.join(std, rel)), {recursive: true});
+    copyFileSync(path.join(process.env.MATHESIS_STANDARDS, rel), path.join(std, rel));
+  }
+  expect(await checkerScript(std)).toBe(path.resolve(std, CHECKER.path));
+  writeFileSync(path.join(std, READER.path), '// changed\n', {flag: 'a'});
+  await expect(checkerScript(std)).rejects.toThrow(/is not the pinned file/);
 });

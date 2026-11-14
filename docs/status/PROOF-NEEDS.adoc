@@ -42,7 +42,7 @@ missing input is missing, in every period after it too, and never zero. A
 verdict is "no" on a known breach and otherwise missing when any value it
 depends on is missing; it is never "yes" then
 |Agda, re-checked in Rocq and Lean
-|Proved in Agda, Rocq and Lean; no receipt yet (WO 4.2)
+|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2)
 |`verification/proofs/agda/Applied/Missing.agda`; Rocq and Lean: `Cohort.v`, `Cohort.lean`
 
 |APP-2
@@ -50,7 +50,7 @@ depends on is missing; it is never "yes" then
 plus, summed over the periods, receipts minus payments; when a value is
 missing, both sides are missing
 |Agda, re-checked in Rocq and Lean
-|Proved in Agda, Rocq and Lean; no receipt yet (WO 4.2)
+|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2)
 |`verification/proofs/agda/Applied/Cash.agda` (`cash-identity`); Rocq and Lean: `cash_identity`
 
 |APP-3
@@ -58,14 +58,14 @@ missing, both sides are missing
 keeps every closing balance at or above its floor, and no smaller
 non-negative amount does
 |Agda, re-checked in Rocq and Lean
-|Proved in Agda, Rocq and Lean; no receipt yet (WO 4.2)
+|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2)
 |`verification/proofs/agda/Applied/Cash.agda` (`gap-sound`, `gap-least`); Rocq and Lean: `gap_sound`, `gap_least`
 
 |APP-4
 |Status never upgrades: the evidence status of an output is never stronger
 than the weakest status of the inputs that it depends on
 |Agda, re-checked in Rocq and Lean
-|Proved in Agda, Rocq and Lean; no receipt yet (WO 4.2)
+|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2)
 |`verification/proofs/agda/Applied/Missing.agda`; Rocq and Lean: `Cohort.v`, `Cohort.lean`
 |===
 
@@ -84,7 +84,8 @@ the integer instance of the worked examples is one. The Rocq and Lean legs
 restate the same definitions and re-prove every theorem, the integer laws
 included. Every module is gated: no postulate in an Agda import cone, every
 Rocq theorem closed under the global context, and no axiom in any Lean
-theorem. No receipt records these legs yet, so no grade is derived.
+theorem. The receipt `verification/receipts/theory_praxis.deed` records the
+three legs of each, and the canon reader derives `PWG-1` for each (2026-11-13).
 
 No Mathesis obligation concerns an ABI or an FFI: since WO 3.2 the deed
 declares neither capability.

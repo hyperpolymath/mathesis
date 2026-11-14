@@ -707,7 +707,7 @@ uncloak:
 # The Mathesis golden path (re-anchoring plan WO 2.5). CI runs it in the pinned
 # Guix (agda-proof-policy.yml). A stale view or a failing proof fails.
 # Golden path: every generated view matches its data, every gated proof checks
-check: check-views site-check check-proofs
+check: check-views site-check check-proofs receipt-check
 
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
 # Views current: catalogue, census tests, atlas, claims registry, bridges and
@@ -771,6 +771,14 @@ registry-check:
     bun scripts/registry/claims-registry.mjs check
     bun scripts/registry/theory-ledger.mjs verify
     bun test tests/registry/
+
+# The git checks of PROOF-POLICY §8.5.3 on the receipt of Mathesis: its
+# :source-commit is on origin/main, each current receipt's inputs manifest holds
+# at its commit, and each echo's witness holds. The shared checker of the pinned
+# standards commit runs them (MATHESIS_STANDARDS, as above). Needs origin/main
+# with its history.
+receipt-check:
+    bun scripts/registry/claims-registry.mjs receipt
 
 # Append each change of the theory shelf to docs/theory/ledger.jsonl, the only
 # way the ledger changes (needs MATHESIS_STANDARDS, as above). A note tells the

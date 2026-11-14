@@ -31,7 +31,7 @@ jobs:
       contents: read
       security-events: write
     env:
-      HYPATIA_SHA: 'd73f76b5cb7a35e1aa1024c916aee7cb4f9b141e'
+      HYPATIA_SHA: '6693f9aed8e4383f78a3d01b600b32663bf7a45c'
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -53,7 +53,7 @@ jobs:
             ~/hypatia
             ~/.hex
             ~/.mix
-          key: hypatia-sarif-${{ runner.os }}-otp28-elx1194-d73f76b5cb7a35e1aa1024c916aee7cb4f9b141e
+          key: hypatia-sarif-${{ runner.os }}-otp28-elx1194-6693f9aed8e4383f78a3d01b600b32663bf7a45c
 
       - name: Build pinned Hypatia scanner
         run: |

@@ -36,11 +36,16 @@ test('validation fails closed', () => {
 });
 
 test('the index is deterministic and takes the grade from the derivation', () => {
+  // Both shelves go in, as in a real derivation; only the theory shelf has
+  // admissions, and only it may reach the index.
   const home = rows.filter(onTheoryShelf);
-  const derived = home.map(row => ({row, pwg: 'PWG-1', reasons: [], evidence: row.source_commit}));
+  const applied = rows.filter(r => r.shelf === 'applied');
+  expect(applied.length).toBeGreaterThan(0);
+  const derived = [...home, ...applied].map(row => ({row, pwg: 'PWG-1', reasons: [], evidence: row.source_commit}));
   const view = renderTheoryIndex(derived, admissions);
   expect(renderTheoryIndex([...derived].reverse(), admissions)).toEqual(view);
   expect(view).toContain('`PWG-1`');
   expect(renderTheoryIndex(derived.map(d => ({...d, pwg: 'ungraded'})), admissions)).toContain('`ungraded`');
   expect(view).toContain(`Theorems: ${home.length}.`);
+  for (const r of applied) expect(view).not.toContain(r.id);
 });

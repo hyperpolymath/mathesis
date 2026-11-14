@@ -242,7 +242,7 @@ One pull request that changes census rows is open at a time (atlas README,
    its shelf: THY-1 is on the theory shelf, and APP-1 to APP-4 are on the
    applied shelf, which needs no admission. The registry catalogues `PWG-1`
    for all five, and the theory ledger records THY-1's return to `PWG-1`.
-   Census: 11 `PWG-1` and 6 `ungraded` (Lintel, no receipt yet) of 17
+   Census: 11 `PWG-1` and 6 `ungraded` (Lintel: its pins, at `a0f2bae`, name no receipt) of 17
    theorems. The Hypatia scanner pin moves to `b7944d3` (hypatia#1087, the
    JavaScript-aware `js_exec_sync` rule), and `scripts/site/site.mjs` drops
    its `hypatia:ignore` annotation.

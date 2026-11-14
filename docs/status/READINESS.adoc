@@ -79,7 +79,7 @@ public repository is not reached
 |alpha-unstable
 |26 tests pass; ADR 0004; 22 claim pins, 17 theorems, 11 graded `PWG-1`
 (2026-11-14)
-|Lintel's home has no machine receipt yet; a dogfood log
+|Lintel's pins, at `a0f2bae`, name no receipt (its main now has one); a dogfood log
 
 |Proof gate and home theory (`scripts/check-proofs.sh`,
 `verification/`)

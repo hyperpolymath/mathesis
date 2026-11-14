@@ -25,13 +25,14 @@ reader of PROOF-POLICY §8.5.1.
 
 |APP-1 to APP-4, the cohort model of the applied shelf (WO 4.2)
 |Proved in Agda, Rocq and Lean
-|-
-|The record below. The receipt derives `PWG-1` (2026-11-13)
+|`PWG-1`
+|The receipt `verification/receipts/theory_praxis.deed`; the record below.
+Claim pins at main `a1388fc` (2026-11-14)
 |===
 
-*Overall*: 5 of 6 obligations are proved in all three provers; THY-1 alone has
-a receipt and a derived grade. The token-lattice theorems (counted as one) are
-open. These are counts, not a
+*Overall*: 5 of 6 obligations are proved in all three provers, and each of the
+5 has a receipt and a derived grade, `PWG-1`. The token-lattice theorems
+(counted as one) are open. These are counts, not a
 percentage: PROOF-POLICY §8 grades are derived from receipts and are never
 flattened. The template example proofs were removed in WO 4.1.
 

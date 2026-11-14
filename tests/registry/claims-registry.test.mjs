@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, render, READER} from '../../scripts/registry/claims-registry.mjs';
+import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, render, READER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -115,6 +115,9 @@ test('deriveAll reads each receipt once, and refuses a receipt that does not mat
   const good = {...theorem, receipt: {path: 'r_praxis.deed', sha256: createHash('sha256').update(text).digest('hex')}};
   expect((await deriveAll([good], dir, readProofReceipt))[0].pwg).toBe('PWG-3');
   await expect(deriveAll([{...good, receipt: {path: 'r_praxis.deed', sha256: 'b'.repeat(64)}}], dir, readProofReceipt)).rejects.toThrow(/digest mismatch/);
+  // Each row is checked against its own pin: a second row with a wrong digest for
+  // the same receipt is not hidden behind the first.
+  await expect(deriveAll([good, {...good, id: 'o/r#T-1b', receipt: {path: 'r_praxis.deed', sha256: 'b'.repeat(64)}}], dir, readProofReceipt)).rejects.toThrow(/digest mismatch/);
 });
 
 test('the view is a census with its denominator, never a percentage, and is deterministic', () => {
@@ -159,4 +162,18 @@ test('a PWG-1 is catalogued only when the git checks of §8.5.3 hold', async () 
 test('git and bash run only from an absolute directory of PATH', () => {
   expect(path.isAbsolute(findTool('bash'))).toBe(true);
   expect(() => findTool('bash', {PATH: 'relative/bin'})).toThrow(/not found in an absolute directory/);
+});
+
+test('a git check that cannot run gives a failed result, not a crash', async () => {
+  const check = await gitChecker();
+  const saved = process.env.PATH;
+  process.env.PATH = '';
+  try {
+    const r = await check({...theorem, receipt: {path: 'r_praxis.deed', sha256: 'a'.repeat(64)}}, fixture());
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/could not clone o\/r: git not found in an absolute directory of PATH/);
+  } finally {
+    process.env.PATH = saved;
+    await check.cleanup();
+  }
 });

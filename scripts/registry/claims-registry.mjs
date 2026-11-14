@@ -22,7 +22,7 @@
 // the reader at READER.commit; the reader's sha256 must equal READER.sha256.
 // --receipts-dir DIR reads receipts from DIR/<owner>__<repo>@<commit>/<path>
 // instead of fetching them (the tests use it; CI fetches).
-import {readFile, writeFile, mkdir, mkdtemp} from 'node:fs/promises';
+import {readFile, writeFile, mkdir, mkdtemp, rm} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
@@ -187,7 +187,16 @@ export function findTool(name, env = process.env) {
   throw new Error(`${name} not found in an absolute directory of PATH`);
 }
 
-const run = (cmd, args) => spawnSync(findTool(cmd), args, {encoding: 'utf8'});
+// A program that cannot be found or launched gives a failed result (status null),
+// so the git check reports it instead of stopping the derivation.
+const run = (cmd, args) => {
+  try {
+    const r = spawnSync(findTool(cmd), args, {encoding: 'utf8'});
+    return r.error ? {status: null, stdout: '', stderr: String(r.error.message)} : r;
+  } catch (e) {
+    return {status: null, stdout: '', stderr: e.message};
+  }
+};
 
 // The path of the pinned checker, after the digest checks of both pinned
 // scripts in the standards checkout.
@@ -224,7 +233,7 @@ export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) 
     }
     return clones.get(repo);
   };
-  return async (row, text) => {
+  const check = async (row, text) => {
     const c = clone(row.repo);
     if (!c.dir) return {ok: false, reason: c.reason};
     const file = path.join(await mkdtemp(path.join(work, 'r-')), path.basename(row.receipt.path));
@@ -234,6 +243,9 @@ export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) 
     const why = `${r.stdout}${r.stderr}`.trim().split('\n').filter(l => !l.startsWith('ok ')).slice(-2).join('; ');
     return {ok: false, reason: `check-proof-receipt.sh exit ${r.status}: ${why}`};
   };
+  // The clones and receipt copies live in `work` only; remove it when done.
+  check.cleanup = () => rm(work, {recursive: true, force: true});
+  return check;
 }
 
 // The reader's record of one receipt text: {record, text} or {refusal}.
@@ -246,7 +258,9 @@ function readReceipt(text, row, readProofReceipt) {
   }
 }
 
-const receiptKey = row => (row.receipt === null ? null : `${row.repo}@${row.source_commit}/${row.receipt.path}`);
+// The pinned digest is part of the key, so each row is checked against its own pin.
+const receiptKey = row =>
+  row.receipt === null ? null : `${row.repo}@${row.source_commit}/${row.receipt.path}#${row.receipt.sha256}`;
 
 // Derive every row, reading each distinct receipt once. A receipt that the
 // reader refuses gives `ungraded` with the reader's reason; a receipt that
@@ -330,7 +344,13 @@ async function main() {
   const rows = validate(await readJsonl(claimsFile), inventory);
   const bridges = validateBridges(await readJsonl(bridgesFile), inventory);
   const admissions = validateAdmissions(await readJsonl(admissionsFile), rows, inventory);
-  const derived = await deriveAll(rows, receiptsDir, await loadReader(), receiptsDir ? null : await gitChecker());
+  const gitCheck = receiptsDir ? null : await gitChecker();
+  let derived;
+  try {
+    derived = await deriveAll(rows, receiptsDir, await loadReader(), gitCheck);
+  } finally {
+    await gitCheck?.cleanup();
+  }
   const ledger = validateLedger(await readJsonl(ledgerFile));
   const current = snapshot(rows, admissions, new Map(derived.map(d => [d.row.id, d.pwg])));
   if (cmd === 'ledger') {

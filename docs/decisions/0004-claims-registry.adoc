@@ -64,6 +64,10 @@ does not restate mathematics.
 |`status_doc` |The home repository's proof-status file.
 |`agda` |For a theorem: `{module, names}`, the Agda source of truth (§1). `null`
 otherwise.
+|`shelf` |For a theorem whose home is Mathesis only: `theory` or `applied`
+(owner ruling 2026-11-12). A theory-shelf theorem needs an admission record
+in `docs/theory/admissions.jsonl`; an applied-shelf theorem does not. Both are
+graded. A record about another repository has no `shelf`.
 |`source_commit` |The full 40-character commit the record describes.
 |`receipt` |`{path, sha256}` of the home repository's machine receipt at that
 commit, or `null` when it has none.

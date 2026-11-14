@@ -31,7 +31,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
-import {validateAdmissions, renderTheoryIndex} from './theory.mjs';
+import {validateAdmissions, renderTheoryIndex, HOME} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -58,6 +58,7 @@ async function ledgerOnMain() {
 
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
+const SHELVES = new Set(['theory', 'applied']);
 
 // The canon reader, pinned by commit and by the digest of its file. A reader
 // that is not this file is refused, so a grade never comes from an unpinned rule.
@@ -101,6 +102,9 @@ export function validate(rows, inventory) {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)
         throw new Error(`A theorem names its Agda module and names: ${r.id}`);
     }
+    if (r.repo === HOME && r.kind === 'theorem') {
+      if (!SHELVES.has(r.shelf)) throw new Error(`A home theorem is on the theory or the applied shelf: ${r.id}`);
+    } else if ('shelf' in r) throw new Error(`Only a home theorem names a shelf: ${r.id}`);
     if (r.receipt !== null) {
       if (!r.receipt || typeof r.receipt.path !== 'string' || !/^[0-9a-f]{64}$/.test(r.receipt.sha256 ?? ''))
         throw new Error(`receipt is null or {path, sha256}: ${r.id}`);

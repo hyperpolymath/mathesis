@@ -23,6 +23,10 @@ A theorem enters the shelf only when all three conditions hold:
 
 A theorem that meets the rule is proved in Agda and re-checked in Rocq and
 Lean (PROOF-POLICY §1 and §2), with a receipt in `verification/receipts/`.
+Its claim pin in `docs/atlas/claims/claims.jsonl` carries `"shelf": "theory"`.
+A theorem of the applied shelf (`applied-systems/`) carries
+`"shelf": "applied"`. It is proved and graded in the same way, but it needs no
+admission, because no estate rule depends on it.
 
 == Where the records are
 

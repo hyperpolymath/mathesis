@@ -63,6 +63,13 @@ test('validation fails closed', () => {
   expect(() => validate([{...theorem, id: 'o/r#X'}], inv)).toThrow(/repo#claim/);
   expect(() => validate([theorem], [{full_name: 'o/r', visibility: 'private'}])).toThrow(/Nonpublic/);
   expect(() => validate([{...theorem, receipt: {path: 'x', sha256: 'nope'}}], inv)).toThrow(/sha256/);
+  const home = {...theorem, id: 'hyperpolymath/mathesis#T-1', repo: 'hyperpolymath/mathesis', shelf: 'theory'};
+  const homeInv = [{full_name: 'hyperpolymath/mathesis', visibility: 'public'}];
+  expect(validate([home], homeInv)).toHaveLength(1);
+  expect(validate([{...home, shelf: 'applied'}], homeInv)).toHaveLength(1);
+  expect(() => validate([{...home, shelf: undefined}], homeInv)).toThrow(/theory or the applied shelf/);
+  expect(() => validate([{...home, shelf: 'lab'}], homeInv)).toThrow(/theory or the applied shelf/);
+  expect(() => validate([{...theorem, shelf: 'theory'}], inv)).toThrow(/Only a home theorem names a shelf/);
 });
 
 test('only the pinned reader is loaded', async () => {

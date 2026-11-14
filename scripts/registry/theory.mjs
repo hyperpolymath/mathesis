@@ -12,6 +12,9 @@
 // receipt and renders docs/theory/generated/index.adoc from both.
 
 export const HOME = 'hyperpolymath/mathesis';
+// A home theorem is on the theory shelf or on the applied shelf (owner ruling
+// 2026-11-12). Only the theory shelf needs an admission.
+export const onTheoryShelf = r => r.repo === HOME && r.kind === 'theorem' && r.shelf === 'theory';
 const FIELDS = new Set(['id', 'admitted', 'theory', 'owner', 'dependant']);
 const DEPENDANT_FIELDS = new Set(['repository', 'path', 'rule']);
 
@@ -23,17 +26,17 @@ const need = (ok, message) => {
 };
 
 // Throw unless every admission is well formed, names a public dependant, and
-// matches one home theorem pin; and unless every home theorem pin has one
+// matches one theory-shelf pin; and unless every theory-shelf pin has one
 // admission. `rows` are the validated claim pins.
 export function validateAdmissions(admissions, rows, inventory) {
   need(Array.isArray(admissions), 'docs/theory/admissions.jsonl must hold one admission record on each line');
   const visibility = new Map(inventory.map(r => [r.full_name, r.visibility]));
-  const home = new Map(rows.filter(r => r.repo === HOME && r.kind === 'theorem').map(r => [r.id, r]));
+  const home = new Map(rows.filter(onTheoryShelf).map(r => [r.id, r]));
   const seen = new Set();
   admissions.forEach((a, i) => {
     const where = `admission ${i + 1}`;
     for (const k of Object.keys(a)) need(FIELDS.has(k), `Unknown field (an admission holds no grade) ${k}: ${where}`);
-    need(home.has(a.id), `No home theorem pin for ${a.id}: ${where}`);
+    need(home.has(a.id), `No theory-shelf pin for ${a.id}: ${where}`);
     need(!seen.has(a.id), `Duplicate admission ${a.id}`);
     seen.add(a.id);
     need(typeof a.admitted === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(a.admitted), `admitted is a date: ${a.id}`);
@@ -45,7 +48,7 @@ export function validateAdmissions(admissions, rows, inventory) {
     need(visibility.get(d.repository) === 'public', `Nonpublic or unlisted dependant repository: ${a.id}`);
     need(text(d.path) && text(d.rule), `The dependant names a path and a rule: ${a.id}`);
   });
-  for (const id of home.keys()) need(seen.has(id), `Home theorem ${id} has no admission record`);
+  for (const id of home.keys()) need(seen.has(id), `Theory-shelf theorem ${id} has no admission record`);
   return admissions;
 }
 
@@ -55,7 +58,7 @@ const cell = s => String(s).replaceAll('|', String.raw`\|`).replaceAll('\n', ' '
 // theorems and their admissions.
 export function renderTheoryIndex(derived, admissions) {
   const byId = new Map(admissions.map(a => [a.id, a]));
-  const home = derived.filter(d => d.row.repo === HOME && d.row.kind === 'theorem')
+  const home = derived.filter(d => onTheoryShelf(d.row))
     .sort((a, b) => a.row.claim.localeCompare(b.row.claim, 'en', {numeric: true}));
   const out = [
     '// SPDX-License-Identifier: CC-BY-SA-4.0',

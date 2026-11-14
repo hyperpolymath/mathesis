@@ -232,9 +232,13 @@ One pull request that changes census rows is open at a time (atlas README,
    and catalogues a `PWG-1` only when the git checks hold. Until the next
    change, the registry shows THY-1 as `ungraded`, because its claim pin names
    the old receipt; the theory ledger records this.
+** The same change pins the nine secret-types claims at its main `4ed0672`
+   (re-anchoring plan WO 5.1). Its receipt names `292d566`, with the echo
+   `7dfeab2` to `292d566` for the squash merge of its pull request 40. The
+   reader derives `PWG-1` for N-1, N-2, N-3, N-7, N-8 and N-9, and the
+   registry's git checks hold, so the registry catalogues six `PWG-1`.
 ** Next change: the claim pins of THY-1 and APP-1 to APP-4 (applied shelf, a
-   new `shelf` field), and of secret-types at the commit that holds its
-   manifest receipt (re-anchoring plan WO 5.1).
+   new `shelf` field).
 
 [[stages]]
 == Stages

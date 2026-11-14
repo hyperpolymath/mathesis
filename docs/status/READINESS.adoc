@@ -77,8 +77,9 @@ public repository is not reached
 |Claims registry (`scripts/registry/`)
 |D
 |alpha-unstable
-|14 tests pass; ADR 0004; 18 claim pins, 13 theorems, 1 graded `PWG-1`
-|The canon reader refuses the receipts of two homes; a dogfood log
+|26 tests pass; ADR 0004; 22 claim pins, 17 theorems, 11 graded `PWG-1`
+(2026-11-14)
+|Lintel's home has no machine receipt yet; a dogfood log
 
 |Proof gate and home theory (`scripts/check-proofs.sh`,
 `verification/`)

@@ -292,6 +292,12 @@ bash tests/proofs/gate_controls_test.sh agda
 |===
 |Date |Change
 
+|2026-11-14
+|The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main
+`a1388fc`. APP-1 to APP-4 are on the applied shelf. The claims registry
+catalogues `PWG-1` for all five: the reader derives it, and the §8.5.3 git
+checks hold.
+
 |2026-11-13
 |The receipt is written again under PROOF-POLICY §8.5.1 at standards
 `e5a39d7`: each current receipt records its inputs manifest and its axioms.

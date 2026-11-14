@@ -77,10 +77,10 @@ from a standards checkout whose file digest it also checks. The view is
 contract clause `no-hand-typed-grade` checks that no pin carries a grade.
 
 Caveat::
-Of 13 theorems, 1 is at `PWG-1` (THY-1) and 12 are `ungraded`. The canon
-reader refuses the current receipts of two home repositories, so their pins
-derive no grade until one side changes (an open finding in
-link:docs/status/ROADMAP.adoc[the roadmap]).
+Of 17 theorems, 11 are at `PWG-1` (THY-1, APP-1 to APP-4, and six of
+secret-types) and 6 are `ungraded` (run on 2026-11-14). The six are Lintel
+claims: their home repository has no machine receipt yet, so their pins
+derive no grade.
 
 == Bridge candidates
 

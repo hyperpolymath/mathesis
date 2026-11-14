@@ -4,7 +4,7 @@
 import {test, expect} from 'bun:test';
 import {readFileSync} from 'node:fs';
 import {validateLedger, snapshot, fold, pending, checkAppendOnly, verifyOffline, jcs, sha256} from '../../scripts/registry/theory-ledger.mjs';
-import {HOME} from '../../scripts/registry/theory.mjs';
+import {onTheoryShelf} from '../../scripts/registry/theory.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const read = p => readFileSync(new URL(p, import.meta.url), 'utf8');
@@ -12,7 +12,8 @@ const rows = parseJsonl(read('../../docs/atlas/claims/claims.jsonl'));
 const admissions = parseJsonl(read('../../docs/theory/admissions.jsonl'));
 const ledgerText = read('../../docs/theory/ledger.jsonl');
 const ledger = parseJsonl(ledgerText);
-const homeIds = rows.filter(r => r.repo === HOME && r.kind === 'theorem').map(r => r.id);
+// The ledger records the theory shelf only: applied-shelf theorems are not admitted.
+const homeIds = rows.filter(onTheoryShelf).map(r => r.id);
 // The grades the ledger last recorded: grade currency needs the canon reader,
 // so `just registry-check` checks it, not this test.
 const grades = new Map([...fold(ledger)].map(([id, s]) => [id, s.pwg]));
@@ -71,6 +72,6 @@ test('the offline check catches a stale admission, a missing theorem and a lefto
   expect(() => verifyOffline(ledger, rows, [])).toThrow(/has no admission/);
   const state = fold(ledger);
   for (const a of admissions) expect(sha256(jcs(a))).toBe(state.get(a.id).admission_sha256);
-  const unpinned = rows.filter(r => !(r.repo === HOME && r.kind === 'theorem'));
+  const unpinned = rows.filter(r => !onTheoryShelf(r));
   expect(() => verifyOffline(ledger, unpinned, admissions)).toThrow(/no claim pin/);
 });

@@ -229,16 +229,23 @@ One pull request that changes census rows is open at a time (atlas README,
    43498592499 on main `034f215`. It adds APP-1 to APP-4 and earns THY-1
    again; the reader derives `PWG-1` for all five, and `just receipt-check`
    (the home gate, in `just check`) passes. The registry pins the new reader
-   and catalogues a `PWG-1` only when the git checks hold. Until the next
-   change, the registry shows THY-1 as `ungraded`, because its claim pin names
+   and catalogues a `PWG-1` only when the git checks hold. Until the second
+   change, the registry showed THY-1 as `ungraded`, because its claim pin named
    the old receipt; the theory ledger records this.
 ** The same change pins the nine secret-types claims at its main `4ed0672`
    (re-anchoring plan WO 5.1). Its receipt names `292d566`, with the echo
    `7dfeab2` to `292d566` for the squash merge of its pull request 40. The
    reader derives `PWG-1` for N-1, N-2, N-3, N-7, N-8 and N-9, and the
    registry's git checks hold, so the registry catalogues six `PWG-1`.
-** Next change: the claim pins of THY-1 and APP-1 to APP-4 (applied shelf, a
-   new `shelf` field).
+** Second change: the claim pins of THY-1 and APP-1 to APP-4 name the
+   receipt at main `a1388fc` (the merge of PR 90). A home theorem now names
+   its shelf: THY-1 is on the theory shelf, and APP-1 to APP-4 are on the
+   applied shelf, which needs no admission. The registry catalogues `PWG-1`
+   for all five, and the theory ledger records THY-1's return to `PWG-1`.
+   Census: 11 `PWG-1` and 6 `ungraded` (Lintel, no receipt yet) of 17
+   theorems. The Hypatia scanner pin moves to `b7944d3` (hypatia#1087, the
+   JavaScript-aware `js_exec_sync` rule), and `scripts/site/site.mjs` drops
+   its `hypatia:ignore` annotation.
 
 [[stages]]
 == Stages

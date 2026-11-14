@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, render, READER} from '../../scripts/registry/claims-registry.mjs';
+import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -176,4 +176,15 @@ test('a git check that cannot run gives a failed result, not a crash', async () 
     process.env.PATH = saved;
     await check.cleanup();
   }
+});
+
+test('the checker runs only beside the pinned canon reader', async () => {
+  const std = mkdtempSync(path.join(tmpdir(), 'mathesis-std-'));
+  for (const rel of [READER.path, CHECKER.path, CHECKER.digest]) {
+    mkdirSync(path.dirname(path.join(std, rel)), {recursive: true});
+    copyFileSync(path.join(process.env.MATHESIS_STANDARDS, rel), path.join(std, rel));
+  }
+  expect(await checkerScript(std)).toBe(path.resolve(std, CHECKER.path));
+  writeFileSync(path.join(std, READER.path), '// changed\n', {flag: 'a'});
+  await expect(checkerScript(std)).rejects.toThrow(/is not the pinned file/);
 });

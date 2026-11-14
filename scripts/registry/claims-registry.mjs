@@ -199,14 +199,16 @@ const run = (cmd, args) => {
 };
 
 // The path of the pinned checker, after the digest checks of both pinned
-// scripts in the standards checkout.
+// scripts and of the canon reader that the checker runs, in the standards
+// checkout. The `receipt` home gate runs the checker without loadReader().
 export async function checkerScript(standardsDir = process.env.MATHESIS_STANDARDS) {
   const pinned = async (rel, sha) => {
     const file = path.resolve(standardsDir, rel);
     const digest = createHash('sha256').update(await readFile(file)).digest('hex');
-    if (digest !== sha) throw new Error(`${file} is not the pinned script (sha256 ${digest}, pinned ${sha} at ${READER.commit})`);
+    if (digest !== sha) throw new Error(`${file} is not the pinned file (sha256 ${digest}, pinned ${sha} at ${READER.commit})`);
     return file;
   };
+  await pinned(READER.path, READER.sha256);
   await pinned(CHECKER.digest, CHECKER.digestSha256);
   return pinned(CHECKER.path, CHECKER.sha256);
 }

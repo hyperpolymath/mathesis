@@ -136,7 +136,7 @@
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
 * `metadatastician/hvn-dehallucinator` — theory; 19 own proof files, 640 detected declarations; provers: agda 10, lean 1, rocq 1, idris2 1, tla 6
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
-* `hyperpolymath/hypatia` — engineering; 58 own proof files, 680 detected declarations; provers: agda 2, lean 1, rocq 1, idris2 52, tla 2
+* `hyperpolymath/hypatia` — engineering; 76 own proof files, 1013 detected declarations; provers: agda 7, lean 1, rocq 1, idris2 65, tla 2
 
 == I
 

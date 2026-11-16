@@ -154,6 +154,8 @@ than one.
 
 |https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1969 |3 |1 |4 |27 |`docs/PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |76 |36 |agda 7, lean 1, rocq 1, idris2 65, tla 2 |1013 |3 |1 |4 |1 |`verification/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/proven-tests-and-benches[hyperpolymath/proven-tests-and-benches] |75 |29 |idris2 75 |891 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/ambientops[hyperpolymath/ambientops] |64 |0 |idris2 39, spark 20, other 5 |777 |39 |0 |8 |0 |`PROOF-NEEDS.adoc`
@@ -161,8 +163,6 @@ than one.
 |https://github.com/metadatastician/paint-type[metadatastician/paint-type] |64 |8 |agda 3, lean 2, rocq 1, idris2 51, tla 7 |1149 |4 |0 |8 |3 |`PROOF-STATUS.adoc`
 
 |https://github.com/metadatastician/gossamer[metadatastician/gossamer] |62 |10 |idris2 53, tla 9 |1868 |0 |0 |8 |0 |`PROOF-NEEDS.md`
-
-|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |58 |24 |agda 2, lean 1, rocq 1, idris2 52, tla 2 |680 |3 |1 |0 |1 |`verification/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |52 |17 |idris2 52 |896 |0 |0 |0 |0 |`docs/proof-debt.adoc`
 

@@ -76,7 +76,7 @@
 == D
 
 * `hyperpolymath/dafniser` — engineering; 9 own proof files, 146 detected declarations; provers: idris2 9
-* `hyperpolymath/ddraig-ssg` — engineering; 4 own proof files, 118 detected declarations; provers: idris2 4
+* `hyperpolymath/ddraig-ssg` — engineering; 7 own proof files, 236 detected declarations; provers: idris2 7
 * `hyperpolymath/deed-core` — engineering; 18 own proof files, 161 detected declarations; provers: idris2 15, spark 3
 * `hyperpolymath/deed-ecosystem` — engineering; 8 own proof files, 99 detected declarations; provers: idris2 8
 * `hyperpolymath/developer-ecosystem` — engineering; 649 own proof files, 4024 detected declarations; provers: agda 2, lean 3, rocq 274, idris2 347, spark 18, tla 2, other 3

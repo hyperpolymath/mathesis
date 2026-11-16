@@ -320,6 +320,8 @@ than one.
 
 |https://github.com/hyperpolymath/bofig[hyperpolymath/bofig] |7 |0 |idris2 7 |166 |0 |0 |0 |0 |—
 
+|https://github.com/hyperpolymath/ddraig-ssg[hyperpolymath/ddraig-ssg] |7 |0 |idris2 7 |236 |0 |0 |0 |0 |`docs/proof-debt.adoc`
+
 |https://github.com/hyperpolymath/docudactyl[hyperpolymath/docudactyl] |7 |0 |idris2 7 |223 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/poly-ssg[hyperpolymath/poly-ssg] |7 |0 |idris2 2, spark 4, other 1 |44 |0 |0 |1 |0 |—
@@ -389,8 +391,6 @@ than one.
 |https://github.com/hyperpolymath/civic-connect[hyperpolymath/civic-connect] |4 |0 |idris2 4 |46 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/conative-gating[hyperpolymath/conative-gating] |4 |0 |idris2 4 |23 |3 |0 |0 |0 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/ddraig-ssg[hyperpolymath/ddraig-ssg] |4 |0 |idris2 4 |118 |0 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/hpm-crypto-rsr[hyperpolymath/hpm-crypto-rsr] |4 |0 |idris2 4 |24 |0 |0 |0 |0 |—
 

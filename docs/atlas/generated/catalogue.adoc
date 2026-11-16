@@ -61,9 +61,9 @@ than one.
 
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |29 |0 |lean 20, isabelle 9 |564 |4 |0 |0 |0 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`docs/proof-debt.md`
+|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |28 |14 |agda 25, lean 2, rocq 1 |574 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |25 |12 |agda 22, lean 2, rocq 1 |467 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`docs/proof-debt.md`
 
 |https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |23 |12 |agda 11, lean 2, rocq 2, idris2 8 |223 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 

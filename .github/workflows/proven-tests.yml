@@ -172,12 +172,12 @@ jobs:
         run: |
           set -euo pipefail
           summary="${GITHUB_STEP_SUMMARY:-/dev/null}"
-          result_of() { jq -r --arg j "$1" '.[$j].result // "missing"' <<< "$NEEDS_JSON"; }
-          in_list() { case " $2 " in *" $1 "*) return 0 ;; esac; return 1; }
+          result_of() { local job="$1"; jq -r --arg j "$job" '.[$j].result // "missing"' <<< "$NEEDS_JSON"; }
+          in_list() { local needle="$1" haystack="$2"; case " $haystack " in *" $needle "*) return 0 ;; esac; return 1; }
           detector_of() {
-            local pair
+            local job="$1" pair
             for pair in $DESIGNED_SKIPS; do
-              if [ "${pair%%:*}" = "$1" ]; then echo "${pair#*:}"; return 0; fi
+              if [ "${pair%%:*}" = "$job" ]; then echo "${pair#*:}"; return 0; fi
             done
             return 1
           }

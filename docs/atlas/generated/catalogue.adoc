@@ -29,6 +29,8 @@ than one.
 
 |https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |165 |0 |agda 163, lean 1, rocq 1 |1759 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |163 |21 |agda 28, lean 18, rocq 9, isabelle 6, idris2 41, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1676 |3 |1 |4 |27 |`docs/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |102 |0 |agda 80, lean 22 |773 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |625 |0 |2 |0 |1 |`docs/status/PROOF-STATUS.adoc`
@@ -151,8 +153,6 @@ than one.
 |https://github.com/hyperpolymath/asdf-tool-plugins[hyperpolymath/asdf-tool-plugins] |567 |0 |idris2 567 |11340 |567 |0 |0 |0 |—
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |3 |0 |0 |—
-
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1969 |3 |1 |4 |27 |`docs/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |77 |37 |agda 7, lean 1, rocq 1, idris2 66, tla 2 |1040 |3 |1 |0 |1 |`verification/PROOF-STATUS.adoc`
 

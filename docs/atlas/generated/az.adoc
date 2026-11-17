@@ -86,7 +86,7 @@
 
 == E
 
-* `hyperpolymath/echidna` — engineering; 170 own proof files, 1969 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
+* `hyperpolymath/echidna` — theory; 163 own proof files, 1676 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 41, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
 * `hyperpolymath/echo-types` — theory; 165 own proof files, 1759 detected declarations; provers: agda 163, lean 1, rocq 1
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4

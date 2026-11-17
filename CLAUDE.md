@@ -39,13 +39,19 @@ The descriptive family (working name *descriptiles*) describes what-is; the **co
 
 | File | Answers |
 |---|---|
-| `mathesis_chora.deed` | **CHORA**, the repo deed. Its `(identity)` `(clade)` `(lineage)` clauses say what this repo IS (registers into `gv-clade-index`); `(meta)` the architecture axes; `(agentic)` *may I act now?*; `(ecosystem)` where it sits and what it is not; `(status)` and `(maturity)` where it is now. Read fields with `scripts/deed-field.sh`. |
+| `mathesis_chora.deed` | **CHORA**, the repo deed. Its header `:repo-uuid` is the repo's one id, and `(identity)` and `(lineage)` say what this repo IS; a `(clade)` clause, when present, records the repo's clade placements: identity facts about where it sits, never its id and never an edict. chora-registry (formerly `gv-clade-index`) is authoritative for them; this repo's validation checks only that a declared clade is one of the 12 shelves; `(meta)` the architecture axes; `(agentic)` *may I act now?*; `(ecosystem)` where it sits and what it is not; `(status)` and `(maturity)` where it is now. Read fields with `scripts/deed-field.sh`. |
 | `(anchor)` | *Semantic authority + golden path* — what downstream may extend-not-redefine; if a recognised-drift / re-anchor marker is present, it **supersedes** accumulated context — read it first. |
 | `(neurosym)` | *Meaning* of operations — proof obligations. |
 | `(playbook)` | *How* permitted actions run. |
 | `docs/status/ROADMAP.adoc` | *What is next* — milestones, blockers, next actions. |
 | contractiles | Normative doctrine: **Intend** (north-star) · **Must** (invariants) · **Trust** (security) · **Adjust** (accessibility / inclusive design) — the integral core that holds strong; plus **Dust** (exnovation drift) · **Bust** (failure / breakage, not drift). |
 | k9 | *Validation*. Kennel (data) / Yard (pure eval) / Hunt (guarded exec). |
+
+**The chora and CLADE are different things** (owner, 2026-11-15; standards A1 CHORA-SPEC §11.1):
+- **The chora is ontological/metaphysical**: what this repo *is* and is meant to be in its context, code as identity: its intension (what defines it) and its extension (what it is an instance of). A `(clade …)` placement in it is an identity fact, copied from chora-registry, and the registry wins; never take one from a legacy file.
+- **`CLADE.deed` is logical/epistemological**: how this repo's own content is ordered. Its scheme may be strict (Linnaean), judgement or none; membership may be single or multiple; a category is decided by its criterion. It is a descriptile and never identity; none is created until A7 M3 `clade` lands.
+- **The aesthetic spans both**: what one experiences of the repo from outside, and in its ordering within.
+- A legacy `CLADE.a2ml`, or A2ML named `CLADE.deed`, feeds the chora and `STATE.deed` (standards `clade-to-repo-deed.adoc`), never a `CLADE.deed`.
 
 ## Canon pointers
 Estate data-format route: **kyq** handles exactly **TOML, Dhall, KYAML,
@@ -56,7 +62,7 @@ grammars. Canon: `metadatastician/standards/3-practice/DATA-FORMAT-ROUTING.adoc`
 Planned support is not operational evidence: retain explicit transitional
 checks until a pinned kyq executable passes positive and negative tests.
 
-- `hyperpolymath/standards` — the canon source. · `hyperpolymath/gv-clade-index` — the estate map (identity registry). · `hyperpolymath/manifesto` — this doctrine.
+- `hyperpolymath/standards` — the canon source. · `hyperpolymath/gv-clade-index` (being renamed chora-registry) — the estate registry of repo identities and classification schemes. · `hyperpolymath/manifesto` — this doctrine.
 - **Before you invent, rename, or consolidate anything: STOP and check the map + IS-NOT.**
 
 ## Estate language policy (overridable per-repo via AGENTIC)
@@ -67,16 +73,56 @@ Use plain JavaScript when this tooling is needed. TypeScript and ReScript migrat
 ## Asking the owner
 Put every question that needs the owner's decision through the selector (the AskUserQuestion tool), not as prose at the end of a report. Batch up to four per call, offer concrete options with the recommended one first, and say what each option would cause.
 
+## Proofs — which prover for which obligation
+
+Normative source: `3-practice/PROOF-POLICY.adoc` in `hyperpolymath/standards`.
+Read it there; `verification/proofs/README.adoc` maps it onto this repo.
+
+| Code or obligation | Verifier |
+|---|---|
+| Rust code | **Creusot** with **Pearlite** contracts, and **Verus**, by default and on the code (§1.2). Kani for `unsafe`/FFI seams and Aeneas for Rust that implements an Agda theorem run alongside, never instead |
+| Ada code | **SPARK** |
+| APIs, ABIs, engineering properties | **Idris2** |
+| Theory | **Agda**, rechecked in **Rocq** and **Lean** (no Mathlib) |
+
+Always name Creusot, Pearlite and Verus in Rust verification plans and in
+`docs/status/PROOF-STATUS.adoc`. Pearlite is Creusot's specification
+language, not a third verifier. Plan scopes for both verifiers, and record
+any that is unsupported, inapplicable or not yet run, with its reason; never
+present an unexecuted check as a pass. Using both does not make two
+independent witnesses (policy §1.2).
+
+Third-party code (crates such as Bevy, libraries, forks) is **not** converted
+or re-proved. Where a proof relies on a dependency the prover does not check,
+state the reliance as an `ASSUMED` boundary specification. Where the
+dependency's whole import cone compiles under the prover's safe mode with zero
+postulates, it is *checked, not assumed*: record the cone (root module, flags,
+postulate count of zero, library name, version and pin) instead of an
+`ASSUMED` row (policy §1.1). A cone with a postulate, or compiled outside safe
+mode, is not checked. When choosing between dependencies that fit equally
+well, prefer one that carries its own verification. A preference, not a gate.
+
+Proof Witness Grades are policy §8. They apply to *theory* theorems only: Agda
+source, rechecked in Rocq and Lean (§8.1). Engineering proofs (Creusot, Verus,
+SPARK, Idris2) are not graded on this ladder; they use the §5 tokens only. For
+a theory theorem, `PWG-3` < `PWG-2i` < `PWG-2ii` < `PWG-1`, where `PWG-1` is
+strongest. A theorem that does not reach `PWG-3` is `ungraded`, with no
+qualifier. A grade is derived from receipts, never asserted. A "verified" or
+"machine-checked" claim needs current receipts. Report a census with its
+denominator, never a percentage. Always write the `PWG-` prefix: CRG, TRG, ARG
+and FRG letters, and ECHIDNA's `TrustLevel`, are different schemes.
+
 ---
 
-# This repo: `mathesis`  ·  clade `fv-mathesis`
+# This repo: `mathesis`
 
-- **Identity** — uuid `#u5"github.com/hyperpolymath/mathesis"`; clade `fv` (secondary ``); born 2026-10-29; forge `hyperpolymath/mathesis`.
+- **Identity** — chora id `#u5"github.com/hyperpolymath/mathesis"`; clade: fv (placement); born 2026-10-29; forge `hyperpolymath/mathesis`.
 - **IS** — The maths section of the estate: an atlas of the mathematics in other repositories, the theory that no single system owns, and methods that apply mathematics to decisions. Each statement carries its evidence. Mathesis derives status from the receipts of the home repositories and does not assert it.
 - **IS-NOT** — a prover or a proof kernel: the checker of the home repository decides · the proof policy: PROOF-POLICY in standards decides · the identity registry: gv-clade-index decides · the map of the type family: nextgen-typing coordinates that map and its glossary · a copy of the proofs or receipts of other repositories · a grade authority: it derives a grade and does not assign one · a store for private or organisation-specific case material · the RSR template: the template is its lineage only
 - **Where it sits** — pipeline position **discovery-and-evidence-navigation**; chain `standards prescribes -> home repositories prove and keep receipts -> mathesis describes (census, claim pins, receipts read through the canon reader) -> researchers and proof tooling`; coordination = `standards`.
 - **Constraints here** (AGENTIC) — fail-closed; evidence-per-step; no-silent-skip; rerun-after-fix; release-claim-requires-hard-pass. Never: banned langs (above), secrets, state files in repo root, AGPL. Details: the deed's `(bot-directives (methodology) (coverage) (debt))` clauses.
 - **Golden path** (ANCHOR) — `just check` → Every generated view matches its data: catalogue, census tests, atlas, claims registry, bridges; Every gated proof checks in the pinned Guix shell, with no axiom, Admitted, sorry or postulate in its cone.
+- **Anchor override** (ANCHOR) — This repo's anchor forbids: Node.js, npm, Nix, Python, Go, TypeScript, ReScript. The anchor overrides the estate policy above.
 - **State** — phase incubating; maturity experimental. Milestones and next actions: `docs/status/ROADMAP.adoc`.
 
 <!-- ARRIVAL-PACK:END · provenance: DEED@7182c2cc6635 ANCHOR@bba9793279e0 · Manifesto@DRAFT-unratified · regenerate: `just claude-md` (k9 drift-detects; do not hand-edit above) -->

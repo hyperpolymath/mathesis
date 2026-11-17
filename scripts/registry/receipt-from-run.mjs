@@ -145,7 +145,12 @@ export function parseGateLog(text) {
       cur.modules.set(`${m[1]}/${m[2]}`, last);
       continue;
     }
-    if (last && (m = /^ {8}sha256 ([0-9a-f]{64})$/.exec(line))) { last.sha256 = m[1]; continue; }
+    if (last && (m = /^ {8}sha256 ([0-9a-f]{64})$/.exec(line))) {
+      // One SHA-256 per module: a second would overwrite the first.
+      if (last.sha256 !== null) fail(`the ${cur.prover} gate run in the log prints two SHA-256s for one module`);
+      last.sha256 = m[1];
+      continue;
+    }
     if (last && last.sha256 && last.note === null && /^ {8}\S/.test(line)) { last.note = line.trim(); continue; }
   }
   const gates = {};

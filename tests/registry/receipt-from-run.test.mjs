@@ -169,6 +169,9 @@ test('the log is read through its timestamps and colour codes, and both gate run
   const twice = text.split('\n').flatMap(l => /Unused\.agda +PASS/.test(l)
     ? [l, `        sha256 ${'0'.repeat(64)}`, `        ${AGDA_NOTE(1, 'Agda.Primitive Unused').trim()}`, l] : [l]).join('\n');
   expect(() => parseGateLog(twice)).toThrow(/lists verification\/proofs\/agda\/Unused\.agda twice/);
+  // Nor may one module carry two SHA-256 lines, a stale one first.
+  const twoHashes = text.split('\n').flatMap(l => /Unused\.agda +PASS/.test(l) ? [l, `        sha256 ${'0'.repeat(64)}`] : [l]).join('\n');
+  expect(() => parseGateLog(twoHashes)).toThrow(/prints two SHA-256s for one module/);
 });
 
 test('only a non-empty no-axiom report of the fixed gate is evidence for a graded root', () => {

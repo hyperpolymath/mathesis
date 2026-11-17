@@ -168,6 +168,16 @@ One pull request that changes census rows is open at a time (atlas README,
   that the listing of 2026-11-09 counted 40 private repositories. The 40
   private entries leave `unreachable.jsonl` and the catalogue. No row changes.
   Merged (pull request 74).
+* 2026-11-17: the row of `hyperpolymath/trope-checker`, taken by
+  `scripts/census/update-rows.sh` at mathesis `3e29744`. The row moves from
+  commit `24d1985` to `0dceab6`; its counts are unchanged (514 declarations,
+  38 own files, 0 holes, 0 axioms). The same run also read
+  `hyperpolymath/trope-particularity-workbench` (no proof files) and
+  `hyperpolymath/vocarium` (every proof file is an unmodified template file),
+  so neither gets a row. The row is a count; it carries no proof grade, and
+  `claims.jsonl` gains no record, because trope-checker has no receipt in the
+  form that the pinned canon reader accepts. Open at the same time: pull
+  request 100, which changes the row of `hyperpolymath/ddraig-ssg` only.
 
 === Re-anchoring: stage 3 (2026-11-11)
 

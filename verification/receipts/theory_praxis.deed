@@ -3,12 +3,15 @@
 ;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1, standards e5a39d7),
 ;; written from the records of THY-1 and APP-1 to APP-4 in
 ;; docs/status/PROOF-STATUS.adoc. The current receipts come from one CI run of
-;; the proof lanes in the pinned Guix (Guix 8edb9da) on main 034f215: run
-;; 43498592499. Its log records, for each gated module, the checker and its
+;; the proof lanes in the pinned Guix (Guix 8edb9da) on main 8c55804: run
+;; 44190913019. Its log records, for each gated module, the checker and its
 ;; version, the SHA-256 of the file, the result and the axioms reported (none).
+;; It is the first run under the gate that audits definitions as well as
+;; theorems, refuses an empty audit and a declared Lean axiom, and audits each
+;; Rocq library and its import cone with the kernel checker coqchk -o (#107).
 ;; Each current receipt carries the inputs manifest of its prover: the union of
 ;; the first-party files that the graded roots read, from
-;;   standards scripts/proof-inputs-sha256.sh --manifest 034f215 PATH...
+;;   standards scripts/proof-inputs-sha256.sh --manifest 8c55804 PATH...
 ;; One manifest per prover, because §8.5.1 allows one digest for one commit and
 ;; one prover. Earlier receipts stay as superseded receipts, each with a reason.
 ;; The reader derives the grade, and the shared git checker does the §8.5.3
@@ -25,7 +28,7 @@
   :beholding-chora #u5"estate/chora"
   :profile proof-receipt
   :repository "hyperpolymath/mathesis"
-  :source-commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
+  :source-commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
   (trusted-base
     (primitive :prover agda :module "Agda.Primitive" :name "Level" :binding "BUILTIN LEVEL")
     (primitive :prover agda :module "Agda.Primitive" :name "lzero" :binding "BUILTIN LEVELZERO")
@@ -35,12 +38,28 @@
     (primitive :prover agda :module "Agda.Builtin.String" :name "String" :binding "BUILTIN STRING"))
   (claim :id "THY-1" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :inputs-sha256 "445160a6f857efe1a4a43ad3757df941ae29b98c988b9e5f51ec36ca81f5c4d3"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "b2d01609be9419e8cbca8578dc128c3251cc947a8c6c10e0b6f16ac5c6ad332c")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
                :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
@@ -63,12 +82,23 @@
                :state superseded
                :reason "replaced by the CI receipt in the pinned Guix, Agda 2.7.0.1"))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc FeatureReachability.v"
+               :inputs-sha256 "212ebaa375caa0cd2259cfd337ddcaae769c0bd0a14d4f169ad31581c74a15c9"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "1ff2d86001e2d62c759cdc15ec3affbf352bf690d736cefd6fb7a4ce8771269f")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc FeatureReachability.v"
                :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
@@ -86,12 +116,24 @@
                :state superseded
                :reason "replaced by the CI receipt in the pinned Guix"))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean FeatureReachability.lean"
+               :inputs-sha256 "24d292acc71fd0f7ece8dd21a0f355f101b63513a66f41b0ba4a9364ac64aa0b"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "e3ff1d650c4ee0dc732ec0c028403476050885fe7e2b51eb8bf24fa9eafe0052")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "55a4116e84cb8d6a230bcc3d85fa9cef1e74fe1520b652830f6e2cb1ce26e39b")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean FeatureReachability.lean"
                :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, the first under the gate that audits definitions as well as theorems and fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
@@ -111,12 +153,28 @@
                :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0")))
   (claim :id "APP-1" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
+               :inputs-sha256 "445160a6f857efe1a4a43ad3757df941ae29b98c988b9e5f51ec36ca81f5c4d3"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "b2d01609be9419e8cbca8578dc128c3251cc947a8c6c10e0b6f16ac5c6ad332c")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
                :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
@@ -127,23 +185,46 @@
                  (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
                  (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "212ebaa375caa0cd2259cfd337ddcaae769c0bd0a14d4f169ad31581c74a15c9"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "1ff2d86001e2d62c759cdc15ec3affbf352bf690d736cefd6fb7a4ce8771269f")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc Cohort.v"
                :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
                  (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "24d292acc71fd0f7ece8dd21a0f355f101b63513a66f41b0ba4a9364ac64aa0b"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "e3ff1d650c4ee0dc732ec0c028403476050885fe7e2b51eb8bf24fa9eafe0052")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "55a4116e84cb8d6a230bcc3d85fa9cef1e74fe1520b652830f6e2cb1ce26e39b")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean Cohort.lean"
                :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
@@ -151,12 +232,28 @@
                  (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
   (claim :id "APP-2" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
+               :inputs-sha256 "445160a6f857efe1a4a43ad3757df941ae29b98c988b9e5f51ec36ca81f5c4d3"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "b2d01609be9419e8cbca8578dc128c3251cc947a8c6c10e0b6f16ac5c6ad332c")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
                :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
@@ -167,23 +264,46 @@
                  (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
                  (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "212ebaa375caa0cd2259cfd337ddcaae769c0bd0a14d4f169ad31581c74a15c9"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "1ff2d86001e2d62c759cdc15ec3affbf352bf690d736cefd6fb7a4ce8771269f")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc Cohort.v"
                :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
                  (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "24d292acc71fd0f7ece8dd21a0f355f101b63513a66f41b0ba4a9364ac64aa0b"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "e3ff1d650c4ee0dc732ec0c028403476050885fe7e2b51eb8bf24fa9eafe0052")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "55a4116e84cb8d6a230bcc3d85fa9cef1e74fe1520b652830f6e2cb1ce26e39b")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean Cohort.lean"
                :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
@@ -191,12 +311,28 @@
                  (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
   (claim :id "APP-3" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
+               :inputs-sha256 "445160a6f857efe1a4a43ad3757df941ae29b98c988b9e5f51ec36ca81f5c4d3"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "b2d01609be9419e8cbca8578dc128c3251cc947a8c6c10e0b6f16ac5c6ad332c")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible Applied/IntLaws.agda"
                :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
@@ -207,23 +343,46 @@
                  (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
                  (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "212ebaa375caa0cd2259cfd337ddcaae769c0bd0a14d4f169ad31581c74a15c9"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "1ff2d86001e2d62c759cdc15ec3affbf352bf690d736cefd6fb7a4ce8771269f")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc Cohort.v"
                :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
                  (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "24d292acc71fd0f7ece8dd21a0f355f101b63513a66f41b0ba4a9364ac64aa0b"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "e3ff1d650c4ee0dc732ec0c028403476050885fe7e2b51eb8bf24fa9eafe0052")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "55a4116e84cb8d6a230bcc3d85fa9cef1e74fe1520b652830f6e2cb1ce26e39b")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean Cohort.lean"
                :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
@@ -231,12 +390,28 @@
                  (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))))
   (claim :id "APP-4" :pwg PWG-1 :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "agda 2.7.0.1 (Guix 8edb9da)"
+               :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
+               :inputs-sha256 "445160a6f857efe1a4a43ad3757df941ae29b98c988b9e5f51ec36ca81f5c4d3"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "b2d01609be9419e8cbca8578dc128c3251cc947a8c6c10e0b6f16ac5c6ad332c")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible Applied/Missing.agda"
                :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
@@ -247,23 +422,46 @@
                  (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
                  (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "coqc 8.18.0 (Guix 8edb9da)"
+               :invocation "coqc Cohort.v"
+               :inputs-sha256 "212ebaa375caa0cd2259cfd337ddcaae769c0bd0a14d4f169ad31581c74a15c9"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "1ff2d86001e2d62c759cdc15ec3affbf352bf690d736cefd6fb7a4ce8771269f")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc Cohort.v"
                :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
                  (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
+      (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
+               :commit "8c55804163fd15deb1e89f0630a72d4ba8588001"
+               :checker "lean 4.29.0 (Guix 8edb9da)"
+               :invocation "lean Cohort.lean"
+               :inputs-sha256 "24d292acc71fd0f7ece8dd21a0f355f101b63513a66f41b0ba4a9364ac64aa0b"
+               :state current
+               (axioms)
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "e3ff1d650c4ee0dc732ec0c028403476050885fe7e2b51eb8bf24fa9eafe0052")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "55a4116e84cb8d6a230bcc3d85fa9cef1e74fe1520b652830f6e2cb1ce26e39b")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2")))
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean Cohort.lean"
                :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
-               :state current
+               :state superseded
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
                (axioms)
                (inputs-manifest
                  (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")

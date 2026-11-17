@@ -56,37 +56,37 @@ for d in "${EXTRA_EX[@]}"; do EXCLUDE+=(--exclude-dir="$d"); done
 # (comment-regex is kept for the rule format; comments are now blanked by
 # strip_comments before matching, so it is no longer consulted.)
 RULES=$(cat <<'EOF'
-agda~*.agda,*.lagda,*.lagda.md~^\s*--~axiom~postulate~^\s*postulate\b
+agda~*.agda,*.lagda,*.lagda.md~^\s*--~axiom~postulate~^\s*postulate(?![\w'])
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~hole~{! !}~\{!
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~unsafe~TERMINATING~\{-#\s*(NON_)?TERMINATING\s*#-\}
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~unsafe~NO_POSITIVITY_CHECK~\{-#\s*NO_POSITIVITY_CHECK
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~unsafe~NO_UNIVERSE_CHECK~\{-#\s*NO_UNIVERSE_CHECK
 agda~*.agda,*.lagda,*.lagda.md~^\s*--~unsafe~--type-in-type~--type-in-type
-agda~*.agda,*.lagda,*.lagda.md~^\s*--~axiom~primTrustMe~\bprimTrustMe\b
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~believe_me~\bbelieve_me\b
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~assert_total~\bassert_total\b
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~assert_smaller~\bassert_smaller\b
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~idris_crash~\bidris_crash\b
+agda~*.agda,*.lagda,*.lagda.md~^\s*--~axiom~primTrustMe~(?<![\w'])primTrustMe(?![\w'])
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~believe_me~(?<![\w'])believe_me(?![\w'])
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~assert_total~(?<![\w'])assert_total(?![\w'])
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~assert_smaller~(?<![\w'])assert_smaller(?![\w'])
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~idris_crash~(?<![\w'])idris_crash(?![\w'])
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~?hole~(^|[\s(=])\?[a-z_][A-Za-z0-9_']*
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~unsafe~%default partial~%default\s+partial
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~unsafe~partial~^\s*partial(?![\w'])
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~axiom~unsafePerformIO~\bunsafePerformIO\b
-lean~*.lean~^\s*--~hole~sorry~\bsorry\b
-lean~*.lean~^\s*--~hole~admit~\badmit\b
-lean~*.lean~^\s*--~axiom~axiom~^\s*(private\s+|protected\s+)?axiom\b
-lean~*.lean~^\s*--~axiom~native_decide~\bnative_decide\b
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~axiom~unsafePerformIO~(?<![\w'])unsafePerformIO(?![\w'])
+lean~*.lean~^\s*--~hole~sorry~(?<![\w'])sorry(?![\w'])
+lean~*.lean~^\s*--~hole~admit~(?<![\w'])admit(?![\w'])
+lean~*.lean~^\s*--~axiom~axiom~^\s*(private\s+|protected\s+)?axiom(?![\w'])
+lean~*.lean~^\s*--~axiom~native_decide~(?<![\w'])native_decide(?![\w'])
 lean~*.lean~^\s*--~axiom~implemented_by~@\[implemented_by
-lean~*.lean~^\s*--~unsafe~unsafe~^\s*(private\s+)?unsafe\b
+lean~*.lean~^\s*--~unsafe~unsafe~^\s*(private\s+)?unsafe(?![\w'])
 lean~*.lean~^\s*--~policy~import Mathlib~^\s*import\s+Mathlib
-rocq~*.v~^\s*\(\*~hole~Admitted~\bAdmitted\.
-rocq~*.v~^\s*\(\*~hole~admit~\badmit\.
-rocq~*.v~^\s*\(\*~hole~give_up~\bgive_up\b
-rocq~*.v~^\s*\(\*~axiom~Axiom~^\s*(Axiom|Axioms|Conjecture|Parameter|Parameters)\b
+rocq~*.v~^\s*\(\*~hole~Admitted~(?<![\w'])Admitted\.
+rocq~*.v~^\s*\(\*~hole~admit~(?<![\w'])admit\.
+rocq~*.v~^\s*\(\*~hole~give_up~(?<![\w'])give_up(?![\w'])
+rocq~*.v~^\s*\(\*~axiom~Axiom~^\s*(Axiom|Axioms|Conjecture|Parameter|Parameters)(?![\w'])
 rocq~*.v~^\s*\(\*~unsafe~Unset Checking~Unset\s+(Guard|Positivity|Universe)\s+Checking
 rocq~*.v~^\s*\(\*~unsafe~bypass_check~#\[\s*bypass_check
-isabelle~*.thy~^\s*\(\*~hole~sorry~\bsorry\b
-isabelle~*.thy~^\s*\(\*~hole~oops~\boops\b
-isabelle~*.thy~^\s*\(\*~axiom~axiomatization~\baxiomatization\b
+isabelle~*.thy~^\s*\(\*~hole~sorry~(?<![\w'])sorry(?![\w'])
+isabelle~*.thy~^\s*\(\*~hole~oops~(?<![\w'])oops(?![\w'])
+isabelle~*.thy~^\s*\(\*~axiom~axiomatization~(?<![\w'])axiomatization(?![\w'])
 isabelle~*.thy~^\s*\(\*~unsafe~quick_and_dirty~quick_and_dirty
 creusot~*.rs~^\s*//~axiom~#[trusted]~#\[\s*((creusot|creusot_std|creusot_contracts)::(macros::)?)?trusted\s*\]|cfg_attr\([^)]*,\s*((creusot|creusot_std|creusot_contracts)::(macros::)?)?trusted\s*\)
 verus~*.rs~^\s*//~hole~admit()~\badmit\s*\(\s*\)
@@ -98,7 +98,7 @@ spark~*.adb,*.ads~^\s*--~hole~pragma Assume~pragma\s+Assume\b
 spark~*.adb,*.ads~^\s*--~unsafe~SPARK_Mode Off~SPARK_Mode\s*(=>\s*)?\(?\s*Off
 spark~*.adb,*.ads~^\s*--~unsafe~Skip_Proof~Skip_(Flow_And_)?Proof
 spark~*.adb,*.ads~^\s*--~axiom~Annotate False_Positive~Annotate\s*\(\s*GNATprove\s*,\s*(False_Positive|Intentional)
-dedukti~*.dk,*.lp~^\s*(//|\(;)~hole~admit~\badmit(ted)?\b
+dedukti~*.dk,*.lp~^\s*(//|\(;)~hole~admit~(?<![\w'])admit(ted)?(?![\w'])
 EOF
 )
 

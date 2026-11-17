@@ -29,7 +29,8 @@ const put = (dir, file, body) => { mkdirSync(path.dirname(path.join(dir, file)),
 // ── A gate log in the fixed gate's format ────────────────────────────────────
 
 const AGDA_NOTE = (n, names) => `postulates: none in the ${n} first-party module(s) of the import cone: ${names} `;
-const ROCQ_NOTE = 'Print Assumptions: closed under the global context for 3 declaration(s): Not t u ';
+const COQCHK = 'coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity in the library or its import cone; ';
+const ROCQ_NOTE = `${COQCHK}Print Assumptions: closed under the global context for 3 declaration(s): Not t u `;
 const LEAN_NOTE = 'axioms: none for 1 theorem(s) and 4 definition(s) with a source range';
 // mods: [root, rel, file text, note]
 const gateRun = (prover, root, mods) => [
@@ -162,10 +163,12 @@ test('only a non-empty no-axiom report of the fixed gate is evidence for a grade
   expect(paths).toEqual({agda: ['verification/proofs/agda/B.agda', 'verification/proofs/agda/Top.agda'],
     rocq: ['verification/proofs/coq/Top.v'], lean: ['verification/proofs/lean4/Top.lean', 'verification/proofs/lean4/lean-toolchain']});
   // The earlier gate's reports audit no definition (audit finding 31).
-  expect(() => inputPaths(read({lean: 'axioms: none for 2 declared theorem(s)'}), files, roots)).toThrow(/before #107/);
-  expect(() => inputPaths(read({v: 'Print Assumptions: closed under the global context for 1 theorem(s): t '}), files, roots)).toThrow(/before #107/);
+  expect(() => inputPaths(read({lean: 'axioms: none for 2 declared theorem(s)'}), files, roots)).toThrow(/form of an earlier gate/);
+  expect(() => inputPaths(read({v: 'Print Assumptions: closed under the global context for 1 theorem(s): t '}), files, roots)).toThrow(/form of an earlier gate/);
+  // The intermediate form of #107 audits definitions but runs no kernel check (coqchk).
+  expect(() => inputPaths(read({v: 'Print Assumptions: closed under the global context for 3 declaration(s): Not t u '}), files, roots)).toThrow(/form of an earlier gate/);
   expect(() => inputPaths(read({lean: 'axioms: none for 0 theorem(s) and 0 definition(s) with a source range'}), files, roots)).toThrow(/inspected nothing/);
-  expect(() => inputPaths(read({v: 'Print Assumptions: closed under the global context for 0 declaration(s): '}), files, roots)).toThrow(/inspected nothing/);
+  expect(() => inputPaths(read({v: `${COQCHK}Print Assumptions: closed under the global context for 0 declaration(s): `}), files, roots)).toThrow(/inspected nothing/);
   expect(() => inputPaths(read({lean: 'axioms: Classical.choice'}), files, roots)).toThrow(/not a no-axiom report/);
   expect(() => inputPaths(read({Top: AGDA_NOTE(3, 'Agda.Primitive B Top')}), files, roots)).toThrow(/counts 3 first-party modules/);
   expect(() => inputPaths(read({}), files, {...roots, agda: ['verification/proofs/agda/Missing.agda']})).toThrow(/did not check/);

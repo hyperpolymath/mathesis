@@ -61,19 +61,21 @@ export const PROVERS = {
 
 // The audit report the gate prints for a module that passed, per gate prover:
 // only the forms of the fixed gate (hyperpolymath/mathesis#107), which audits
-// definitions as well as theorems. The earlier gate's reports ("N theorem(s)"
-// for Rocq, "N declared theorem(s)" for Lean) inspected no definition, so a
-// receipt from them could again carry vacuous axiom evidence (audit finding
-// 31); they are refused. The counts must add up to at least one: an audit that
-// inspected nothing is no evidence. For Agda the count is the first-party
-// modules of the import cone, and the names follow it.
+// definitions as well as theorems, and checks each Rocq library with the kernel
+// checker (coqchk -o). The earlier gate's reports ("N theorem(s)" for Rocq,
+// "N declared theorem(s)" for Lean) inspected no definition, so a receipt from
+// them could again carry vacuous axiom evidence (audit finding 31), and a Rocq
+// report without coqchk lacks the kernel check; all are refused. The counts
+// must add up to at least one: an audit that inspected nothing is no evidence.
+// For Agda the count is the first-party modules of the import cone, and the
+// names follow it.
 export const NOTES = {
   agda: /^postulates: none in the (\d+) first-party module\(s\) of the import cone: (.*)$/,
-  coq: /^Print Assumptions: closed under the global context for (\d+) declaration\(s\):/,
+  coq: /^coqchk -o: no axiom, type-in-type, unsafe \(co\)fixpoint or assumed positivity in the library or its import cone; Print Assumptions: closed under the global context for (\d+) declaration\(s\):/,
   lean4: /^axioms: none for (\d+) theorem\(s\) and (\d+) definition\(s\) with a source range$/,
 };
 const EARLIER = {
-  coq: /^Print Assumptions: closed under the global context for \d+ theorem\(s\)|^no theorem declared$/,
+  coq: /^Print Assumptions: closed under the global context for \d+ (?:theorem|declaration)\(s\)|^no theorem declared$/,
   lean4: /^axioms: none for \d+ declared theorem\(s\)$/,
 };
 
@@ -327,7 +329,7 @@ export function inputPaths(gates, files, roots) {
       if (!m.sha256) fail(`the ${spec.gate} gate printed no sha256 for ${r}`);
       const n = NOTES[spec.gate].exec(m.note ?? '');
       if (!n && EARLIER[spec.gate]?.test(m.note ?? '')) {
-        fail(`the ${spec.gate} gate's report for ${r} is from the gate before #107, which audits no definition: ${JSON.stringify(m.note)}`);
+        fail(`the ${spec.gate} gate's report for ${r} is in the form of an earlier gate, which #107 replaced (it audits no definition, or runs no kernel check): ${JSON.stringify(m.note)}`);
       }
       if (!n) fail(`the ${spec.gate} gate's report for ${r} is not a no-axiom report: ${JSON.stringify(m.note)}`);
       if (Number(n[1]) + Number(spec.gate === 'lean4' ? n[2] : 0) < 1) fail(`the ${spec.gate} gate's audit of ${r} inspected nothing: ${JSON.stringify(m.note)}`);

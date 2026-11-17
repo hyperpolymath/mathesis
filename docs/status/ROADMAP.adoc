@@ -312,9 +312,12 @@ One pull request that changes census rows is open at a time (atlas README,
    each Rocq library and its import cone with the kernel checker
    `coqchk -o`. The receipt is written again from CI run 44190913019 on main
    `8c55804`, the first under that gate; THY-1's Lean leg gains axiom
-   evidence that inspected its results. Next: the claim pins of THY-1 and
-   APP-1 to APP-4 move to this receipt, and APP-1's pin names
-   `verdict-missing` and `verdict-not-yes`.
+   evidence that inspected its results.
+** Fourth change (2026-11-17), after PR 113: the claim pins of THY-1 and
+   APP-1 to APP-4 name the receipt at main `58ebefb`, and APP-1's pin also
+   names `verdict-missing` and `verdict-not-yes`. The registry catalogues
+   `PWG-1` for all five, and the theory ledger records THY-1's receipt
+   change (entry 4).
 
 [[stages]]
 == Stages

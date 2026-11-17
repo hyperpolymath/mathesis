@@ -99,6 +99,12 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Changed
 
+* The in-workflow aggregate job in `proven-tests.yml` is renamed from `CI/gate` to
+  `Proven suite verdict` (job id, `needs:` and verdict logic unchanged). The
+  context `CI/gate` is now a commit status published by `ci-gate.yml`, a thin
+  caller of the reusable in proven-cicd-and-workflows, which is its only
+  producer. `ci-gate.yml` is keyed in `actions.lock` as the lock-sync gate
+  requires.
 * KYAML, step 5 of standards YAML-POLICY §5 (standards#1024): the three
   estate-owned YAML files that no third-party bot rewrites are now KYAML
   content: `build/container/compose.yaml`, `compose.example.yaml` and

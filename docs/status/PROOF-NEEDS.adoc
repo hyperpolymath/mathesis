@@ -100,9 +100,11 @@ re-anchoring plan. They were never Mathesis obligations.
 
 No proof file may contain an unproven escape: `postulate` (Agda),
 `Admitted` (Rocq), `sorry` (Lean), `believe_me` or `assert_total`
-(Idris2). For Agda, Rocq and Lean, `scripts/check-proofs.sh` enforces this
-in CI: it compiles each gated module, then audits its axioms, and
-`tests/proofs/gate_controls_test.sh` shows that a planted escape fails.
+(Idris2). Nor may a Rocq or Lean file declare an axiom of its own, used or
+not. For Agda, Rocq and Lean, `scripts/check-proofs.sh` enforces this in
+CI: it compiles each gated module, then audits its axioms (for Rocq, with
+the kernel checker `coqchk -o` on the compiled library as well), and
+`tests/proofs/gate_controls_test.sh` shows that each planted escape fails.
 
 == Proof file locations
 

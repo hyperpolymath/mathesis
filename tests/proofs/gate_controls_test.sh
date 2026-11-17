@@ -7,31 +7,79 @@
 # For Rocq and Lean the escape is also planted in a DEFINITION, and a module
 # with nothing to audit is planted too. Before the audit covered definitions
 # and refused an empty domain, all four of those passed (measured 2026-11-17).
+# Rocq also gets the escapes that a reading of the source misses, each beside a
+# clean theorem: a Local Definition, a #[local] attribute, a Program
+# obligation, an Instance, an unused Axiom, a guard bypass and an Admitted in
+# a nested Module (coqchk -o catches them; before it, an unused
+# `Local Definition planted : False. Admitted.` passed). Lean gets an unused
+# axiom beside a clean theorem, which also passed before 2026-11-17. A
+# definition-only module must pass, so that the audit is not refusing a whole
+# kind of declaration, and so must a declaration that sits in a comment.
 # Usage: bash tests/proofs/gate_controls_test.sh agda|coq|lean4
 # Needs the prover on PATH; an absent prover fails, as in the gate itself.
 set -euo pipefail
 prover=${1:?usage: gate_controls_test.sh agda|coq|lean4}
 root=$(cd "$(dirname "$0")/../.." && pwd)
 t=$(mktemp -d); trap 'rm -rf "$t"' EXIT
+# Each list holds "Name|body" entries; a body may span lines.
+must_pass=() must_fail=()
 case "$prover" in
-  agda)  ext=agda; clean='module Clean where
+  agda)  ext=agda
+         must_pass+=('Clean|module Clean where
 -- postulate in a comment is not a postulate
 data N : Set where
   z : N
-  s : N → N'
-         planted='module Planted where
-postulate X : Set' ;;
-  coq)   ext=v; clean='(* Admitted. in a comment *)
-Theorem clean : 1 + 1 = 2. Proof. reflexivity. Qed.'
-         planted='Theorem planted : 2 + 2 = 5. Admitted.'
-         planted_def='Definition planted : 2 + 2 = 5.
+  s : N → N')
+         must_fail+=('Planted|module Planted where
+postulate X : Set') ;;
+  coq)   ext=v
+         ok='Theorem clean : 1 + 1 = 2. Proof. reflexivity. Qed.'
+         must_pass+=("Clean|(* Admitted. in a comment *)
+$ok"
+           'CleanDef|Definition clean : nat := 0.'
+           "Commented|(*
+Definition documentation_example := 0.
+(* nested *) Lemma also_not_real : False.
+*)
+$ok")
+         must_fail+=('Planted|Theorem planted : 2 + 2 = 5. Admitted.'
+           'PlantedDef|Definition planted : 2 + 2 = 5.
 Admitted.'
-         empty='(* nothing to audit *)' ;;
-  lean4) ext=lean; clean='-- sorry in a comment
-theorem clean : 1 + 1 = 2 := rfl'
-         planted='theorem planted : 2 + 2 = 5 := by sorry'
-         planted_def='def planted : 2 + 2 = 5 := sorry'
-         empty='-- nothing to audit' ;;
+           'Empty|(* nothing to audit *)'
+           "PlantedLocal|Definition clean_def : nat := 0.
+$ok
+Local Definition planted : False.
+Admitted."
+           "PlantedAttr|$ok
+#[local] Definition planted : nat.
+Admitted."
+           "PlantedProgram|From Coq Require Import Program.Tactics.
+$ok
+Program Definition planted : False := _.
+Next Obligation. Admitted."
+           "PlantedInstance|$ok
+Class K := { k : False }.
+Instance planted : K.
+Admitted."
+           "PlantedAxiom|$ok
+Axiom planted : False."
+           "PlantedGuard|$ok
+#[bypass_check(guard)] Fixpoint loop (n : nat) : nat := loop n."
+           "PlantedModule|$ok
+Module Inner.
+Definition hidden : False.
+Admitted.
+End Inner.") ;;
+  lean4) ext=lean
+         ok='theorem clean : 1 + 1 = 2 := rfl'
+         must_pass+=("Clean|-- sorry in a comment
+$ok"
+           'CleanDef|def clean : Nat := 0')
+         must_fail+=('Planted|theorem planted : 2 + 2 = 5 := by sorry'
+           'PlantedDef|def planted : 2 + 2 = 5 := sorry'
+           'Empty|-- nothing to audit'
+           "PlantedAxiom|$ok
+axiom planted : False") ;;
   *) echo "unknown prover: $prover" >&2; exit 2 ;;
 esac
 run() { # name body -> exit status of the gate on a tree holding that module
@@ -43,14 +91,15 @@ run() { # name body -> exit status of the gate on a tree holding that module
   bash "$d/scripts/check-proofs.sh" "$prover" > "$d.log" 2>&1
 }
 fail=0
-if run Clean "$clean"; then echo "PASS: $prover clean control passes"
-else echo "FAIL: $prover clean control failed"; cat "$t/Clean.log"; fail=1; fi
-if run Planted "$planted"; then echo "FAIL: $prover planted escape passed the gate"; cat "$t/Planted.log"; fail=1
-else echo "PASS: $prover planted escape fails the gate"; fi
-if [ -n "${planted_def:-}" ]; then
-  if run PlantedDef "$planted_def"; then echo "FAIL: $prover escape planted in a definition passed the gate"; cat "$t/PlantedDef.log"; fail=1
-  else echo "PASS: $prover escape planted in a definition fails the gate"; fi
-  if run Empty "$empty"; then echo "FAIL: $prover module with nothing to audit passed the gate"; cat "$t/Empty.log"; fail=1
-  else echo "PASS: $prover module with nothing to audit fails the gate"; fi
-fi
+for e in "${must_pass[@]}"; do
+  name=${e%%|*}
+  if run "$name" "${e#*|}"; then echo "PASS: $prover control $name passes the gate"
+  else echo "FAIL: $prover control $name should pass the gate"; cat "$t/$name.log"; fail=1; fi
+done
+for e in "${must_fail[@]}"; do
+  name=${e%%|*}
+  if run "$name" "${e#*|}"; then echo "FAIL: $prover control $name passed the gate"; cat "$t/$name.log"; fail=1
+  else echo "PASS: $prover control $name fails the gate"; fi
+done
+echo "$prover: ${#must_pass[@]} control(s) must pass, ${#must_fail[@]} must fail"
 exit "$fail"

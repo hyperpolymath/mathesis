@@ -270,8 +270,11 @@ stated by no declaration (proof audit 2026-11-16, finding 33).
 8.18.0. The gate's `Print Assumptions` finds all 89 theorems closed under
 the global context, and since 2026-11-17 every definition and fixpoint as
 well: 134 declarations in all (82 theorems at the current receipt; the
-seven added for APP-1's middle clause have no receipt yet). The standard library's `PeanoNat` and `Lia` prove the
-natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
+seven added for APP-1's middle clause have no receipt yet). The kernel
+checker `coqchk -o` finds no axiom, type-in-type, unsafe (co)fixpoint or
+assumed positivity in the compiled library or its import cone, the
+standard library included (gate, 2026-11-17). The standard library's
+`PeanoNat` and `Lia` prove the natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
 file.
 
 |Lean leg
@@ -279,7 +282,7 @@ file.
 Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 102
 theorems or in the 128 definitions with a source range (95 theorems at the
 current receipt; the seven added for APP-1's middle clause have no receipt
-yet). No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
+yet), and the file declares no axiom of its own. No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
 
 |Statement correspondence (§2.2)
 |Compared by reading, item by item. Each target restates every Agda
@@ -339,8 +342,18 @@ bash tests/proofs/gate_controls_test.sh agda
 The gate's axiom audit now covers definitions as well as theorems, and an
 audit that inspects nothing fails. Before this, a Lean `def` built on
 `sorry` and a Rocq `Admitted` Definition each passed, and THY-1's Lean
-results were never inspected. All three gates and their controls pass
-locally. No receipt is earned yet: the receipt and the claim pins still name
+results were never inspected. Review then found that the Rocq audit took
+its declaration names from the source text, so an unused
+`Local Definition planted : False. Admitted.` passed the gate (reproduced).
+The Rocq audit now also runs the kernel checker `coqchk -o` on the compiled
+library, which lists every assumption in the library and its import cone
+however the source spells it, and the name reader skips comments. The Lean
+audit now fails on any axiom the source declares, used or not; an unused
+`axiom planted : False` passed it before (reproduced). Seven planted escapes
+that passed the old gate (Rocq: Local, `#[local]`, Program, Instance, an
+unused Axiom and a guard bypass; Lean: an unused axiom) now fail it, and a
+declaration inside a comment no longer fails it. All three gates and their
+controls pass locally. No receipt is earned yet: the receipt and the claim pins still name
 `a1388fc`/`034f215`, which predate these theorems, and they move only once
 CI has run on this change.
 

@@ -80,7 +80,7 @@
 * `hyperpolymath/dictask` — engineering; 2 own proof files, 17 detected declarations; provers: idris2 2
 * `hyperpolymath/docmatrix` — engineering; 6 own proof files, 0 detected declarations; provers: spark 5, other 1
 * `hyperpolymath/docudactyl` — engineering; 7 own proof files, 223 detected declarations; provers: idris2 7
-* `hyperpolymath/echidna` — engineering; 170 own proof files, 1969 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
+* `hyperpolymath/echidna` — theory; 163 own proof files, 1676 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 41, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
 * `hyperpolymath/echo-types` — theory; 165 own proof files, 1759 detected declarations; provers: agda 163, lean 1, rocq 1
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
@@ -113,7 +113,7 @@
 * `hyperpolymath/hpm-json-rsr` — engineering; 3 own proof files, 26 detected declarations; provers: idris2 3
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
-* `hyperpolymath/hypatia` — engineering; 58 own proof files, 680 detected declarations; provers: agda 2, lean 1, rocq 1, idris2 52, tla 2
+* `hyperpolymath/hypatia` — engineering; 77 own proof files, 1040 detected declarations; provers: agda 7, lean 1, rocq 1, idris2 66, tla 2
 * `hyperpolymath/i-human` — engineering; 3 own proof files, 47 detected declarations; provers: idris2 3
 * `hyperpolymath/ideas-to-alphas` — engineering; 4 own proof files, 77 detected declarations; provers: idris2 4
 * `hyperpolymath/idrisiser` — engineering; 9 own proof files, 122 detected declarations; provers: idris2 9
@@ -188,7 +188,7 @@
 * `hyperpolymath/reposystem` — engineering; 5 own proof files, 7 detected declarations; provers: idris2 1, spark 2, other 2
 * `hyperpolymath/residual-evidence-types` — theory; 37 own proof files, 391 detected declarations; provers: agda 37
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1
-* `hyperpolymath/resource-algebra` — theory; 25 own proof files, 467 detected declarations; provers: agda 22, lean 2, rocq 1
+* `hyperpolymath/resource-algebra` — theory; 28 own proof files, 574 detected declarations; provers: agda 25, lean 2, rocq 1
 * `hyperpolymath/robodog-defensive-systems-lab` — engineering; 13 own proof files, 64 detected declarations; provers: idris2 6, spark 6, other 1
 * `hyperpolymath/rpa-elysium` — engineering; 6 own proof files, 74 detected declarations; provers: idris2 6
 * `hyperpolymath/rsr-template-repo` — engineering; 18 own proof files, 136 detected declarations; provers: agda 1, lean 2, rocq 1, idris2 11, tla 3
@@ -255,7 +255,7 @@
 * `metadatastician/proglanging-languages` — engineering; 1 own proof files, 1 detected declarations; provers: idris2 1
 * `metadatastician/selur` — engineering; 2 own proof files, 23 detected declarations; provers: idris2 2
 * `metadatastician/sim-public-relations` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
-* `metadatastician/standards` — engineering; 2 own proof files, 40 detected declarations; provers: idris2 2
+* `metadatastician/standards` — engineering; 3 own proof files, 66 detected declarations; provers: idris2 3
 * `metadatastician/stapeln` — engineering; 19 own proof files, 294 detected declarations; provers: idris2 18, alloy 1
 * `metadatastician/vordr` — engineering; 26 own proof files, 129 detected declarations; provers: idris2 10, spark 12, creusot 2, verus 1, other 1
 * `metadatastician/ZenodoDeposits.jl` — theory; 3 own proof files, 53 detected declarations; provers: agda 3

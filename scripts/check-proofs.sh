@@ -99,13 +99,40 @@ check_one() {
 # names an axiom. PROOF-POLICY §8.4: axioms travel with the grade.
 #   agda : the first-party modules of the import cone that Agda itself reports
 #          go through scan-postulates.sh (the reference gate of januskey).
-#   coq  : `Print Assumptions` for every Theorem, Lemma, Corollary, Proposition,
-#          Fact and Remark of the file must print "Closed under the global
-#          context".
-#   lean4: every theorem the source declares must depend on no axiom
-#          (Lean.collectAxioms, the function behind #print axioms). The
-#          lemmas Lean generates for an inductive are not witnesses.
-# Each audit fails closed: if it cannot show that it ran, the module fails.
+#   coq  : two checks, both required.
+#          (1) coqchk -o, Rocq's independent kernel checker, re-checks the
+#          compiled library and its whole import cone (the standard library
+#          included) and lists every assumption in it: axioms (an Admitted
+#          proof is one), type-in-type, unsafe (co)fixpoints and assumed
+#          positivity. Each list must be <none>, and Set predicative. This
+#          reads the compiled library, not the source text, so no spelling
+#          escapes it: Local, #[local], Program, Instance, a nested Module,
+#          an unused Axiom and a guard bypass were each caught (measured
+#          2026-11-17; the text matcher alone passed an unused
+#          `Local Definition planted : False. Admitted.`).
+#          (2) `Print Assumptions` for every Theorem, Lemma, Corollary,
+#          Proposition, Fact, Remark, Example, Definition, Fixpoint and
+#          CoFixpoint that the comment-free source declares (Local, Global,
+#          Program, Polymorphic, Monomorphic and #[...] prefixes allowed) must
+#          print "Closed under the global context". It names what the receipt
+#          covers, and it refuses a file that declares nothing.
+#   lean4: every theorem and every definition that carries a source range
+#          must depend on no axiom (Lean.collectAxioms, the function behind
+#          #print axioms), and the source may declare no axiom of its own,
+#          used or not. That covers each declaration of the source, and
+#          the definitions Lean generates for an inductive with its range
+#          (casesOn, recOn, below, brecOn, ...), which are counted too. The
+#          lemmas Lean generates (injEq, inj, sizeOf_spec) carry no range.
+#          (Measured 2026-11-17: before the axiom rule, a module holding a
+#          clean theorem and an unused `axiom planted : False` passed.)
+# Definitions are audited as well as theorems because a development can
+# carry its results as definitions: THY-1's Lean leg is Type-valued, so every
+# result there is a `def`, and an audit of theorems alone inspected none of
+# them (proof audit 2026-11-16, finding 31). Measured before this fix: a Lean
+# module whose only declaration was `def planted : 2 + 2 = 5 := sorry`, or a
+# Rocq file whose only declaration was an Admitted Definition, PASSED.
+# Each audit fails closed: if it cannot show that it ran, or if it inspected
+# no declaration at all, the module fails. An empty audit is not a clean one.
 # Both axiom reports are transitive: a theorem's report covers every Fixpoint,
 # Definition or def it uses. A declaration that no audited theorem uses is not
 # reported; Lean still warns on its sorry, and Rocq still compiles its Admitted.
@@ -137,28 +164,63 @@ audit_one() {
       AUDIT_NOTE="postulates: none in the ${#own[@]} first-party module(s) of the import cone: $(sed -n 's/.*label="\([^"]*\)".*/\1/p' "$dir/cone.dot" | LC_ALL=C sort -u | tr '\n' ' ')"
       ;;
     coq)
+      if ! command -v coqchk >/dev/null 2>&1; then
+        rm -rf "$dir"; LAST_OUT="axiom audit: coqchk not on PATH (the kernel audit cannot run, so the module fails)"; return 1
+      fi
       base="$(basename "$rel" .v)"; copy="GateAudit_${base}"
+      # Comments (nested, across lines) and string literals are blanked first,
+      # as Rocq's lexer reads them, so a declaration in a comment is not
+      # collected. Line breaks are kept, so the Module stack sees real lines.
       names="$(awk '
+        { out = ""; n = length($0)
+          for (i = 1; i <= n; i++) {
+            c = substr($0, i, 1); two = substr($0, i, 2)
+            if (instr) { if (c == "\"") { if (substr($0, i + 1, 1) == "\"") i++; else instr = 0 }; continue }
+            if (c == "\"") { instr = 1; continue }
+            if (two == "(*") { depth++; i++; continue }
+            if (two == "*)" && depth > 0) { depth--; i++; continue }
+            if (depth == 0) out = out c }
+          print out }' "$ROOT/$root/$rel" | awk '
         /^[ \t]*Module[ \t]+Type[ \t]/ { split($0, w, /[ \t.]+/); stack[++d] = "T:" w[4]; next }
         /^[ \t]*Module[ \t]+[A-Za-z_][A-Za-z0-9_'\'']*[ \t]*\.[ \t]*$/ ||
         /^[ \t]*Module[ \t]+[A-Za-z_][A-Za-z0-9_'\'']*[ \t]*[:(<]/ && !/:=/ {
           s = $0; sub(/^[ \t]*Module[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s); stack[++d] = "M:" s; next }
         /^[ \t]*Section[ \t]/ { stack[++d] = "S:"; next }
         /^[ \t]*End[ \t]/ { if (d > 0) d--; next }
-        /^[ \t]*(Theorem|Lemma|Corollary|Proposition|Fact|Remark)[ \t]/ {
-          s = $0; sub(/^[ \t]*[A-Za-z]+[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s)
+        /^[ \t]*((Local|Global|Program|Polymorphic|Monomorphic|#\[[^]]*\])[ \t]+)*(Theorem|Lemma|Corollary|Proposition|Fact|Remark|Example|Definition|Fixpoint|CoFixpoint)[ \t]/ {
+          s = $0; sub(/^[ \t]*((Local|Global|Program|Polymorphic|Monomorphic|#\[[^]]*\])[ \t]+)*[A-Za-z]+[ \t]+/, "", s); sub(/[^A-Za-z0-9_'\''].*/, "", s)
           q = ""; for (i = 1; i <= d; i++) if (stack[i] ~ /^M:/) q = q substr(stack[i], 3) "."
-          print q s }' "$ROOT/$root/$rel")"
-      if [ -z "$names" ]; then rm -rf "$dir"; LAST_OUT=""; AUDIT_NOTE="no theorem declared"; return 0; fi
+          print q s }')"
+      if [ -z "$names" ]; then rm -rf "$dir"; LAST_OUT="axiom audit: no theorem or definition declared, so nothing was audited"; return 1; fi
       { cat "$ROOT/$root/$rel"; echo; while IFS= read -r n; do echo "Print Assumptions $n."; done <<<"$names"; } \
         >"$ROOT/$root/$copy.v"
-      set +e; out="$(cd "$ROOT/$root" && coqc "$copy.v" 2>&1)"; rc=$?; set -e
+      set +e; out="$(cd "$ROOT/$root" && coqc "$copy.v" 2>&1)"; rc=$?
+      # The kernel audit reads the library that coqc has just written.
+      chk=""; chk_rc=1
+      [ "$rc" -eq 0 ] && { chk="$(cd "$ROOT/$root" && coqchk -silent -o -Q . "" "$copy" 2>&1)"; chk_rc=$?; }
+      set -e
       rm -f "$ROOT/$root/$copy".{v,vo,vok,vos,glob} "$ROOT/$root/.$copy".aux
       expect="$(grep -c . <<<"$names")"
       got="$(grep -c '^Closed under the global context' <<<"$out" || true)"
-      if [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ]; then rc=0
-        AUDIT_NOTE="Print Assumptions: closed under the global context for $expect theorem(s): $(tr '\n' ' ' <<<"$names")"
-      else rc=1; out="axiom audit: $got of $expect theorem(s) closed under the global context"$'\n'"$out"; fi
+      # coqchk exits 0 when it finds an assumption; only its summary tells.
+      # A list that is not empty prints its header with no value and the
+      # names on the lines below, so every "* " line must be one of these.
+      summary="$(sed -n '/^CONTEXT SUMMARY/,$p' <<<"$chk" | sed 's/[[:space:]]*$//')"
+      kernel_ok=0
+      if [ "$chk_rc" -eq 0 ] && [ -n "$summary" ] &&
+         ! grep -E '^\* ' <<<"$summary" | grep -qvxE '\* (Theory: Set is predicative|[^:]+: <none>)'; then
+        kernel_ok=1
+        for h in "Axioms" "Constants/Inductives relying on type-in-type" \
+                 "Constants/Inductives relying on unsafe (co)fixpoints" "Inductives whose positivity is assumed"; do
+          grep -qxF "* $h: <none>" <<<"$summary" || kernel_ok=0
+        done
+        grep -qxF "* Theory: Set is predicative" <<<"$summary" || kernel_ok=0
+      fi
+      if [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ] && [ "$kernel_ok" -eq 1 ]; then rc=0
+        AUDIT_NOTE="coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity in the library or its import cone; Print Assumptions: closed under the global context for $expect declaration(s): $(tr '\n' ' ' <<<"$names")"
+      elif [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ]; then rc=1
+        out="axiom audit: the kernel checker (coqchk -o) reports an assumption, or did not run (exit $chk_rc)"$'\n'"${summary:-$chk}"
+      else rc=1; out="axiom audit: $got of $expect declaration(s) closed under the global context"$'\n'"$out"; fi
       ;;
     lean4)
       { echo "import Lean"; cat "$ROOT/$root/$rel"; cat <<'LEAN'
@@ -167,23 +229,35 @@ open Lean Elab Command in
 #eval show CommandElabM Unit from do
   let env ← getEnv
   let mut n := 0
+  let mut m := 0
   for (name, ci) in env.constants.map₂.toList do
-    -- Only theorems the source declares: the lemmas Lean generates for an
-    -- inductive (injEq, inj, sizeOf_spec) carry no declaration range.
-    if let .thmInfo _ := ci then
-      if (← liftCoreM (findDeclarationRanges? name)).isNone then continue
-      n := n + 1
-      let axs ← Lean.collectAxioms name
-      unless axs.isEmpty do
-        logInfo m!"GATE-AXIOMS {name}: {axs.toList}"
-  logInfo m!"GATE-AUDIT-DONE {n}"
+    -- An axiom the source declares fails the module even if nothing uses it.
+    if let .axiomInfo _ := ci then
+      if (← liftCoreM (findDeclarationRanges? name)).isSome then
+        logInfo m!"GATE-AXIOMS {name}: declared by the source"
+      continue
+    -- Theorems and definitions the source declares: the declarations Lean
+    -- generates (injEq, inj, sizeOf_spec, match_1, …) carry no range.
+    let isThm := match ci with | .thmInfo _ => true | _ => false
+    let isDef := match ci with | .defnInfo _ => true | .opaqueInfo _ => true | _ => false
+    unless isThm || isDef do continue
+    if (← liftCoreM (findDeclarationRanges? name)).isNone then continue
+    if isThm then n := n + 1 else m := m + 1
+    let axs ← Lean.collectAxioms name
+    unless axs.isEmpty do
+      logInfo m!"GATE-AXIOMS {name}: {axs.toList}"
+  logInfo m!"GATE-AUDIT-DONE {n} {m}"
 LEAN
       } >"$dir/Audit.lean"
       set +e; out="$(cd "$ROOT/$root" && lean "$dir/Audit.lean" 2>&1)"; rc=$?; set -e
-      if [ "$rc" -ne 0 ] || ! grep -q 'GATE-AUDIT-DONE' <<<"$out" || grep -q 'GATE-AXIOMS' <<<"$out"; then
-        rc=1; out="axiom audit: a theorem depends on an axiom, or the audit did not run"$'\n'"$(grep -E 'GATE-|error' <<<"$out" || printf '%s' "$out")"
+      thms="$(sed -n 's/.*GATE-AUDIT-DONE \([0-9]*\) \([0-9]*\).*/\1/p' <<<"$out")"
+      defs="$(sed -n 's/.*GATE-AUDIT-DONE \([0-9]*\) \([0-9]*\).*/\2/p' <<<"$out")"
+      if [ "$rc" -ne 0 ] || [ -z "$thms" ] || grep -q 'GATE-AXIOMS' <<<"$out"; then
+        rc=1; out="axiom audit: a declaration depends on an axiom, or the audit did not run"$'\n'"$(grep -E 'GATE-|error' <<<"$out" || printf '%s' "$out")"
+      elif [ $((thms + defs)) -eq 0 ]; then
+        rc=1; out="axiom audit: no theorem or definition declared, so nothing was audited"
       fi
-      [ "$rc" -eq 0 ] && AUDIT_NOTE="axioms: none for $(sed -n 's/.*GATE-AUDIT-DONE \([0-9]*\).*/\1/p' <<<"$out") declared theorem(s)"
+      [ "$rc" -eq 0 ] && AUDIT_NOTE="axioms: none for $thms theorem(s) and $defs definition(s) with a source range"
       ;;
     *) rc=0; out="" ;;
   esac

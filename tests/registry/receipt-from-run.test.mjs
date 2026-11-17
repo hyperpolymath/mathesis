@@ -164,6 +164,11 @@ test('the log is read through its timestamps and colour codes, and both gate run
   expect(() => parseGateLog(text + 'Lean (version 4.30.0, x86_64-unknown-linux-gnu, Release)\n')).toThrow(/2 different Lean version/);
   expect(() => parseGateLog(text.replace(/Agda version 2\.7\.0\.1/g, ''))).toThrow(/no Agda version/);
   expect(() => parseGateLog(text + `    commit: ${'e'.repeat(40)}\n`)).toThrow(/2 different Guix channel commit/);
+  // A module listed twice in one gate run, a stale SHA-256 first, would be overwritten
+  // by the second entry; the log is refused instead.
+  const twice = text.split('\n').flatMap(l => /Unused\.agda +PASS/.test(l)
+    ? [l, `        sha256 ${'0'.repeat(64)}`, `        ${AGDA_NOTE(1, 'Agda.Primitive Unused').trim()}`, l] : [l]).join('\n');
+  expect(() => parseGateLog(twice)).toThrow(/lists verification\/proofs\/agda\/Unused\.agda twice/);
 });
 
 test('only a non-empty no-axiom report of the fixed gate is evidence for a graded root', () => {
@@ -269,6 +274,10 @@ test('the move is refused when the log, the tree or the history disagree', async
   // A logged SHA-256 outside every manifest must hold too.
   const unused = {...fx.files, 'verification/proofs/agda/Unused.agda': 'module Unused where\n-- not what was committed\n'};
   await expect(move({evidence: evidenceFor(fx.c2, logFor(unused))})).rejects.toThrow(/Unused\.agda: the log printed sha256 .*, git has/);
+  // One path given two SHA-256s by two provers' gates is refused, not overwritten.
+  const clash = logFor(fx.files).split('\n').flatMap(l => /Top\.v +PASS/.test(l)
+    ? [`  ${'verification/proofs/agda'.padEnd(30)} ${'B.agda'.padEnd(24)} PASS`, `        sha256 ${'0'.repeat(64)}`, `        ${ROCQ_NOTE.trim()}`, l] : [l]).join('\n');
+  await expect(move({evidence: evidenceFor(fx.c2, clash)})).rejects.toThrow(/B\.agda: the log prints two SHA-256s for it/);
   // The Guix of the log is not the one the commit pins.
   await expect(move({evidence: evidenceFor(fx.c2, logFor(fx.files, {guix: 'f'.repeat(40)}))})).rejects.toThrow(/is not the one build\/channels.scm pins/);
   // A receipt moves forward only.

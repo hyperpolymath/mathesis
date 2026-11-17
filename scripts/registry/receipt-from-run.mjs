@@ -139,6 +139,9 @@ export function parseGateLog(text) {
     if (cur.coverage) continue;
     if ((m = /^ {2}(\S+)\s+(\S+)\s+(PASS|FAIL|PASS -- UNEXPECTED.*|fail \(quarantined, expected\))$/.exec(line))) {
       last = {status: m[3], sha256: null, note: null};
+      // A gate run lists each module once; a second entry would overwrite the
+      // first and could hide a stale SHA-256, so the log is refused.
+      if (cur.modules.has(`${m[1]}/${m[2]}`)) fail(`the ${cur.prover} gate run in the log lists ${m[1]}/${m[2]} twice`);
       cur.modules.set(`${m[1]}/${m[2]}`, last);
       continue;
     }
@@ -478,7 +481,13 @@ export async function planMove({repo = root, deedPath = DEED, evidence, why, com
   // not only those in a manifest, must be the file's at the commit: the log
   // must be a log of this commit.
   const logged = new Map();
-  for (const mods of Object.values(log.gates)) for (const [p, m] of mods) if (m.sha256) logged.set(p, m.sha256);
+  for (const mods of Object.values(log.gates)) {
+    for (const [p, m] of mods) {
+      if (!m.sha256) continue;
+      if (logged.has(p) && logged.get(p) !== m.sha256) fail(`${p}: the log prints two SHA-256s for it`);
+      logged.set(p, m.sha256);
+    }
+  }
   if (logged.size === 0) fail('the log printed no SHA-256 for any module');
   for (const f of (await canonManifest(repo, at, [...logged.keys()], standardsDir)).manifest) {
     if (logged.get(f.path) !== f.sha256) fail(`${f.path}: the log printed sha256 ${logged.get(f.path)}, git has ${f.sha256} at ${at}`);

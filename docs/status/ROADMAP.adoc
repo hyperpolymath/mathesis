@@ -365,3 +365,13 @@ scheduled census, a view of what each repository owes
   the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
   requests; the laws of the integer instance proved in the second pull
   request.
+* Receipt moves (2026-11-17), through the selector:
+** A superseded receipt keeps the shape of the earlier ones: `:run`,
+`:commit`, `:checker`, `:invocation`, `:state` and `:reason`. It keeps no
+digest, manifest or axioms. Git keeps them at the receipt's earlier commit.
+** The run-to-receipt logic lives here for now
+(`scripts/registry/receipt-from-run.mjs`).
+** Next action, outside this repository: port its general parts (run check,
+log reading, manifest, supersession) to the shared §8.5.1 receipt generator
+in `metadatastician/standards`, which the owner ruled on 2026-11-16 should
+come first. Mathesis then keeps only its lane names and pins that generator.

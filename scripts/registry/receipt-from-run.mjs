@@ -21,7 +21,8 @@
 //     every file the log names must have the SHA-256 the log printed.
 //
 // Then it writes one new current receipt per leg, marks the old one
-// superseded with the reason you give, and moves :source-commit. Before it
+// superseded with the reason you give (in the shape of the earlier superseded
+// receipts: no digest, manifest or axioms), and moves :source-commit. Before it
 // writes anything, the result must pass the pinned canon reader (which derives
 // each grade and refuses a recorded :pwg the receipts do not support) and the
 // shared git checker (§8.5.3). The script never writes a grade.
@@ -235,11 +236,39 @@ export function receiptText({run, commit, checker, invocation, digest, manifest}
   ].join('\n');
 }
 
+// Whether text[start, end) holds a comment (a ";" outside a string).
+const hasComment = (text, start, end) => {
+  for (let i = start, inString = false; i < end; i++) {
+    if (inString) { if (text[i] === '\\') i++; else if (text[i] === '"') inString = false; } else if (text[i] === '"') inString = true; else if (text[i] === ';') return true;
+  }
+  return false;
+};
+
+// The old current receipt as a superseded one, in the shape of the receipts
+// superseded before it (owner ruling 2026-11-17): :run, :commit, :checker and
+// :invocation as they were written, then :state superseded and :reason. Its
+// :inputs-sha256, (axioms …) and (inputs-manifest …) are dropped; §8.5.1 lets a
+// receipt that is not current omit them, and git keeps them at the receipt's
+// earlier commit. A comment inside it would be lost, so it is refused.
+export function supersededText(text, receipt, fieldIndent, reason) {
+  if (hasComment(text, receipt.start, receipt.end)) fail(`the receipt at offset ${receipt.start} holds a comment, which superseding it would drop`);
+  const f = ' '.repeat(fieldIndent);
+  const field = k => valueAtom(receipt, k)?.text ?? fail(`the receipt at offset ${receipt.start} has no :${k}`);
+  return [
+    `(receipt :run ${field('run')}`,
+    `${f}:commit ${field('commit')}`,
+    `${f}:checker ${field('checker')}`,
+    `${f}:invocation ${field('invocation')}`,
+    `${f}:state superseded`,
+    `${f}:reason ${quote(reason)})`,
+  ].join('\n');
+}
+
 // Apply the move to the deed text: a new current receipt before each old one,
-// the old one superseded with `reason`, :source-commit moved, and the old run,
-// commit and Guix named in the header comment replaced by the new ones.
-// `receipts` maps "claim prover" to the fields of receiptText. Returns {text,
-// header}, where `header` lists the header replacements made.
+// the old one superseded with `reason` (supersededText), :source-commit moved,
+// and the old run, commit and Guix named in the header comment replaced by the
+// new ones. `receipts` maps "claim prover" to the fields of receiptText.
+// Returns {text, header}, where `header` lists the header replacements made.
 export function rewriteDeed(text, {commit, runId, receipts, reason, guix}) {
   const {deed, legs} = currentReceipts(text);
   const old = value(deed, 'source-commit');
@@ -254,9 +283,8 @@ export function rewriteDeed(text, {commit, runId, receipts, reason, guix}) {
     if (g) guixes.add(g);
     const indent = column(text, receipt.start);
     const fieldIndent = column(text, keyAtom(receipt, 'commit').start);
-    edits.push({at: receipt.start, del: 0, ins: receiptText(fields, fieldIndent) + '\n' + ' '.repeat(indent)});
-    const state = valueAtom(receipt, 'state');
-    edits.push({at: state.start, del: state.end - state.start, ins: `superseded\n${' '.repeat(fieldIndent)}:reason ${quote(reason)}`});
+    edits.push({at: receipt.start, del: receipt.end - receipt.start,
+      ins: receiptText(fields, fieldIndent) + '\n' + ' '.repeat(indent) + supersededText(text, receipt, fieldIndent, reason)});
   }
   if (legs.length === 0) fail('the receipt has no current receipt to move');
   if (receipts.size !== legs.length) fail(`${receipts.size} new receipts for ${legs.length} legs`);

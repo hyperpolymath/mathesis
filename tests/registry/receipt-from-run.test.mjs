@@ -195,9 +195,14 @@ test('the move writes one new current receipt per leg and supersedes the old one
     expect(cur).toMatchObject({state: 'current', commit: fx.c2, run: 'https://github.com/hyperpolymath/mathesis/actions/runs/7000/job/70', axioms: []});
     expect(old).toMatchObject({state: 'superseded', commit: fx.c1, run: RUN0,
       reason: `replaced by the CI receipt of run 7000 on ${fx.c2.slice(0, 7)}, ${WHY}`});
-    expect(old['inputs-sha256']).toBe(fx.inputs[leg.prover].digest); // the old record is kept, only its state moves
+    // In the shape of the earlier superseded receipts (owner ruling 2026-11-17).
+    expect(old['inputs-sha256']).toBeUndefined();
+    expect(old.inputs_manifest).toBeNull();
+    expect(old.axioms).toBeNull();
     expect(leg.receipts.length).toBe(2);
   }
+  expect(text).toContain(`               :invocation "coqc Top.v"\n               :state superseded\n` +
+    `               :reason "replaced by the CI receipt of run 7000 on ${fx.c2.slice(0, 7)}, ${WHY}")`);
   const lean = record.claims[0].legs.find(l => l.prover === 'lean').receipts[0];
   expect(lean.checker).toBe('lean 4.29.0 (Guix 8edb9da)');
   expect(lean.inputs_manifest.map(f => f.path)).toEqual(PATHS.lean);
@@ -233,8 +238,15 @@ test('the move is refused when the log, the tree or the history disagree', async
   // The run's commit must be on the branch.
   git(fx.repo, 'branch', '-f', 'old-main', fx.c1);
   await expect(move({branch: 'old-main'})).rejects.toThrow(/is not on old-main/);
-  // Every current receipt must describe the :source-commit; a mixed receipt is not moved.
+  // Superseding drops a receipt's fields after :invocation, so a comment inside it is refused, not dropped.
   const file = path.join(fx.repo, DEED), before = readFileSync(file, 'utf8');
+  writeFileSync(file, before.replace('               (axioms)\n', '               (axioms) ; seen by hand\n'));
+  try {
+    await expect(move()).rejects.toThrow(/holds a comment, which superseding it would drop/);
+  } finally {
+    writeFileSync(file, before);
+  }
+  // Every current receipt must describe the :source-commit; a mixed receipt is not moved.
   const parts = before.split(`:commit "${fx.c1}"`);
   writeFileSync(file, parts.slice(0, 3).join(`:commit "${fx.c1}"`) + `:commit "${'b'.repeat(40)}"` + parts.slice(3).join(`:commit "${fx.c1}"`));
   try {

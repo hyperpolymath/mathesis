@@ -69,7 +69,7 @@ idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~assert_smaller~\bassert_smaller\b
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~idris_crash~\bidris_crash\b
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~hole~?hole~(^|[\s(=])\?[a-z_][A-Za-z0-9_']*
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~unsafe~%default partial~%default\s+partial
-idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~unsafe~partial~^\s*partial\b
+idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~unsafe~partial~^\s*partial(?![\w'])
 idris2~*.idr,*.lidr~^\s*(--|\|\|\|)~axiom~unsafePerformIO~\bunsafePerformIO\b
 lean~*.lean~^\s*--~hole~sorry~\bsorry\b
 lean~*.lean~^\s*--~hole~admit~\badmit\b

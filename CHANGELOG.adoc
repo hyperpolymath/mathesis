@@ -66,6 +66,12 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Added
 
+* The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
+  (2026-11-17), whose receipt describes `47de4a8`, the merge of
+  hyperpolymath/resource-algebra#36. F-5 now names `maps-disagree-at-positive`,
+  which that merge moved into the graded cone. The canon reader still derives
+  `PWG-1` for all 27. The census row is rebuilt at the same commit (29 own
+  proof files, 575 declarations).
 * The claims registry pins the 27 proven theorems of
   `hyperpolymath/resource-algebra` (C-1 to S-4) at its `main` of 2026-11-16,
   `f0818f2`, with the receipt that describes `f211fc1`. The canon reader

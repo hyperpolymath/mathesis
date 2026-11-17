@@ -135,6 +135,22 @@ missing crate as missing from every build.
 * CI receipt (current): Lean 4.29.0 in the pinned Guix (`8edb9da`), same
   invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
   unchanged, and no declared theorem depends on an axiom.
+* Axiom evidence, corrected 2026-11-17. Every THY-1 result in this file is a
+  `def` (the leg is Type-valued, like the Agda), and until 2026-11-17 the
+  gate audited theorems only. So the empty `(axioms)` element of the Lean
+  receipts, and "no declared theorem depends on an axiom" above, were true
+  of an audit that inspected none of THY-1's results (proof audit
+  2026-11-16, finding 31). The gate now audits every definition with a
+  source range as well, and fails on an empty audit. Run locally on Lean
+  4.29.0 (`98dc76e3c0a9`), `scripts/check-proofs.sh lean4` reports "axioms:
+  none for 2 theorem(s) and 48 definition(s) with a source range" for this
+  file. Those are the six results (`reachMono`, `absentBelow`, `onMono`,
+  `onMonoAll`, `edgeMono`, `absentUnderAllFeatures`), their helpers, and
+  the definitions Lean generates for the inductives. The two theorems are
+  the projections `Edge.src` and `Edge.dst`. No axiom was found, so none had
+  to be removed. A CI receipt under the fixed gate is still to be earned:
+  until it is, the current receipt's axiom evidence for this leg stays the
+  vacuous one.
 
 |Why neither leg is transported
 |Lambdapi's Rocq and Lean exports translate before elaboration and drop
@@ -227,19 +243,29 @@ each unit's graph.
 |`verification/proofs/agda/Applied/`: `Cohort` (the model), `Status` and
 `Missing` (APP-1, APP-4), `Cash` (APP-2, APP-3, for any ordered abelian
 group), `IntNumber` and `IntLaws` (the integer instance and its laws).
+APP-1's verdict sentence has one theorem per clause, in each prover:
+"no" on a known breach (`breach-decides`); otherwise missing when any value
+it depends on is missing (`verdict-missing`, added 2026-11-17, with the
+invariant `verdict-not-false`); never "yes" then (`verdict-yes`, and
+`verdict-not-yes` stated directly). Before 2026-11-17 the middle clause was
+stated by no declaration (proof audit 2026-11-16, finding 33).
 `--safe --without-K --cubical-compatible`; no postulate in any import cone.
 
 |Rocq leg
 |`PROVEN`, route `re-proved`. `verification/proofs/coq/Cohort.v`, Rocq
-8.18.0. The gate's `Print Assumptions` finds all 82 theorems closed under
-the global context. The standard library's `PeanoNat` and `Lia` prove the
+8.18.0. The gate's `Print Assumptions` finds all 89 theorems closed under
+the global context, and since 2026-11-17 every definition and fixpoint as
+well: 134 declarations in all (82 theorems at the current receipt; the
+seven added for APP-1's middle clause have no receipt yet). The standard library's `PeanoNat` and `Lia` prove the
 natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
 file.
 
 |Lean leg
 |`PROVEN`, route `re-proved`. `verification/proofs/lean4/Cohort.lean`,
-Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 95
-theorems. No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
+Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 102
+theorems or in the 128 definitions with a source range (95 theorems at the
+current receipt; the seven added for APP-1's middle clause have no receipt
+yet). No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
 
 |Statement correspondence (§2.2)
 |Compared by reading, item by item. Each target restates every Agda
@@ -292,6 +318,17 @@ bash tests/proofs/gate_controls_test.sh agda
 [cols="1,3",options="header"]
 |===
 |Date |Change
+
+|2026-11-17
+|APP-1's middle clause is proved in Agda, Rocq and Lean (`verdict-missing`,
+`verdict-not-false`, `verdict-not-yes`; owner ruling: prove, not narrow).
+The gate's axiom audit now covers definitions as well as theorems, and an
+audit that inspects nothing fails. Before this, a Lean `def` built on
+`sorry` and a Rocq `Admitted` Definition each passed, and THY-1's Lean
+results were never inspected. All three gates and their controls pass
+locally. No receipt is earned yet: the receipt and the claim pins still name
+`a1388fc`/`034f215`, which predate these theorems, and they move only once
+CI has run on this change.
 
 |2026-11-14
 |The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main

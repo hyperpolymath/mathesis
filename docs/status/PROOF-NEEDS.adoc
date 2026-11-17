@@ -42,7 +42,9 @@ missing input is missing, in every period after it too, and never zero. A
 verdict is "no" on a known breach and otherwise missing when any value it
 depends on is missing; it is never "yes" then
 |Agda, re-checked in Rocq and Lean
-|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2)
+|Proved in Agda, Rocq and Lean; the receipt derives `PWG-1` (WO 4.2). The
+middle clause ("otherwise missing") is `verdict-missing`, proved 2026-11-17;
+its receipt is still to be earned
 |`verification/proofs/agda/Applied/Missing.agda`; Rocq and Lean: `Cohort.v`, `Cohort.lean`
 
 |APP-2

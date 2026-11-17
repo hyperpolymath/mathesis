@@ -9,3 +9,4 @@
 # renamed or path-filtered workflow can never silently strand pull requests
 # behind an unsatisfiable ruleset check (issue #219 class).
 scan / gitleaks => .github/workflows/secret-scanner.yml
+CI/gate => .github/workflows/proven-tests.yml

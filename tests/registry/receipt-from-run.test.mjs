@@ -12,7 +12,7 @@ import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {checkRun, parseGateLog, parseSpans, inputPaths, currentReceipts, canonManifest, planMove, planPin, idSegment, JOB, WORKFLOW, DEED, CLAIMS}
+import {checkRun, parseGateLog, parseSpans, inputPaths, currentReceipts, canonManifest, planMove, planPin, idSegment, apiUrl, JOB, WORKFLOW, DEED, CLAIMS}
   from '../../scripts/registry/receipt-from-run.mjs';
 import {findTool} from '../../scripts/registry/claims-registry.mjs';
 import {jcs} from '../../scripts/registry/theory-ledger.mjs';
@@ -176,7 +176,13 @@ test('an id goes into an API path only as a positive integer', () => {
   expect(idSegment(134116153255, 'job')).toBe('134116153255');
   for (const bad of ['1/../../x', '../users', '%2e%2e', '-1', '0', '1e3', 1.5, '', ' 7', null, '99999999999999999999']) {
     expect(() => idSegment(bad, 'run')).toThrow(/is not a positive integer id/);
+    expect(() => apiUrl('logs', bad)).toThrow(/is not a positive integer id/);
   }
+  const api = 'https://api.github.com/repos/hyperpolymath/mathesis/actions';
+  expect(apiUrl('run', '44105371764').href).toBe(`${api}/runs/44105371764`);
+  expect(apiUrl('jobs', 44105371764).href).toBe(`${api}/runs/44105371764/jobs?filter=latest&per_page=100`);
+  expect(apiUrl('logs', 134116153255).href).toBe(`${api}/jobs/134116153255/logs`);
+  expect(() => apiUrl('artifacts', 1)).toThrow(/no API request of kind/);
 });
 
 test('the span reader is not misled by parentheses and quotes in comments', () => {

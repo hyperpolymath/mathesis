@@ -377,13 +377,30 @@ export async function canonManifest(repo, commit, paths, standardsDir = process.
 // A GitHub id goes into an API path only as a positive integer, as one encoded
 // segment, so no input can steer the request to another path.
 export function idSegment(id, what) {
-  const n = typeof id === 'number' ? id : /^\d+$/.test(String(id)) ? Number(id) : Number.NaN;
-  if (!Number.isSafeInteger(n) || n <= 0) fail(`${what} is not a positive integer id: ${JSON.stringify(id)}`);
-  return encodeURIComponent(String(n));
+  const text = String(id);
+  const n = /^[1-9]\d*$/.test(text) ? Number.parseInt(text, 10) : Number.NaN;
+  if (!Number.isSafeInteger(n)) fail(`${what} is not a positive integer id: ${JSON.stringify(id)}`);
+  return n.toString(10);
+}
+
+// The only three requests the script makes, each checked against an allowlist
+// of origin and path before it is sent.
+const API = 'https://api.github.com';
+const API_PATHS = {
+  run: id => `/repos/${HOME}/actions/runs/${id}`,
+  jobs: id => `/repos/${HOME}/actions/runs/${id}/jobs`,
+  logs: id => `/repos/${HOME}/actions/jobs/${id}/logs`,
+};
+const API_PATH = new RegExp(`^/repos/${HOME}/actions/(?:runs/[1-9][0-9]*(?:/jobs)?|jobs/[1-9][0-9]*/logs)$`);
+export function apiUrl(kind, id) {
+  const build = API_PATHS[kind] ?? fail(`no API request of kind ${kind}`);
+  const url = new URL(build(idSegment(id, `the ${kind} id`)), API);
+  if (url.origin !== API || !API_PATH.test(url.pathname)) fail(`refusing to request ${url.href}`);
+  if (kind === 'jobs') { url.searchParams.set('filter', 'latest'); url.searchParams.set('per_page', '100'); }
+  return url;
 }
 
 async function fetchEvidence(runId) {
-  const run = idSegment(runId, 'the run id');
   const plain = {Accept: 'application/vnd.github+json', 'User-Agent': 'mathesis-receipt-from-run'};
   const auth = process.env.GITHUB_TOKEN ? {...plain, Authorization: `Bearer ${process.env.GITHUB_TOKEN}`} : plain;
   // GitHub answers a log request with a redirect to a signed storage URL. It is
@@ -399,11 +416,10 @@ async function fetchEvidence(runId) {
     if (!res.ok) fail(`GET ${url}: HTTP ${res.status}`);
     return res;
   };
-  const api = `https://api.github.com/repos/${HOME}/actions`;
-  const runJson = await (await get(`${api}/runs/${run}`)).json();
-  const jobsJson = await (await get(`${api}/runs/${run}/jobs?filter=latest&per_page=100`)).json();
+  const runJson = await (await get(apiUrl('run', runId))).json();
+  const jobsJson = await (await get(apiUrl('jobs', runId))).json();
   const job = (jobsJson.jobs ?? []).find(j => j.name === JOB);
-  const log = job ? await (await get(`${api}/jobs/${idSegment(job.id, 'the job id')}/logs`)).text() : '';
+  const log = job ? await (await get(apiUrl('logs', job.id))).text() : '';
   return {run: runJson, jobs: jobsJson, log};
 }
 

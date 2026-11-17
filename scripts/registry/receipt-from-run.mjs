@@ -104,7 +104,11 @@ export function checkRun(run, jobs, commit = null) {
   if (job.run_attempt !== undefined && run.run_attempt !== undefined && job.run_attempt !== run.run_attempt) {
     no(`job ${job.id} is from attempt ${job.run_attempt}, not the run's attempt ${run.run_attempt}`);
   }
-  if (!/^https:\/\/github\.com\/[^/]+\/[^/]+\/actions\/runs\/\d+\/job\/\d+$/.test(job.html_url ?? '')) no(`job ${job.id} has no job URL`);
+  // The job must be this run's, in this repository: its URL names both, and the
+  // receipt's :run is that URL.
+  const url = /^https:\/\/github\.com\/([^/]+\/[^/]+)\/actions\/runs\/(\d+)\/job\/\d+$/.exec(job.html_url ?? '') ?? no(`job ${job.id} has no job URL`);
+  if (url[1] !== HOME || url[2] !== String(run.id)) no(`job ${job.id}'s URL is not a job of run ${run.id} in ${HOME}: ${job.html_url}`);
+  if (String(job.run_id) !== String(run.id)) no(`job ${job.id} belongs to run ${job.run_id}, not run ${run.id}`);
   return {commit: run.head_sha, job};
 }
 
@@ -340,7 +344,9 @@ export function inputPaths(gates, files, roots) {
         cone.forEach(f => set.add(f));
       }
     }
-    if (prover !== 'agda') for (const k of mods.keys()) set.add(k);
+    // Rocq and Lean: every module the gate compiled. A quarantined module that
+    // failed as expected compiled nothing, so it is not an input.
+    if (prover !== 'agda') for (const [k, m] of mods) if (m.status === 'PASS') set.add(k);
     // Agda looks for its library files in the directory it runs in and in
     // every parent; the other provers read their config beside the proofs.
     const dirs = new Set([spec.dir]);
@@ -468,17 +474,18 @@ export async function planMove({repo = root, deedPath = DEED, evidence, why, com
   const files = new Set(git(repo, 'ls-tree', '-r', '--name-only', '--full-tree', at).split('\n').filter(Boolean));
   const {paths, notes} = inputPaths(log.gates, files, roots);
 
-  // One manifest per prover (§8.5.1: one digest for one commit and one prover),
-  // each file checked against the SHA-256 that the log printed for it.
-  const inputs = {};
-  for (const [prover, list] of Object.entries(paths)) {
-    const m = await canonManifest(repo, at, list, standardsDir);
-    for (const f of m.manifest) {
-      const seen = log.gates[PROVERS[prover].gate].get(f.path);
-      if (seen && seen.sha256 !== f.sha256) fail(`${f.path}: the log printed sha256 ${seen.sha256}, git has ${f.sha256} at ${at}`);
-    }
-    inputs[prover] = m;
+  // Every SHA-256 the log printed, for every gated module of every prover and
+  // not only those in a manifest, must be the file's at the commit: the log
+  // must be a log of this commit.
+  const logged = new Map();
+  for (const mods of Object.values(log.gates)) for (const [p, m] of mods) if (m.sha256) logged.set(p, m.sha256);
+  if (logged.size === 0) fail('the log printed no SHA-256 for any module');
+  for (const f of (await canonManifest(repo, at, [...logged.keys()], standardsDir)).manifest) {
+    if (logged.get(f.path) !== f.sha256) fail(`${f.path}: the log printed sha256 ${logged.get(f.path)}, git has ${f.sha256} at ${at}`);
   }
+  // One manifest per prover (§8.5.1: one digest for one commit and one prover).
+  const inputs = {};
+  for (const [prover, list] of Object.entries(paths)) inputs[prover] = await canonManifest(repo, at, list, standardsDir);
   const checker = p => `${PROVERS[p].label} ${log.versions[p]} (Guix ${log.guix.slice(0, 7)})`;
   const receipts = new Map(legs.map(l => [`${l.claim} ${l.prover}`, {
     run: job.html_url, commit: at, checker: checker(l.prover), invocation: value(l.receipt, 'invocation'),

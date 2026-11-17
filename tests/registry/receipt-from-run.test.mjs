@@ -32,13 +32,16 @@ const AGDA_NOTE = (n, names) => `postulates: none in the ${n} first-party module
 const COQCHK = 'coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity in the library or its import cone; ';
 const ROCQ_NOTE = `${COQCHK}Print Assumptions: closed under the global context for 3 declaration(s): Not t u `;
 const LEAN_NOTE = 'axioms: none for 1 theorem(s) and 4 definition(s) with a source range';
-// mods: [root, rel, file text, note]
+// mods: [root, rel, file text, note]; a null file text is a quarantined module
+// that failed as expected, which the gate prints with no SHA-256.
 const gateRun = (prover, root, mods) => [
   `=== ${prover} proof check ===`,
-  ...mods.flatMap(([r, rel, body, note]) => [`  ${r.padEnd(30)} ${rel.padEnd(24)} PASS`, `        sha256 ${sha(body)}`, `        ${note}`]),
+  ...mods.flatMap(([r, rel, body, note]) => body === null
+    ? [`  ${r.padEnd(30)} ${rel.padEnd(24)} fail (quarantined, expected)`, `        reason: ${note}`]
+    : [`  ${r.padEnd(30)} ${rel.padEnd(24)} PASS`, `        sha256 ${sha(body)}`, `        ${note}`]),
   '', `=== manifest coverage (${root}) ===`, `  all ${mods.length} file(s) accounted for`, '',
   'RESULT: PASS -- gated modules compile; quarantined modules still fail as recorded'];
-const logFor = (files, {guix = GUIX, notes = {}} = {}) => {
+const logFor = (files, {guix = GUIX, notes = {}, quarantined = false} = {}) => {
   const A = 'verification/proofs/agda', C = 'verification/proofs/coq', L = 'verification/proofs/lean4';
   const lines = [
     '##[group]Run guix time-machine -C build/channels.scm -- describe',
@@ -49,8 +52,11 @@ const logFor = (files, {guix = GUIX, notes = {}} = {}) => {
     ...gateRun('agda', A, [
       [A, 'B.agda', files[`${A}/B.agda`], notes.B ?? AGDA_NOTE(1, 'Agda.Primitive B')],
       [A, 'Top.agda', files[`${A}/Top.agda`], notes.Top ?? AGDA_NOTE(2, 'Agda.Builtin.Nat Agda.Primitive B Top')],
+      // Gated, but outside every graded cone: its SHA-256 is checked, and it is in no manifest.
+      [A, 'Unused.agda', files[`${A}/Unused.agda`], AGDA_NOTE(1, 'Agda.Primitive Unused')],
     ]),
-    ...gateRun('coq', C, [[C, 'Top.v', files[`${C}/Top.v`], notes.v ?? ROCQ_NOTE]]),
+    ...gateRun('coq', C, [[C, 'Top.v', files[`${C}/Top.v`], notes.v ?? ROCQ_NOTE],
+      ...(quarantined ? [[C, 'Old.v', null, ' an open obligation, kept to show it still fails']] : [])]),
     ...gateRun('lean4', L, [[L, 'Top.lean', files[`${L}/Top.lean`], notes.lean ?? LEAN_NOTE]]),
   ];
   // The gate runs in its lane and again in the golden path.
@@ -115,7 +121,7 @@ async function fixtureRepo() {
 
 const evidenceFor = (c2, log, {run = {}, job = {}} = {}) => ({
   run: {id: 7000, path: WORKFLOW, event: 'push', head_branch: 'main', status: 'completed', conclusion: 'success', head_sha: c2, run_attempt: 1, ...run},
-  jobs: {jobs: [{id: 70, name: JOB, status: 'completed', conclusion: 'success', head_sha: c2, run_attempt: 1,
+  jobs: {jobs: [{id: 70, run_id: 7000, name: JOB, status: 'completed', conclusion: 'success', head_sha: c2, run_attempt: 1,
     html_url: 'https://github.com/hyperpolymath/mathesis/actions/runs/7000/job/70', ...job}]},
   log,
 });
@@ -136,6 +142,11 @@ test('a green push run of the gate on main is accepted; anything else is refused
   expect(no({}, {name: 'another job'})).toThrow(/has 0 jobs named/);
   expect(no({}, {conclusion: 'cancelled'})).toThrow(/completed\/cancelled/);
   expect(no({}, {run_attempt: 2})).toThrow(/attempt 2/);
+  // The job must be this run's, in this repository.
+  expect(no({}, {run_id: 7001})).toThrow(/belongs to run 7001, not run 7000/);
+  expect(no({}, {html_url: 'https://github.com/hyperpolymath/mathesis/actions/runs/7001/job/70'})).toThrow(/is not a job of run 7000/);
+  expect(no({}, {html_url: 'https://github.com/someone/else/actions/runs/7000/job/70'})).toThrow(/is not a job of run 7000 in hyperpolymath\/mathesis/);
+  expect(no({}, {html_url: 'https://example.com/x'})).toThrow(/has no job URL/);
 });
 
 // ── The log ──────────────────────────────────────────────────────────────────
@@ -160,6 +171,8 @@ test('only a non-empty no-axiom report of the fixed gate is evidence for a grade
   const roots = {agda: ['verification/proofs/agda/Top.agda'], rocq: ['verification/proofs/coq/Top.v'], lean: ['verification/proofs/lean4/Top.lean']};
   const read = notes => parseGateLog(logFor(fx.files, {notes})).gates;
   const {paths} = inputPaths(read({}), files, roots);
+  // A quarantined module that failed as expected is not an input; a gated module outside the cones is not either.
+  expect(inputPaths(parseGateLog(logFor(fx.files, {quarantined: true})).gates, files, roots).paths.rocq).toEqual(['verification/proofs/coq/Top.v']);
   expect(paths).toEqual({agda: ['verification/proofs/agda/B.agda', 'verification/proofs/agda/Top.agda'],
     rocq: ['verification/proofs/coq/Top.v'], lean: ['verification/proofs/lean4/Top.lean', 'verification/proofs/lean4/lean-toolchain']});
   // The earlier gate's reports audit no definition (audit finding 31).
@@ -239,6 +252,13 @@ test('the move writes one new current receipt per leg and supersedes the old one
   }
 });
 
+test('a green run with a quarantined module that failed as expected is accepted, and the module is in no manifest', async () => {
+  const {record} = await planMove({repo: fx.repo, evidence: evidenceFor(fx.c2, logFor(fx.files, {quarantined: true})), why: WHY, branch: 'main'});
+  expect(record.claims[0].pwg).toBe('PWG-1');
+  const rocq = record.claims[0].legs.find(l => l.prover === 'rocq').receipts[0];
+  expect(rocq.inputs_manifest.map(m => m.path)).toEqual(['verification/proofs/coq/Top.v']);
+});
+
 test('the move is refused when the log, the tree or the history disagree', async () => {
   const move = (opts = {}) => planMove({repo: fx.repo, evidence: evidenceFor(fx.c2, logFor(fx.files)), why: WHY, branch: 'main', ...opts});
   await expect(move({why: ' '})).rejects.toThrow(/--why is required/);
@@ -246,6 +266,9 @@ test('the move is refused when the log, the tree or the history disagree', async
   // The log printed a SHA-256 that git does not have at the commit.
   const stale = {...fx.files, 'verification/proofs/agda/B.agda': 'module B where\n-- not what was committed\n'};
   await expect(move({evidence: evidenceFor(fx.c2, logFor(stale))})).rejects.toThrow(/the log printed sha256 .*, git has/);
+  // A logged SHA-256 outside every manifest must hold too.
+  const unused = {...fx.files, 'verification/proofs/agda/Unused.agda': 'module Unused where\n-- not what was committed\n'};
+  await expect(move({evidence: evidenceFor(fx.c2, logFor(unused))})).rejects.toThrow(/Unused\.agda: the log printed sha256 .*, git has/);
   // The Guix of the log is not the one the commit pins.
   await expect(move({evidence: evidenceFor(fx.c2, logFor(fx.files, {guix: 'f'.repeat(40)}))})).rejects.toThrow(/is not the one build\/channels.scm pins/);
   // A receipt moves forward only.

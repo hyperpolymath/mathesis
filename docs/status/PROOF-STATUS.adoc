@@ -285,6 +285,12 @@ guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just c
 
 # The planted controls: each must fail the gate
 bash tests/proofs/gate_controls_test.sh agda
+
+# Move the receipt to a green Proof Policy Gate run on main, then pin the
+# claims to the commit that holds it (scripts/registry/receipt-from-run.mjs).
+# The first writes nothing that the canon reader and the git checker refuse.
+just receipt-from-run RUN "why the new receipt replaces the old one" --dry-run
+just receipt-pin COMMIT
 ----
 
 == Changelog

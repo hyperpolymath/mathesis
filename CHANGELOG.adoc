@@ -66,6 +66,18 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Added
 
+* `scripts/registry/receipt-from-run.mjs` (`just receipt-from-run`, `just
+  receipt-pin`) moves the receipt of Mathesis to a green Proof Policy Gate run
+  on `main`. It writes one new current receipt per leg and supersedes the old one
+  with a stated reason. Each receipt's fields come only from the run's job log
+  (PASS line, file SHA-256, axiom report, checker versions, Guix commit) and
+  from git (manifests from the pinned `proof-inputs-sha256.sh`). It refuses:
+  a run that is not a green push on `main`, a log SHA-256 that git does not
+  hold, an audit that inspected nothing, the pre-#107 gate's axiom reports (they
+  audit no definition, audit finding 31), and a move backwards. Nothing is
+  written until the canon reader and `check-proof-receipt.sh` accept the
+  result. The script never writes a grade. Tests:
+  `tests/registry/receipt-from-run.test.mjs`.
 * The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
   (2026-11-17), whose receipt describes `47de4a8`, the merge of
   hyperpolymath/resource-algebra#36. F-5 now names `maps-disagree-at-positive`,

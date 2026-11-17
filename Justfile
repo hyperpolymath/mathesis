@@ -780,6 +780,20 @@ registry-check:
 receipt-check:
     bun scripts/registry/claims-registry.mjs receipt
 
+# PROOF-POLICY §8.4 rules 2, 4 and 5: a new current receipt per leg, from the
+# run's log and git, and the old one superseded because WHY. It writes only what
+# the canon reader and the git checker accept, and never a grade. Add --dry-run
+# to look first. Needs MATHESIS_STANDARDS (as above) and origin/main with its
+# history. Example: just receipt-from-run 44105371764 "whose gate audits definitions" --dry-run
+# Move the receipt of Mathesis to green Proof Policy Gate run RUN on main
+receipt-from-run run why *flags:
+    bun scripts/registry/receipt-from-run.mjs receipt --run {{run}} --why {{quote(why)}} {{flags}}
+
+# COMMIT must hold the new receipt. Then regenerate the views: just registry
+# Pin the claims of the receipt of Mathesis to COMMIT and that file's SHA-256
+receipt-pin commit *flags:
+    bun scripts/registry/receipt-from-run.mjs pin --at {{commit}} {{flags}}
+
 # Append each change of the theory shelf to docs/theory/ledger.jsonl, the only
 # way the ledger changes (needs MATHESIS_STANDARDS, as above). A note tells the
 # story: just theory-ledger "THY-2 admitted after its Lean leg landed"

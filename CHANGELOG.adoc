@@ -66,6 +66,15 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Added
 
+* The claims registry pins the 27 proven theorems of
+  `hyperpolymath/resource-algebra` (C-1 to S-4) at its `main` of 2026-11-16,
+  `f0818f2`, with the receipt that describes `f211fc1`. The canon reader
+  derives `PWG-1` for all 27. The two `OPEN` rows (C-4b, M-2) are not pinned:
+  an open row names no Agda declaration. F-5 does not yet name
+  `maps-disagree-at-positive`: at `f0818f2` it is in the repository's unit
+  tests, outside the graded import cone; hyperpolymath/resource-algebra#36
+  moves it into `src/`. The resource-algebra census row is rebuilt at the same
+  commit (28 own proof files, was 25).
 * `www/` site-operations bundle (issue #53): canonical `.well-known/`
   metadata, publishable content, policy sources, error bodies,
   security-header templates, Caddy/nginx/Apache integration examples, an

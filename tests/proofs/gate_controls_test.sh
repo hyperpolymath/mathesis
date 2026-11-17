@@ -4,6 +4,9 @@
 # without it (re-anchoring plan WO 1.3): an Agda `postulate`, a Rocq
 # `Admitted`, a Lean `sorry`. Each of these compiled, or would have, before
 # the axiom audit. A decoy in a comment must not fail the gate.
+# For Rocq and Lean the escape is also planted in a DEFINITION, and a module
+# with nothing to audit is planted too. Before the audit covered definitions
+# and refused an empty domain, all four of those passed (measured 2026-11-17).
 # Usage: bash tests/proofs/gate_controls_test.sh agda|coq|lean4
 # Needs the prover on PATH; an absent prover fails, as in the gate itself.
 set -euo pipefail
@@ -20,10 +23,15 @@ data N : Set where
 postulate X : Set' ;;
   coq)   ext=v; clean='(* Admitted. in a comment *)
 Theorem clean : 1 + 1 = 2. Proof. reflexivity. Qed.'
-         planted='Theorem planted : 2 + 2 = 5. Admitted.' ;;
+         planted='Theorem planted : 2 + 2 = 5. Admitted.'
+         planted_def='Definition planted : 2 + 2 = 5.
+Admitted.'
+         empty='(* nothing to audit *)' ;;
   lean4) ext=lean; clean='-- sorry in a comment
 theorem clean : 1 + 1 = 2 := rfl'
-         planted='theorem planted : 2 + 2 = 5 := by sorry' ;;
+         planted='theorem planted : 2 + 2 = 5 := by sorry'
+         planted_def='def planted : 2 + 2 = 5 := sorry'
+         empty='-- nothing to audit' ;;
   *) echo "unknown prover: $prover" >&2; exit 2 ;;
 esac
 run() { # name body -> exit status of the gate on a tree holding that module
@@ -39,4 +47,10 @@ if run Clean "$clean"; then echo "PASS: $prover clean control passes"
 else echo "FAIL: $prover clean control failed"; cat "$t/Clean.log"; fail=1; fi
 if run Planted "$planted"; then echo "FAIL: $prover planted escape passed the gate"; cat "$t/Planted.log"; fail=1
 else echo "PASS: $prover planted escape fails the gate"; fi
+if [ -n "${planted_def:-}" ]; then
+  if run PlantedDef "$planted_def"; then echo "FAIL: $prover escape planted in a definition passed the gate"; cat "$t/PlantedDef.log"; fail=1
+  else echo "PASS: $prover escape planted in a definition fails the gate"; fi
+  if run Empty "$empty"; then echo "FAIL: $prover module with nothing to audit passed the gate"; cat "$t/Empty.log"; fail=1
+  else echo "PASS: $prover module with nothing to audit fails the gate"; fi
+fi
 exit "$fail"

@@ -306,6 +306,15 @@ One pull request that changes census rows is open at a time (atlas README,
    theorems. The Hypatia scanner pin moves to `b7944d3` (hypatia#1087, the
    JavaScript-aware `js_exec_sync` rule), and `scripts/site/site.mjs` drops
    its `hypatia:ignore` annotation.
+** Third change (2026-11-17), after PR 107: APP-1's middle clause is proved
+   in all three provers, and the gate audits definitions as well as
+   theorems, refuses an empty audit and a declared Lean axiom, and checks
+   each Rocq library and its import cone with the kernel checker
+   `coqchk -o`. The receipt is written again from CI run 44190913019 on main
+   `8c55804`, the first under that gate; THY-1's Lean leg gains axiom
+   evidence that inspected its results. Next: the claim pins of THY-1 and
+   APP-1 to APP-4 move to this receipt, and APP-1's pin names
+   `verdict-missing` and `verdict-not-yes`.
 
 [[stages]]
 == Stages

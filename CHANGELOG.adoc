@@ -20,6 +20,19 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   document `docs/status/PROOF-STATUS.adoc`). The other rows are still the
   2026-10-26 census.
 
+* The `metadatastician/hvn-dehallucinator` row now stands at that repository's
+  `main` `da01ab82aa6b1974276e6f7f064c2beed2f356b4` (home PR #51, 2026-11-09):
+  19 own proof files (agda 10, lean 1, rocq 1, idris2 1, tla 6), 7 fixture
+  files and 640 declarations; status document
+  `docs/status/PROOF-STATUS.adoc`. This supersedes the `f2f31f7` figures in the
+  entry above (16 own proof files), which were true when written (`654de35`).
+  The row was rebuilt at `da01ab8` by `d9ee5c4` (each row now names its source
+  commit and census time); `78bb420` moved it to
+  `docs/atlas/census/rows.jsonl`. A re-run on 2026-11-16 changed only
+  `censused_at`. Receipts are read as they stand: the Rocq and Lean Haruspex
+  legs are proven but bridge-pending in the home ledger, and the row carries
+  no grade.
+
 * `repo-init` minting a repository created with GitHub's "Use this
   template" (measured on metadatastician/lintel, 2026-10-14):
 ** provenance recorded the CHILD's own HEAD as the template commit. The

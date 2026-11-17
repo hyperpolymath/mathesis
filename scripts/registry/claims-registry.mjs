@@ -59,6 +59,18 @@ async function ledgerOnMain() {
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
 const SHELVES = new Set(['theory', 'applied']);
+// ADR 0004: a record has exactly these fields, and holds no grade, token, leg
+// or flag (those are read from the receipt). The set is closed, as in
+// bridges.mjs and theory.mjs: any other field is refused, never ignored.
+const FIELDS = new Set(['id', 'repo', 'claim', 'kind', 'statement', 'status_doc', 'agda', 'shelf',
+  'source_commit', 'receipt']);
+const AGDA_FIELDS = new Set(['module', 'names']);
+const RECEIPT_FIELDS = new Set(['path', 'sha256']);
+
+// Throw unless every key of `object` is in `allowed`.
+const closed = (object, allowed, label, where) => {
+  for (const k of Object.keys(object)) if (!allowed.has(k)) throw new Error(`${label} ${k}: ${where}`);
+};
 
 // The canon reader, pinned by commit and by the digest of its file. A reader
 // that is not this file is refused, so a grade never comes from an unpinned rule.
@@ -89,6 +101,8 @@ export function validate(rows, inventory) {
   const seen = new Set();
   for (const r of rows) {
     const where = r && r.id ? r.id : JSON.stringify(r);
+    if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
+    closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
     if (typeof r.repo !== 'string' || !/^[-\w.]+\/[-\w.]+$/.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
     if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
@@ -102,12 +116,14 @@ export function validate(rows, inventory) {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)
         throw new Error(`A theorem names its Agda module and names: ${r.id}`);
     }
+    if (r.agda !== null && r.agda !== undefined) closed(r.agda, AGDA_FIELDS, 'Unknown agda field', r.id);
     if (r.repo === HOME && r.kind === 'theorem') {
       if (!SHELVES.has(r.shelf)) throw new Error(`A home theorem is on the theory or the applied shelf: ${r.id}`);
     } else if ('shelf' in r) throw new Error(`Only a home theorem names a shelf: ${r.id}`);
     if (r.receipt !== null) {
       if (!r.receipt || typeof r.receipt.path !== 'string' || !/^[0-9a-f]{64}$/.test(r.receipt.sha256 ?? ''))
         throw new Error(`receipt is null or {path, sha256}: ${r.id}`);
+      closed(r.receipt, RECEIPT_FIELDS, 'Unknown receipt field', r.id);
     }
     if (visibility.get(r.repo) !== 'public') throw new Error(`Nonpublic or unlisted repository: ${r.id}`);
   }

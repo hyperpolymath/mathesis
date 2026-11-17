@@ -107,10 +107,14 @@ missing crate as missing from every build.
 * Negative controls: a planted false lemma is rejected. A planted
   `Admitted` compiles, and `Print Assumptions` reports it as an axiom.
 * Receipt state: superseded on 2026-11-10 by the CI receipt below.
-* CI receipt (current): Rocq 8.18.0 in the pinned Guix (`8edb9da`), same
-  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
-  unchanged, and `Print Assumptions` reports `absent_under_all_features`
-  closed under the global context.
+* CI receipt (superseded on 2026-11-13): Rocq 8.18.0 in the pinned Guix
+  (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
+  The file SHA-256 is unchanged, and `Print Assumptions` reports
+  `absent_under_all_features` closed under the global context.
+* CI receipt (current, 2026-11-13): the same, at main `034f215`, run
+  43498592499. It records the inputs manifest and an empty `(axioms)`
+  clause, as PROOF-POLICY §8.5.1 now requires (standards `e5a39d7`). The
+  file SHA-256 is unchanged.
 
 |Lean leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -132,9 +136,13 @@ missing crate as missing from every build.
   definition are rejected. A planted `sorry` compiles with a warning, and
   `#print axioms` reports `sorryAx`.
 * Receipt state: superseded on 2026-11-10 by the CI receipt below.
-* CI receipt (current): Lean 4.29.0 in the pinned Guix (`8edb9da`), same
-  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
-  unchanged, and no declared theorem depends on an axiom.
+* CI receipt (superseded on 2026-11-13): Lean 4.29.0 in the pinned Guix
+  (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
+  The file SHA-256 is unchanged, and no declared theorem depends on an axiom.
+* CI receipt (current, 2026-11-13): the same, at main `034f215`, run
+  43498592499. It records the inputs manifest and an empty `(axioms)`
+  clause, as PROOF-POLICY §8.5.1 now requires (standards `e5a39d7`). The
+  file SHA-256 is unchanged.
 
 |Why neither leg is transported
 |Lambdapi's Rocq and Lean exports translate before elaboration and drop

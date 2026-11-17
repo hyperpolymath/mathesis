@@ -144,10 +144,15 @@ missing crate as missing from every build.
   source range as well, and fails on an empty audit. Run locally on Lean
   4.29.0 (`98dc76e3c0a9`), `scripts/check-proofs.sh lean4` reports "axioms:
   none for 2 theorem(s) and 48 definition(s) with a source range" for this
-  file. Those are the six results (`reachMono`, `absentBelow`, `onMono`,
-  `onMonoAll`, `edgeMono`, `absentUnderAllFeatures`), their helpers, and
-  the definitions Lean generates for the inductives. The two theorems are
-  the projections `Edge.src` and `Edge.dst`. No axiom was found, so none had
+  file, before the propositional theorems below were added. Those are the
+  six results (`reachMono`, `absentBelow`, `onMono`, `onMonoAll`,
+  `edgeMono`, `absentUnderAllFeatures`), their helpers, and the
+  definitions Lean generates for the inductives. The two theorems are the
+  projections `Edge.src` and `Edge.dst`. With the propositional theorems
+  (owner ruling 2026-11-17: the gate fix and theorem wrappers), the report
+  is "axioms: none for 8 theorem(s) and 48 definition(s) with a source
+  range". `absent_under_all_features` and the other five carry each
+  definition in their own `#print axioms` cone as well. No axiom was found, so none had
   to be removed. A CI receipt under the fixed gate is still to be earned:
   until it is, the current receipt's axiom evidence for this leg stays the
   vacuous one.
@@ -200,6 +205,15 @@ same hypotheses and conclusions. The differences are encoding only:
   no proof inspects.
 * `_⊑_` takes the feature implicitly in Agda and Lean, and explicitly
   in Rocq.
+* Lean only, added 2026-11-17: a `theorem` must be a proposition, and
+  each Lean result is a Type-valued `def`. So `reach_mono`, `absent_below`,
+  `on_mono`, `edge_mono` and `absent_under_all_features` restate the
+  results about inhabitation (`Nonempty`, and `¬ Nonempty` for absence),
+  each proved by the definition it names. `not'_iff` shows that `Not' A`
+  is inhabited exactly when `¬ Nonempty A`, so for the headline the two
+  readings coincide. The definitions are unchanged; these are additions,
+  and they play the part that `Theorem absent_under_all_features` plays
+  in the Rocq leg.
 
 Residual assumptions: none in any leg.
 

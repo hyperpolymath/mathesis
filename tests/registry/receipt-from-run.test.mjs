@@ -12,7 +12,7 @@ import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {checkRun, parseGateLog, parseSpans, inputPaths, currentReceipts, canonManifest, planMove, planPin, JOB, WORKFLOW, DEED, CLAIMS}
+import {checkRun, parseGateLog, parseSpans, inputPaths, currentReceipts, canonManifest, planMove, planPin, idSegment, JOB, WORKFLOW, DEED, CLAIMS}
   from '../../scripts/registry/receipt-from-run.mjs';
 import {findTool} from '../../scripts/registry/claims-registry.mjs';
 import {jcs} from '../../scripts/registry/theory-ledger.mjs';
@@ -169,6 +169,14 @@ test('only a non-empty no-axiom report of the fixed gate is evidence for a grade
   expect(() => inputPaths(read({lean: 'axioms: Classical.choice'}), files, roots)).toThrow(/not a no-axiom report/);
   expect(() => inputPaths(read({Top: AGDA_NOTE(3, 'Agda.Primitive B Top')}), files, roots)).toThrow(/counts 3 first-party modules/);
   expect(() => inputPaths(read({}), files, {...roots, agda: ['verification/proofs/agda/Missing.agda']})).toThrow(/did not check/);
+});
+
+test('an id goes into an API path only as a positive integer', () => {
+  expect(idSegment('44105371764', 'run')).toBe('44105371764');
+  expect(idSegment(134116153255, 'job')).toBe('134116153255');
+  for (const bad of ['1/../../x', '../users', '%2e%2e', '-1', '0', '1e3', 1.5, '', ' 7', null, '99999999999999999999']) {
+    expect(() => idSegment(bad, 'run')).toThrow(/is not a positive integer id/);
+  }
 });
 
 test('the span reader is not misled by parentheses and quotes in comments', () => {

@@ -374,19 +374,36 @@ export async function canonManifest(repo, commit, paths, standardsDir = process.
 
 // ── Evidence: the run, its jobs and the log ──────────────────────────────────
 
+// A GitHub id goes into an API path only as a positive integer, as one encoded
+// segment, so no input can steer the request to another path.
+export function idSegment(id, what) {
+  const n = typeof id === 'number' ? id : /^\d+$/.test(String(id)) ? Number(id) : Number.NaN;
+  if (!Number.isSafeInteger(n) || n <= 0) fail(`${what} is not a positive integer id: ${JSON.stringify(id)}`);
+  return encodeURIComponent(String(n));
+}
+
 async function fetchEvidence(runId) {
-  const headers = {Accept: 'application/vnd.github+json', 'User-Agent': 'mathesis-receipt-from-run'};
-  if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const run = idSegment(runId, 'the run id');
+  const plain = {Accept: 'application/vnd.github+json', 'User-Agent': 'mathesis-receipt-from-run'};
+  const auth = process.env.GITHUB_TOKEN ? {...plain, Authorization: `Bearer ${process.env.GITHUB_TOKEN}`} : plain;
+  // GitHub answers a log request with a redirect to a signed storage URL. It is
+  // followed here by hand, over HTTPS and without the token, so the token is
+  // only ever sent to api.github.com.
   const get = async url => {
-    const res = await fetch(url, {headers, redirect: 'follow'});
+    let res = await fetch(url, {headers: auth, redirect: 'manual'});
+    if (res.status >= 300 && res.status < 400) {
+      const to = new URL(res.headers.get('location') ?? fail(`GET ${url}: HTTP ${res.status} with no Location`), url);
+      if (to.protocol !== 'https:') fail(`GET ${url}: redirected to a URL that is not HTTPS`);
+      res = await fetch(to, {headers: plain, redirect: 'error'});
+    }
     if (!res.ok) fail(`GET ${url}: HTTP ${res.status}`);
     return res;
   };
   const api = `https://api.github.com/repos/${HOME}/actions`;
-  const runJson = await (await get(`${api}/runs/${runId}`)).json();
-  const jobsJson = await (await get(`${api}/runs/${runId}/jobs?filter=latest&per_page=100`)).json();
+  const runJson = await (await get(`${api}/runs/${run}`)).json();
+  const jobsJson = await (await get(`${api}/runs/${run}/jobs?filter=latest&per_page=100`)).json();
   const job = (jobsJson.jobs ?? []).find(j => j.name === JOB);
-  const log = job ? await (await get(`${api}/jobs/${job.id}/logs`)).text() : '';
+  const log = job ? await (await get(`${api}/jobs/${idSegment(job.id, 'the job id')}/logs`)).text() : '';
   return {run: runJson, jobs: jobsJson, log};
 }
 

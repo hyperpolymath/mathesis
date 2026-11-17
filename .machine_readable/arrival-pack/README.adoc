@@ -11,14 +11,16 @@ the repo's own machine-readable truth.
 [source]
 ----
 <repo>_chora.deed        extract.sh            arrival-pack.ncl          CLAUDE.md
-+ anchors/ANCHOR   ──▶  (deed → JSON,    ──▶   (Nickel projection  ──▶   region between
-                         the thin reader)       = the engine)            BEGIN/END markers
+(incl. its (anchor       (deed → JSON,         (Nickel projection        region between
+ (golden-path)))   ──▶   the thin reader) ──▶  = the engine)        ──▶  BEGIN/END markers
 ----
 
 Two halves of the generated region:
 
 * *Estate-common* — identical in every repo; the Manifesto doctrine + format-family
-  orientation + canon pointers + language policy. Pinned to a Manifesto SHA once
+  orientation + canon pointers + language policy + the proof guidance (which
+  prover for which obligation; moved in from hand-authored text on 2026-11-15
+  so a wording fix reaches every repo by regenerating). Pinned to a Manifesto SHA once
   the wording is ratified (today: `DRAFT-unratified`).
 * *Repo-specific* — projected from this repo's deed: identity, IS / IS-NOT,
   position, constraints, golden path, state.
@@ -52,7 +54,14 @@ just validate-claude-md   # fail if the committed region drifted / was hand-edit
 
 * Estate-common doctrine is a *DRAFT* in the agent's words — owner to ratify into
   his voice, then pin to a `hyperpolymath/manifesto` commit SHA.
-* `ECOSYSTEM.what-this-is-not` is empty here, so IS-NOT renders as "not yet
-  declared". Populating it is the boundary-erosion fix (the `lith` lesson).
+* IS-NOT comes from the deed's `(ecosystem :not (…))`. When that list is empty,
+  IS-NOT renders as "not yet declared" and the deed should gain the list (the
+  boundary-erosion fix, the `lith` lesson).
+* A repo's `(anchor (implementation-policy …))` renders as one "Anchor
+  override" line in the repo-specific part: what `:forbidden` lists, and any
+  language `:allowed` lists that the estate policy denies. An allowed language
+  the estate does not deny is no override and is not listed. The line is
+  hidden when there is neither. Controls:
+  `tests/workflows/arrival_pack_anchor_override_test.sh`.
 * The `(anchor)` clause currently encodes semantic-authority + golden-path; the
   recognised-drift / re-anchor-ledger aspect is a pending standards change.

@@ -255,7 +255,7 @@
 * `hyperpolymath/reposystem` — engineering; 5 own proof files, 7 detected declarations; provers: idris2 1, spark 2, other 2
 * `hyperpolymath/residual-evidence-types` — theory; 37 own proof files, 391 detected declarations; provers: agda 37
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1
-* `hyperpolymath/resource-algebra` — theory; 28 own proof files, 574 detected declarations; provers: agda 25, lean 2, rocq 1
+* `hyperpolymath/resource-algebra` — theory; 29 own proof files, 575 detected declarations; provers: agda 26, lean 2, rocq 1
 * `hyperpolymath/robodog-defensive-systems-lab` — engineering; 13 own proof files, 64 detected declarations; provers: idris2 6, spark 6, other 1
 * `hyperpolymath/rpa-elysium` — engineering; 6 own proof files, 74 detected declarations; provers: idris2 6
 * `hyperpolymath/rsr-template-repo` — engineering; 18 own proof files, 136 detected declarations; provers: agda 1, lean 2, rocq 1, idris2 11, tla 3

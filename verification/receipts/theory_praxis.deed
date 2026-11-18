@@ -1,6 +1,6 @@
 ;; SPDX-License-Identifier: CC-BY-SA-4.0
 ;; SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
-;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1, standards e5a39d7),
+;; The proof receipt of Mathesis (PROOF-POLICY §8.5.1, standards 940a27af),
 ;; written from the records of THY-1 and APP-1 to APP-4 in
 ;; docs/status/PROOF-STATUS.adoc. The current receipts come from one CI run of
 ;; the proof lanes in the pinned Guix (Guix 8edb9da) on main 8c55804: run
@@ -14,6 +14,8 @@
 ;;   standards scripts/proof-inputs-sha256.sh --manifest 8c55804 PATH...
 ;; One manifest per prover, because §8.5.1 allows one digest for one commit and
 ;; one prover. Earlier receipts stay as superseded receipts, each with a reason.
+;; No row is PWG-1: the lanes run in the pinned Guix shell, not a container
+;; image pinned by digest (§8.2, standards#1625), so the reader derives PWG-2ii.
 ;; The reader derives the grade, and the shared git checker does the §8.5.3
 ;; checks (just receipt-check):
 ;;   bun deed_lint.js --proof-receipt-json verification/receipts/theory_praxis.deed

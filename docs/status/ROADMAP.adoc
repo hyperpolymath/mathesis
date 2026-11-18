@@ -318,6 +318,25 @@ One pull request that changes census rows is open at a time (atlas README,
    names `verdict-missing` and `verdict-not-yes`. The registry catalogues
    `PWG-1` for all five, and the theory ledger records THY-1's receipt
    change (entry 4).
+** Fifth change (2026-11-18), PR 115: the claims registry pins the canon
+   reader at standards `940a27af`, which reads `(import …)` clauses and
+   applies standards#1625 (`PWG-1` needs a container image pinned by
+   digest). The receipt is recorded again with the canon `#u8`
+   `:beholding-chora`; the reader derives `PWG-2ii` for all five.
+** Sixth change (2026-11-18): the claim pins of THY-1 and APP-1 to APP-4
+   name the receipt at main `10f9f46`, and the theory ledger records THY-1's
+   move to `PWG-2ii` (entry 6). resource-algebra's rows name its receipt at
+   main `c31bf1a`, and C-4b, E-1, E-2 and E-3 are catalogued. Its Lean leg is
+   `superseded` there (resource-algebra PR 53 changed the Lean inputs), so
+   the reader derives `PWG-2i` for its 31 rows until a Lean run is recorded
+   again. M-2's link to tropical-types is a
+   bridge candidate (`resource-algebra-maxplus-tropical`), relation
+   `unassessed`, not a claims row: a claims row needs an Agda module, and
+   that theorem lives in Lean only. Census: 0 `PWG-1`, 5 `PWG-2ii`, 31
+   `PWG-2i`, 0 `PWG-3` and 12 `ungraded`, of 48 theorems. The 12 are
+   secret-types' and lintel's: the new reader refuses their receipts (a `#u5`
+   identity literal, and secret-types' recorded `PWG-1` that the image rule
+   no longer supports) until they are recorded again.
 
 [[stages]]
 == Stages

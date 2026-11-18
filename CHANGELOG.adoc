@@ -10,6 +10,18 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* The CI gate reusable is re-pinned to hyperpolymath/proven-cicd-and-workflows
+  `09878f2a2c0a8907cc69fe48973ea604753ecab1`, up from `d49708186e72`, to stop a
+  false `CI/gate` failure when a workflow name contains an emoji (GitHub
+  rejects 4-byte UTF-8 in a status description; fixed in
+  hyperpolymath/proven-cicd-and-workflows#144, seen on
+  hyperpolymath/resource-algebra#48). Both callers, `actions.lock` and
+  `tests/workflows/squabble_gate_test.sh` carry the new pin. `actions.lock`
+  also gains the key for `ci-gate-tamper-guard.yml` and drops the stale
+  `0862fe8` record, so `scripts/check-lock-sync.sh` passes again. The new pin
+  is still a commit on an unmerged suite branch, so a second re-pin follows the
+  squash merge of hyperpolymath/proven-cicd-and-workflows#139.
+
 * The census picked a repository's status document by alphabetical order, so a
   template-era `PROOF-NEEDS.adoc` was chosen over the real ledger beside it.
   `scripts/census/build-rows.sh` now prefers `PROOF-STATUS`, then

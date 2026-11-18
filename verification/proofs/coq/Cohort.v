@@ -311,6 +311,30 @@ Proof.
   - exists s. reflexivity.
 Qed.
 
+(** A known "no" comes from a known "no" on one side. *)
+Lemma kand_false_inv : forall x y s, kand x y = given s false ->
+  (exists s', x = given s' false) \/ (exists t, y = given t false).
+Proof.
+  intros [|s' [|]] [|t [|]] s e; simpl in e; try discriminate;
+    first [ left; eexists; reflexivity | right; eexists; reflexivity ].
+Qed.
+
+(** A missing side gives a missing result, unless the other side is a known
+    "no". *)
+Lemma kand_missing_left : forall x y, x = missing ->
+  (forall t, y <> given t false) -> kand x y = missing.
+Proof.
+  intros x [|t [|]] -> nf; simpl; try reflexivity.
+  exfalso. exact (nf t eq_refl).
+Qed.
+
+Lemma kand_missing_right : forall x y, (forall s, x <> given s false) ->
+  y = missing -> kand x y = missing.
+Proof.
+  intros [|s [|]] y nf ->; simpl; try reflexivity.
+  exfalso. exact (nf s eq_refl).
+Qed.
+
 Section Model.
 
 Variable N : Number.
@@ -467,6 +491,52 @@ Proof.
   destruct h as [[s e] | p].
   - exists s. exact (kand_false_left _ _ _ e).
   - destruct (IH p) as [t e]. exact (kand_false_right _ _ _ e).
+Qed.
+
+(** With no known breach, the verdict is never a known "no". *)
+Lemma verdict_not_false : forall (f : Row -> Val bool) rs,
+  ~ Exists' (fun r => exists s, f r = given s false) rs ->
+  forall s, verdict f rs <> given s false.
+Proof.
+  intro f. induction rs as [|r rs IH]; simpl; intros nb s e; [discriminate|].
+  destruct (kand_false_inv _ _ _ e) as [b | [t e']].
+  - exact (nb (or_introl b)).
+  - exact (IH (fun p => nb (or_intror p)) t e').
+Qed.
+
+(** APP-1, the middle clause: with no known breach, a verdict is missing when
+    any value it depends on is missing. *)
+Lemma verdict_missing : forall (f : Row -> Val bool) rs,
+  ~ Exists' (fun r => exists s, f r = given s false) rs ->
+  Exists' (fun r => f r = missing) rs -> verdict f rs = missing.
+Proof.
+  intro f. induction rs as [|r rs IH]; simpl; intros nb m; [destruct m|].
+  destruct m as [m | p].
+  - apply kand_missing_left; [exact m|].
+    exact (verdict_not_false f rs (fun p => nb (or_intror p))).
+  - apply kand_missing_right.
+    + intros s e. exact (nb (or_introl (ex_intro _ s e))).
+    + exact (IH (fun q => nb (or_intror q)) p).
+Qed.
+
+(** A property every element has and one some element has cannot clash. *)
+Lemma forall_exists_absurd : forall {A : Type} (P Q : A -> Prop) xs,
+  Forall' P xs -> Exists' Q xs -> (forall x, P x -> Q x -> False) -> False.
+Proof.
+  intros A P Q xs. induction xs as [|x xs IH]; simpl; intros all ex k; [exact ex|].
+  destruct all as [px rest]. destruct ex as [qx | ex].
+  - exact (k x px qx).
+  - exact (IH rest ex k).
+Qed.
+
+(** And it is never "yes" then: a "yes" needs every value it depends on to be
+    a known "yes" (verdict_yes). *)
+Lemma verdict_not_yes : forall (f : Row -> Val bool) rs u,
+  Exists' (fun r => f r = missing) rs -> verdict f rs <> given u true.
+Proof.
+  intros f rs u m e.
+  apply (forall_exists_absurd _ _ rs (verdict_yes f rs u e) m).
+  intros r [s [ey _]] em. rewrite em in ey. discriminate.
 Qed.
 
 Lemma gap_needs : forall u rs, Covers u (worst rs) -> Forall' (fun r => Covers u (shortfall r)) rs.

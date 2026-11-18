@@ -495,6 +495,31 @@ theorem kand_false_right : ∀ {x y : Val Bool} {t : Status}, y = given t false 
   | given s true,  _, t, rfl => ⟨meet s t, rfl⟩
   | missing,       _, t, rfl => ⟨t, rfl⟩
 
+/-- A known "no" comes from a known "no" on one side. -/
+theorem kand_false_inv : ∀ {x y : Val Bool} {s : Status}, kand x y = given s false →
+    (∃ s', x = given s' false) ∨ (∃ t, y = given t false)
+  | given s' false, _,             _, _ => Or.inl ⟨s', rfl⟩
+  | given _ true,   given t false, _, _ => Or.inr ⟨t, rfl⟩
+  | given _ true,   given _ true,  _, e => nomatch e
+  | given _ true,   missing,       _, e => nomatch e
+  | missing,        given t false, _, _ => Or.inr ⟨t, rfl⟩
+  | missing,        given _ true,  _, e => nomatch e
+  | missing,        missing,       _, e => nomatch e
+
+/-- A missing side gives a missing result, unless the other side is a known
+"no". -/
+theorem kand_missing_left : ∀ {x y : Val Bool}, x = missing →
+    (∀ t, y ≠ given t false) → kand x y = missing
+  | _, given t false, rfl, nf => absurd rfl (nf t)
+  | _, given _ true,  rfl, _  => rfl
+  | _, missing,       rfl, _  => rfl
+
+theorem kand_missing_right : ∀ {x y : Val Bool}, (∀ s, x ≠ given s false) →
+    y = missing → kand x y = missing
+  | given s false, _, nf, _   => absurd rfl (nf s)
+  | given _ true,  _, _,  rfl => rfl
+  | missing,       _, _,  rfl => rfl
+
 theorem breach_decides (f : Row N → Val Bool) :
     ∀ rs, Exists' (fun r => ∃ s, f r = given s false) rs → ∃ u, verdict f rs = given u false
   | [],      h                   => nomatch h
@@ -502,6 +527,42 @@ theorem breach_decides (f : Row N → Val Bool) :
   | _ :: rs, Or.inr p            =>
     match breach_decides f rs p with
     | ⟨_, e⟩ => kand_false_right e
+
+/-- With no known breach, the verdict is never a known "no". -/
+theorem verdict_not_false (f : Row N → Val Bool) :
+    ∀ rs, ¬ Exists' (fun r => ∃ s, f r = given s false) rs →
+      ∀ s, verdict f rs ≠ given s false
+  | [],      _,  _, e => nomatch e
+  | _ :: rs, nb, _, e =>
+    match kand_false_inv e with
+    | Or.inl b      => nb (Or.inl b)
+    | Or.inr ⟨t, h⟩ => verdict_not_false f rs (fun p => nb (Or.inr p)) t h
+
+/-- APP-1, the middle clause: with no known breach, a verdict is missing when
+any value it depends on is missing. -/
+theorem verdict_missing (f : Row N → Val Bool) :
+    ∀ rs, ¬ Exists' (fun r => ∃ s, f r = given s false) rs →
+      Exists' (fun r => f r = missing) rs → verdict f rs = missing
+  | [],      _,  m        => nomatch m
+  | _ :: rs, nb, Or.inl m =>
+    kand_missing_left m (verdict_not_false f rs (fun p => nb (Or.inr p)))
+  | _ :: rs, nb, Or.inr p =>
+    kand_missing_right (fun s e => nb (Or.inl ⟨s, e⟩))
+      (verdict_missing f rs (fun q => nb (Or.inr q)) p)
+
+/-- A property every element has and one some element has cannot clash. -/
+theorem forall_exists_absurd {α : Type} {P Q : α → Prop} :
+    ∀ xs, Forall P xs → Exists' Q xs → (∀ x, P x → Q x → False) → False
+  | [],      _,       h,        _ => nomatch h
+  | _ :: _,  ⟨p, _⟩,  Or.inl q, k => k _ p q
+  | _ :: xs, ⟨_, ps⟩, Or.inr h, k => forall_exists_absurd xs ps h k
+
+/-- And it is never "yes" then: a "yes" needs every value it depends on to be
+a known "yes" (`verdict_yes`). -/
+theorem verdict_not_yes {u : Status} (f : Row N → Val Bool) (rs : List (Row N))
+    (m : Exists' (fun r => f r = missing) rs) : verdict f rs ≠ given u true :=
+  fun e => forall_exists_absurd rs (verdict_yes f rs e) m
+    (fun _ ⟨_, ey, _⟩ em => nomatch em.symm.trans ey)
 
 theorem gap_needs {u : Status} : ∀ rs : List (Row N), Covers u (worst rs) →
     Forall (fun r => Covers u r.shortfall) rs

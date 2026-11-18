@@ -27,7 +27,7 @@ reader of PROOF-POLICY §8.5.1.
 |Proved in Agda, Rocq and Lean
 |`PWG-2ii`
 |The receipt `verification/receipts/theory_praxis.deed`; the record below.
-Claim pins at main `a1388fc` (2026-11-14)
+Claim pins at main `58ebefb` (2026-11-17)
 |===
 
 *Overall*: 5 of 6 obligations are proved in all three provers, and each of the
@@ -371,8 +371,15 @@ new run. Its `:beholding-chora` used a `#u5` literal, which that reader
 refuses (owner ruling Q2), and now uses the canon form
 `#u8"chora:estate/github.com/hyperpolymath"`. The reader derives
 `PWG-2ii` for all five. The claim pins still name the receipt at
-`a1388fc`, which the reader refuses, so the registry shows the five as
+`58ebefb`, which the reader refuses, so the registry shows the five as
 `ungraded` until the pins move to this receipt (the next change).
+
+|2026-11-17
+|The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main
+`58ebefb` (PR 113), and APP-1's pin also names `verdict-missing` and
+`verdict-not-yes`. The claims registry catalogues `PWG-1` for all five:
+the reader derives it from the receipt of run 44190913019, and the §8.5.3
+git checks hold. The theory ledger records THY-1's receipt change (entry 4).
 
 |2026-11-17
 |The receipt is earned again from CI run 44190913019 on main `8c55804`, the

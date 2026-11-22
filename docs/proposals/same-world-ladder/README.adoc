@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Same-world proof ladder: sketches
+:toc: preamble
+
+Status: *sketch, not admitted* (2026-11-22). These files are a backup of
+work in progress. They are not on the theory shelf, they are not in
+`verification/proofs/agda/MANIFEST`, and no receipt exists for them. Every
+theorem here is `ungraded`.
+
+== What the files are
+
+The question is: when do two subjects see "the same world"? The world is a
+deterministic machine (`step : W → In → W`). A view is a function from the
+world state to a percept (`see : W → P`).
+
+[cols="2,3,3"]
+|===
+| File | Content | Invocation that passed
+
+| `SameWorld.agda`
+| Ladder A, rungs A0 to A3, A5, A6: `Coherent`, `SameWorld`, `sound`,
+  `stable`, `_~_`, `Bisimulation`, `greatest`, `weaker`, `Secret.no-leak`,
+  `Gaslight.not-same`
+| `agda --safe --without-K --cubical-compatible --double-check`
+
+| `SameWorldCo.agda`
+| Rung A4: the coinductive form (`Beh`, `_≋_`, `Lift`, `one-world`)
+| The same flags plus `--guardedness`, which is outside PROOF-POLICY section 2.1
+
+| `Bridge.agda`
+| Rung B0: a full Cubical module imports the section 2.1 module
+| `agda --cubical --safe --double-check`
+
+| `SameWorldCubical.agda`
+| Ladder B, rungs B1 to B4: function extensionality, bisimilar is equal,
+  the set quotient `W / ~`, `SameWorld` as a fibre
+| `agda --cubical --safe --guardedness --double-check`
+|===
+
+== What is not established
+
+* The runs used Agda 2.6.3 from an Ubuntu package, on 2026-11-21. The pinned
+  Guix shell has Agda 2.7.0.1. No run used the pinned shell.
+* No Rocq recheck and no Lean recheck exists.
+* `SameWorldCo.agda`, `Bridge.agda` and `SameWorldCubical.agda` need an
+  explicit, separately reviewed proof profile (PROOF-POLICY section 2.1).
+  No such profile exists.
+* Full Cubical Agda supplies postulates in `Agda.Primitive.Cubical`. A
+  receipt must list them (PROOF-POLICY section 8.4).
+* Rungs B5 (univalence) and B6 (pushout) are design only. No file exists.
+* `collapse` in rung B3 holds for classes of states only.
+* No rung proves that a host program obeys this model. `sound` is true by
+  construction only if a view is a pure function of the one world state.
+
+== Owner rulings (2026-11-22)
+
+. Home: the general theorems go on the theory shelf of this repository, with
+  an admission that names `enaction-umwelt/1` as the dependant. The Enaction
+  instance stays in `enaction-engine`.
+. Order: Ladder A first (rungs A0 to A3, A5, A6) under section 2.1. No
+  profile for `--guardedness` or `--cubical` is written now.
+
+The admission waits for `enaction-umwelt/1`, which does not exist yet.

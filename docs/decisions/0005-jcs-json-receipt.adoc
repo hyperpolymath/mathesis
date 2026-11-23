@@ -55,12 +55,14 @@ canon reader returns (`snake_case`). Nothing else is allowed.
 |`source_commit` |`:source-commit` |40 lowercase hex.
 |`trusted_base[]` `{prover, module, name, binding}` |`(trusted-base (primitive …))` |Required array. `[]` means the deed omits the clause.
 |`echoes[]` `{source, image, witness, tree_sha256?, inputs?[] {prover, sha256}}` |`(echo …)`, `(inputs …)` |Required array, possibly empty. Commits are 40 hex.
-|`claims[]` `{id, legs[]}` |`(claim :id …)` |*No* `pwg` and *no* `foundation_diverse`.
+|`claims[]` `{id, legs[], controls?[]}` |`(claim :id …)` |*No* `pwg` and *no* `foundation_diverse`.
 |`legs[]` `{prover, route, token?, state?, reason?, receipts[]}` |`(leg …)` |`receipts` is required, and empty for a waived or unavailable leg.
-|`receipts[]` `{run, commit, checker, invocation, inputs_sha256?, state, reason?, inputs_manifest?[], axioms?[], result}` |`(receipt …)` |`commit` is 40 hex.
+|`receipts[]` `{run, commit, checker, invocation, inputs_sha256?, state, reason?, image?, inputs_manifest?[], imports?[], axioms?[], result}` |`(receipt …)` |`commit` is 40 hex. `image` is the digest-pinned image the checker ran in. A counted witness needs it for `PWG-1` (§8.2, owner ruling 2026-11-16).
+|`imports[]` `{repository, commit, inputs_sha256, files[] {path, sha256}}` |`(import … (file …))` |A pinned repository that the run read (§8.5.1). Leave the field out when there is none: `[]` is refused, so there is one form.
+|`controls[]` `{path, prover, expect, receipts[]}` |`(control … (receipt …))` |A negative control that the checker must refuse (§8.5.4). It is recorded, never graded. `[]` is refused, as for `imports`.
 |`inputs_manifest[]` `{path, sha256}` |`(inputs-manifest (file …))` |
 |`axioms[]` `{name, disposition}` |`(axioms (axiom …))` |An absent field and `[]` mean different things, as in the deed. `[]` means the checker reported no axiom.
-|`result` |none |The only field with no deed counterpart: `pass` or `fail`. `current` requires `pass`, and `fail` requires `regressed`. In the deed, `:state` carries this.
+|`result` |none |The only field with no deed counterpart: `pass` or `fail`. `current` requires `pass`, and `fail` requires `regressed`. In the deed, `:state` carries this. For a control receipt, `pass` means that the checker refused the file, as expected.
 |===
 
 `:canonical-name` and `:beholding-chora` belong to the deed envelope. The
@@ -112,11 +114,26 @@ prototype fails loudly. It then reads the whole receipt once more with the
 derived pairs, so that the checks across claims also run. The result is the
 canon reader's own record. The deed text is never stored.
 
-Tested equivalence: three receipts round-trip from deed to record to JSON to
-record and come back byte-identical under JCS. They are this repository's
-`theory_praxis.deed` (five claims, all `PWG-1`) and the standards worked
-examples `example_praxis.deed` (`PWG-3`) and `echo_praxis.deed` (`PWG-1`
-through an echo).
+Tested equivalence: four receipts round-trip from deed to record to JSON to
+record and come back byte-identical under JCS:
+
+* this repository's `theory_praxis.deed`;
+* the standards worked examples `example_praxis.deed` and `echo_praxis.deed`
+  (`PWG-1` through an echo, with each current receipt naming its image);
+* the echo example with an `(import …)` and a `(control …)` added, its digests
+  computed.
+
+The tests compare each grade with the one the canon reader derives from the
+deed. They do not hard-code grades, because grades move with the pin. Under
+reader `940a27af`, this repository's receipt derives `PWG-2ii` for all five
+claims: it names no checker image, and `PWG-1` now needs one.
+
+Amended 2026-11-23. The merge of `main` moved the reader pin from `e5a39d7`
+to `940a27af`, and that reader added `:image`, `(import …)` and `(control …)`.
+On the merged tree the round-trip test failed. The JSON form dropped `:image`,
+so the echo example derived `PWG-2ii` instead of `PWG-1`. The form now carries
+all three fields. This is what the equivalence test is for: when the canon
+reader grows a field, the JSON form fails loudly until it follows.
 
 ==== Wiring, once accepted
 

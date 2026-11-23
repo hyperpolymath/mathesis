@@ -50,14 +50,20 @@ const S = (kind, required = true) => ({kind, required});
 const A = (schema, required = true) => ({kind: 'array', schema, required});
 const FILE = {path: S('string'), sha256: S('hex64')};
 const AXIOM = {name: S('string'), disposition: S('symbol')};
+// A pinned repository that the run imported, with its own manifest (§8.5.1).
+const IMPORT = {repository: S('string'), commit: S('commit'), inputs_sha256: S('hex64'), files: A(FILE)};
 const RECEIPT = {
   run: S('string'), commit: S('commit'), checker: S('string'), invocation: S('string'),
   inputs_sha256: S('hex64', false), state: S('symbol'), reason: S('string', false), result: S('result'),
-  inputs_manifest: A(FILE, false), axioms: A(AXIOM, false),
+  image: S('string', false), inputs_manifest: A(FILE, false), imports: A(IMPORT, false), axioms: A(AXIOM, false),
 };
+// A negative control: a file the checker must refuse (§8.5.4). Recorded, never graded.
+const CONTROL = {path: S('string'), prover: S('symbol'), expect: S('symbol'), receipts: A(RECEIPT)};
 const LEG = {prover: S('symbol'), route: S('symbol'), token: S('symbol', false), state: S('symbol', false),
   reason: S('string', false), receipts: A(RECEIPT)};
-const CLAIM = {id: S('string'), legs: A(LEG)};
+const CLAIM = {id: S('string'), legs: A(LEG), controls: A(CONTROL, false)};
+// Optional arrays whose absence the reader reads as empty: one form only, so [] is refused.
+const NONEMPTY = new Set(['imports', 'controls']);
 const PRIMITIVE = {prover: S('symbol'), module: S('string'), name: S('string'), binding: S('string')};
 const INPUTS = {prover: S('symbol'), sha256: S('hex64')};
 const ECHO = {source: S('commit'), image: S('commit'), witness: S('symbol'), tree_sha256: S('hex64', false),
@@ -114,6 +120,7 @@ function checkObject(o, schema, where) {
     need(o[k] !== null, `${at} is null; leave an optional field out instead`);
     if (f.kind === 'array') {
       need(Array.isArray(o[k]), `${at} must be an array`);
+      need(!NONEMPTY.has(k) || o[k].length > 0, `${at} is empty; leave it out instead`);
       o[k].forEach((e, i) => checkObject(e, f.schema, `${at}[${i}]`));
     } else {
       if (typeof o[k] === 'string') checkCodePoints(o[k], at);
@@ -149,8 +156,10 @@ export function parseJsonReceipt(input) {
   need(value.profile === PROFILE, `profile must be ${PROFILE}`);
   need(value.schema_version === SCHEMA_VERSION, `schema_version must be ${SCHEMA_VERSION}`);
   need(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value.repository), 'repository must be OWNER/REPO');
-  for (const c of value.claims) for (const l of c.legs) for (const r of l.receipts) {
-    const where = `claim ${JSON.stringify(c.id)}, ${l.prover} leg, receipt ${r.run}`;
+  const withReceipts = c => [...c.legs.map(l => [`${l.prover} leg`, l.receipts]),
+    ...(c.controls ?? []).map(k => [`${k.prover} control ${k.path}`, k.receipts])];
+  for (const c of value.claims) for (const [what, receipts] of withReceipts(c)) for (const r of receipts) {
+    const where = `claim ${JSON.stringify(c.id)}, ${what}, receipt ${r.run}`;
     // The deed has no result field: its :state carries it. A current receipt
     // records a run that passed, and a failed run is kept only as regressed.
     if (r.state === 'current') need(r.result === 'pass', `${where}: a current receipt has result pass`);
@@ -169,6 +178,11 @@ function receiptText(r, pad) {
   if (r.inputs_sha256 !== undefined) out.push(`${pad}  :inputs-sha256 ${str(r.inputs_sha256)}`);
   out.push(`${pad}  :state ${r.state}`);
   if (r.reason !== undefined) out.push(`${pad}  :reason ${str(r.reason)}`);
+  if (r.image !== undefined) out.push(`${pad}  :image ${str(r.image)}`);
+  for (const i of r.imports ?? []) {
+    out.push(`${pad}  (import :repository ${str(i.repository)} :commit ${str(i.commit)} :inputs-sha256 ${str(i.inputs_sha256)}`,
+      ...i.files.map(f => `${pad}    (file :path ${str(f.path)} :sha256 ${str(f.sha256)})`), `${pad}  )`);
+  }
   if (r.axioms !== undefined) {
     out.push(`${pad}  (axioms`, ...r.axioms.map(a => `${pad}    (axiom :name ${str(a.name)} :disposition ${a.disposition})`), `${pad}  )`);
   }
@@ -188,6 +202,11 @@ function claimText(c, pwg, diverse) {
     out.push(head);
     if (l.reason !== undefined) out.push(`      :reason ${str(l.reason)}`);
     for (const r of l.receipts) out.push(...receiptText(r, '      '));
+    out.push('    )');
+  }
+  for (const k of c.controls ?? []) {
+    out.push(`    (control :path ${str(k.path)} :prover ${k.prover} :expect ${k.expect}`);
+    for (const r of k.receipts) out.push(...receiptText(r, '      '));
     out.push('    )');
   }
   out.push('  )');

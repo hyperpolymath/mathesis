@@ -32,16 +32,21 @@ const ownReceipt = readFileSync(new URL('../../verification/receipts/theory_prax
 // projection, used to build fixtures from real deeds. `result` has no deed
 // field: a regressed receipt failed, and every other receipt passed.
 const drop = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== null && v !== undefined));
+const nonEmpty = a => (a && a.length ? a : null);
+const receiptJson = r => drop({run: r.run, commit: r.commit, checker: r.checker,
+  invocation: r.invocation, inputs_sha256: r['inputs-sha256'], state: r.state, reason: r.reason,
+  result: r.state === 'regressed' ? 'fail' : 'pass', image: r.image, inputs_manifest: r.inputs_manifest,
+  imports: nonEmpty((r.imports ?? []).map(i => ({repository: i.repository, commit: i.commit, inputs_sha256: i['inputs-sha256'], files: i.files}))),
+  axioms: r.axioms});
 function fromRecord(rec) {
   return {
     profile: 'proof-receipt', schema_version: '1.0.0', repository: rec.repository, source_commit: rec.source_commit,
     trusted_base: rec.trusted_base,
     echoes: rec.echoes.map(e => drop({source: e.source, image: e.image, witness: e.witness, tree_sha256: e.tree_sha256,
       inputs: e.witness === 'inputs-sha256' ? Object.entries(e.inputs).map(([prover, sha256]) => ({prover, sha256})) : null})),
-    claims: rec.claims.map(c => ({id: c.id, legs: c.legs.map(l => drop({prover: l.prover, route: l.route, token: l.token,
-      state: l.state, reason: l.reason, receipts: l.receipts.map(r => drop({run: r.run, commit: r.commit, checker: r.checker,
-        invocation: r.invocation, inputs_sha256: r['inputs-sha256'], state: r.state, reason: r.reason,
-        result: r.state === 'regressed' ? 'fail' : 'pass', inputs_manifest: r.inputs_manifest, axioms: r.axioms}))}))})),
+    claims: rec.claims.map(c => drop({id: c.id, legs: c.legs.map(l => drop({prover: l.prover, route: l.route, token: l.token,
+      state: l.state, reason: l.reason, receipts: l.receipts.map(receiptJson)})),
+      controls: nonEmpty((c.controls ?? []).map(k => ({path: k.path, prover: k.prover, expect: k.expect, receipts: k.receipts.map(receiptJson)})))})),
   };
 }
 const canon = v => jcs(v) + '\n';
@@ -50,15 +55,48 @@ const good = () => fromRecord(readProofReceipt(ownReceipt, 'theory_praxis.deed')
 const firstReceipt = v => v.claims[0].legs[0].receipts[0];
 const edit = f => { const v = good(); f(v); return canon(v); };
 
+// The worked echo example with an (import …) on its current Agda receipt and a
+// (control …) on its claim (§8.5.1, §8.5.4), digests computed, not invented.
+const sha = t => createHash('sha256').update(t).digest('hex');
+function withImportAndControl(example) {
+  const file = (p, h) => `(file :path "${p}" :sha256 "${h}")`;
+  const lib = [['src/Lib.agda', 'd'.repeat(64)]];
+  const libDigest = sha(lib.map(([p, h]) => `${h}  ${p}\n`).join(''));
+  const ctl = [['controls/Bad.agda', 'e'.repeat(64)]];
+  const ctlDigest = sha(ctl.map(([p, h]) => `${h}  ${p}\n`).join(''));
+  const imp = `(import :repository "hyperpolymath/lib" :commit "${'2'.repeat(40)}" :inputs-sha256 "${libDigest}" ${file(...lib[0])})`;
+  const control = `(control :path "controls/Bad.agda" :prover agda :expect refused\n` +
+    `  (receipt :run "https://example.invalid/run/9" :commit "${'1'.repeat(40)}" :checker "agda 2.6.4.3"\n` +
+    `    :invocation "agda --safe --without-K --cubical-compatible controls/Bad.agda" :inputs-sha256 "${ctlDigest}" :state current\n` +
+    `    (inputs-manifest ${file(...ctl[0])}) (axioms)))`;
+  // The first (axioms …) closes the current Agda receipt: the import goes before it.
+  const at = example.indexOf('(axioms');
+  let out = example.slice(0, at) + imp + '\n' + example.slice(at);
+  const leg = out.indexOf('(leg :prover rocq');
+  return out.slice(0, leg) + control + '\n    ' + out.slice(leg);
+}
+
 // ── Equivalence: the JSON route gives the canon reader's own record ─────────
 
 test('a JSON receipt reads to the same record as its deed, for every worked receipt', () => {
   for (const [name, text] of [['theory_praxis.deed', ownReceipt],
     ['example_praxis.deed', standards('1-formats/deed/tools/fixtures/proof-receipt/example_praxis.deed')],
-    ['echo_praxis.deed', standards('1-formats/deed/tools/fixtures/proof-receipt/echo_praxis.deed')]]) {
+    ['echo_praxis.deed', standards('1-formats/deed/tools/fixtures/proof-receipt/echo_praxis.deed')],
+    ['import_control_praxis.deed', withImportAndControl(standards('1-formats/deed/tools/fixtures/proof-receipt/echo_praxis.deed'))]]) {
     const record = readProofReceipt(text, name);
     expect(jcs(readJson(canon(fromRecord(record))))).toBe(jcs(record));
   }
+});
+
+test('the import-and-control deed really carries an import, a control and an image', () => {
+  const rec = readProofReceipt(withImportAndControl(standards('1-formats/deed/tools/fixtures/proof-receipt/echo_praxis.deed')), 'ic_praxis.deed');
+  const v = fromRecord(rec);
+  expect(v.claims[0].controls).toHaveLength(1);
+  expect(v.claims[0].legs[0].receipts[0].imports).toHaveLength(1);
+  expect(v.claims[0].legs[0].receipts[0].image).toMatch(/@sha256:[0-9a-f]{64}$/);
+  // Dropping the image loses PWG-1: the JSON form must carry it (§8.2, owner ruling 2026-11-16).
+  for (const l of v.claims[0].legs) for (const r of l.receipts) delete r.image;
+  expect(readJson(canon(v)).claims[0].pwg).toBe('PWG-2ii');
 });
 
 test('the grade is derived from the legs: a lean leg that is not RECONCILED lowers THY-1 to PWG-2i (one recheck leg)', () => {
@@ -66,7 +104,10 @@ test('the grade is derived from the legs: a lean leg that is not RECONCILED lowe
   v.claims[0].legs.find(l => l.prover === 'lean').state = 'BRIDGE-PENDING';
   const rec = readJson(canon(v));
   expect(rec.claims[0].pwg).toBe('PWG-2i');
-  expect(rec.claims.slice(1).every(c => c.pwg === 'PWG-1')).toBe(true);
+  // The other claims keep whatever the canon reader derives from the deed itself,
+  // so this test does not hard-code grades that move with the policy.
+  const fromDeed = readProofReceipt(ownReceipt, 'theory_praxis.deed').claims.slice(1).map(c => c.pwg);
+  expect(rec.claims.slice(1).map(c => c.pwg)).toEqual(fromDeed);
 });
 
 test('bytes, with or without one final LF, are accepted; the reader pin is the one in use', () => {
@@ -124,6 +165,13 @@ const CASES = [
   ['uppercase token', () => edit(v => { v.claims[0].legs[0].token = 'PROVEN'; }), /:token PROVEN .* is not one of/],
   ['agda leg not source', () => edit(v => { v.claims[0].legs[0].route = 're-proved'; }), /route source belongs to the agda leg/],
   ['manifest digest', () => edit(v => { firstReceipt(v).inputs_sha256 = '0'.repeat(64); }), /is not the SHA-256 of its \(inputs-manifest/],
+  // The fields added by reader 940a27af: imports and controls.
+  ['empty imports', () => edit(v => { firstReceipt(v).imports = []; }), /imports is empty/],
+  ['empty controls', () => edit(v => { v.claims[0].controls = []; }), /controls is empty/],
+  ['unknown import field', () => edit(v => { firstReceipt(v).imports = [{repository: 'o/lib', commit: '2'.repeat(40), inputs_sha256: 'd'.repeat(64), files: [{path: 'a', sha256: 'd'.repeat(64)}], pwg: 'PWG-1'}]; }), /asserts a grade \(pwg\)/],
+  ['short import commit', () => edit(v => { firstReceipt(v).imports = [{repository: 'o/lib', commit: '2'.repeat(12), inputs_sha256: 'd'.repeat(64), files: [{path: 'a', sha256: 'd'.repeat(64)}]}]; }), /commit must be the full 40-character/],
+  ['control receipt that failed', () => edit(v => { v.claims[0].controls = [{path: 'c/Bad.agda', prover: 'agda', expect: 'refused', receipts: [{...firstReceipt(v), result: 'fail'}]}]; }), /current receipt has result pass/],
+  ['import digest', () => edit(v => { firstReceipt(v).imports = [{repository: 'o/lib', commit: '2'.repeat(40), inputs_sha256: '0'.repeat(64), files: [{path: 'a', sha256: 'd'.repeat(64)}]}]; }), /is not the SHA-256 of its files/],
   ['duplicate claim id', () => edit(v => { v.claims[1].id = v.claims[0].id; }), /duplicate claim id/],
 ];
 

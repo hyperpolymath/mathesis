@@ -15,7 +15,7 @@ reader of PROOF-POLICY §8.5.1.
 
 |THY-1
 |Discharged
-|`PWG-1`
+|`PWG-2ii`
 |The receipt `verification/receipts/theory_praxis.deed`; the record below
 
 |The token-lattice theorems (next on the theory shelf)
@@ -25,13 +25,16 @@ reader of PROOF-POLICY §8.5.1.
 
 |APP-1 to APP-4, the cohort model of the applied shelf (WO 4.2)
 |Proved in Agda, Rocq and Lean
-|`PWG-1`
+|`PWG-2ii`
 |The receipt `verification/receipts/theory_praxis.deed`; the record below.
-Claim pins at main `a1388fc` (2026-11-14)
+Claim pins at main `10f9f46` (2026-11-18)
 |===
 
 *Overall*: 5 of 6 obligations are proved in all three provers, and each of the
-5 has a receipt and a derived grade, `PWG-1`. The token-lattice theorems
+5 has a receipt and a derived grade, `PWG-2ii`. None is `PWG-1`: since
+standards#1625 (2026-11-17), `PWG-1` needs every counted checker to have run
+in a container image pinned by digest, and the proof lanes run in the pinned
+Guix shell, which the receipt cannot name as such an image. The token-lattice theorems
 (counted as one) are open. These are counts, not a
 percentage: PROOF-POLICY §8 grades are derived from receipts and are never
 flattened. The template example proofs were removed in WO 4.1.
@@ -88,9 +91,12 @@ missing crate as missing from every build.
   (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
   The file SHA-256 is unchanged, and the log reports no postulate in the cone
   (`Agda.Primitive`, `FeatureReachability`).
-* CI receipt (current, 2026-11-13): the same, at main `034f215`, run
+* CI receipt (superseded on 2026-11-17): the same, at main `034f215`, run
   43498592499. It records the inputs manifest and the axioms (none) that
   PROOF-POLICY §8.5.1 now requires (standards `e5a39d7`).
+* CI receipt (current, 2026-11-17): the same, at main `8c55804`, run 44190913019,
+  under the gate of #107. The file SHA-256 is unchanged, and the log reports
+  no postulate in the cone.
 
 |Rocq leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -107,10 +113,17 @@ missing crate as missing from every build.
 * Negative controls: a planted false lemma is rejected. A planted
   `Admitted` compiles, and `Print Assumptions` reports it as an axiom.
 * Receipt state: superseded on 2026-11-10 by the CI receipt below.
-* CI receipt (current): Rocq 8.18.0 in the pinned Guix (`8edb9da`), same
-  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
-  unchanged, and `Print Assumptions` reports `absent_under_all_features`
-  closed under the global context.
+* CI receipt (superseded on 2026-11-13): Rocq 8.18.0 in the pinned Guix
+  (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
+  The file SHA-256 is unchanged, and `Print Assumptions` reports
+  `absent_under_all_features` closed under the global context.
+* CI receipt (superseded on 2026-11-17): the same, at main `034f215`, run
+  43498592499, with the inputs manifest and the axioms (none).
+* CI receipt (current, 2026-11-17): the same, at main `8c55804`, run 44190913019,
+  under the gate of #107. The file SHA-256 is unchanged. `Print Assumptions`
+  reports all 11 declarations of the file closed under the global context,
+  and the kernel checker `coqchk -o` reports no axiom, type-in-type, unsafe
+  (co)fixpoint or assumed positivity in the library or its import cone.
 
 |Lean leg
 |`PROVEN`, route `re-proved`, correspondence `RECONCILED`. Receipt:
@@ -132,9 +145,37 @@ missing crate as missing from every build.
   definition are rejected. A planted `sorry` compiles with a warning, and
   `#print axioms` reports `sorryAx`.
 * Receipt state: superseded on 2026-11-10 by the CI receipt below.
-* CI receipt (current): Lean 4.29.0 in the pinned Guix (`8edb9da`), same
-  invocation, at commit `336768958d01`, run 42896264290. The file SHA-256 is
-  unchanged, and no declared theorem depends on an axiom.
+* CI receipt (superseded on 2026-11-13): Lean 4.29.0 in the pinned Guix
+  (`8edb9da`), same invocation, at commit `336768958d01`, run 42896264290.
+  The file SHA-256 is unchanged, and no declared theorem depends on an axiom.
+* CI receipt (superseded on 2026-11-17): the same, at main `034f215`, run
+  43498592499, with the inputs manifest and an empty axiom list. That list
+  is the vacuous one described below.
+* CI receipt (current, 2026-11-17): the same, at main `8c55804`, run 44190913019,
+  under the gate of #107, with the propositional theorems. The log reports
+  "axioms: none for 8 theorem(s) and 48 definition(s) with a source range",
+  and the file declares no axiom.
+* Axiom evidence, corrected 2026-11-17. Every THY-1 result in this file is a
+  `def` (the leg is Type-valued, like the Agda), and until 2026-11-17 the
+  gate audited theorems only. So the empty `(axioms)` element of the Lean
+  receipts, and "no declared theorem depends on an axiom" above, were true
+  of an audit that inspected none of THY-1's results (proof audit
+  2026-11-16, finding 31). The gate now audits every definition with a
+  source range as well, and fails on an empty audit. Run locally on Lean
+  4.29.0 (`98dc76e3c0a9`), `scripts/check-proofs.sh lean4` reports "axioms:
+  none for 2 theorem(s) and 48 definition(s) with a source range" for this
+  file, before the propositional theorems below were added. Those are the
+  six results (`reachMono`, `absentBelow`, `onMono`, `onMonoAll`,
+  `edgeMono`, `absentUnderAllFeatures`), their helpers, and the
+  definitions Lean generates for the inductives. The two theorems are the
+  projections `Edge.src` and `Edge.dst`. With the propositional theorems
+  (owner ruling 2026-11-17: the gate fix and theorem wrappers), the report
+  is "axioms: none for 8 theorem(s) and 48 definition(s) with a source
+  range". `absent_under_all_features` and the other five carry each
+  definition in their own `#print axioms` cone as well. No axiom was found, so none had
+  to be removed. The CI receipt under the fixed gate was earned on
+  2026-11-17 (run 44190913019, main `8c55804`, above), so the current receipt's
+  axiom evidence for this leg is no longer the vacuous one.
 
 |Why neither leg is transported
 |Lambdapi's Rocq and Lean exports translate before elaboration and drop
@@ -184,21 +225,33 @@ same hypotheses and conclusions. The differences are encoding only:
   no proof inspects.
 * `_⊑_` takes the feature implicitly in Agda and Lean, and explicitly
   in Rocq.
+* Lean only, added 2026-11-17: a `theorem` must be a proposition, and
+  each Lean result is a Type-valued `def`. So `reach_mono`, `absent_below`,
+  `on_mono`, `edge_mono` and `absent_under_all_features` restate the
+  results about inhabitation (`Nonempty`, and `¬ Nonempty` for absence),
+  each proved by the definition it names. `not'_iff` shows that `Not' A`
+  is inhabited exactly when `¬ Nonempty A`, so for the headline the two
+  readings coincide. The definitions are unchanged; these are additions,
+  and they play the part that `Theorem absent_under_all_features` plays
+  in the Rocq leg.
 
 Residual assumptions: none in any leg.
 
 |Machine receipt (§8.5.1)
 |`verification/receipts/theory_praxis.deed`. The canon reader
-(`deed_lint.js --proof-receipt-json`) derives `PWG-1` from it, the grade
-below, and CI runs that reader on each change. The claims registry lists
+(`deed_lint.js --proof-receipt-json`, standards `940a27af`) derives
+`PWG-2ii` from it, the grade below, and CI runs that reader on each change. The claims registry lists
 the claim as `hyperpolymath/mathesis#THY-1` and shows the grade that the
 same reader derives
 (link:../atlas/generated/registry.adoc[`docs/atlas/generated/registry.adoc`]).
 
 |`pwg`
-|`1` (since 2026-11-10): `PWG-2ii`, and every counted witness has a current
-receipt from one headless, isolated, pinned CI run on the exact source commit
-(PROOF-POLICY §8.2): `336768958d01` until 2026-11-13, `034f215` since. The grade holds while those receipts stay
+|`2ii` (since 2026-11-18). From 2026-11-10 to 2026-11-17 it was `1`:
+`PWG-2ii`, and every counted witness had a current receipt from one headless,
+pinned CI run on the exact source commit (PROOF-POLICY §8.2). Standards#1625
+then required the checker's image, pinned by digest, on each receipt; the
+pinned Guix shell is not such an image, so the reader derives `PWG-2ii`.
+The receipts are unchanged. The commits: `336768958d01` until 2026-11-13, `034f215` until 2026-11-17, `8c55804` since. The grade holds while those receipts stay
 current: a later commit that breaks a leg, or a run that cannot be repeated,
 drops it (§8.4). Before 2026-11-10 it was `2ii`, because each receipt came
 from a local run.
@@ -227,19 +280,34 @@ each unit's graph.
 |`verification/proofs/agda/Applied/`: `Cohort` (the model), `Status` and
 `Missing` (APP-1, APP-4), `Cash` (APP-2, APP-3, for any ordered abelian
 group), `IntNumber` and `IntLaws` (the integer instance and its laws).
+APP-1's verdict sentence has one theorem per clause, in each prover:
+"no" on a known breach (`breach-decides`); otherwise missing when any value
+it depends on is missing (`verdict-missing`, added 2026-11-17, with the
+invariant `verdict-not-false`); never "yes" then (`verdict-yes`, and
+`verdict-not-yes` stated directly). Before 2026-11-17 the middle clause was
+stated by no declaration (proof audit 2026-11-16, finding 33).
 `--safe --without-K --cubical-compatible`; no postulate in any import cone.
 
 |Rocq leg
 |`PROVEN`, route `re-proved`. `verification/proofs/coq/Cohort.v`, Rocq
-8.18.0. The gate's `Print Assumptions` finds all 82 theorems closed under
-the global context. The standard library's `PeanoNat` and `Lia` prove the
-natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
+8.18.0. The gate's `Print Assumptions` finds all 89 theorems closed under
+the global context, and since 2026-11-17 every definition and fixpoint as
+well: 134 declarations in all. The current receipt (run 44190913019) covers all
+of them; the receipt before it (run 43498592499) covered 82 theorems, before
+the seven of APP-1's middle clause. The kernel
+checker `coqchk -o` finds no axiom, type-in-type, unsafe (co)fixpoint or
+assumed positivity in the compiled library or its import cone, the
+standard library included (gate, 2026-11-17). The standard library's
+`PeanoNat` and `Lia` prove the natural-number arithmetic; `Unset Lia Cache` keeps `lia` from writing a
 file.
 
 |Lean leg
 |`PROVEN`, route `re-proved`. `verification/proofs/lean4/Cohort.lean`,
-Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 95
-theorems. No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
+Lean 4.29.0, core only. The gate's audit finds no axiom in any of the 102
+theorems or in the 128 definitions with a source range, and the file
+declares no axiom of its own. The current receipt (run 44190913019) covers all of
+them; the receipt before it covered 95 theorems, before the seven of APP-1's
+middle clause. No `simp`, `omega` or `ac_rfl`: each brings `propext` in.
 
 |Statement correspondence (§2.2)
 |Compared by reading, item by item. Each target restates every Agda
@@ -266,10 +334,11 @@ Residual assumptions: none in any leg.
 
 |Machine receipt (§8.5.1)
 |`verification/receipts/theory_praxis.deed`, with THY-1. The current receipts
-come from CI run 43498592499 on main `034f215` (Agda 2.7.0.1, Rocq 8.18.0,
-Lean 4.29.0, pinned Guix `8edb9da`). Each records the inputs manifest of its
-prover and no axiom. The canon reader at standards `e5a39d7` derives `PWG-1`
-for each of APP-1 to APP-4, and the shared git checker (`just receipt-check`)
+come from CI run 44190913019 on main `8c55804` (Agda 2.7.0.1, Rocq 8.18.0,
+Lean 4.29.0, pinned Guix `8edb9da`), the first under the gate of #107; the
+receipts of run 43498592499 on main `034f215` are superseded. Each records the inputs manifest of its
+prover and no axiom. The canon reader at standards `940a27af` derives `PWG-2ii`
+for each of APP-1 to APP-4 (no digest-pinned checker image, standards#1625), and the shared git checker (`just receipt-check`)
 passes. The Rocq and Lean legs are `RECONCILED` by the comparison above, done
 by reading. The trusted base gains `Char` and `String`, the postulates that
 `Applied/IntLaws` reaches through `Agda.Builtin.Int`.
@@ -303,6 +372,61 @@ just registry
 [cols="1,3",options="header"]
 |===
 |Date |Change
+
+|2026-11-18
+|The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main
+`10f9f46` (PR 115). The registry catalogues `PWG-2ii` for all five, and
+the theory ledger records THY-1's change (entry 6).
+
+|2026-11-18
+|The claims registry pins the canon reader at standards `940a27af`
+(it was `e5a39d7`). That reader reads `(import …)` clauses and applies
+standards#1625: `PWG-1` needs every counted checker to have run in a
+container image pinned by digest. The receipt is recorded again without a
+new run. Its `:beholding-chora` used a `#u5` literal, which that reader
+refuses (owner ruling Q2), and now uses the canon form
+`#u8"chora:estate/github.com/hyperpolymath"`. The reader derives
+`PWG-2ii` for all five. The claim pins still name the receipt at
+`58ebefb`, which the reader refuses, so the registry shows the five as
+`ungraded` until the pins move to this receipt (the next change).
+
+|2026-11-17
+|The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main
+`58ebefb` (PR 113), and APP-1's pin also names `verdict-missing` and
+`verdict-not-yes`. The claims registry catalogues `PWG-1` for all five:
+the reader derives it from the receipt of run 44190913019, and the §8.5.3
+git checks hold. The theory ledger records THY-1's receipt change (entry 4).
+
+|2026-11-17
+|The receipt is earned again from CI run 44190913019 on main `8c55804`, the
+first under the gate of #107: for THY-1 and APP-1 to APP-4, in Agda, Rocq
+and Lean. The receipts of run 43498592499 on `034f215` are superseded,
+each with its reason. THY-1's Lean leg now has axiom evidence from an audit
+that inspected its results. The two run-42896264290 receipts that this page
+still called current are marked superseded, as they have been since
+2026-11-13. The reader derives `PWG-1` for all five, and the shared git
+checker passes. The claim pins move to this receipt in the next change.
+
+|2026-11-17
+|APP-1's middle clause is proved in Agda, Rocq and Lean (`verdict-missing`,
+`verdict-not-false`, `verdict-not-yes`; owner ruling: prove, not narrow).
+The gate's axiom audit now covers definitions as well as theorems, and an
+audit that inspects nothing fails. Before this, a Lean `def` built on
+`sorry` and a Rocq `Admitted` Definition each passed, and THY-1's Lean
+results were never inspected. Review then found that the Rocq audit took
+its declaration names from the source text, so an unused
+`Local Definition planted : False. Admitted.` passed the gate (reproduced).
+The Rocq audit now also runs the kernel checker `coqchk -o` on the compiled
+library, which lists every assumption in the library and its import cone
+however the source spells it, and the name reader skips comments. The Lean
+audit now fails on any axiom the source declares, used or not; an unused
+`axiom planted : False` passed it before (reproduced). Seven planted escapes
+that passed the old gate (Rocq: Local, `#[local]`, Program, Instance, an
+unused Axiom and a guard bypass; Lean: an unused axiom) now fail it, and a
+declaration inside a comment no longer fails it. All three gates and their
+controls pass locally. No receipt is earned yet: the receipt and the claim pins still name
+`a1388fc`/`034f215`, which predate these theorems, and they move only once
+CI has run on this change.
 
 |2026-11-14
 |The claim pins of THY-1 and APP-1 to APP-4 name the receipt at main

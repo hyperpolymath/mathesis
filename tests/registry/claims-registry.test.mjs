@@ -27,13 +27,15 @@ beforeAll(async () => { readProofReceipt = await loadReader(); });
 // `rocq` and `lean` are leg states, or null for no leg; `*At` is the commit of
 // that leg's current receipt.
 const fixture = ({repo = 'o/r', pwg = 'PWG-3', invocation = 'agda --safe --without-K --cubical-compatible M.agda',
-  rocq = null, lean = null, rocqAt = commit, leanAt = commit} = {}) => {
+  rocq = null, lean = null, rocqAt = commit, leanAt = commit, image = false} = {}) => {
   // Each current receipt lists its inputs (standards e5a39d7): one manifest line,
-  // the digest of that manifest, and an empty axioms clause.
+  // the digest of that manifest, and an empty axioms clause. With `image`, each
+  // receipt also names a digest-pinned image, which PWG-1 needs (§8.2, standards#1625).
   const run = (prover, at, inv) => {
     const line = `${'c'.repeat(64)}  ${prover}/M\n`;
     const digest = createHash('sha256').update(line).digest('hex');
-    return `      (receipt :run "ci" :commit "${at}" :checker "${prover}" :invocation "${inv}"\n` +
+    const img = image ? ` :image "example/${prover}@sha256:${'d'.repeat(64)}"` : '';
+    return `      (receipt :run "ci" :commit "${at}" :checker "${prover}"${img} :invocation "${inv}"\n` +
       `               :inputs-sha256 "${digest}" :state current (axioms)\n` +
       `               (inputs-manifest (file :path "${prover}/M" :sha256 "${'c'.repeat(64)}"))))\n`;
   };
@@ -72,6 +74,21 @@ test('validation fails closed', () => {
   expect(() => validate([{...theorem, shelf: 'theory'}], inv)).toThrow(/Only a home theorem names a shelf/);
 });
 
+// ADR 0004: a record has exactly the listed fields and holds no grade, token,
+// leg or flag. Each of these rows was accepted before validate() was closed.
+test('validation is closed over the ADR 0004 field set', () => {
+  for (const extra of [{pwg: 'PWG-1'}, {grade: 'PWG-1'}, {token: 'proven'}, {legs: []}, {leg: 'rocq'},
+    {flags: ['--safe']}, {foundation_diverse: true}, {nonsense: 42}]) {
+    expect(() => validate([{...theorem, ...extra}], inv)).toThrow(/Unknown field/);
+  }
+  expect(() => validate([{...theorem, agda: {module: 'M', names: ['t'], pwg: 'PWG-1'}}], inv)).toThrow(/Unknown agda field/);
+  const receipt = {path: 'verification/receipts/x_praxis.deed', sha256: 'b'.repeat(64)};
+  expect(validate([{...theorem, receipt}], inv)).toHaveLength(1);
+  expect(() => validate([{...theorem, receipt: {...receipt, pwg: 'PWG-1'}}], inv)).toThrow(/Unknown receipt field/);
+  const {status_doc: _, ...missing} = theorem;
+  expect(() => validate([missing], inv)).toThrow(/Missing status_doc/);
+});
+
 test('only the pinned reader is loaded', async () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'reader-'));
   mkdirSync(path.join(dir, path.dirname(READER.path)), {recursive: true});
@@ -89,8 +106,13 @@ test('the grade is the one the reader derives (§8.2)', () => {
   const two = derive(theorem, read(fixture({pwg: 'PWG-2ii', rocq: 'RECONCILED', lean: 'RECONCILED', leanAt: 'b'.repeat(40)})));
   expect(two.pwg).toBe('PWG-2ii');
   expect(two.reasons.join()).toContain('the reader derives PWG-2ii');
-  const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'})));
+  const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED', image: true})));
   expect(one).toEqual({pwg: 'PWG-1', reasons: [], evidence: commit});
+  // The same witnesses with no checker image give PWG-2ii, so a recorded PWG-1 is refused.
+  expect(derive(theorem, read(fixture({pwg: 'PWG-2ii', rocq: 'RECONCILED', lean: 'RECONCILED'}))).pwg).toBe('PWG-2ii');
+  const noImage = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'})));
+  expect(noImage.pwg).toBe('ungraded');
+  expect(noImage.reasons.join()).toMatch(/records :pwg PWG-1, but its legs and receipts support PWG-2ii/);
 });
 
 test('a receipt the reader refuses is ungraded, with the reader\'s reason', () => {
@@ -145,7 +167,7 @@ test('a row names the commit that its receipt describes when it differs from the
 });
 
 test('a PWG-1 is catalogued only when the git checks of §8.5.3 hold', async () => {
-  const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'})));
+  const one = derive(theorem, read(fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED', image: true})));
   expect(withGitCheck(one, {ok: true})).toEqual(one);
   const capped = withGitCheck(one, {ok: false, reason: 'the source commit is not on origin/main'});
   expect(capped.pwg).toBe('PWG-2ii');
@@ -154,7 +176,7 @@ test('a PWG-1 is catalogued only when the git checks of §8.5.3 hold', async () 
   expect(withGitCheck(three, {ok: false, reason: 'x'})).toEqual(three);
   // deriveAll runs the check once per receipt, and with no check it catalogues no PWG-1.
   const dir = mkdtempSync(path.join(tmpdir(), 'registry-'));
-  const text = fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED'});
+  const text = fixture({pwg: 'PWG-1', rocq: 'RECONCILED', lean: 'RECONCILED', image: true});
   mkdirSync(path.join(dir, `o__r@${commit}`), {recursive: true});
   writeFileSync(path.join(dir, `o__r@${commit}`, 'r_praxis.deed'), text);
   const row = {...theorem, receipt: {path: 'r_praxis.deed', sha256: createHash('sha256').update(text).digest('hex')}};

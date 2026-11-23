@@ -57,7 +57,7 @@ jobs:
           git -C "$r" remote add origin https://github.com/metadatastician/standards.git
           git -C "$r" config core.sparseCheckout true
           printf '1-formats/deed/tools/\nscripts/check-proof-receipt.sh\nscripts/proof-inputs-sha256.sh\n' > "$r/.git/info/sparse-checkout"
-          git -C "$r" fetch -q --depth 1 origin e5a39d7e5c66f9d24d7e0ffa3f8dbd01f2d42d9d
+          git -C "$r" fetch -q --depth 1 origin 940a27af1e25a73a2d55daa78d0763e6749fd935
           git -C "$r" checkout -q FETCH_HEAD
           for f in verification/receipts/*_praxis.deed; do
             bun "$r/1-formats/deed/tools/deed_lint.js" --proof-receipt-json "$f"
@@ -149,14 +149,15 @@ jobs:
           STANDARDS_DIR="$RUNNER_TEMP/standards" bash scripts/run-proven-suite.sh --require-zig --bench
 
   # ==========================================================================
-  # Required status check "CI/gate" (Branch-Floor ruleset).
-  # The check context is this job's name. It waits for every other job in this
-  # workflow and runs even when one fails, is cancelled or is skipped; it exits
+  # In-workflow verdict job "Proven suite verdict" (NOT the required context).
+  # The context `CI/gate` is NOT this job: it is a commit status published by
+  # ci-gate.yml (the suite reusable), the only producer of it. This job waits for every
+  # other job in this workflow and runs even when one fails, is cancelled or is skipped; it exits
   # 0 only when every required job succeeded (or was skipped by design behind a
   # detector job that itself succeeded). Pattern: hyperpolymath/hypatia ci.yml.
   # ==========================================================================
   ci-gate:
-    name: CI/gate
+    name: Proven suite verdict
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions: {}
@@ -183,7 +184,7 @@ jobs:
           }
           row() { printf '| %s | %s | %s | %s |\n' "$@" | tee -a "$summary"; }
           {
-            echo "### CI/gate"
+            echo "### Proven suite verdict"
             echo
             echo "| job | result | role | verdict |"
             echo "|---|---|---|---|"
@@ -222,7 +223,7 @@ jobs:
           msg="required jobs: $total; satisfied: $passed; advisory: $(wc -w <<< "$ADVISORY_JOBS")"
           echo "$msg" | tee -a "$summary"
           if [ "$fail" -ne 0 ]; then
-            echo "::error::CI/gate failed ($msg)"
+            echo "::error::Proven suite verdict failed ($msg)"
             exit 1
           fi
-          echo "CI/gate passed ($msg)"
+          echo "Proven suite verdict passed ($msg)"

@@ -59,14 +59,26 @@ async function ledgerOnMain() {
 const KINDS = new Set(['theorem', 'demonstration', 'assumption']);
 const PWG = new Set(['PWG-1', 'PWG-2ii', 'PWG-2i', 'PWG-3', 'ungraded']);
 const SHELVES = new Set(['theory', 'applied']);
+// ADR 0004: a record has exactly these fields, and holds no grade, token, leg
+// or flag (those are read from the receipt). The set is closed, as in
+// bridges.mjs and theory.mjs: any other field is refused, never ignored.
+const FIELDS = new Set(['id', 'repo', 'claim', 'kind', 'statement', 'status_doc', 'agda', 'shelf',
+  'source_commit', 'receipt']);
+const AGDA_FIELDS = new Set(['module', 'names']);
+const RECEIPT_FIELDS = new Set(['path', 'sha256']);
+
+// Throw unless every key of `object` is in `allowed`.
+const closed = (object, allowed, label, where) => {
+  for (const k of Object.keys(object)) if (!allowed.has(k)) throw new Error(`${label} ${k}: ${where}`);
+};
 
 // The canon reader, pinned by commit and by the digest of its file. A reader
 // that is not this file is refused, so a grade never comes from an unpinned rule.
 export const READER = {
   repository: 'metadatastician/standards',
-  commit: 'e5a39d7e5c66f9d24d7e0ffa3f8dbd01f2d42d9d',
+  commit: '940a27af1e25a73a2d55daa78d0763e6749fd935',
   path: '1-formats/deed/tools/deed_lint.js',
-  sha256: '37ff85be499b35dd9d74399e05d9ae1e57ccf095362c355f93e04b3bbf4c9491',
+  sha256: '29278b46654bdee70e8e1ff4a7ff8cb810e04b618c9ca1520a6979d6c4c91f18',
 };
 
 // The git checks of PROOF-POLICY §8.5.3, from the same standards commit as the
@@ -74,7 +86,7 @@ export const READER = {
 // the home repository; the checker calls the digest script, so both are pinned.
 export const CHECKER = {
   path: 'scripts/check-proof-receipt.sh',
-  sha256: '831f5a43c906c3edc8cfa68ab5fe13c37e7a41b35e40068481d988d887f4bd3f',
+  sha256: 'f2375747238464535d1b4a61f658f07cb2f8504c69bfb1812311c79429a4e23e',
   digest: 'scripts/proof-inputs-sha256.sh',
   digestSha256: 'dfc6dde01a3a79df638eebe4cad0eae584d8f17280077e149174c0667e9508f4',
 };
@@ -89,6 +101,8 @@ export function validate(rows, inventory) {
   const seen = new Set();
   for (const r of rows) {
     const where = r && r.id ? r.id : JSON.stringify(r);
+    if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
+    closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
     if (typeof r.repo !== 'string' || !/^[-\w.]+\/[-\w.]+$/.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
     if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
@@ -102,12 +116,14 @@ export function validate(rows, inventory) {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)
         throw new Error(`A theorem names its Agda module and names: ${r.id}`);
     }
+    if (r.agda !== null && r.agda !== undefined) closed(r.agda, AGDA_FIELDS, 'Unknown agda field', r.id);
     if (r.repo === HOME && r.kind === 'theorem') {
       if (!SHELVES.has(r.shelf)) throw new Error(`A home theorem is on the theory or the applied shelf: ${r.id}`);
     } else if ('shelf' in r) throw new Error(`Only a home theorem names a shelf: ${r.id}`);
     if (r.receipt !== null) {
       if (!r.receipt || typeof r.receipt.path !== 'string' || !/^[0-9a-f]{64}$/.test(r.receipt.sha256 ?? ''))
         throw new Error(`receipt is null or {path, sha256}: ${r.id}`);
+      closed(r.receipt, RECEIPT_FIELDS, 'Unknown receipt field', r.id);
     }
     if (visibility.get(r.repo) !== 'public') throw new Error(`Nonpublic or unlisted repository: ${r.id}`);
   }

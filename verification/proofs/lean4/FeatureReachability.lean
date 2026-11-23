@@ -16,6 +16,14 @@ Correspondence choices, all mirrored from the Agda source:
   fields of `Edge`, where proof relevance plays no part.
 - `All (On S)` is nested inside `On`, as in the Agda.
 
+Every result is therefore a `def`, and a Lean `theorem` must be a
+proposition. So each result is also stated about inhabitation (`Nonempty`)
+as a `theorem` proved by the definition it names (sections 1 and 2, under
+"As propositions"). Absence reads the same either way (`not'_iff`), and the
+theorems put every definition here inside a theorem's axiom report, as the
+Rocq leg's `Theorem absent_under_all_features` does. The gate also audits
+the definitions directly.
+
 Only Lean core is used: no `import`, no Mathlib.
 -/
 
@@ -26,6 +34,10 @@ def Not' (A : Type) : Type := A → Empty
 inductive All {α : Type u} (P : α → Type v) : List α → Type (max u v)
   | nil : All P []
   | cons {x : α} {xs : List α} : P x → All P xs → All P (x :: xs)
+
+/-- `Not'` and `¬ Nonempty` say the same thing: absence is proof-irrelevant. -/
+theorem not'_iff {A : Type} : Nonempty (Not' A) ↔ ¬ Nonempty A :=
+  ⟨fun ⟨n⟩ ⟨a⟩ => (n a).elim, fun h => ⟨fun a => (h ⟨a⟩).elim⟩⟩
 
 /-! ## 1. The abstract result -/
 
@@ -50,6 +62,20 @@ def absentBelow (le : Ctx → Ctx → Type) (Edge : Ctx → Node → Node → Ty
     {F G : Ctx} {root v : Node} (h : le F G)
     (absent : Not' (Reach Edge G root v)) : Not' (Reach Edge F root v) :=
   fun r => absent (reachMono le Edge edgeMono h r)
+
+/-! As propositions. -/
+
+theorem reach_mono (le : Ctx → Ctx → Type) (Edge : Ctx → Node → Node → Type)
+    (edgeMono : ∀ {F G : Ctx} {u v : Node}, le F G → Edge F u v → Edge G u v)
+    {F G : Ctx} {root v : Node} (h : le F G) :
+    Nonempty (Reach Edge F root v) → Nonempty (Reach Edge G root v) :=
+  fun ⟨r⟩ => ⟨reachMono le Edge edgeMono h r⟩
+
+theorem absent_below (le : Ctx → Ctx → Type) (Edge : Ctx → Node → Node → Type)
+    (edgeMono : ∀ {F G : Ctx} {u v : Node}, le F G → Edge F u v → Edge G u v)
+    {F G : Ctx} {root v : Node} (h : le F G)
+    (absent : ¬ Nonempty (Reach Edge G root v)) : ¬ Nonempty (Reach Edge F root v) :=
+  fun ⟨r⟩ => (absentBelow le Edge edgeMono h (fun r' => (absent ⟨r'⟩).elim) r).elim
 
 end Monotone
 
@@ -116,6 +142,29 @@ def absentUnderAllFeatures {root v : Node}
     absentBelow Sub (Edge premises conclusion src' dst' guard targetOk t)
       (fun h e => edgeMono premises conclusion src' dst' guard targetOk t h e)
       (belowAll S) (absent t)
+
+/-! As propositions. -/
+
+theorem on_mono {S T : Request Feat} (h : Sub S T) {f : Feat} :
+    Nonempty (On premises conclusion S f) → Nonempty (On premises conclusion T f) :=
+  fun ⟨o⟩ => ⟨onMono premises conclusion h o⟩
+
+theorem edge_mono (t : Target) {S T : Request Feat} {u v : Node} (h : Sub S T) :
+    Nonempty (Edge premises conclusion src' dst' guard targetOk t S u v) →
+    Nonempty (Edge premises conclusion src' dst' guard targetOk t T u v) :=
+  fun ⟨e⟩ => ⟨edgeMono premises conclusion src' dst' guard targetOk t h e⟩
+
+/-- The watch page's rule, per target, as a proposition. -/
+theorem absent_under_all_features {root v : Node}
+    (absent : ∀ t : Target,
+      ¬ Nonempty (Reach (Edge premises conclusion src' dst' guard targetOk t)
+        allFeatures root v)) :
+    ∀ (t : Target) (S : Request Feat),
+      ¬ Nonempty (Reach (Edge premises conclusion src' dst' guard targetOk t)
+        S root v) :=
+  fun t S ⟨r⟩ =>
+    (absentUnderAllFeatures premises conclusion src' dst' guard targetOk
+      (fun t' r' => (absent t' ⟨r'⟩).elim) t S r).elim
 
 end Cargo
 

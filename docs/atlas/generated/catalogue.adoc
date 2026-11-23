@@ -29,6 +29,8 @@ than one.
 
 |https://github.com/hyperpolymath/echo-types[hyperpolymath/echo-types] |165 |0 |agda 163, lean 1, rocq 1 |1759 |0 |1 |0 |1 |`PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |163 |21 |agda 28, lean 18, rocq 9, isabelle 6, idris2 41, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1676 |3 |1 |4 |27 |`docs/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/system-et[hyperpolymath/system-et] |102 |0 |agda 80, lean 22 |773 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/ordinal-notation[hyperpolymath/ordinal-notation] |78 |0 |agda 78 |625 |0 |2 |0 |1 |`docs/status/PROOF-STATUS.adoc`
@@ -59,11 +61,11 @@ than one.
 
 |https://github.com/hyperpolymath/secret-types[hyperpolymath/secret-types] |30 |6 |agda 22, lean 7, rocq 1 |304 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |29 |15 |agda 26, lean 2, rocq 1 |575 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |29 |0 |lean 20, isabelle 9 |564 |4 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`docs/proof-debt.md`
-
-|https://github.com/hyperpolymath/resource-algebra[hyperpolymath/resource-algebra] |25 |12 |agda 22, lean 2, rocq 1 |467 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |23 |12 |agda 11, lean 2, rocq 2, idris2 8 |223 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
@@ -152,7 +154,7 @@ than one.
 
 |https://github.com/hyperpolymath/boj-server-cartridges[hyperpolymath/boj-server-cartridges] |184 |0 |idris2 184 |1500 |0 |3 |0 |0 |—
 
-|https://github.com/hyperpolymath/echidna[hyperpolymath/echidna] |170 |21 |agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4 |1969 |3 |1 |4 |27 |`docs/PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |77 |37 |agda 7, lean 1, rocq 1, idris2 66, tla 2 |1040 |3 |1 |0 |1 |`verification/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/proven-tests-and-benches[hyperpolymath/proven-tests-and-benches] |75 |29 |idris2 75 |891 |0 |0 |0 |0 |—
 
@@ -161,8 +163,6 @@ than one.
 |https://github.com/metadatastician/paint-type[metadatastician/paint-type] |64 |8 |agda 3, lean 2, rocq 1, idris2 51, tla 7 |1149 |4 |0 |8 |3 |`PROOF-STATUS.adoc`
 
 |https://github.com/metadatastician/gossamer[metadatastician/gossamer] |62 |10 |idris2 53, tla 9 |1868 |0 |0 |8 |0 |`PROOF-NEEDS.md`
-
-|https://github.com/hyperpolymath/hypatia[hyperpolymath/hypatia] |58 |24 |agda 2, lean 1, rocq 1, idris2 52, tla 2 |680 |3 |1 |0 |1 |`verification/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/typed-wasm[hyperpolymath/typed-wasm] |52 |17 |idris2 52 |896 |0 |0 |0 |0 |`docs/proof-debt.adoc`
 
@@ -474,6 +474,8 @@ than one.
 
 |https://github.com/metadatastician/authority-watch[metadatastician/authority-watch] |3 |0 |idris2 3 |13 |0 |0 |0 |0 |—
 
+|https://github.com/metadatastician/standards[metadatastician/standards] |3 |0 |idris2 3 |66 |0 |0 |0 |0 |`docs/proof-debt.adoc`
+
 |https://github.com/catachresis-colloquium/pong-ping[catachresis-colloquium/pong-ping] |2 |0 |idris2 2 |13 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/cloud-sync-tuner[hyperpolymath/cloud-sync-tuner] |2 |1 |spark 1, other 1 |0 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
@@ -499,8 +501,6 @@ than one.
 |https://github.com/hyperpolymath/recon-silly-ation[hyperpolymath/recon-silly-ation] |2 |0 |idris2 2 |25 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 
 |https://github.com/metadatastician/selur[metadatastician/selur] |2 |0 |idris2 2 |23 |4 |0 |0 |0 |—
-
-|https://github.com/metadatastician/standards[metadatastician/standards] |2 |0 |idris2 2 |40 |0 |0 |0 |0 |`docs/proof-debt.adoc`
 
 |https://github.com/catachresis-colloquium/enterglide-ncc-137-k[catachresis-colloquium/enterglide-ncc-137-k] |1 |0 |idris2 1 |13 |0 |0 |0 |0 |`docs/status/PROOF-STATUS.adoc`
 

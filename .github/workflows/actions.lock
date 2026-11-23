@@ -86,7 +86,7 @@ workflows:
         - 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1'
     '.github/workflows/sonarqube.yml':
         - 'actions/checkout@v7.0.1'
-        - 'sonarsource/sonarqube-scan-action@v8.4.1'
+        - 'sonarsource/sonarqube-scan-action@v8.5.0'
     '.github/workflows/squabble.yml': []
     '.github/workflows/static-analysis-gate.yml':
         - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
@@ -199,8 +199,8 @@ dependencies:
         commit: 'sha1-0c5077e51419868618aeaa5fe8019c62421857d6'
         owner_id: 108928776
         repo_id: 512644635
-    'sonarsource/sonarqube-scan-action@v8.4.1':
-        ref: 'v8.4.1'
-        commit: 'sha1-e805d875275f728fac1885b413934be6d7c63f65'
+    'sonarsource/sonarqube-scan-action@v8.5.0':
+        ref: 'v8.5.0'
+        commit: 'sha1-59202af334b4ba7b5db01b701b8e79f8b3bef0f4'
         owner_id: 545988
         repo_id: 366408409

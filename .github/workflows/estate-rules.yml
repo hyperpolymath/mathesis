@@ -75,6 +75,14 @@ jobs:
         run: bash tests/workflows/check_no_a2ml_test.sh
       - name: Deed clause writer controls
         run: bash tests/workflows/deed_clause_test.sh
+      # The repo uuid is derived the same on every machine (sha1sum, shasum or
+      # openssl), equal to uuidgen --sha1; with no SHA-1 tool it is refused.
+      - name: Repo uuid derivation is machine-independent
+        run: bash tests/workflows/uuid5_url_test.sh
+      # A #uuid body is read as written, and a legacy #u8 literal is derived
+      # through scripts/uuid-v8.sh, equal to standards scripts/uuid-v8.js.
+      - name: Repo chora id is read as written, and #u8 is derived as UUIDv8
+        run: bash tests/workflows/uuid_v8_test.sh
       - name: Install verified Nickel 1.17.0
         run: |
           mkdir -p "$RUNNER_TEMP/nickel-bin"

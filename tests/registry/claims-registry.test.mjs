@@ -74,6 +74,21 @@ test('validation fails closed', () => {
   expect(() => validate([{...theorem, shelf: 'theory'}], inv)).toThrow(/Only a home theorem names a shelf/);
 });
 
+// ADR 0004: a record has exactly the listed fields and holds no grade, token,
+// leg or flag. Each of these rows was accepted before validate() was closed.
+test('validation is closed over the ADR 0004 field set', () => {
+  for (const extra of [{pwg: 'PWG-1'}, {grade: 'PWG-1'}, {token: 'proven'}, {legs: []}, {leg: 'rocq'},
+    {flags: ['--safe']}, {foundation_diverse: true}, {nonsense: 42}]) {
+    expect(() => validate([{...theorem, ...extra}], inv)).toThrow(/Unknown field/);
+  }
+  expect(() => validate([{...theorem, agda: {module: 'M', names: ['t'], pwg: 'PWG-1'}}], inv)).toThrow(/Unknown agda field/);
+  const receipt = {path: 'verification/receipts/x_praxis.deed', sha256: 'b'.repeat(64)};
+  expect(validate([{...theorem, receipt}], inv)).toHaveLength(1);
+  expect(() => validate([{...theorem, receipt: {...receipt, pwg: 'PWG-1'}}], inv)).toThrow(/Unknown receipt field/);
+  const {status_doc: _, ...missing} = theorem;
+  expect(() => validate([missing], inv)).toThrow(/Missing status_doc/);
+});
+
 test('only the pinned reader is loaded', async () => {
   const dir = mkdtempSync(path.join(tmpdir(), 'reader-'));
   mkdirSync(path.join(dir, path.dirname(READER.path)), {recursive: true});

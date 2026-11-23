@@ -1,0 +1,216 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= Architecture Decision Record: 0005-jcs-json-receipt
+
+== 5. The claims registry also reads a proof receipt written as canonical JCS I-JSON
+
+Date: 2026-11-16
+
+=== Status
+
+*Proposed. It is not accepted until the owner accepts it.* It follows the owner's ruling of
+2026-11-16: trope-checker does not emit a praxis deed. Instead, the reader in
+Mathesis also accepts a receipt that is canonical JCS I-JSON. This record says
+how. The prototype (`scripts/registry/json-receipt.mjs`, tests in
+`tests/registry/json-receipt.test.mjs`) is *not wired* into
+`claims-registry.mjs`. The registry reads praxis deeds only until this record
+is accepted, and no trope-checker row is added to `claims.jsonl` here.
+
+=== Context
+
+ADR 0004 pins each record's receipt as `{path, sha256}` and derives the grade
+with the canon reader of PROOF-POLICY §8.5.1. That reader is `readProofReceipt` in
+`metadatastician/standards` `1-formats/deed/tools/deed_lint.js`, pinned by commit
+and digest in `READER`. The reader reads praxis deeds: S-expressions, with each
+line at most 998 octets.
+
+`hyperpolymath/trope-checker` publishes its evidence as `verification/pwg.json`.
+That file is I-JSON (RFC 7493) in canonical JCS form (RFC 8785), and
+`scripts/pwg-check.sh` gates it. The owner rules out a deed there. Given to the
+pinned reader as it stands, the file fails at once: "line 1: line is 26347 octets".
+
+Two constraints bind any answer:
+
+* PROOF-POLICY §8.4 and §8.5, and ADR 0004: grades are derived, never asserted.
+  Mathesis derives them from receipts and has no grading rule of its own
+  (WO 2.4).
+* AUTHORITY: receipts stay home. The registry fetches them at a pinned commit
+  and does not copy them.
+
+=== Decision (proposed)
+
+==== The JSON receipt
+
+A JSON receipt is the §8.5.1 proof receipt, written field for field in
+I-JSON, with *no grade*. The field names are those of the record that the
+canon reader returns (`snake_case`). Nothing else is allowed.
+
+[cols="2,2,3",options="header"]
+|===
+|JSON field |§8.5.1 deed field |Note
+
+|`profile` |`:profile proof-receipt` |Must be `"proof-receipt"`.
+|`schema_version` |`:schema-version` |`"1.0.0"`.
+|`repository` |`:repository` |`OWNER/REPO`.
+|`source_commit` |`:source-commit` |40 lowercase hex.
+|`trusted_base[]` `{prover, module, name, binding}` |`(trusted-base (primitive …))` |Required array. `[]` means the deed omits the clause.
+|`echoes[]` `{source, image, witness, tree_sha256?, inputs?[] {prover, sha256}}` |`(echo …)`, `(inputs …)` |Required array, possibly empty. Commits are 40 hex.
+|`claims[]` `{id, legs[], controls?[]}` |`(claim :id …)` |*No* `pwg` and *no* `foundation_diverse`.
+|`legs[]` `{prover, route, token?, state?, reason?, receipts[]}` |`(leg …)` |`receipts` is required, and empty for a waived or unavailable leg.
+|`receipts[]` `{run, commit, checker, invocation, inputs_sha256?, state, reason?, image?, inputs_manifest?[], imports?[], axioms?[], result}` |`(receipt …)` |`commit` is 40 hex. `image` is the digest-pinned image the checker ran in. A counted witness needs it for `PWG-1` (§8.2, owner ruling 2026-11-16).
+|`imports[]` `{repository, commit, inputs_sha256, files[] {path, sha256}}` |`(import … (file …))` |A pinned repository that the run read (§8.5.1). Leave the field out when there is none: `[]` is refused, so there is one form.
+|`controls[]` `{path, prover, expect, receipts[]}` |`(control … (receipt …))` |A negative control that the checker must refuse (§8.5.4). It is recorded, never graded. `[]` is refused, as for `imports`.
+|`inputs_manifest[]` `{path, sha256}` |`(inputs-manifest (file …))` |
+|`axioms[]` `{name, disposition}` |`(axioms (axiom …))` |An absent field and `[]` mean different things, as in the deed. `[]` means the checker reported no axiom.
+|`result` |none |The only field with no deed counterpart: `pass` or `fail`. `current` requires `pass`, and `fail` requires `regressed`. In the deed, `:state` carries this. For a control receipt, `pass` means that the checker refused the file, as expected.
+|===
+
+`:canonical-name` and `:beholding-chora` belong to the deed envelope. The
+reader's record carries neither, so the JSON form leaves them out.
+
+==== What the reader refuses
+
+The JSON layer refuses a file:
+
+. that is not strict UTF-8, or that starts with a byte order mark;
+. whose bytes differ from the JCS form of its value. One final LF is allowed,
+  as `scripts/check-ijson-jcs.sh` allows. This rule also refuses duplicate
+  keys, unsorted keys, insignificant whitespace and escapes that JCS does not
+  use. *Canonicality is a hard requirement*, because the `sha256` pin of
+  ADR 0004 needs exactly one byte form for each value;
+. that holds a lone surrogate or a noncharacter in a key or a value (RFC 7493 §2.1);
+. with an *asserted grade*: a key `pwg`, `grade`, `grades`,
+  `foundation_diverse` (or `foundation-diverse`, `foundationDiverse`) at any
+  depth. The reason given says that the registry derives the grade;
+. with an unknown field at any depth, or a missing required field, or `null`
+  in place of a value (an optional field is left out instead);
+. with a number or a boolean anywhere. No field of the form has either type;
+. with a commit that is not 40 lowercase hex: short, abbreviated or uppercase;
+. with a string value that is empty, holds a control character (a trailing
+  newline, a tab or a CR), or is longer than 900 UTF-8 octets;
+. with a symbol-valued field (`prover`, `route`, `token`, `state`,
+  `disposition`, `witness`) that is not letters, digits and hyphens. This
+  stops deed syntax from being smuggled in;
+. with a `result` outside `pass | fail`, a `current` receipt that failed, or a
+  `fail` that is not `regressed`.
+
+After the JSON layer, the *pinned canon reader* refuses whatever it refuses in
+a deed: values outside its closed vocabularies (no coercion, so `PROVEN` is
+refused where `proven` is meant), an Agda leg whose route is not `source`, a
+manifest whose digest is not its `inputs_sha256`, duplicate claim ids, bad
+echoes, and the rest.
+
+==== How the grade is derived
+
+The prototype adds no grading rule. It writes the receipt as §8.5.1 deed text
+and hands that text to the pinned reader, which runs after `loadReader()` has
+checked its digest. The reader checks a recorded `:pwg` and
+`:foundation-diverse` against the values it derives, and refuses a mismatch.
+The prototype uses that check as an oracle. For each claim it tries the closed
+grade vocabulary, five grades times two flags. Exactly one pair is accepted,
+and that pair is the derived grade. If the reader accepts no pair, the
+prototype reports the reader's refusal. If it accepts more than one, the
+prototype fails loudly. It then reads the whole receipt once more with the
+derived pairs, so that the checks across claims also run. The result is the
+canon reader's own record. The deed text is never stored.
+
+Tested equivalence: four receipts round-trip from deed to record to JSON to
+record and come back byte-identical under JCS:
+
+* this repository's `theory_praxis.deed`;
+* the standards worked examples `example_praxis.deed` and `echo_praxis.deed`
+  (`PWG-1` through an echo, with each current receipt naming its image);
+* the echo example with an `(import …)` and a `(control …)` added, its digests
+  computed.
+
+The tests compare each grade with the one the canon reader derives from the
+deed. They do not hard-code grades, because grades move with the pin. Under
+reader `940a27af`, this repository's receipt derives `PWG-2ii` for all five
+claims: it names no checker image, and `PWG-1` now needs one.
+
+Amended 2026-11-23. The merge of `main` moved the reader pin from `e5a39d7`
+to `940a27af`, and that reader added `:image`, `(import …)` and `(control …)`.
+On the merged tree the round-trip test failed. The JSON form dropped `:image`,
+so the echo example derived `PWG-2ii` instead of `PWG-1`. The form now carries
+all three fields. This is what the equivalence test is for: when the canon
+reader grows a field, the JSON form fails loudly until it follows.
+
+==== Wiring, once accepted
+
+`readReceipt` in `claims-registry.mjs` would dispatch on the pinned path. A
+`*_praxis.deed` would go to the reader directly, as now. A `*.json` would go
+through `readJsonReceipt` and then the same reader. The rest of the derivation
+would not change: the digest pin, `derive()`, and the §8.5.3 git checks. The
+git checker in standards reads deeds only. A JSON receipt that reaches `PWG-1`
+would therefore be catalogued as `PWG-2ii` ("§8.5.3 git checks cannot run on
+a JSON receipt") until standards' checker accepts JSON too. See open question 2.
+
+=== trope-checker's file today
+
+`verification/pwg.json` at `0dceab6` (sha256 `3bf20a2e…5bda`) is canonical JCS.
+It is an evidence ledger, though, not a receipt in this form. The prototype
+refuses it ("unknown field commit"), and the test pins that refusal. To be read
+as a receipt, the file would need these changes. They are work for
+trope-checker, not for Mathesis:
+
+* *Envelope.* `repo`, `commit` and the `receipts` map would become
+  `repository`, `source_commit`, and receipts nested in their legs. `note`,
+  `policy`, `title`, `notes`, `reference` and `declarations` stay in the
+  ledger, not in the receipt.
+* *Receipts.* `evidence` (the run URL) would become `run`. `checker` and
+  `checker_version` would become one `checker` string, as the deed writes it
+  (`"agda 2.7.0.1"`).
+* *Inputs (hard gap).* `inputs_digest` is a git tree SHA-1 of a directory
+  (`git-tree verification/proofs/agda = 8d3370e…`). §8.5.1 wants a SHA-256 of
+  the sorted file manifest, *and* the manifest itself. Every `current` receipt
+  lacks both.
+* *Axioms.* The axioms are bare names (`propext`, `Quot.sound`,
+  `Classical.choice`). §8.5.1 needs `{name, disposition}`, and the disposition
+  is the owner's call under TRUSTED-BASE-REDUCTION-POLICY, not an agent's. The
+  file itself notes that the Lean legs' Mathlib dependency is one PROOF-POLICY
+  §2 forbids for a recheck leg.
+* *Vocabulary.* Tokens are uppercase (`PROVEN`). `PROVEN-WITH-AXIOMS` is not a
+  §5 token in the reader's vocabulary. `NOT-INVENTORIED` is not one of the
+  reader's states. Unavailable legs carry a token and a state, where the reader
+  wants neither but wants a `reason`. 19 of the 25 Agda legs use route
+  `re-proved`, where §8.5.1 wants `source`.
+* *Scope.* Six claims have no Agda leg (route `unavailable`), and one claim is
+  `engineering`. The reader requires an Agda leg on every claim, and §8.1
+  grades theory only. Those claims would be left out of the receipt.
+
+=== Alternatives considered
+
+* *trope-checker emits a deed.* Ruled out by the owner (2026-11-16).
+* *Change the canon reader to read JSON.* This is the cleanest long-term
+  answer, and the source is the right place for it (doctrine 14). The reader
+  is a standards artefact, though, so the change is a standards proposal: split
+  `readProofReceipt` into a parse step and a `derive(record)` step that takes
+  either syntax. Until then the oracle approach reaches the same record without
+  touching the pin. This is the most elegant arm, and the proposal recommends
+  it as the destination (open question 1).
+* *Read `pwg.json` as it is, with a mapping in Mathesis.* Rejected. It would
+  make Mathesis the interpreter of another repository's ledger, guessing
+  dispositions and translating vocabularies. That is assigning, not deriving.
+* *Let the JSON carry `pwg` and check it, as the deed does.* Rejected, as the
+  ruling requires. A JSON grade would be a second thing to keep in step.
+  Leaving it out makes "derived, not asserted" structural.
+
+=== Consequences
+
+* A repository that can emit canonical JSON but not a deed has a route into
+  the registry, and still cannot assert its own grade.
+* Mathesis carries a second syntax for one record. The equivalence tests keep
+  both syntaxes tied to the same reader.
+* The 900-octet value limit comes from the deed's line limit. A longer
+  invocation needs the standards change of open question 1.
+
+=== Open questions for the owner
+
+. Should the destination be a standards change, `derive(record)` in the canon
+  reader, with this prototype retired once that change lands?
+. §8.5.3 git checks for JSON receipts: should standards' `check-proof-receipt.sh`
+  accept JSON? Until it does, a JSON receipt cannot be catalogued at `PWG-1`.
+. `result`: keep it, the one field with no deed counterpart, or drop it and
+  let `state` carry it, as the deed does?
+. The final LF: allow it, as the estate JSON gate does, or require none, as
+  bare JCS output has?

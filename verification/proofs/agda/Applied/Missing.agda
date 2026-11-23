@@ -12,6 +12,11 @@
 -- is missing (APP-1): it is the constructor `missing`, never a number such
 -- as zero. Read the other way, an output is never more certain than an
 -- input it depends on (APP-4).
+--
+-- The verdicts are three-valued (Kleene conjunction): breach-decides gives
+-- "no" on a known breach; verdict-missing gives "missing" when there is no
+-- known breach and a value the verdict depends on is missing; verdict-yes
+-- and verdict-not-yes give that it is never "yes" then.
 
 module Applied.Missing where
 
@@ -45,6 +50,12 @@ Any P (x ∷ xs) = P x ⊎ Any P xs
 All-map : ∀ {A} {P Q : A → Set} → (∀ {x} → P x → Q x) → ∀ xs → All P xs → All Q xs
 All-map f []       _        = tt
 All-map f (x ∷ xs) (p , ps) = f p , All-map f xs ps
+
+-- A property every element has and one some element has cannot clash.
+All-Any-⊥ : ∀ {A} {P Q : A → Set} xs → All P xs → Any Q xs → (∀ {x} → P x → Q x → ⊥) → ⊥
+All-Any-⊥ []       _        ()       _
+All-Any-⊥ (x ∷ xs) (p , _)  (inj₁ q) k = k p q
+All-Any-⊥ (x ∷ xs) (_ , ps) (inj₂ q) k = All-Any-⊥ xs ps q k
 
 if-false : ∀ {A : Set} {b : Bool} {x y : A} → b ≡ false → (if b then x else y) ≡ y
 if-false refl = refl
@@ -140,6 +151,31 @@ module Proofs (N : Number) where
   ∧-false-right {given s true}  {t = t} refl = s ⊓ t , refl
   ∧-false-right {missing}       {t = t} refl = t , refl
 
+  -- A known "no" comes from a known "no" on one side.
+  ∧-false-inv : ∀ {x y s} → x ∧ᵏ y ≡ given s false →
+    Σ Status (λ s′ → x ≡ given s′ false) ⊎ Σ Status (λ t → y ≡ given t false)
+  ∧-false-inv {given s′ false}               eq = inj₁ (s′ , refl)
+  ∧-false-inv {given s′ true}  {given t b}   eq = inj₂ (t , cong (given t) (cong truth eq))
+  ∧-false-inv {given s′ true}  {missing}     ()
+  ∧-false-inv {missing}        {given t false} eq = inj₂ (t , refl)
+  ∧-false-inv {missing}        {given t true}  ()
+  ∧-false-inv {missing}        {missing}       ()
+
+  -- A missing side gives a missing result, unless the other side is a
+  -- known "no".
+  ∧-missing-left : ∀ {x y} → x ≡ missing → (∀ t → y ≡ given t false → ⊥) → x ∧ᵏ y ≡ missing
+  ∧-missing-left {y = given t false} refl nf = ⊥-elim (nf t refl)
+  ∧-missing-left {y = given t true}  refl nf = refl
+  ∧-missing-left {y = missing}       refl nf = refl
+
+  ∧-missing-right : ∀ {x y} → (∀ s → x ≡ given s false → ⊥) → y ≡ missing → x ∧ᵏ y ≡ missing
+  ∧-missing-right {given s false} nf refl = ⊥-elim (nf s refl)
+  ∧-missing-right {given s true}  nf refl = refl
+  ∧-missing-right {missing}       nf refl = refl
+
+  missing≢given : ∀ {s} {b : Bool} → missing ≡ given s b → ⊥
+  missing≢given ()
+
   module _ (i : Inputs) where
     open Inputs i
     open Run i
@@ -220,6 +256,35 @@ module Proofs (N : Number) where
     breach-decides f (r ∷ rs) (inj₁ (s , eq)) = s , ∧-false-left {f r} {verdict f rs} eq
     breach-decides f (r ∷ rs) (inj₂ p) with breach-decides f rs p
     ... | t , eq = ∧-false-right {f r} {verdict f rs} eq
+
+    -- With no known breach, the verdict is never a known "no".
+    verdict-not-false : ∀ (f : Row → Val Bool) rs →
+      (Any (λ r → Σ Status (λ s → f r ≡ given s false)) rs → ⊥) →
+      ∀ s → verdict f rs ≡ given s false → ⊥
+    verdict-not-false f []       nb s eq = false≢true (sym (cong truth eq))
+    verdict-not-false f (r ∷ rs) nb s eq with ∧-false-inv {f r} {verdict f rs} eq
+    ... | inj₁ b       = nb (inj₁ b)
+    ... | inj₂ (t , e) = verdict-not-false f rs (λ p → nb (inj₂ p)) t e
+
+    -- APP-1, the middle clause: with no known breach, a verdict is missing
+    -- when any value it depends on is missing.
+    verdict-missing : ∀ (f : Row → Val Bool) rs →
+      (Any (λ r → Σ Status (λ s → f r ≡ given s false)) rs → ⊥) →
+      Any (λ r → f r ≡ missing) rs → verdict f rs ≡ missing
+    verdict-missing f []       nb ()
+    verdict-missing f (r ∷ rs) nb (inj₁ m) =
+      ∧-missing-left {f r} {verdict f rs} m (verdict-not-false f rs (λ p → nb (inj₂ p)))
+    verdict-missing f (r ∷ rs) nb (inj₂ p) =
+      ∧-missing-right {f r} {verdict f rs} (λ s e → nb (inj₁ (s , e)))
+        (verdict-missing f rs (λ q → nb (inj₂ q)) p)
+
+    -- And it is never "yes" then: a "yes" needs every value it depends on
+    -- to be a known "yes" (verdict-yes).
+    verdict-not-yes : ∀ {u} (f : Row → Val Bool) rs →
+      Any (λ r → f r ≡ missing) rs → verdict f rs ≡ given u true → ⊥
+    verdict-not-yes f rs m eq =
+      All-Any-⊥ rs (verdict-yes f rs eq) m
+        (λ { (s , ey , _) em → missing≢given (subst (λ v → v ≡ given s true) em ey) })
 
     -- The funding gap is given only when every shortfall is given, with a
     -- status at least that of the gap.

@@ -23,3 +23,31 @@ WANT
 rm "$F/Real.agda" "$F/Prose.agda"
 bash "$SCAN" --fail-on any "$F" >/dev/null || { echo "FAIL: a control alone must not fail --fail-on any"; exit 1; }
 echo "PASS: negative-control findings classed control, real and prose-only files still axioms"
+
+# Identifier controls: a keyword followed by a prime is an identifier, not the
+# keyword (`'` is not a word character, so a bare \b matched `partial'`). Found
+# in hyperpolymath/hypatia tests/accept/ReceiptP5MissingExact.idr, which defines
+# a total function `partial'` and was counted as 4 `unsafe` lines.
+P=$(mktemp -d); trap 'rm -rf "$F" "$P"' EXIT
+printf '%s\n' 'module Ids' "partial' : Body -> Nat" "partial' x = 0" "partial'' : Nat" 'partial_sum : Nat' 'partialApply : Nat' \
+  "y = believe_me' 1" "z = assert_total' 2" > "$P/Ids.idr"
+printf '%s\n' "theorem t' : True := sorry'" "axiom' x : Nat" > "$P/Ids.lean"
+printf '%s\n' "Axiom' f : nat." > "$P/Ids.v"
+got=$(bash "$SCAN" --fail-on none "$P" | jq -r 'select(.class=="hole" or .class=="unsafe" or (.class=="axiom" and .marker!="undefined declaration")) | "\(.file):\(.line) \(.class) \(.marker)"')
+[[ -z "$got" ]] || { echo "FAIL: identifiers with a trailing prime were counted:"; echo "$got"; exit 1; }
+# Positive controls: the real keywords still count.
+rm "$P"/*
+printf '%s\n' 'module Real' 'partial' 'f : Nat -> Nat' '  partial' 'g : Nat -> Nat' 'partial h : Nat' 'y = believe_me 1' > "$P/Real.idr"
+printf '%s\n' 'theorem t : True := sorry' 'axiom a : Nat' > "$P/Real.lean"
+got=$(bash "$SCAN" --fail-on none "$P" | jq -r 'select(.marker!="undefined declaration") | "\(.file):\(.line) \(.class) \(.marker)"' | sort)
+want=$(sort <<'WANT'
+Real.idr:2 unsafe partial
+Real.idr:4 unsafe partial
+Real.idr:6 unsafe partial
+Real.idr:7 hole believe_me
+Real.lean:1 hole sorry
+Real.lean:2 axiom axiom
+WANT
+)
+[[ "$got" == "$want" ]] || { echo "FAIL: real keywords no longer counted"; diff <(printf '%s\n' "$want") <(printf '%s\n' "$got") || true; exit 1; }
+echo "PASS: trailing-prime identifiers not counted, real partial/believe_me/sorry/axiom still counted"

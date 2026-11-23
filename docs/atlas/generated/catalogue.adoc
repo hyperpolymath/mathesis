@@ -65,6 +65,8 @@ than one.
 
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |29 |0 |lean 20, isabelle 9 |564 |4 |0 |0 |0 |`PROOF-STATUS.adoc`
 
+|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |25 |3 |agda 8, lean 17 |233 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+
 |https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`docs/proof-debt.md`
 
 |https://github.com/hyperpolymath/januskey[hyperpolymath/januskey] |23 |12 |agda 11, lean 2, rocq 2, idris2 8 |223 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
@@ -78,8 +80,6 @@ than one.
 |https://github.com/hyperpolymath/wokelang[hyperpolymath/wokelang] |18 |0 |lean 7, rocq 3, idris2 8 |418 |0 |0 |0 |0 |`PROOF-NEEDS.adoc`
 
 |https://github.com/hyperpolymath/JuliaPackageSpitter.jl[hyperpolymath/JuliaPackageSpitter.jl] |17 |12 |agda 17 |87 |1 |1 |1 |1 |`PROOF-NEEDS.adoc`
-
-|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |17 |0 |lean 17 |198 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/jtv-lang[hyperpolymath/jtv-lang] |16 |0 |agda 5, lean 10, idris2 1 |301 |0 |0 |0 |0 |`verification/PROOF-STATUS.adoc`
 

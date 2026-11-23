@@ -160,14 +160,20 @@ jobs:
         run: |
           set -euo pipefail
           report="$RUNNER_TEMP/proof-report"
-          guix="$(sed -n 's/.*(commit "\([0-9a-f]\{40\}\)").*/\1/p' build/channels.scm | head -1)"
-          [ -n "$guix" ] || { echo "::error::build/channels.scm names no 40-hex Guix commit"; exit 1; }
+          # The one channel pin, read with the Scheme comments removed, so an old
+          # pin quoted in a comment is never taken for the active one.
+          guix="$(sed 's/;.*//' build/channels.scm | grep -oE '\(commit "[0-9a-f]{40}"\)' | grep -oE '[0-9a-f]{40}' || true)"
+          if [ -z "$guix" ] || [ "$(grep -c . <<<"$guix")" -ne 1 ]; then
+            echo "::error::build/channels.scm must pin exactly one 40-hex Guix commit outside its comments"; exit 1
+          fi
           run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT"
           rows="$RUNNER_TEMP/ledger-rows"
           : > "$rows"
           for lane in agda:agda coq:rocq lean4:lean; do
             gate="${lane%%:*}"; prover="${lane#*:}"; f="$report/$gate"
-            [ -f "$f" ] && [ "$(wc -l < "$f")" -eq 3 ] || { echo "::error::the $gate gate wrote no receipt report"; exit 1; }
+            if [ ! -f "$f" ] || [ "$(wc -l < "$f")" -ne 3 ]; then
+              echo "::error::the $gate gate wrote no receipt report"; exit 1
+            fi
             [ "$(sed -n 2p "$f")" = none ] || { echo "::error::the $gate gate reported axioms: $(sed -n 2p "$f")"; exit 1; }
             bash scripts/grade-receipt.sh --run-row "$prover" --run "$run" --commit "$GITHUB_SHA" \
               --checker "$(sed -n 1p "$f") (Guix ${guix:0:7})" --reported "$(sed -n 3p "$f")" --axioms none >> "$rows"

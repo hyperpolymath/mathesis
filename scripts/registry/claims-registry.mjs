@@ -64,9 +64,9 @@ const SHELVES = new Set(['theory', 'applied']);
 // that is not this file is refused, so a grade never comes from an unpinned rule.
 export const READER = {
   repository: 'metadatastician/standards',
-  commit: 'e5a39d7e5c66f9d24d7e0ffa3f8dbd01f2d42d9d',
+  commit: '940a27af1e25a73a2d55daa78d0763e6749fd935',
   path: '1-formats/deed/tools/deed_lint.js',
-  sha256: '37ff85be499b35dd9d74399e05d9ae1e57ccf095362c355f93e04b3bbf4c9491',
+  sha256: '29278b46654bdee70e8e1ff4a7ff8cb810e04b618c9ca1520a6979d6c4c91f18',
 };
 
 // The git checks of PROOF-POLICY §8.5.3, from the same standards commit as the
@@ -74,7 +74,7 @@ export const READER = {
 // the home repository; the checker calls the digest script, so both are pinned.
 export const CHECKER = {
   path: 'scripts/check-proof-receipt.sh',
-  sha256: '831f5a43c906c3edc8cfa68ab5fe13c37e7a41b35e40068481d988d887f4bd3f',
+  sha256: 'f2375747238464535d1b4a61f658f07cb2f8504c69bfb1812311c79429a4e23e',
   digest: 'scripts/proof-inputs-sha256.sh',
   digestSha256: 'dfc6dde01a3a79df638eebe4cad0eae584d8f17280077e149174c0667e9508f4',
 };

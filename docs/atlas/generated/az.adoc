@@ -86,7 +86,7 @@
 
 == E
 
-* `hyperpolymath/echidna` — engineering; 170 own proof files, 1969 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 48, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
+* `hyperpolymath/echidna` — theory; 163 own proof files, 1676 detected declarations; provers: agda 28, lean 18, rocq 9, isabelle 6, idris2 41, spark 17, smt-atp 31, why3 1, fstar 6, dafny 1, alloy 1, other 4
 * `hyperpolymath/echidnabot` — theory; 12 own proof files, 82 detected declarations; provers: agda 2, lean 4, rocq 3, idris2 3
 * `hyperpolymath/echo-types` — theory; 165 own proof files, 1759 detected declarations; provers: agda 163, lean 1, rocq 1
 * `hyperpolymath/eclexia` — theory; 11 own proof files, 218 detected declarations; provers: agda 1, rocq 6, idris2 4
@@ -136,7 +136,7 @@
 * `hyperpolymath/http-capability-gateway` — engineering; 5 own proof files, 59 detected declarations; provers: idris2 5
 * `metadatastician/hvn-dehallucinator` — theory; 19 own proof files, 640 detected declarations; provers: agda 10, lean 1, rocq 1, idris2 1, tla 6
 * `hyperpolymath/hybrid-automation-router` — engineering; 5 own proof files, 66 detected declarations; provers: idris2 5
-* `hyperpolymath/hypatia` — engineering; 58 own proof files, 680 detected declarations; provers: agda 2, lean 1, rocq 1, idris2 52, tla 2
+* `hyperpolymath/hypatia` — engineering; 77 own proof files, 1040 detected declarations; provers: agda 7, lean 1, rocq 1, idris2 66, tla 2
 
 == I
 
@@ -255,7 +255,7 @@
 * `hyperpolymath/reposystem` — engineering; 5 own proof files, 7 detected declarations; provers: idris2 1, spark 2, other 2
 * `hyperpolymath/residual-evidence-types` — theory; 37 own proof files, 391 detected declarations; provers: agda 37
 * `hyperpolymath/ResidualEvidenceTypes.jl` — theory; 1 own proof files, 1 detected declarations; provers: agda 1
-* `hyperpolymath/resource-algebra` — theory; 25 own proof files, 467 detected declarations; provers: agda 22, lean 2, rocq 1
+* `hyperpolymath/resource-algebra` — theory; 29 own proof files, 575 detected declarations; provers: agda 26, lean 2, rocq 1
 * `hyperpolymath/robodog-defensive-systems-lab` — engineering; 13 own proof files, 64 detected declarations; provers: idris2 6, spark 6, other 1
 * `hyperpolymath/rpa-elysium` — engineering; 6 own proof files, 74 detected declarations; provers: idris2 6
 * `hyperpolymath/rsr-template-repo` — engineering; 18 own proof files, 136 detected declarations; provers: agda 1, lean 2, rocq 1, idris2 11, tla 3
@@ -272,7 +272,7 @@
 * `hyperpolymath/somethings-fishy` — engineering; 7 own proof files, 0 detected declarations; provers: spark 6, other 1
 * `catachresis-colloquium/sr71-blackglider` — engineering; 8 own proof files, 60 detected declarations; provers: lean 1, idris2 7
 * `hyperpolymath/ssg-collection` — engineering; 18 own proof files, 108 detected declarations; provers: lean 1, idris2 6, spark 8, other 3
-* `metadatastician/standards` — engineering; 2 own proof files, 40 detected declarations; provers: idris2 2
+* `metadatastician/standards` — engineering; 3 own proof files, 66 detected declarations; provers: idris2 3
 * `metadatastician/stapeln` — engineering; 19 own proof files, 294 detected declarations; provers: idris2 18, alloy 1
 * `hyperpolymath/stateful-artefacts` — engineering; 6 own proof files, 56 detected declarations; provers: idris2 4, tla 2
 * `hyperpolymath/statistikles` — theory; 4 own proof files, 22 detected declarations; provers: agda 4

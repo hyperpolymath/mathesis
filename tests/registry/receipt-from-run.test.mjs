@@ -81,7 +81,7 @@ const deedAt = async (repo, c1, inputs) => {
     `;; The current receipts come from run\n;; 6000 on main ${c1.slice(0, 7)}; a comment with ( and ) and "quotes".\n` +
     '(praxis-deed\n  :schema-version "1.0.0"\n  :canonical-name "fixture-receipt"\n  :profile proof-receipt\n' +
     `  :repository "hyperpolymath/mathesis"\n  :source-commit "${c1}"\n` +
-    '  (claim :id "T-1" :pwg PWG-1 :foundation-diverse #f\n' +
+    '  (claim :id "T-1" :pwg PWG-2ii :foundation-diverse #f\n' +
     '    (leg :prover agda :route source :token proven :state AGDA-VERIFIED\n' + rec('agda', 'agda --safe --without-K --cubical-compatible Top.agda') + ')\n' +
     '    (leg :prover rocq :route re-proved :token proven :state RECONCILED ; a comment ) here\n' + rec('rocq', 'coqc Top.v') + ')\n' +
     '    (leg :prover lean :route re-proved :token proven :state RECONCILED\n' + rec('lean', 'lean Top.lean') + ')))\n';
@@ -227,7 +227,7 @@ test('the move writes one new current receipt per leg and supersedes the old one
   const {text, report, record} = await planMove({repo: fx.repo, evidence: evidenceFor(fx.c2, logFor(fx.files)), why: WHY, branch: 'main'});
   expect(readFileSync(path.join(fx.repo, DEED), 'utf8')).toBe(before); // planning writes nothing
   expect(record.source_commit).toBe(fx.c2);
-  expect(record.claims.map(c => [c.id, c.pwg])).toEqual([['T-1', 'PWG-1']]);
+  expect(record.claims.map(c => [c.id, c.pwg])).toEqual([['T-1', 'PWG-2ii']]);
   for (const leg of record.claims[0].legs) {
     const [cur, old] = leg.receipts;
     expect(cur).toMatchObject({state: 'current', commit: fx.c2, run: 'https://github.com/hyperpolymath/mathesis/actions/runs/7000/job/70', axioms: []});
@@ -262,7 +262,7 @@ test('the move writes one new current receipt per leg and supersedes the old one
 
 test('a green run with a quarantined module that failed as expected is accepted, and the module is in no manifest', async () => {
   const {record} = await planMove({repo: fx.repo, evidence: evidenceFor(fx.c2, logFor(fx.files, {quarantined: true})), why: WHY, branch: 'main'});
-  expect(record.claims[0].pwg).toBe('PWG-1');
+  expect(record.claims[0].pwg).toBe('PWG-2ii');
   const rocq = record.claims[0].legs.find(l => l.prover === 'rocq').receipts[0];
   expect(rocq.inputs_manifest.map(m => m.path)).toEqual(['verification/proofs/coq/Top.v']);
 });

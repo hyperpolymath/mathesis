@@ -44,6 +44,11 @@ RECEIPT_DEFAULT_BRANCH=main
 RECEIPT_CANONICAL_NAME=mathesis-theory-receipt
 RECEIPT_BEHOLDING_CHORA='#u8"chora:estate/github.com/hyperpolymath"'
 RECEIPT_SCRIPT=scripts/grade-receipt.sh
+# A receipt that is not current keeps what its run read: its inputs digest and
+# axioms from the ledger row, and its inputs manifest when that can be rebuilt to
+# the same digest (PROOF-POLICY §8.5.1; owner ruling 2026-11-24). None of it
+# counts toward a grade. Set here, it is the same for --write and --check.
+RECEIPT_KEEP_LINEAGE_DETAIL=1
 
 AGDA=verification/proofs/agda
 COQ=verification/proofs/coq

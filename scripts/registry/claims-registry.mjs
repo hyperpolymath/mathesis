@@ -76,9 +76,9 @@ const closed = (object, allowed, label, where) => {
 // that is not this file is refused, so a grade never comes from an unpinned rule.
 export const READER = {
   repository: 'metadatastician/standards',
-  commit: '745fc744158047a675eeb92464167c9961d66c4b',
+  commit: '84c2d1c1b040c9d7b8924532fa77e71e63d72c66',
   path: '1-formats/deed/tools/deed_lint.js',
-  sha256: 'aece22bf20d6e112e633efd288ed5d145012e85822d6b3ebea916c91c513acb9',
+  sha256: 'bd276e4046066926bdfb65f474271e2ddba57467cc237e9e7ec56c894577b04d',
 };
 
 // The git checks of PROOF-POLICY §8.5.3, from the same standards commit as the
@@ -96,7 +96,7 @@ export const CHECKER = {
 // of Mathesis. One commit pins all four files, as the generator requires.
 export const GENERATOR = {
   path: 'scripts/proof-receipt.sh',
-  sha256: 'e54a8ccc5399d1c81a4f60a01c354ddb6df3cfae31f87d0c6c3d91e3e4623a4d',
+  sha256: 'f56edf5eb5c78f510f65877a7f24c1fe099b4f60873d2804427fef6a52fd6f65',
 };
 
 // ── Validation of the registry rows ──────────────────────────────────────────

@@ -129,9 +129,11 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   control. `just receipt-record ROWS` records a run. The Proof Policy Gate writes
   the ledger rows of each green run on main to its job summary, from a report
   that `scripts/check-proofs.sh` writes when `PROOF_REPORT_DIR` is set; no log
-  is read. The current receipts and grades are unchanged. The canon reader, the
-  git checker and the generator are pinned at standards `745fc74` (was
-  `940a27af`); `claims-registry.mjs receipt` is removed, and
+  is read. The current receipts and grades are unchanged. Superseded receipts
+  keep their run's inputs digest and axioms, and the inputs manifest where it
+  can be rebuilt (`RECEIPT_KEEP_LINEAGE_DETAIL=1`, standards#1705). The canon
+  reader, the git checker and the generator are pinned at standards `84c2d1c`
+  (was `940a27af`); `claims-registry.mjs receipt` is removed, and
   `claims-registry.mjs standards` checks the four pinned files for the home
   script.
 * `CI/gate` now also starts on `pull_request`, and a tamper guard is added.

@@ -126,7 +126,7 @@ jobs:
           git -C "$r" remote add origin https://github.com/metadatastician/standards.git
           git -C "$r" config core.sparseCheckout true
           printf '1-formats/deed/tools/\nscripts/check-proof-receipt.sh\nscripts/proof-inputs-sha256.sh\nscripts/proof-receipt.sh\n' > "$r/.git/info/sparse-checkout"
-          git -C "$r" fetch -q --depth 1 origin 745fc744158047a675eeb92464167c9961d66c4b
+          git -C "$r" fetch -q --depth 1 origin 84c2d1c1b040c9d7b8924532fa77e71e63d72c66
           git -C "$r" checkout -q FETCH_HEAD
 
       - name: Golden path (just check), then its controls

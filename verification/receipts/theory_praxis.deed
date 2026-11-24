@@ -51,22 +51,36 @@
                :commit "f68b78d6ceb8d3c83f96f5ab8e57779442a8834f"
                :checker "agda 2.6.3 (Ubuntu 24.04 agda package)"
                :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :inputs-sha256 "35199233097c51127dd8a94440cae7a0c2507a920ba744207732b7c8b0932666"
                :state superseded
-               :reason "replaced by the CI receipt in the pinned Guix, Agda 2.7.0.1")
+               :reason "replaced by the CI receipt in the pinned Guix, Agda 2.7.0.1"
+               (axioms))
       ; the run reported: check-proofs.sh agda: RESULT: PASS; FeatureReachability.agda: postulates: none in the 1 first-party module(s) of the import cone
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "agda --safe --without-K --cubical-compatible FeatureReachability.agda"
+               :inputs-sha256 "35199233097c51127dd8a94440cae7a0c2507a920ba744207732b7c8b0932666"
                :state superseded
-               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)"
+               (axioms))
       ; the run reported: check-proofs.sh agda: RESULT: PASS; postulates: none in the first-party cones of FeatureReachability (1 module), Applied/Missing (3) and Applied/IntLaws (6)
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh agda: agda --safe --without-K --cubical-compatible on each gated module of verification/proofs/agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))
+               (axioms)))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh coq: RESULT: PASS; coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity; Print Assumptions: closed under the global context for 11 declaration(s) of FeatureReachability.v and 134 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -84,22 +98,31 @@
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "coqc 8.18.0 (Ubuntu 24.04 coq package)"
                :invocation "coqc FeatureReachability.v"
+               :inputs-sha256 "21dbe44f56ee4442247715b50d8a384b834b3232ba1ff2de9201bbbfbff92915"
                :state superseded
-               :reason "replaced by the CI receipt in the pinned Guix")
+               :reason "replaced by the CI receipt in the pinned Guix"
+               (axioms))
       ; the run reported: check-proofs.sh coq: RESULT: PASS; FeatureReachability.v: Print Assumptions: closed under the global context for 1 theorem(s): absent_under_all_features
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "coqc FeatureReachability.v"
+               :inputs-sha256 "794ed1c5179384913e037570a9490eb003c320a3aae2df2efcf4066ed5f57ae4"
                :state superseded
-               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)"
+               (axioms))
       ; the run reported: check-proofs.sh coq: RESULT: PASS; Print Assumptions: closed under the global context for 1 theorem(s) of FeatureReachability.v and 82 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh coq: coqc and Print Assumptions on each gated module of verification/proofs/coq"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))
+               (axioms)))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 8 theorem(s) and 48 definition(s) of FeatureReachability.lean, and 102 theorem(s) and 128 definition(s) of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -118,22 +141,32 @@
                :commit "f1be654e69b23873ea40651cb40e0e095ac53680"
                :checker "lean 4.15.0 (11651562caae, release archive)"
                :invocation "lean FeatureReachability.lean"
+               :inputs-sha256 "c105ee55e8ea57b9c11d6a1ff9245e0a550a5bd7301eddbb056e8719e4c47724"
                :state superseded
-               :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0")
+               :reason "replaced by the CI receipt in the pinned Guix, Lean 4.29.0"
+               (axioms))
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; FeatureReachability.lean: axioms: none for 2 declared theorem(s)
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/42896264290/job/130110238086"
                :commit "336768958d01257caae14cb81fb54197c2617d97"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "lean FeatureReachability.lean"
+               :inputs-sha256 "ee5e7b1347a394a9050d815f30915aacdd85ffa9219811b29b0faa341c7d8e97"
                :state superseded
-               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)")
+               :reason "replaced by the CI receipt of run 43498592499 on 034f215, which records the inputs digest and the axioms (PROOF-POLICY 8.5.1, standards d9b03a3)"
+               (axioms))
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 2 declared theorem(s) of FeatureReachability.lean and 95 of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/43498592499/job/132138258520"
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh lean4: lean and the axiom audit of declared theorems on each gated module of verification/proofs/lean4"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)")))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))
+               (axioms))))
   (claim :id "APP-1" :pwg PWG-2ii :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
       ; the run reported: check-proofs.sh agda: RESULT: PASS; postulates: none in the first-party cones of FeatureReachability (1 module), Applied/Missing (3) and Applied/IntLaws (6)
@@ -157,8 +190,18 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh agda: agda --safe --without-K --cubical-compatible on each gated module of verification/proofs/agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))
+               (axioms)))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh coq: RESULT: PASS; coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity; Print Assumptions: closed under the global context for 11 declaration(s) of FeatureReachability.v and 134 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -176,8 +219,13 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh coq: coqc and Print Assumptions on each gated module of verification/proofs/coq"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))
+               (axioms)))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 8 theorem(s) and 48 definition(s) of FeatureReachability.lean, and 102 theorem(s) and 128 definition(s) of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -196,8 +244,14 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh lean4: lean and the axiom audit of declared theorems on each gated module of verification/proofs/lean4"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)")))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))
+               (axioms))))
   (claim :id "APP-2" :pwg PWG-2ii :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
       ; the run reported: check-proofs.sh agda: RESULT: PASS; postulates: none in the first-party cones of FeatureReachability (1 module), Applied/Missing (3) and Applied/IntLaws (6)
@@ -221,8 +275,18 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh agda: agda --safe --without-K --cubical-compatible on each gated module of verification/proofs/agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))
+               (axioms)))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh coq: RESULT: PASS; coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity; Print Assumptions: closed under the global context for 11 declaration(s) of FeatureReachability.v and 134 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -240,8 +304,13 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh coq: coqc and Print Assumptions on each gated module of verification/proofs/coq"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))
+               (axioms)))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 8 theorem(s) and 48 definition(s) of FeatureReachability.lean, and 102 theorem(s) and 128 definition(s) of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -260,8 +329,14 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh lean4: lean and the axiom audit of declared theorems on each gated module of verification/proofs/lean4"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)")))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))
+               (axioms))))
   (claim :id "APP-3" :pwg PWG-2ii :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
       ; the run reported: check-proofs.sh agda: RESULT: PASS; postulates: none in the first-party cones of FeatureReachability (1 module), Applied/Missing (3) and Applied/IntLaws (6)
@@ -285,8 +360,18 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh agda: agda --safe --without-K --cubical-compatible on each gated module of verification/proofs/agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))
+               (axioms)))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh coq: RESULT: PASS; coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity; Print Assumptions: closed under the global context for 11 declaration(s) of FeatureReachability.v and 134 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -304,8 +389,13 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh coq: coqc and Print Assumptions on each gated module of verification/proofs/coq"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))
+               (axioms)))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 8 theorem(s) and 48 definition(s) of FeatureReachability.lean, and 102 theorem(s) and 128 definition(s) of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -324,8 +414,14 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh lean4: lean and the axiom audit of declared theorems on each gated module of verification/proofs/lean4"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)")))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))
+               (axioms))))
   (claim :id "APP-4" :pwg PWG-2ii :foundation-diverse #f
     (leg :prover agda :route source :token proven :state AGDA-VERIFIED
       ; the run reported: check-proofs.sh agda: RESULT: PASS; postulates: none in the first-party cones of FeatureReachability (1 module), Applied/Missing (3) and Applied/IntLaws (6)
@@ -349,8 +445,18 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "agda 2.7.0.1 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh agda: agda --safe --without-K --cubical-compatible on each gated module of verification/proofs/agda"
+               :inputs-sha256 "4db97b78050ef622485ceb179e80ad9f39dbd986cdd6f45af0fd5b32a410c643"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/agda/Applied/Cash.agda" :sha256 "fe231a7679529e7998385d8acdcaf8cde6880e44a5cc5d5cc3c03fd4ac2eea12")
+                 (file :path "verification/proofs/agda/Applied/Cohort.agda" :sha256 "5a485d5fd5329939aa85909e65bc200d886316ebb69e9786b2764dd17eba8d56")
+                 (file :path "verification/proofs/agda/Applied/IntLaws.agda" :sha256 "09285481b29234fced3197b1a4fcd86f284a66f5ce011d23b68bb1aa602c91fb")
+                 (file :path "verification/proofs/agda/Applied/IntNumber.agda" :sha256 "0ba5ca46fd22d0abb4f7ceb0ff73a7857f7a3acc6143a43a68cf5932e8868959")
+                 (file :path "verification/proofs/agda/Applied/Missing.agda" :sha256 "4afb4c82e84bf6411b0f0c19eb6d34869a42bee7d5616624147d1881c78b6fe9")
+                 (file :path "verification/proofs/agda/Applied/Status.agda" :sha256 "d059344565a55b897824b83b4f676b9a7326ba50a5b35a6da49ab72bb40e8a97")
+                 (file :path "verification/proofs/agda/FeatureReachability.agda" :sha256 "4e39d6ae751d97d3edf57720ccf844d90de3e9ee6603901a04f5eb6494d94564"))
+               (axioms)))
     (leg :prover rocq :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh coq: RESULT: PASS; coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity; Print Assumptions: closed under the global context for 11 declaration(s) of FeatureReachability.v and 134 of Cohort.v
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -368,8 +474,13 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "coqc 8.18.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh coq: coqc and Print Assumptions on each gated module of verification/proofs/coq"
+               :inputs-sha256 "1c5814d6040f119382ebeccffe477cbd7d8485a45cf9e8877782316378e28709"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4)"
+               (inputs-manifest
+                 (file :path "verification/proofs/coq/Cohort.v" :sha256 "2519cdbdb3b22ee5132e5708bbbeb9e87e3b2d8c2c318329c96c0545863b6260")
+                 (file :path "verification/proofs/coq/FeatureReachability.v" :sha256 "e2f90043366fb8061784da4cd12af3278e8a9ea0af78fdba4490f96f28b68cb1"))
+               (axioms)))
     (leg :prover lean :route re-proved :token proven :state RECONCILED
       ; the run reported: check-proofs.sh lean4: RESULT: PASS; axioms: none for 8 theorem(s) and 48 definition(s) of FeatureReachability.lean, and 102 theorem(s) and 128 definition(s) of Cohort.lean
       (receipt :run "https://github.com/hyperpolymath/mathesis/actions/runs/44190913019/job/134419742986"
@@ -388,6 +499,12 @@
                :commit "034f215b3b601aa6bdde7471bdc650bc62c0f56c"
                :checker "lean 4.29.0 (Guix 8edb9da)"
                :invocation "bash scripts/check-proofs.sh lean4: lean and the axiom audit of declared theorems on each gated module of verification/proofs/lean4"
+               :inputs-sha256 "de2e3324f91b25f4a05658dfcfb435c7417709667b8766f7aeaa832fa874c4c1"
                :state superseded
-               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)")))
+               :reason "replaced by the CI receipt of run 44190913019 on main 8c55804, whose inputs add APP-1's middle clause and THY-1's propositional theorems, checked under the gate that audits definitions as well as theorems (PROOF-POLICY 8.4); for THY-1 it is also the first under the gate that fails on an empty audit: this receipt's empty axiom list came from an audit that inspected none of THY-1's results, which are definitions (proof audit 2026-11-16, finding 31)"
+               (inputs-manifest
+                 (file :path "verification/proofs/lean4/Cohort.lean" :sha256 "b91e2aa7b1322284d67710ea918858497bc1245a6b941448df2deba4b521ce10")
+                 (file :path "verification/proofs/lean4/FeatureReachability.lean" :sha256 "4158e54f85c8e83e49789869a4e9b12fe4b8d7460981f5c8442479268f17d55a")
+                 (file :path "verification/proofs/lean4/lean-toolchain" :sha256 "651c8accb402b0c071cd336e9d3dc0a55516b1bfb434ddc4801f14936785b1d2"))
+               (axioms))))
 )

@@ -637,13 +637,13 @@ THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the p
 [[superseded-manifests-option]]
 ==== 🌱 🗄️ Keep superseded manifests (option)
 
-A generator option in standards that keeps the inputs digest, manifest and axioms on superseded receipts. Mathesis turns it on once it lands (owner ruling 2026-11-24); until then the run ledger keeps each digest.
+A generator option that keeps the inputs digest, manifest and axioms on superseded receipts (owner ruling 2026-11-24). It landed in standards as #1705, and hyperpolymath/mathesis#122 turns it on; it is done when that pull request merges.
 
-*Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
+*Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open
 
 *Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
 *Value (judgement):* engineering ●, soundness ●●, ecosystem ● +
-*See:* metadatastician/standards#1705 (draft): RECEIPT_KEEP_LINEAGE_DETAIL=1 in scripts/grade-receipt.sh, set alike for --write and --check
+*See:* metadatastician/standards#1705, merged at 84c2d1c; hyperpolymath/mathesis#122 turns it on: RECEIPT_KEEP_LINEAGE_DETAIL=1 in scripts/grade-receipt.sh, alike for --write and --check
 
 * 🃏 _Contrarian:_ The ledger already holds every digest; check the option earns its keep.
 * 🔍 _Soundness auditor:_ Lineage you can re-check without git archaeology.
@@ -838,6 +838,5 @@ carried to that repository, not done here.
 * estate:metadatastician/gels: xref:gels-maths-panel[🪟 Maths panel in GELS] (blocked)
 * estate:metadatastician/standards: xref:ci-recorder[🤖 CI records its own runs] (open)
 * estate:metadatastician/standards: xref:idris-token-laws[🧬 Generated Idris2 token laws] (open)
-* estate:metadatastician/standards: xref:superseded-manifests-option[🗄️ Keep superseded manifests (option)] (open)
 * upstream:Deducteam/agda2dedukti: xref:file-transport-bugs[🐛 File the transport reproducers] (open)
 * upstream:Deducteam/lambdapi: xref:dedukti-transport[🚂 Transport through Dedukti] (blocked)

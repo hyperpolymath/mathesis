@@ -80,7 +80,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 +
   `scripts/ultraplan/ultraplan.mjs` generates `generated/ultraplan.adoc` and a
   picture, `generated/tree.svg`. They show the eras, the frontier, the forks,
-  the confluences and each advisor's pick, all derived and none typed.
+  the confluences and each advisor's pick (the private me advisor names none), all
+  derived and none typed.
 +
   The generator refuses:
   ** a done node without evidence that holds: a file, a claim grade the

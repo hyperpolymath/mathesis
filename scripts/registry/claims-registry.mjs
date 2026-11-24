@@ -93,6 +93,15 @@ export const CHECKER = {
 
 // ── Validation of the registry rows ──────────────────────────────────────────
 
+// A claim id is OWNER/REPO#CLAIM: a repository name, then a non-empty claim. The
+// registry's rows obey it, and readers that cite a claim (the ultraplan) use it too.
+export const CLAIM_REPO = /^[-\w.]+\/[-\w.]+$/;
+export function isClaimId(id) {
+  if (typeof id !== 'string') return false;
+  const i = id.indexOf('#');
+  return i > 0 && CLAIM_REPO.test(id.slice(0, i)) && id.length > i + 1;
+}
+
 // Throw unless every row is well formed and its repository is public in the
 // census inventory (the registry never names a private repository).
 export function validate(rows, inventory) {
@@ -103,7 +112,7 @@ export function validate(rows, inventory) {
     const where = r && r.id ? r.id : JSON.stringify(r);
     if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
     closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
-    if (typeof r.repo !== 'string' || !/^[-\w.]+\/[-\w.]+$/.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
+    if (typeof r.repo !== 'string' || !CLAIM_REPO.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
     if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
     if (seen.has(r.id)) throw new Error(`Duplicate id: ${r.id}`);

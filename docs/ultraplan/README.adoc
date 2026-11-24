@@ -48,7 +48,8 @@ start today whenever an active slot is free.
 * *Unlocks*: how many live nodes depend on a node, directly or through others.
 * *Forks*: nodes that enable two or more tracks, where work spreads.
 * *Confluences*: nodes that need two or more tracks, where work joins.
-* *Each advisor's pick*: one node from the frontier.
+* *Each advisor's pick*: one node from the frontier. The private me advisor names
+none; the page lists the frontier nodes the owner tagged, unranked.
 
 A typed status is held to account:
 

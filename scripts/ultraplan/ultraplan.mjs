@@ -31,6 +31,7 @@ import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSyn
 import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
+import {isClaimId} from '../registry/claims-registry.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DIR = 'docs/ultraplan';
@@ -152,7 +153,8 @@ const EVIDENCE = {
     return ctx.isFile(p) ? null : `evidence path ${p} is not a file in the repository`;
   },
   claim(ev, ctx) {
-    if (!isStr(ev.claim) || !/^[\w.-]+\/[\w.-]+#[A-Z]+-[0-9A-Za-z]+$/.test(ev.claim)) return `evidence claim ${JSON.stringify(ev.claim)} is not OWNER/REPO#ID`;
+    // The registry's own rule, so any claim it can list can be cited here.
+    if (!isStr(ev.claim) || !isClaimId(ev.claim)) return `evidence claim ${JSON.stringify(ev.claim)} is not OWNER/REPO#ID`;
     const min = ev.min_pwg ?? 'PWG-3';
     if (!PWG_ORDER.includes(min) || min === 'ungraded') return `evidence min_pwg ${JSON.stringify(min)} is not a grade`;
     const got = registryGrade(ctx.registry, ev.claim);

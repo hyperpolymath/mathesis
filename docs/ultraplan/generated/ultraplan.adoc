@@ -642,7 +642,8 @@ A generator option in standards that keeps the inputs digest, manifest and axiom
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
 *Needs:* <<receipt-generator,🏭 Shared receipt generator>> +
-*Value (judgement):* engineering ●, soundness ●●, ecosystem ●
+*Value (judgement):* engineering ●, soundness ●●, ecosystem ● +
+*See:* metadatastician/standards#1705 (draft): RECEIPT_KEEP_LINEAGE_DETAIL=1 in scripts/grade-receipt.sh, set alike for --write and --check
 
 * 🃏 _Contrarian:_ The ledger already holds every digest; check the option earns its keep.
 * 🔍 _Soundness auditor:_ Lineage you can re-check without git archaeology.

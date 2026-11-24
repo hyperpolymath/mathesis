@@ -3,7 +3,7 @@
 //
 // The ultraplan generator: what it derives, and each thing it refuses.
 import {test, expect, afterAll} from 'bun:test';
-import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, ACTIVE_LIMIT, ROOT, VIEW, SVG}
@@ -67,6 +67,8 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(out[VIEW]).toContain('_Pick:_ <<theorem,🔷 theorem>>. The deep one.');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
+  // Three eras are narrower than the legend; the canvas still holds the legend.
+  expect(Number(/width="(\d+)"/.exec(out[SVG])[1])).toBeGreaterThanOrEqual(24 + 6 * 128 + 260);
 });
 
 test('the views are deterministic', () => {
@@ -81,6 +83,16 @@ test('done needs evidence that holds', () => {
   refuses({nodes: swap('root', {evidence: [{path: '../etc/passwd'}]})}, /is not a repository path/);
   refuses({nodes: swap('root', {evidence: [{path: '.'}]})}, /evidence path \. is not a file in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: 'docs/decisions'}]})}, /evidence path docs\/decisions is not a file/);
+  // A committed symlink to a file outside the repository is not evidence in it.
+  const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-outside-'));
+  roots.push(outside);
+  writeFileSync(path.join(outside, 'secret.txt'), 'x\n');
+  const root = fixture({nodes: swap('root', {evidence: [{path: 'link.txt'}]})});
+  symlinkSync(path.join(outside, 'secret.txt'), path.join(root, 'link.txt'));
+  expect(() => generate(root)).toThrow(/evidence path link.txt is not a file in the repository/);
+  const inside = fixture({nodes: swap('root', {evidence: [{path: 'inner.adoc'}]})});
+  symlinkSync('README.adoc', path.join(inside, 'inner.adoc'));
+  expect(() => generate(inside)).not.toThrow();
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
@@ -94,6 +106,9 @@ test('a claim is evidence only at the grade the registry derives', () => {
   expect(() => generate(fixture({nodes: ok, registry}))).not.toThrow();
   refuses({nodes: swap('root', {evidence: [{claim: 'o/r#T-1', min_pwg: 'PWG-2ii'}]}), registry}, /o\/r#T-1 derives PWG-2i, below PWG-2ii/);
   refuses({nodes: swap('root', {evidence: [{claim: 'o/r#T-9'}]}), registry}, /does not list o\/r#T-9/);
+  // An id mentioned inside another row's statement does not list that claim.
+  const mention = '|https://x/blob/c/P.adoc[o/r#T-1] at `c` |theorem |`PWG-2ii` |Builds on [o/r#GHOST-1] |why\n';
+  refuses({nodes: swap('root', {evidence: [{claim: 'o/r#GHOST-1'}]}), registry: mention}, /does not list o\/r#GHOST-1/);
 });
 
 test('a done or active node cannot rest on an unfinished need', () => {
@@ -112,6 +127,12 @@ test('rivals name each other back', () => {
   refuses({nodes: swap('paper', {rivals: ['cheap']})}, /rival cheap does not name paper back/);
   const both = BASE.map(n => n.id === 'paper' ? {...n, rivals: ['cheap']} : n.id === 'cheap' ? {...n, rivals: ['paper']} : n);
   expect(generate(fixture({nodes: both})).derived.rivalries).toEqual([['cheap', 'paper']]);
+});
+
+test('the council is well formed', () => {
+  refuses({advisors: ADVISORS.filter(a => a.id !== 'me')}, /the me advisor is required/);
+  refuses({advisors: ADVISORS.map(a => a.id === 'maths' ? {id: a.id, name: a.name, glyph: a.glyph, asks: a.asks} : a)}, /advisor maths: reads is required/);
+  refuses({advisors: ADVISORS.map(a => a.id === 'contrarian' ? {...a, reads: 'maths'} : a)}, /advisor contrarian: reads no value mark/);
 });
 
 test('exactly the me advisor is private', () => {
@@ -154,7 +175,7 @@ test('closed schema, blocked reasons and canonical lines', () => {
 
 test('return tickets are grafted or archived honestly', () => {
   const x = {id: 'X-001', what: 'A trip', why: 'Because', size: 'S', date: '2026-11-24', status: 'out'};
-  expect(() => generate(fixture({expeditions: [x]}))).not.toThrow();
+  expect(generate(fixture({expeditions: [x]}))[VIEW]).toContain('|X-001 |2026-11-24 |S |A trip |Because |🎒 out');
   refuses({expeditions: [{...x, status: 'grafted', graft: 'ghost'}]}, /names the node it became/);
   refuses({expeditions: [{...x, status: 'archived'}]}, /records what it taught/);
   refuses({expeditions: [x, {...x}]}, /id is X-NNN and unique/);

@@ -27,7 +27,7 @@
 // The "me" advisor is private (owner ruling 2026-11-24): its notes are kept
 // outside this public repository, and a node carries at most the neutral tag
 // `owner_value: "high"`. Counsel under the key `me` is refused.
-import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync} from 'node:fs';
+import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, realpathSync} from 'node:fs';
 import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
@@ -43,6 +43,7 @@ export const SIZES = {S: 1, M: 2, L: 4, XL: 8};
 export const VALUE_KEYS = ['maths', 'engineering', 'science', 'economics', 'publications', 'teaching', 'soundness', 'ecosystem'];
 export const KINDS = ['theorem', 'tool', 'data', 'view', 'paper', 'decision', 'infrastructure', 'method'];
 export const ACTIVE_LIMIT = 3;
+export const SPECIAL_ADVISORS = ['contrarian', 'me'];
 export const PWG_ORDER = ['ungraded', 'PWG-3', 'PWG-2i', 'PWG-2ii', 'PWG-1'];
 
 // The eras of the tree, by depth (the longest chain of needs below a node).
@@ -101,11 +102,16 @@ function closed(obj, allowed, where) {
 // ── Evidence ─────────────────────────────────────────────────────────────────
 // The grade the registry view derives for a claim id, or null when the view
 // does not list it. The view is generated and checked by registry-check.
+// A registry row opens with its claim cell (a link whose label is the claim id),
+// then its kind and its grade. Only the claim cell names the row's claim: an id
+// mentioned in another row's statement is not that claim's row.
+const ROW = /^\|https:\/\/\S*?\[([^\]]+)\][^|]* \|(?:theorem|demonstration|assumption) \|`(PWG-1|PWG-2ii|PWG-2i|PWG-3|ungraded)` \|/;
 export function registryGrade(registryText, id) {
-  const line = registryText.split('\n').find(l => l.includes(`[${id}]`));
-  if (!line) return null;
-  const m = /\|`(PWG-1|PWG-2ii|PWG-2i|PWG-3|ungraded)`/.exec(line) || /\|`?(ungraded)`?\s*\|/.exec(line);
-  return m ? m[1] : null;
+  for (const line of registryText.split('\n')) {
+    const m = ROW.exec(line);
+    if (m && m[1] === id) return m[2];
+  }
+  return null;
 }
 
 // Whether an ADR's Status section opens with "Accepted".
@@ -157,7 +163,11 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     // Exactly the me advisor is private: its ranking and the page's privacy claim depend on it.
     if (a.id === 'me' && a.private !== true) fail('advisor me: must be private ("private":true)');
     if (a.id !== 'me' && a.private !== undefined) fail(`advisor ${a.id}: only the me advisor is private`);
+    // The contrarian and the me advisor have their own ranking; every other advisor ranks by one mark.
+    if (SPECIAL_ADVISORS.includes(a.id) && a.reads !== undefined) fail(`advisor ${a.id}: reads no value mark (it has its own ranking)`);
+    if (!SPECIAL_ADVISORS.includes(a.id) && a.reads === undefined) fail(`advisor ${a.id}: reads is required (the value mark it ranks by)`);
   }
+  if (!advisorIds.has('me')) fail('advisors: the me advisor is required ("id":"me","private":true)');
 
   const byId = new Map();
   for (const n of nodes) {
@@ -452,12 +462,12 @@ export function renderAdoc(byId, advisors, expeditions, d) {
   L.push('');
   if (!expeditions.length) L.push('No trip is out.');
   else {
-    L.push('[cols="1,1,3,3,3",options="header"]');
+    L.push('[cols="1,1,1,3,3,3",options="header"]');
     L.push('|===');
-    L.push('|Card |Date |What |Why |Outcome');
+    L.push('|Card |Date |Size |What |Why |Outcome');
     for (const x of expeditions) {
       const out = x.status === 'out' ? '🎒 out' : x.status === 'grafted' ? `🌿 grafted as ${xref(byId, x.graft)}` : `📦 archived: ${cell(x.lesson)}`;
-      L.push(`|${x.id} |${x.date} |${cell(x.what)} |${cell(x.why)} |${out}`);
+      L.push(`|${x.id} |${x.date} |${x.size} |${cell(x.what)} |${cell(x.why)} |${out}`);
     }
     L.push('|===');
   }
@@ -495,7 +505,9 @@ export function renderSvg(byId, d) {
     cols[k].forEach((n, i) => yOf.set(n.id, TOP + i * (BOX_H + GAP)));
   }
   const tallest = Math.max(1, ...cols.map(c => c.length));
-  const W = LEFT * 2 + (maxDepth + 1) * COL - (COL - BOX_W);
+  // At least as wide as the fixed legend (six tracks and the beyond-repository key).
+  const LEGEND_W = LEFT + TRACKS.length * 128 + 260;
+  const W = Math.max(LEFT * 2 + (maxDepth + 1) * COL - (COL - BOX_W), LEGEND_W);
   const H = TOP + tallest * (BOX_H + GAP) + 70;
   const frontier = new Set(d.frontier.map(n => n.id));
   const xOf = id => LEFT + d.depth.get(id) * COL;
@@ -552,7 +564,13 @@ export function renderSvg(byId, d) {
 export function context(root = ROOT) {
   const decisions = path.join(root, 'docs/decisions');
   return {
-    isFile: p => { try { return statSync(path.join(root, p)).isFile(); } catch { return false; } },
+    // A regular file whose real path (symlinks resolved) stays inside the repository.
+    isFile: p => {
+      try {
+        const base = realpathSync(root), real = realpathSync(path.join(root, p));
+        return real.startsWith(base + path.sep) && statSync(real).isFile();
+      } catch { return false; }
+    },
     read: p => readFileSync(path.join(root, p), 'utf8'),
     registry: existsSync(path.join(root, 'docs/atlas/generated/registry.adoc')) ? readFileSync(path.join(root, 'docs/atlas/generated/registry.adoc'), 'utf8') : '',
     adrFile: n => {

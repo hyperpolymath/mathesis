@@ -254,6 +254,7 @@ test('when every active slot is taken, the frontier is ready but cannot start', 
   const open = generate(fixture());
   expect(open.derived.slots).toBe(ACTIVE_LIMIT);
   expect(open[VIEW]).toContain('can be started now.');
+  expect(open[VIEW]).toContain('so any of them can start today.');
   expect(open[VIEW]).not.toContain('active slots are full');
   expect(open[SVG]).toContain('gold border: start it now');
   // theorem and cheap are ready; with a third started node, every slot is taken and spare waits.
@@ -264,6 +265,9 @@ test('when every active slot is taken, the frontier is ready but cannot start', 
   expect(full.derived.frontier.map(n => n.id)).toEqual(['spare']);
   expect(full[VIEW]).toContain(`1 are ready, but all ${ACTIVE_LIMIT} active slots are full.`);
   expect(full[VIEW]).toContain(`*All ${ACTIVE_LIMIT} active slots are full.* These nodes are ready`);
+  expect(full[VIEW]).toContain('so each can start once an active slot is free.');
+  expect(full[VIEW]).not.toContain('can start today');
+  expect(full[VIEW]).not.toContain('can be started now');
   expect(full[VIEW]).toContain('A gold border marks a node\nthat is ready, once an active slot is free.');
   expect(full[SVG]).toContain('gold border: ready, once an active slot is free');
 });

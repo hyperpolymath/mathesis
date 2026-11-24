@@ -458,7 +458,8 @@ function frontierLines(byId, d) {
   const head = [
     '== Research now: the frontier',
     '',
-    'These open nodes have every need done, so any of them can start today. "Unlocks"',
+    d.slots > 0 ? 'These open nodes have every need done, so any of them can start today. "Unlocks"'
+      : 'These open nodes have every need done, so each can start once an active slot is free. "Unlocks"',
     'counts the live nodes that depend on it, directly or through others.',
     '',
   ];

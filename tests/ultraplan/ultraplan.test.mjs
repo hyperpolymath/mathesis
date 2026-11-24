@@ -64,7 +64,7 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(d.picks.get('contrarian').id).toBe('cheap');                  // rated lowest by the council
   expect(d.picks.get('me').id).toBe('theorem');                        // tagged owner_value, no notes
   expect(out[VIEW]).toContain('== Research now: the frontier');
-  expect(out[VIEW]).toContain('_Pick:_ <<theorem,🔷 theorem>>. The deep one.');
+  expect(out[VIEW]).toContain('_Pick:_ xref:theorem[🔷 theorem]. The deep one.');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
   // Three eras are narrower than the legend; the canvas still holds the legend.
@@ -75,6 +75,14 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(edges.every(e => /marker-end="url\(#arrow(-hot)?\)"/.test(e))).toBe(true);
   expect(out[SVG]).toContain('<marker id="arrow"');
   expect(out[SVG]).toContain('<marker id="arrow-hot"');
+});
+
+test('a link to a node holds any name', () => {
+  // `<<id,text>>` ends at ">>"; the xref macro's text ends at "]", turns into attributes at "=",
+  // and a table cell ends at "|". Those three are character references, so the link text is the name.
+  const page = generate(fixture({nodes: swap('theorem', {name: 'a >> b = c ] d | e'})}))[VIEW];
+  expect(page).toContain('xref:theorem[🔷 a >> b &#61; c &#93; d &#124; e]');
+  expect(page).not.toContain('<<theorem,');
 });
 
 test('every value mark is shown, a 0 included', () => {
@@ -126,6 +134,14 @@ test('done needs evidence that holds', () => {
   const twin = fixture();
   writeFileSync(path.join(twin, 'docs/decisions/0004-second.adoc'), '= ADR\n\n=== Status\n\n*Proposed.*\n');
   expect(() => generate(twin)).toThrow(/ADR 0004 is ambiguous: docs\/decisions\/0004-claims-registry\.adoc, docs\/decisions\/0004-second\.adoc share the number/);
+  // Only the boilerplate NNNN-template.adoc is set aside: a record whose title says template counts,
+  // and a template that shares a number with a record does not make it ambiguous.
+  const titled = fixture({nodes: swap('tool', {evidence: [{adr: '0006'}]})});
+  writeFileSync(path.join(titled, 'docs/decisions/0006-template-inheritance.adoc'), '= ADR\n\n=== Status\n\n*Accepted.*\n');
+  expect(() => generate(titled)).not.toThrow();
+  const boiler = fixture();
+  writeFileSync(path.join(boiler, 'docs/decisions/0004-template.adoc'), '= Template\n\n=== Status\n\nProposed\n');
+  expect(() => generate(boiler)).not.toThrow();
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0004', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);

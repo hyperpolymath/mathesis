@@ -803,8 +803,10 @@ ultraplan:
     bun scripts/ultraplan/ultraplan.mjs build
 
 # Fail if the ultraplan views are stale, or the tree's data is not sound: an unknown
-# or cyclic need, a done node without evidence that holds, too many active nodes
-ultraplan-check:
+# or cyclic need, a done node without evidence that holds, too many active nodes.
+# Claim evidence is read from the registry view, so registry-check runs first: a
+# stale view would let a done node rest on a grade the receipts no longer give.
+ultraplan-check: registry-check
     bun scripts/ultraplan/ultraplan.mjs check
     bun test tests/ultraplan/
 

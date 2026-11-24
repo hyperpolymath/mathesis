@@ -30,18 +30,18 @@ counts the live nodes that depend on it, directly or through others.
 [cols="3,1,1,1,5",options="header"]
 |===
 |Node |Track |Size |Unlocks |Summary
-|<<bridge-lock-pilot,🔗 Bridge lock pilot>> |ecosystem |M |8 |The full bridge record for two pilots, a squeakwell ladder row and resource-algebra to tropical-types (WO 5.2, ruling D-7 a): what is claimed equal, by which map, checked how.
-|<<census-workflow,⏰ Census on a schedule>> |engineering |M |2 |A scheduled census workflow as the one writer of the census rows (WO 5.3), so refreshes stop arriving by hand and unrecorded.
-|<<forecast-13wk,📅 Thirteen-week forecast>> |economics |M |2 |A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the first worked decision of the applied shelf.
-|<<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>> |maths |M |2 |A sound three-valued cash verdict over intervals, where missing means unbounded (S-4), and more uncertainty never strengthens a verdict (S-5). Reuses residual-evidence-types at a pin; pass is PWG-3 (E-4.2).
-|<<dossier,🗂️ Theorem dossier>> |maths |S |1 |The eight-item dossier for each theorem (Line 0), scored first on THY-1, five januskey theorems and two each of secret-types and lintel (E-0). Its home (here or standards, R-5) is still open.
-|<<file-transport-bugs,🐛 File the transport reproducers>> |ecosystem |S |1 |File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act. _(upstream:Deducteam/agda2dedukti)_
-|<<pinned-image,📦 Proof lanes in a pinned image>> |engineering |M |1 |Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
-|<<s2-monotone,📈 S-2: evaluation is monotone>> |maths |S |1 |Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
-|<<doc-drift-fix,🧹 Mend the status documents>> |engineering |S |0 |ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
-|<<paper-thy1,📄 Note: feature reachability>> |publications |M |0 |A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
-|<<statistical-bridge,🎲 From oracle to theorem>> |science |L |0 |S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are tested only, against MetaManifold-WebUI as oracle. Prove them in Agda, Rocq and Lean for admission (Q-2.6).
-|<<teaching-cohort,📓 Cohort economics, taught>> |publications |M |0 |A worked tutorial: a small business model where missing data stays missing, with the proofs alongside and synthetic data only.
+|xref:bridge-lock-pilot[🔗 Bridge lock pilot] |ecosystem |M |8 |The full bridge record for two pilots, a squeakwell ladder row and resource-algebra to tropical-types (WO 5.2, ruling D-7 a): what is claimed equal, by which map, checked how.
+|xref:census-workflow[⏰ Census on a schedule] |engineering |M |2 |A scheduled census workflow as the one writer of the census rows (WO 5.3), so refreshes stop arriving by hand and unrecorded.
+|xref:forecast-13wk[📅 Thirteen-week forecast] |economics |M |2 |A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the first worked decision of the applied shelf.
+|xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts] |maths |M |2 |A sound three-valued cash verdict over intervals, where missing means unbounded (S-4), and more uncertainty never strengthens a verdict (S-5). Reuses residual-evidence-types at a pin; pass is PWG-3 (E-4.2).
+|xref:dossier[🗂️ Theorem dossier] |maths |S |1 |The eight-item dossier for each theorem (Line 0), scored first on THY-1, five januskey theorems and two each of secret-types and lintel (E-0). Its home (here or standards, R-5) is still open.
+|xref:file-transport-bugs[🐛 File the transport reproducers] |ecosystem |S |1 |File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act. _(upstream:Deducteam/agda2dedukti)_
+|xref:pinned-image[📦 Proof lanes in a pinned image] |engineering |M |1 |Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
+|xref:s2-monotone[📈 S-2: evaluation is monotone] |maths |S |1 |Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
+|xref:doc-drift-fix[🧹 Mend the status documents] |engineering |S |0 |ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
+|xref:paper-thy1[📄 Note: feature reachability] |publications |M |0 |A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
+|xref:statistical-bridge[🎲 From oracle to theorem] |science |L |0 |S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are tested only, against MetaManifold-WebUI as oracle. Prove them in Agda, Rocq and Lean for admission (Q-2.6).
+|xref:teaching-cohort[📓 Cohort economics, taught] |publications |M |0 |A worked tutorial: a small business model where missing data stays missing, with the proofs alongside and synthetic data only.
 |===
 
 == The council
@@ -54,61 +54,61 @@ nodes the owner has tagged.
 
 _Asks:_ Is it true, is it new, and does it join two things that were apart?
 
-_Pick:_ <<bridge-lock-pilot,🔗 Bridge lock pilot>>. Equivalence as identity, made checkable.
+_Pick:_ xref:bridge-lock-pilot[🔗 Bridge lock pilot]. Equivalence as identity, made checkable.
 
 === 🔬 Scientist
 
 _Asks:_ What would we measure, and what result would change our mind?
 
-_Pick:_ <<statistical-bridge,🎲 From oracle to theorem>>. Takes a statistical result that is only tested and makes it a theorem.
+_Pick:_ xref:statistical-bridge[🎲 From oracle to theorem]. Takes a statistical result that is only tested and makes it a theorem.
 
 === ⚙️ Engineer
 
 _Asks:_ Does it run in the gate, fail loudly, and stay cheap to keep?
 
-_Pick:_ <<census-workflow,⏰ Census on a schedule>>.
+_Pick:_ xref:census-workflow[⏰ Census on a schedule].
 
 === 🪙 Economist
 
 _Asks:_ What does it cost, what does it return, and who would fund or use it?
 
-_Pick:_ <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>. A forecast that can say undecided is worth more than one that guesses.
+_Pick:_ xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts]. A forecast that can say undecided is worth more than one that guesses.
 
 === 📜 Publisher
 
 _Asks:_ Is there a paper, a talk or a citable artefact here?
 
-_Pick:_ <<paper-thy1,📄 Note: feature reachability>>. A complete, small, checked result: the easiest first paper.
+_Pick:_ xref:paper-thy1[📄 Note: feature reachability]. A complete, small, checked result: the easiest first paper.
 
 === 🔍 Soundness auditor
 
 _Asks:_ Is every done backed by a receipt, and where is the hole?
 
-_Pick:_ <<pinned-image,📦 Proof lanes in a pinned image>>. The only road back to PWG-1 for THY-1 and APP-1 to APP-4.
+_Pick:_ xref:pinned-image[📦 Proof lanes in a pinned image]. The only road back to PWG-1 for THY-1 and APP-1 to APP-4.
 
 === 🗺️ Estate cartographer
 
 _Asks:_ Does another repository already have this, or need it? Converge rather than rebuild.
 
-_Pick:_ <<bridge-lock-pilot,🔗 Bridge lock pilot>>. The first real convergence between repositories; everything cross-repo waits on it.
+_Pick:_ xref:bridge-lock-pilot[🔗 Bridge lock pilot]. The first real convergence between repositories; everything cross-repo waits on it.
 
 === 🍎 Teacher
 
 _Asks:_ Could a newcomer learn something true and useful from it?
 
-_Pick:_ <<teaching-cohort,📓 Cohort economics, taught>>. Shows why a proof matters to someone who reads spreadsheets, not theorems.
+_Pick:_ xref:teaching-cohort[📓 Cohort economics, taught]. Shows why a proof matters to someone who reads spreadsheets, not theorems.
 
 === 🃏 Contrarian
 
 _Asks:_ What if we took the other road? Which cheap node is everyone overlooking?
 
-_Pick:_ <<file-transport-bugs,🐛 File the transport reproducers>>.
+_Pick:_ xref:file-transport-bugs[🐛 File the transport reproducers].
 
 === 🫶 Me
 
 _Asks:_ Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.
 
-_Pick:_ <<forecast-13wk,📅 Thirteen-week forecast>>.
+_Pick:_ xref:forecast-13wk[📅 Thirteen-week forecast].
 
 == Forks and confluences
 
@@ -117,36 +117,36 @@ nodes from two or more tracks: work there joins. Rivals are different routes to 
 same place; the contrarian keeps the road not taken in view.
 
 .Forks
-* <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> -> <<forecast-13wk,📅 Thirteen-week forecast>>, <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>, <<teaching-cohort,📓 Cohort economics, taught>>
-* <<bridge-lock-pilot,🔗 Bridge lock pilot>> -> <<centre-computations,🎯 Centre computations>>, <<echo-mirrors,🪞 Echo mirror records>>, <<encoding-differences,🔤 Closed list of encoding differences>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>
-* <<centre-computations,🎯 Centre computations>> -> <<concept-commons,🏛️ Concept commons>>, <<corpus,🧪 Propose and dispose corpus>>
-* <<claims-registry,📒 Claims registry>> -> <<bridge-candidates,🌉 Bridge candidates>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<whats-owed,📋 What is owed>>
-* <<proof-gate,🛡️ Proof gate in pinned Guix>> -> <<cohort-model,👥 Cohort model in Agda>>, <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipts,🔏 Proof receipts>>, <<thy1,🧭 THY-1: reachability is monotone>>
-* <<receipt-generator,🏭 Shared receipt generator>> -> <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>, <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>>
-* <<receipts,🔏 Proof receipts>> -> <<paper-thy1,📄 Note: feature reachability>>, <<receipt-generator,🏭 Shared receipt generator>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
-* <<s1-token-algebra,🔢 S-1: tokens form a dioid>> -> <<bridge-by-construction,🏗 Bridges by construction>>, <<idris-token-laws,🧬 Generated Idris2 token laws>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
-* <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<corpus,🧪 Propose and dispose corpus>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
-* <<theory-shelf,📚 Theory shelf and ledger>> -> <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<statistical-bridge,🎲 From oracle to theorem>>
-* <<thy1,🧭 THY-1: reachability is monotone>> -> <<dedukti-transport,🚂 Transport through Dedukti>>, <<file-transport-bugs,🐛 File the transport reproducers>>, <<paper-thy1,📄 Note: feature reachability>>, <<theory-shelf,📚 Theory shelf and ledger>>
-* <<token-order,⚖️ Settle the order of status tokens>> -> <<centre-computations,🎯 Centre computations>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
+* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] -> xref:forecast-13wk[📅 Thirteen-week forecast], xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts], xref:teaching-cohort[📓 Cohort economics, taught]
+* xref:bridge-lock-pilot[🔗 Bridge lock pilot] -> xref:centre-computations[🎯 Centre computations], xref:echo-mirrors[🪞 Echo mirror records], xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra]
+* xref:centre-computations[🎯 Centre computations] -> xref:concept-commons[🏛️ Concept commons], xref:corpus[🧪 Propose and dispose corpus]
+* xref:claims-registry[📒 Claims registry] -> xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:gels-maths-panel[🪟 Maths panel in GELS], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed]
+* xref:proof-gate[🛡️ Proof gate in pinned Guix] -> xref:cohort-model[👥 Cohort model in Agda], xref:pinned-image[📦 Proof lanes in a pinned image], xref:receipts[🔏 Proof receipts], xref:thy1[🧭 THY-1: reachability is monotone]
+* xref:receipt-generator[🏭 Shared receipt generator] -> xref:ci-recorder[🤖 CI records its own runs], xref:paper-receipts[📰 Paper: receipts, not claims], xref:pwg1-regained[🥇 Back to PWG-1], xref:receipts-campaign[📣 Receipts campaign], xref:superseded-manifests-option[🗄️ Keep superseded manifests (option)]
+* xref:receipts[🔏 Proof receipts] -> xref:paper-thy1[📄 Note: feature reachability], xref:receipt-generator[🏭 Shared receipt generator], xref:s3-grade-function[🎚️ S-3: the grade is a function]
+* xref:s1-token-algebra[🔢 S-1: tokens form a dioid] -> xref:bridge-by-construction[🏗 Bridges by construction], xref:idris-token-laws[🧬 Generated Idris2 token laws], xref:paper-status-algebra[📘 Paper: an algebra of proof status]
+* xref:s3-grade-function[🎚️ S-3: the grade is a function] -> xref:corpus[🧪 Propose and dispose corpus], xref:paper-receipts[📰 Paper: receipts, not claims], xref:paper-status-algebra[📘 Paper: an algebra of proof status]
+* xref:theory-shelf[📚 Theory shelf and ledger] -> xref:dossier[🗂️ Theorem dossier], xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s2-monotone[📈 S-2: evaluation is monotone], xref:statistical-bridge[🎲 From oracle to theorem]
+* xref:thy1[🧭 THY-1: reachability is monotone] -> xref:dedukti-transport[🚂 Transport through Dedukti], xref:file-transport-bugs[🐛 File the transport reproducers], xref:paper-thy1[📄 Note: feature reachability], xref:theory-shelf[📚 Theory shelf and ledger]
+* xref:token-order[⚖️ Settle the order of status tokens] -> xref:centre-computations[🎯 Centre computations], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra], xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s3-grade-function[🎚️ S-3: the grade is a function]
 
 .Confluences
-* <<encoding-differences,🔤 Closed list of encoding differences>> + <<s1-token-algebra,🔢 S-1: tokens form a dioid>> -> <<bridge-by-construction,🏗 Bridges by construction>>
-* <<bridge-lock-pilot,🔗 Bridge lock pilot>> + <<token-order,⚖️ Settle the order of status tokens>> -> <<centre-computations,🎯 Centre computations>>
-* <<centre-computations,🎯 Centre computations>> + <<whats-owed,📋 What is owed>> -> <<concept-commons,🏛️ Concept commons>>
-* <<bridge-by-construction,🏗 Bridges by construction>> + <<centre-computations,🎯 Centre computations>> + <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<corpus,🧪 Propose and dispose corpus>>
-* <<thy1,🧭 THY-1: reachability is monotone>> + <<file-transport-bugs,🐛 File the transport reproducers>> -> <<dedukti-transport,🚂 Transport through Dedukti>>
-* <<corpus,🧪 Propose and dispose corpus>> + <<receipts-campaign,📣 Receipts campaign>> + <<ci-recorder,🤖 CI records its own runs>> -> <<estate-pwg2ii,🏔️ PWG-2ii across the estate>>
-* <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>> + <<forecast-13wk,📅 Thirteen-week forecast>> -> <<liquidity-shelf,💶 Liquidity shelf>>
-* <<receipt-generator,🏭 Shared receipt generator>> + <<claims-registry,📒 Claims registry>> + <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<paper-receipts,📰 Paper: receipts, not claims>>
-* <<thy1,🧭 THY-1: reachability is monotone>> + <<receipts,🔏 Proof receipts>> -> <<paper-thy1,📄 Note: feature reachability>>
-* <<bridge-lock-pilot,🔗 Bridge lock pilot>> + <<token-order,⚖️ Settle the order of status tokens>> -> <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>
-* <<receipts,🔏 Proof receipts>> + <<token-order,⚖️ Settle the order of status tokens>> -> <<s3-grade-function,🎚️ S-3: the grade is a function>>
-* <<claims-registry,📒 Claims registry>> + <<thy1,🧭 THY-1: reachability is monotone>> -> <<theory-shelf,📚 Theory shelf and ledger>>
+* xref:encoding-differences[🔤 Closed list of encoding differences] + xref:s1-token-algebra[🔢 S-1: tokens form a dioid] -> xref:bridge-by-construction[🏗 Bridges by construction]
+* xref:bridge-lock-pilot[🔗 Bridge lock pilot] + xref:token-order[⚖️ Settle the order of status tokens] -> xref:centre-computations[🎯 Centre computations]
+* xref:centre-computations[🎯 Centre computations] + xref:whats-owed[📋 What is owed] -> xref:concept-commons[🏛️ Concept commons]
+* xref:bridge-by-construction[🏗 Bridges by construction] + xref:centre-computations[🎯 Centre computations] + xref:s3-grade-function[🎚️ S-3: the grade is a function] -> xref:corpus[🧪 Propose and dispose corpus]
+* xref:thy1[🧭 THY-1: reachability is monotone] + xref:file-transport-bugs[🐛 File the transport reproducers] -> xref:dedukti-transport[🚂 Transport through Dedukti]
+* xref:corpus[🧪 Propose and dispose corpus] + xref:receipts-campaign[📣 Receipts campaign] + xref:ci-recorder[🤖 CI records its own runs] -> xref:estate-pwg2ii[🏔️ PWG-2ii across the estate]
+* xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts] + xref:forecast-13wk[📅 Thirteen-week forecast] -> xref:liquidity-shelf[💶 Liquidity shelf]
+* xref:receipt-generator[🏭 Shared receipt generator] + xref:claims-registry[📒 Claims registry] + xref:s3-grade-function[🎚️ S-3: the grade is a function] -> xref:paper-receipts[📰 Paper: receipts, not claims]
+* xref:thy1[🧭 THY-1: reachability is monotone] + xref:receipts[🔏 Proof receipts] -> xref:paper-thy1[📄 Note: feature reachability]
+* xref:bridge-lock-pilot[🔗 Bridge lock pilot] + xref:token-order[⚖️ Settle the order of status tokens] -> xref:s1-reuse[♻️ S-1 by reuse of resource-algebra]
+* xref:receipts[🔏 Proof receipts] + xref:token-order[⚖️ Settle the order of status tokens] -> xref:s3-grade-function[🎚️ S-3: the grade is a function]
+* xref:claims-registry[📒 Claims registry] + xref:thy1[🧭 THY-1: reachability is monotone] -> xref:theory-shelf[📚 Theory shelf and ledger]
 
 .Rivals
-* <<bridge-by-construction,🏗 Bridges by construction>> or <<dedukti-transport,🚂 Transport through Dedukti>>
-* <<s1-reuse,♻️ S-1 by reuse of resource-algebra>> or <<s1-token-algebra,🔢 S-1: tokens form a dioid>>
+* xref:bridge-by-construction[🏗 Bridges by construction] or xref:dedukti-transport[🚂 Transport through Dedukti]
+* xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] or xref:s1-token-algebra[🔢 S-1: tokens form a dioid]
 
 == The eras
 
@@ -159,7 +159,7 @@ The proof census of 465 public repositories: 249 rows of proof files, holes and 
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* L · *Status:* done
 
-*Enables:* <<atlas-views,🗺️ Atlas views>>, <<census-workflow,⏰ Census on a schedule>>, <<claims-registry,📒 Claims registry>> +
+*Enables:* xref:atlas-views[🗺️ Atlas views], xref:census-workflow[⏰ Census on a schedule], xref:claims-registry[📒 Claims registry] +
 *Evidence:* `docs/atlas/census/rows.jsonl`; `scripts/census/run-census.sh` +
 *Value (judgement):* engineering ●●, science ●●, ecosystem ●●●
 
@@ -170,7 +170,7 @@ Agda 2.7.0.1, Rocq 8.18.0 and Lean 4.29.0 check every gated module on every comm
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* L · *Status:* done
 
-*Enables:* <<cohort-model,👥 Cohort model in Agda>>, <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipts,🔏 Proof receipts>>, <<thy1,🧭 THY-1: reachability is monotone>> +
+*Enables:* xref:cohort-model[👥 Cohort model in Agda], xref:pinned-image[📦 Proof lanes in a pinned image], xref:receipts[🔏 Proof receipts], xref:thy1[🧭 THY-1: reachability is monotone] +
 *Evidence:* `scripts/check-proofs.sh`; `tests/proofs/gate_controls_test.sh` +
 *Value (judgement):* engineering ●●●, soundness ●●●
 
@@ -183,8 +183,8 @@ The cohort-economics model of the applied shelf, with three number modes and syn
 
 *Track:* ∑ maths · *Kind:* method · *Size:* M · *Status:* done
 
-*Needs:* <<proof-gate,🛡️ Proof gate in pinned Guix>> +
-*Enables:* <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> +
+*Needs:* xref:proof-gate[🛡️ Proof gate in pinned Guix] +
+*Enables:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
 *Evidence:* `verification/proofs/agda/Applied/Cohort.agda`; `applied-systems/methods/input-schema.adoc` +
 *Value (judgement):* maths ●●, economics ●●, teaching ●●
 
@@ -195,8 +195,8 @@ In a dependency graph with feature-guarded edges, a node unreachable with every 
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* done
 
-*Needs:* <<proof-gate,🛡️ Proof gate in pinned Guix>> +
-*Enables:* <<dedukti-transport,🚂 Transport through Dedukti>>, <<file-transport-bugs,🐛 File the transport reproducers>>, <<paper-thy1,📄 Note: feature reachability>>, <<theory-shelf,📚 Theory shelf and ledger>> +
+*Needs:* xref:proof-gate[🛡️ Proof gate in pinned Guix] +
+*Enables:* xref:dedukti-transport[🚂 Transport through Dedukti], xref:file-transport-bugs[🐛 File the transport reproducers], xref:paper-thy1[📄 Note: feature reachability], xref:theory-shelf[📚 Theory shelf and ledger] +
 *Evidence:* hyperpolymath/mathesis#THY-1 at PWG-2ii or above +
 *Value (judgement):* maths ●●, engineering ●●, publications ●●
 
@@ -207,8 +207,8 @@ The catalogue and the A to Z and organisation views, generated from the census r
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* M · *Status:* done
 
-*Needs:* <<census,🧾 Census of the estate>> +
-*Enables:* <<site-build,🏗️ Atlas site (build)>>, <<ultraplan,🌳 The ultraplan>> +
+*Needs:* xref:census[🧾 Census of the estate] +
+*Enables:* xref:site-build[🏗️ Atlas site (build)], xref:ultraplan[🌳 The ultraplan] +
 *Evidence:* `docs/atlas/generated/catalogue.adoc`; `docs/atlas/generated/az.adoc` +
 *Value (judgement):* engineering ●●, teaching ●●, ecosystem ●●
 
@@ -219,8 +219,8 @@ A scheduled census workflow as the one writer of the census rows (WO 5.3), so re
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open
 
-*Needs:* <<census,🧾 Census of the estate>> +
-*Enables:* <<whats-owed,📋 What is owed>> +
+*Needs:* xref:census[🧾 Census of the estate] +
+*Enables:* xref:whats-owed[📋 What is owed] +
 *Value (judgement):* engineering ●●, ecosystem ●● +
 *See:* docs/proposals/mathesis-re-anchoring.adoc:1075
 
@@ -231,8 +231,8 @@ Pins 53 claims in their home repositories and derives each grade from the home r
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
-*Needs:* <<census,🧾 Census of the estate>> +
-*Enables:* <<bridge-candidates,🌉 Bridge candidates>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<whats-owed,📋 What is owed>> +
+*Needs:* xref:census[🧾 Census of the estate] +
+*Enables:* xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:gels-maths-panel[🪟 Maths panel in GELS], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed] +
 *Evidence:* ADR 0004 accepted; `docs/atlas/generated/registry.adoc` +
 *Value (judgement):* engineering ●●●, soundness ●●●, ecosystem ●●●
 
@@ -243,8 +243,8 @@ Run the three proof lanes in a container image pinned by digest, the condition P
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open
 
-*Needs:* <<proof-gate,🛡️ Proof gate in pinned Guix>> +
-*Enables:* <<pwg1-regained,🥇 Back to PWG-1>> +
+*Needs:* xref:proof-gate[🛡️ Proof gate in pinned Guix] +
+*Enables:* xref:pwg1-regained[🥇 Back to PWG-1] +
 *Value (judgement):* engineering ●●, soundness ●●● +
 *See:* docs/status/PROOF-STATUS.adoc:33
 
@@ -259,8 +259,8 @@ Missing inputs propagate and never read as zero; the cash identity; the least fu
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* done
 
-*Needs:* <<cohort-model,👥 Cohort model in Agda>> +
-*Enables:* <<forecast-13wk,📅 Thirteen-week forecast>>, <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>, <<teaching-cohort,📓 Cohort economics, taught>> +
+*Needs:* xref:cohort-model[👥 Cohort model in Agda] +
+*Enables:* xref:forecast-13wk[📅 Thirteen-week forecast], xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts], xref:teaching-cohort[📓 Cohort economics, taught] +
 *Evidence:* hyperpolymath/mathesis#APP-1 at PWG-2ii or above; hyperpolymath/mathesis#APP-2 at PWG-2ii or above; hyperpolymath/mathesis#APP-3 at PWG-2ii or above; hyperpolymath/mathesis#APP-4 at PWG-2ii or above +
 *Value (judgement):* maths ●●, economics ●●●, teaching ●●
 
@@ -271,8 +271,8 @@ Experiment X-PF1, pre-registered: list each rule, gate and report in the estate 
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* active
 
-*Needs:* <<claims-registry,📒 Claims registry>> +
-*Enables:* <<token-order,⚖️ Settle the order of status tokens>> +
+*Needs:* xref:claims-registry[📒 Claims registry] +
+*Enables:* xref:token-order[⚖️ Settle the order of status tokens] +
 *Value (judgement):* maths ●●●, science ●●, soundness ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:390; docs/proposals/mathesis-research-programme.adoc:458
 
@@ -286,8 +286,8 @@ The admission rule for theory no single system owns, with an append-only ledger 
 
 *Track:* ∑ maths · *Kind:* data · *Size:* S · *Status:* done
 
-*Needs:* <<claims-registry,📒 Claims registry>>, <<thy1,🧭 THY-1: reachability is monotone>> +
-*Enables:* <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<statistical-bridge,🎲 From oracle to theorem>> +
+*Needs:* xref:claims-registry[📒 Claims registry], xref:thy1[🧭 THY-1: reachability is monotone] +
+*Enables:* xref:dossier[🗂️ Theorem dossier], xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s2-monotone[📈 S-2: evaluation is monotone], xref:statistical-bridge[🎲 From oracle to theorem] +
 *Evidence:* `docs/theory/admissions.jsonl`; `docs/theory/ledger.jsonl` +
 *Value (judgement):* maths ●●, soundness ●●
 
@@ -298,7 +298,7 @@ ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PW
 
 *Track:* ⚙ engineering · *Kind:* decision · *Size:* S · *Status:* open
 
-*Needs:* <<claims-registry,📒 Claims registry>> +
+*Needs:* xref:claims-registry[📒 Claims registry] +
 *Value (judgement):* teaching ●, soundness ●●● +
 *See:* docs/status/ROADMAP.adoc:30; docs/status/PROOF-NEEDS.adoc:27; README.adoc:46; .machine_readable/contractiles/intend
 
@@ -312,8 +312,8 @@ The PROOF-POLICY 8.5.1 receipt of Mathesis: per-leg run, commit, checker, inputs
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* M · *Status:* done
 
-*Needs:* <<proof-gate,🛡️ Proof gate in pinned Guix>>, <<claims-registry,📒 Claims registry>> +
-*Enables:* <<paper-thy1,📄 Note: feature reachability>>, <<receipt-generator,🏭 Shared receipt generator>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
+*Needs:* xref:proof-gate[🛡️ Proof gate in pinned Guix], xref:claims-registry[📒 Claims registry] +
+*Enables:* xref:paper-thy1[📄 Note: feature reachability], xref:receipt-generator[🏭 Shared receipt generator], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Evidence:* `verification/receipts/theory_praxis.deed` +
 *Value (judgement):* engineering ●●, soundness ●●●
 
@@ -324,8 +324,8 @@ Renders every generated view with Asciidoctor and fails on any warning or broken
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
-*Needs:* <<atlas-views,🗺️ Atlas views>> +
-*Enables:* <<publish-atlas,🌐 Publish the atlas>> +
+*Needs:* xref:atlas-views[🗺️ Atlas views] +
+*Enables:* xref:publish-atlas[🌐 Publish the atlas] +
 *Evidence:* `scripts/site/site.mjs` +
 *Value (judgement):* engineering ●, teaching ●●
 
@@ -336,8 +336,8 @@ This tech tree: data first, with derived eras, frontier, forks, confluences and 
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
-*Needs:* <<atlas-views,🗺️ Atlas views>> +
-*Enables:* <<gels-maths-panel,🪟 Maths panel in GELS>> +
+*Needs:* xref:atlas-views[🗺️ Atlas views] +
+*Enables:* xref:gels-maths-panel[🪟 Maths panel in GELS] +
 *Evidence:* `docs/ultraplan/tree.jsonl`; `scripts/ultraplan/ultraplan.mjs` +
 *Value (judgement):* engineering ●, teaching ●
 
@@ -348,8 +348,8 @@ Three unassessed candidate links between theorems in different repositories and 
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* S · *Status:* done
 
-*Needs:* <<claims-registry,📒 Claims registry>> +
-*Enables:* <<bridge-lock-pilot,🔗 Bridge lock pilot>> +
+*Needs:* xref:claims-registry[📒 Claims registry] +
+*Enables:* xref:bridge-lock-pilot[🔗 Bridge lock pilot] +
 *Evidence:* `docs/atlas/claims/bridges.jsonl` +
 *Value (judgement):* maths ●●, ecosystem ●●●
 
@@ -360,8 +360,8 @@ File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option g
 
 *Track:* 🗺 ecosystem · *Kind:* decision · *Size:* S · *Status:* open · *Beyond this repository:* upstream:Deducteam/agda2dedukti
 
-*Needs:* <<thy1,🧭 THY-1: reachability is monotone>> +
-*Enables:* <<dedukti-transport,🚂 Transport through Dedukti>> +
+*Needs:* xref:thy1[🧭 THY-1: reachability is monotone] +
+*Enables:* xref:dedukti-transport[🚂 Transport through Dedukti] +
 *Value (judgement):* engineering ●, ecosystem ●● +
 *See:* docs/status/ROADMAP.adoc:92; docs/proposals/mathesis-research-programme.adoc:693
 
@@ -374,8 +374,8 @@ A view of the standards requirements master list beside the census and the regis
 
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* open
 
-*Needs:* <<census-workflow,⏰ Census on a schedule>>, <<claims-registry,📒 Claims registry>> +
-*Enables:* <<concept-commons,🏛️ Concept commons>> +
+*Needs:* xref:census-workflow[⏰ Census on a schedule], xref:claims-registry[📒 Claims registry] +
+*Enables:* xref:concept-commons[🏛️ Concept commons] +
 *Value (judgement):* engineering ●, soundness ●●, ecosystem ●●● +
 *See:* docs/proposals/mathesis-re-anchoring.adoc:1079
 
@@ -388,8 +388,8 @@ The eight-item dossier for each theorem (Line 0), scored first on THY-1, five ja
 
 *Track:* ∑ maths · *Kind:* method · *Size:* S · *Status:* open
 
-*Needs:* <<theory-shelf,📚 Theory shelf and ledger>> +
-*Enables:* <<januskey-slice,🗝️ Theorem to code: januskey>> +
+*Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
+*Enables:* xref:januskey-slice[🗝️ Theorem to code: januskey] +
 *Value (judgement):* maths ●, teaching ●●, soundness ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:291; docs/proposals/mathesis-research-programme.adoc:1017
 
@@ -400,8 +400,8 @@ Positive evaluation of status is monotone. It holds for each ordered resource al
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* S · *Status:* open
 
-*Needs:* <<theory-shelf,📚 Theory shelf and ledger>> +
-*Enables:* <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
+*Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
+*Enables:* xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
 *Value (judgement):* maths ●●, soundness ● +
 *See:* docs/proposals/mathesis-research-programme.adoc:368
 
@@ -414,8 +414,8 @@ A sound three-valued cash verdict over intervals, where missing means unbounded 
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
 
-*Needs:* <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> +
-*Enables:* <<liquidity-shelf,💶 Liquidity shelf>> +
+*Needs:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
+*Enables:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* maths ●●, economics ●●●, teaching ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:792; docs/proposals/mathesis-research-programme.adoc:824
 
@@ -429,8 +429,8 @@ Record the order X-PF1 decides, in Mathesis (R-1, provisional) and in the canon.
 
 *Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* open
 
-*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>> +
-*Enables:* <<centre-computations,🎯 Centre computations>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
+*Needs:* xref:chain-question[🧩 Is a chain enough? (X-PF1)] +
+*Enables:* xref:centre-computations[🎯 Centre computations], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra], xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Value (judgement):* maths ●●, soundness ●●●, ecosystem ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:335; docs/atlas/generated/registry.adoc:39; metadatastician/standards 3-practice/PROOF-POLICY.adoc:348 (at 745fc74)
 
@@ -444,8 +444,8 @@ Check an Agda proof in Rocq and Lean by translating it through Dedukti and Lambd
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* blocked · *Beyond this repository:* upstream:Deducteam/lambdapi
 
-*Needs:* <<thy1,🧭 THY-1: reachability is monotone>>, <<file-transport-bugs,🐛 File the transport reproducers>> +
-*Rivals:* <<bridge-by-construction,🏗 Bridges by construction>> +
+*Needs:* xref:thy1[🧭 THY-1: reachability is monotone], xref:file-transport-bugs[🐛 File the transport reproducers] +
+*Rivals:* xref:bridge-by-construction[🏗 Bridges by construction] +
 *Blocked by:* Agda2Dedukti fails on a parameterised record in Set1 and rejects --cubical-compatible; Lambdapi raw_lean and raw_coq drop rewrite rules. A transport row stays a re-proof until a fixed release passes the round trip. +
 *Value (judgement):* maths ●, engineering ●●, soundness ●● +
 *See:* docs/status/ROADMAP.adoc:92
@@ -459,8 +459,8 @@ Adopt the standards generator: the receipt is generated from a run ledger, and t
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* M · *Status:* active
 
-*Needs:* <<receipts,🔏 Proof receipts>> +
-*Enables:* <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>, <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>> +
+*Needs:* xref:receipts[🔏 Proof receipts] +
+*Enables:* xref:ci-recorder[🤖 CI records its own runs], xref:paper-receipts[📰 Paper: receipts, not claims], xref:pwg1-regained[🥇 Back to PWG-1], xref:receipts-campaign[📣 Receipts campaign], xref:superseded-manifests-option[🗄️ Keep superseded manifests (option)] +
 *Value (judgement):* engineering ●●●, soundness ●●●
 
 * ⚙️ _Engineer:_ One generator for the estate instead of one per repository.
@@ -472,7 +472,7 @@ S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are 
 
 *Track:* 🔬 science · *Kind:* theorem · *Size:* L · *Status:* open
 
-*Needs:* <<theory-shelf,📚 Theory shelf and ledger>> +
+*Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
 *Value (judgement):* maths ●●, science ●●●, publications ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:641
 
@@ -485,8 +485,8 @@ A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the 
 
 *Track:* 🪙 economics · *Kind:* method · *Size:* M · *Status:* open
 
-*Needs:* <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> +
-*Enables:* <<liquidity-shelf,💶 Liquidity shelf>> +
+*Needs:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
+*Enables:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* engineering ●, economics ●●●, teaching ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:824; applied-systems/finance/liquidity/README.adoc
 
@@ -499,7 +499,7 @@ A short note on THY-1: why requesting every feature is a sound check for absence
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* M · *Status:* open
 
-*Needs:* <<thy1,🧭 THY-1: reachability is monotone>>, <<receipts,🔏 Proof receipts>> +
+*Needs:* xref:thy1[🧭 THY-1: reachability is monotone], xref:receipts[🔏 Proof receipts] +
 *Value (judgement):* maths ●, publications ●●●, teaching ●
 
 * 📜 _Publisher:_ A complete, small, checked result: the easiest first paper.
@@ -511,8 +511,8 @@ Deploy the built site (WO 4.3), once the owner says go. Publication is outward-f
 
 *Track:* 📜 publications · *Kind:* view · *Size:* S · *Status:* blocked
 
-*Needs:* <<site-build,🏗️ Atlas site (build)>> +
-*Enables:* <<talk-atlas,🎤 Talk: an atlas of an estate>> +
+*Needs:* xref:site-build[🏗️ Atlas site (build)] +
+*Enables:* xref:talk-atlas[🎤 Talk: an atlas of an estate] +
 *Blocked by:* the owner’s go-ahead to deploy (WO 4.3): deploying is outward-facing, so the hold that ended on 2026-11-24 is followed by a fresh owner question, through the decision desk +
 *Value (judgement):* publications ●●●, teaching ●●, ecosystem ●● +
 *See:* docs/status/ROADMAP.adoc:262; docs/proposals/mathesis-re-anchoring.adoc:1058
@@ -527,7 +527,7 @@ A worked tutorial: a small business model where missing data stays missing, with
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* M · *Status:* open
 
-*Needs:* <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> +
+*Needs:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
 *Value (judgement):* economics ●, publications ●●, teaching ●●●
 
 * 🍎 _Teacher:_ Shows why a proof matters to someone who reads spreadsheets, not theorems.
@@ -539,8 +539,8 @@ The full bridge record for two pilots, a squeakwell ladder row and resource-alge
 
 *Track:* 🗺 ecosystem · *Kind:* method · *Size:* M · *Status:* open
 
-*Needs:* <<bridge-candidates,🌉 Bridge candidates>> +
-*Enables:* <<centre-computations,🎯 Centre computations>>, <<echo-mirrors,🪞 Echo mirror records>>, <<encoding-differences,🔤 Closed list of encoding differences>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>> +
+*Needs:* xref:bridge-candidates[🌉 Bridge candidates] +
+*Enables:* xref:centre-computations[🎯 Centre computations], xref:echo-mirrors[🪞 Echo mirror records], xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] +
 *Value (judgement):* maths ●●, science ●, ecosystem ●●● +
 *See:* docs/proposals/mathesis-re-anchoring.adoc:803; docs/proposals/mathesis-re-anchoring.adoc:1071
 
@@ -554,7 +554,7 @@ The tech tree as one panel type in GELS, beside the work-queue lanes and the Pla
 
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked · *Beyond this repository:* estate:metadatastician/gels
 
-*Needs:* <<claims-registry,📒 Claims registry>>, <<ultraplan,🌳 The ultraplan>> +
+*Needs:* xref:claims-registry[📒 Claims registry], xref:ultraplan[🌳 The ultraplan] +
 *Blocked by:* the GELS feed and panel contract (docs/proposals/feed-panel-contract.adoc in metadatastician/gels), which the GELS thread is drafting (estate coordinator, 2026-11-24); Mathesis then publishes a read-only I-JSON/JCS feed and GELS renders it +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
@@ -567,8 +567,8 @@ Over locked bridges: classes under a criterion, their order, contradictions, and
 
 *Track:* ∑ maths · *Kind:* method · *Size:* L · *Status:* open
 
-*Needs:* <<bridge-lock-pilot,🔗 Bridge lock pilot>>, <<token-order,⚖️ Settle the order of status tokens>> +
-*Enables:* <<concept-commons,🏛️ Concept commons>>, <<corpus,🧪 Propose and dispose corpus>> +
+*Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot], xref:token-order[⚖️ Settle the order of status tokens] +
+*Enables:* xref:concept-commons[🏛️ Concept commons], xref:corpus[🧪 Propose and dispose corpus] +
 *Value (judgement):* maths ●●●, science ●● +
 *See:* docs/proposals/mathesis-re-anchoring.adoc:786
 
@@ -579,9 +579,9 @@ The status tokens form a ResourceAlgebra and dioid with an annihilating zero, wi
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* L · *Status:* open
 
-*Needs:* <<theory-shelf,📚 Theory shelf and ledger>>, <<token-order,⚖️ Settle the order of status tokens>> +
-*Enables:* <<bridge-by-construction,🏗 Bridges by construction>>, <<idris-token-laws,🧬 Generated Idris2 token laws>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
-*Rivals:* <<s1-reuse,♻️ S-1 by reuse of resource-algebra>> +
+*Needs:* xref:theory-shelf[📚 Theory shelf and ledger], xref:token-order[⚖️ Settle the order of status tokens] +
+*Enables:* xref:bridge-by-construction[🏗 Bridges by construction], xref:idris-token-laws[🧬 Generated Idris2 token laws], xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
+*Rivals:* xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] +
 *Value (judgement):* maths ●●●, publications ●●, soundness ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:346; docs/proposals/mathesis-research-programme.adoc:544
 
@@ -595,8 +595,8 @@ The Proof Witness Grade is a total monotone function of the receipt, and the can
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
 
-*Needs:* <<receipts,🔏 Proof receipts>>, <<token-order,⚖️ Settle the order of status tokens>> +
-*Enables:* <<corpus,🧪 Propose and dispose corpus>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
+*Needs:* xref:receipts[🔏 Proof receipts], xref:token-order[⚖️ Settle the order of status tokens] +
+*Enables:* xref:corpus[🧪 Propose and dispose corpus], xref:paper-receipts[📰 Paper: receipts, not claims], xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
 *Value (judgement):* maths ●●, engineering ●●, soundness ●●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:378; docs/proposals/mathesis-research-programme.adoc:550
 
@@ -609,8 +609,8 @@ A trusted publisher that writes each green run's ledger rows to the repository, 
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
-*Needs:* <<receipt-generator,🏭 Shared receipt generator>> +
-*Enables:* <<estate-pwg2ii,🏔️ PWG-2ii across the estate>> +
+*Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
+*Enables:* xref:estate-pwg2ii[🏔️ PWG-2ii across the estate] +
 *Value (judgement):* engineering ●●●, soundness ●●, ecosystem ●●
 
 [[januskey-slice]]
@@ -620,7 +620,7 @@ Follow one theorem into running code (E-3.1): the januskey slice T-1, with T-10 
 
 *Track:* ⚙ engineering · *Kind:* method · *Size:* L · *Status:* open · *Beyond this repository:* estate:hyperpolymath/januskey
 
-*Needs:* <<dossier,🗂️ Theorem dossier>> +
+*Needs:* xref:dossier[🗂️ Theorem dossier] +
 *Value (judgement):* maths ●, engineering ●●●, soundness ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:743; docs/proposals/mathesis-research-programme.adoc:755
 
@@ -631,7 +631,7 @@ THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the p
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* S · *Status:* open
 
-*Needs:* <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipt-generator,🏭 Shared receipt generator>> +
+*Needs:* xref:pinned-image[📦 Proof lanes in a pinned image], xref:receipt-generator[🏭 Shared receipt generator] +
 *Value (judgement):* publications ●, soundness ●●
 
 [[superseded-manifests-option]]
@@ -641,7 +641,7 @@ A generator option in standards that keeps the inputs digest, manifest and axiom
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
-*Needs:* <<receipt-generator,🏭 Shared receipt generator>> +
+*Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
 *Value (judgement):* engineering ●, soundness ●●, ecosystem ● +
 *See:* metadatastician/standards#1705 (draft): RECEIPT_KEEP_LINEAGE_DETAIL=1 in scripts/grade-receipt.sh, set alike for --write and --check
 
@@ -655,8 +655,8 @@ A closed, tested list of the ways the same statement differs between Agda, Rocq 
 
 *Track:* 🔬 science · *Kind:* data · *Size:* M · *Status:* open
 
-*Needs:* <<bridge-lock-pilot,🔗 Bridge lock pilot>> +
-*Enables:* <<bridge-by-construction,🏗 Bridges by construction>> +
+*Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot] +
+*Enables:* xref:bridge-by-construction[🏗 Bridges by construction] +
 *Value (judgement):* maths ●, science ●●●, publications ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:609; docs/proposals/mathesis-research-programme.adoc:679
 
@@ -670,8 +670,8 @@ The liquidity part of the applied shelf: a forecast whose every verdict carries 
 
 *Track:* 🪙 economics · *Kind:* view · *Size:* M · *Status:* open
 
-*Needs:* <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>, <<forecast-13wk,📅 Thirteen-week forecast>> +
-*Enables:* <<value-of-information,🔭 Value of information>> +
+*Needs:* xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts], xref:forecast-13wk[📅 Thirteen-week forecast] +
+*Enables:* xref:value-of-information[🔭 Value of information] +
 *Value (judgement):* economics ●●●, publications ●, teaching ●●
 
 [[talk-atlas]]
@@ -681,7 +681,7 @@ A talk on mapping the mathematics of hundreds of repositories, with every status
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* S · *Status:* open
 
-*Needs:* <<publish-atlas,🌐 Publish the atlas>> +
+*Needs:* xref:publish-atlas[🌐 Publish the atlas] +
 *Value (judgement):* publications ●●, teaching ●●, ecosystem ●
 
 [[echo-mirrors]]
@@ -691,7 +691,7 @@ Bridge records for the six languages that mirror echo-types (E-2.5), with the gr
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* M · *Status:* open · *Beyond this repository:* estate:hyperpolymath/echo-types
 
-*Needs:* <<bridge-lock-pilot,🔗 Bridge lock pilot>> +
+*Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot] +
 *Value (judgement):* maths ●●, ecosystem ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:695
 
@@ -702,8 +702,8 @@ Home repositories re-record their receipts (WO 5.1): secret-types and lintel for
 
 *Track:* 🗺 ecosystem · *Kind:* method · *Size:* L · *Status:* open · *Beyond this repository:* estate:hyperpolymath/secret-types
 
-*Needs:* <<receipt-generator,🏭 Shared receipt generator>> +
-*Enables:* <<estate-pwg2ii,🏔️ PWG-2ii across the estate>> +
+*Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
+*Enables:* xref:estate-pwg2ii[🏔️ PWG-2ii across the estate] +
 *Value (judgement):* soundness ●●, ecosystem ●●● +
 *See:* docs/status/ROADMAP.adoc:330; docs/proposals/mathesis-re-anchoring.adoc:1065
 
@@ -716,8 +716,8 @@ Prove only the morphism here, and take the dioid laws from resource-algebra's E-
 
 *Track:* 🗺 ecosystem · *Kind:* theorem · *Size:* M · *Status:* open · *Beyond this repository:* estate:hyperpolymath/resource-algebra
 
-*Needs:* <<bridge-lock-pilot,🔗 Bridge lock pilot>>, <<token-order,⚖️ Settle the order of status tokens>> +
-*Rivals:* <<s1-token-algebra,🔢 S-1: tokens form a dioid>> +
+*Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot], xref:token-order[⚖️ Settle the order of status tokens] +
+*Rivals:* xref:s1-token-algebra[🔢 S-1: tokens form a dioid] +
 *Value (judgement):* maths ●●, engineering ●, ecosystem ●●●
 
 * 🗺️ _Estate cartographer:_ Converge: the laws exist, at a grade, in their home repository.
@@ -731,7 +731,7 @@ The horizon of the atlas (M4): a commons of the estate's concepts, navigable by 
 
 *Track:* ∑ maths · *Kind:* view · *Size:* XL · *Status:* open
 
-*Needs:* <<centre-computations,🎯 Centre computations>>, <<whats-owed,📋 What is owed>> +
+*Needs:* xref:centre-computations[🎯 Centre computations], xref:whats-owed[📋 What is owed] +
 *Value (judgement):* maths ●●, teaching ●●●, ecosystem ●● +
 *See:* docs/proposals/mathesis-re-anchoring.adoc:441; docs/proposals/estate-mathematical-architecture.adoc:158
 
@@ -742,9 +742,9 @@ Generate the Agda, Rocq and Lean forms of a statement from one source (Q-2.3, E-
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* open
 
-*Needs:* <<encoding-differences,🔤 Closed list of encoding differences>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>> +
-*Enables:* <<corpus,🧪 Propose and dispose corpus>> +
-*Rivals:* <<dedukti-transport,🚂 Transport through Dedukti>> +
+*Needs:* xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-token-algebra[🔢 S-1: tokens form a dioid] +
+*Enables:* xref:corpus[🧪 Propose and dispose corpus] +
+*Rivals:* xref:dedukti-transport[🚂 Transport through Dedukti] +
 *Value (judgement):* maths ●●, engineering ●●●, publications ● +
 *See:* docs/proposals/mathesis-research-programme.adoc:620; docs/proposals/mathesis-research-programme.adoc:690
 
@@ -757,7 +757,7 @@ Generate the Idris2 token laws of the proof-route Token module from S-1 (E-3.2),
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* M · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
-*Needs:* <<s1-token-algebra,🔢 S-1: tokens form a dioid>> +
+*Needs:* xref:s1-token-algebra[🔢 S-1: tokens form a dioid] +
 *Value (judgement):* maths ●, engineering ●●, ecosystem ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:760
 
@@ -768,7 +768,7 @@ Decision science on the shelf: what a missing input is worth to know, computed f
 
 *Track:* 🪙 economics · *Kind:* method · *Size:* L · *Status:* open
 
-*Needs:* <<liquidity-shelf,💶 Liquidity shelf>> +
+*Needs:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* maths ●●, science ●●, economics ●●● +
 *See:* applied-systems/decision-science/README.adoc
 
@@ -779,7 +779,7 @@ A methods paper: proof status derived from machine receipts, graded by witness c
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* L · *Status:* open
 
-*Needs:* <<receipt-generator,🏭 Shared receipt generator>>, <<claims-registry,📒 Claims registry>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
+*Needs:* xref:receipt-generator[🏭 Shared receipt generator], xref:claims-registry[📒 Claims registry], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Value (judgement):* engineering ●, publications ●●●, soundness ●●
 
 [[paper-status-algebra]]
@@ -789,7 +789,7 @@ S-1 to S-3 written up: proof status as a dioid, its monotone evaluation, and the
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* L · *Status:* open
 
-*Needs:* <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
+*Needs:* xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s2-monotone[📈 S-2: evaluation is monotone], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Value (judgement):* maths ●●●, publications ●●●
 
 === 🌀 Era 6: Grothendieck
@@ -801,8 +801,8 @@ A corpus as a view over bridges and receipts (E-H.1), and 20 ungraded Agda theor
 
 *Track:* 🔬 science · *Kind:* method · *Size:* XL · *Status:* open
 
-*Needs:* <<bridge-by-construction,🏗 Bridges by construction>>, <<centre-computations,🎯 Centre computations>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
-*Enables:* <<estate-pwg2ii,🏔️ PWG-2ii across the estate>> +
+*Needs:* xref:bridge-by-construction[🏗 Bridges by construction], xref:centre-computations[🎯 Centre computations], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
+*Enables:* xref:estate-pwg2ii[🏔️ PWG-2ii across the estate] +
 *Value (judgement):* maths ●●, engineering ●●, science ●●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:891
 
@@ -815,7 +815,7 @@ The long horizon (Q-H.3): the 900 and more ungraded theorems of the estate each 
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* XL · *Status:* open
 
-*Needs:* <<corpus,🧪 Propose and dispose corpus>>, <<receipts-campaign,📣 Receipts campaign>>, <<ci-recorder,🤖 CI records its own runs>> +
+*Needs:* xref:corpus[🧪 Propose and dispose corpus], xref:receipts-campaign[📣 Receipts campaign], xref:ci-recorder[🤖 CI records its own runs] +
 *Value (judgement):* maths ●●, science ●, soundness ●●●, ecosystem ●●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:883; docs/proposals/mathesis-research-programme.adoc:903
 
@@ -831,13 +831,13 @@ No trip is out.
 Nodes whose work lands in another repository. They are listed here so they can be
 carried to that repository, not done here.
 
-* estate:hyperpolymath/echo-types: <<echo-mirrors,🪞 Echo mirror records>> (open)
-* estate:hyperpolymath/januskey: <<januskey-slice,🗝️ Theorem to code: januskey>> (open)
-* estate:hyperpolymath/resource-algebra: <<s1-reuse,♻️ S-1 by reuse of resource-algebra>> (open)
-* estate:hyperpolymath/secret-types: <<receipts-campaign,📣 Receipts campaign>> (open)
-* estate:metadatastician/gels: <<gels-maths-panel,🪟 Maths panel in GELS>> (blocked)
-* estate:metadatastician/standards: <<ci-recorder,🤖 CI records its own runs>> (open)
-* estate:metadatastician/standards: <<idris-token-laws,🧬 Generated Idris2 token laws>> (open)
-* estate:metadatastician/standards: <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>> (open)
-* upstream:Deducteam/agda2dedukti: <<file-transport-bugs,🐛 File the transport reproducers>> (open)
-* upstream:Deducteam/lambdapi: <<dedukti-transport,🚂 Transport through Dedukti>> (blocked)
+* estate:hyperpolymath/echo-types: xref:echo-mirrors[🪞 Echo mirror records] (open)
+* estate:hyperpolymath/januskey: xref:januskey-slice[🗝️ Theorem to code: januskey] (open)
+* estate:hyperpolymath/resource-algebra: xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] (open)
+* estate:hyperpolymath/secret-types: xref:receipts-campaign[📣 Receipts campaign] (open)
+* estate:metadatastician/gels: xref:gels-maths-panel[🪟 Maths panel in GELS] (blocked)
+* estate:metadatastician/standards: xref:ci-recorder[🤖 CI records its own runs] (open)
+* estate:metadatastician/standards: xref:idris-token-laws[🧬 Generated Idris2 token laws] (open)
+* estate:metadatastician/standards: xref:superseded-manifests-option[🗄️ Keep superseded manifests (option)] (open)
+* upstream:Deducteam/agda2dedukti: xref:file-transport-bugs[🐛 File the transport reproducers] (open)
+* upstream:Deducteam/lambdapi: xref:dedukti-transport[🚂 Transport through Dedukti] (blocked)

@@ -417,7 +417,12 @@ export function derive(byId, advisors) {
 // The page is a list of sections; each section is a list of lines.
 const cell = s => String(s).replaceAll('|', String.raw`\|`);
 const nameOf = (byId, id) => `${byId.get(id).glyph} ${byId.get(id).name}`;
-const xref = (byId, id) => `<<${id},${cell(nameOf(byId, id))}>>`;
+// A link to a node, as the xref macro. Its text may hold anything but a few
+// characters, written as character references so they mean the same everywhere,
+// in a table or not: "|" (a table cell's end), "]" (the macro's end) and "="
+// (which makes the text an attribute list). "<<id,text>>" cannot hold ">>".
+const linkText = s => String(s).replaceAll('|', '&#124;').replaceAll(']', '&#93;').replaceAll('=', '&#61;');
+const xref = (byId, id) => `xref:${id}[${linkText(nameOf(byId, id))}]`;
 const xrefs = (byId, ids, sep = ', ') => ids.map(t => xref(byId, t)).join(sep);
 const orNone = (items, none) => (items.length ? items : [none]);
 const trackKey = t => `${TRACK_GLYPH[t]} ${t}`;
@@ -754,9 +759,10 @@ export function context(root = ROOT) {
     read,
     // No registry view means no claim is listed; one that leads outside the repository is refused.
     registry: existsSync(path.join(root, registry)) ? read(registry) : '',
-    // Every decision record with this number (the template aside), in a fixed order.
+    // Every decision record with this number, in a fixed order. Only the boilerplate
+    // NNNN-template.adoc is set aside; a record such as 0006-template-inheritance.adoc counts.
     adrFiles: n => (existsSync(decisions) ? readdirSync(decisions) : [])
-      .filter(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && !x.includes('template'))
+      .filter(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && x !== `${n}-template.adoc`)
       .sort(cmp).map(x => `docs/decisions/${x}`),
   };
 }

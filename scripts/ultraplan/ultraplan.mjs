@@ -27,7 +27,7 @@
 // The "me" advisor is private (owner ruling 2026-11-24): its notes are kept
 // outside this public repository, and a node carries at most the neutral tag
 // `owner_value: "high"`. Counsel under the key `me` is refused.
-import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync} from 'node:fs';
+import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync} from 'node:fs';
 import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
@@ -60,15 +60,28 @@ export const TRACK_FILL = {
 };
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// A size is one of the four own keys of SIZES, never an inherited name such as "toString".
+const isSize = s => typeof s === 'string' && Object.hasOwn(SIZES, s);
 const isStr = (v, max = 400) => typeof v === 'string' && v.length > 0 && v.length <= max && v === v.trim() && !/[\u0000-\u001f]/.test(v);
 
 // ── Reading ──────────────────────────────────────────────────────────────────
 // Each source line must already be its own JCS form, so the data has one
 // spelling and a diff shows only real change.
+// I-JSON (RFC 7493) and JCS (RFC 8785) refuse a string or a member name that
+// holds a lone surrogate, which JSON.parse would otherwise accept and
+// JSON.stringify would write back unchanged.
+export function wellFormed(v) {
+  if (typeof v === 'string') return v.isWellFormed();
+  if (Array.isArray(v)) return v.every(wellFormed);
+  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => k.isWellFormed() && wellFormed(x));
+  return true;
+}
+
 export function readSource(text, name) {
   const rows = parseJsonl(text, name);
   const lines = text === '' ? [] : text.slice(0, -1).split('\n');
   rows.forEach((r, i) => {
+    if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate, which I-JSON and JCS refuse`);
     if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
   });
   return rows;
@@ -105,7 +118,7 @@ export function checkEvidence(ev, ctx) {
   if (kinds.length !== 1) return 'an evidence item names exactly one of path, claim or adr';
   if (ev.path !== undefined) {
     if (!isStr(ev.path, 300) || ev.path.startsWith('/') || ev.path.split('/').includes('..')) return `evidence path ${JSON.stringify(ev.path)} is not a repository path`;
-    return ctx.exists(ev.path) ? null : `evidence path ${ev.path} does not exist`;
+    return ctx.isFile(ev.path) ? null : `evidence path ${ev.path} is not a file in the repository`;
   }
   if (ev.claim !== undefined) {
     if (!isStr(ev.claim) || !/^[\w.-]+\/[\w.-]+#[A-Z]+-[0-9A-Za-z]+$/.test(ev.claim)) return `evidence claim ${JSON.stringify(ev.claim)} is not OWNER/REPO#ID`;
@@ -151,7 +164,7 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     if (!TRACKS.includes(n.track)) fail(`${where}: track must be one of ${TRACKS.join(', ')}`);
     if (!KINDS.includes(n.kind)) fail(`${where}: kind must be one of ${KINDS.join(', ')}`);
     if (!STATUSES.includes(n.status)) fail(`${where}: status must be one of ${STATUSES.join(', ')}`);
-    if (!(n.size in SIZES)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
+    if (!isSize(n.size)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
     if (!isStr(n.summary, 600)) fail(`${where}: summary is required (at most 600 characters)`);
     for (const k of ['needs', 'rivals', 'evidence', 'refs']) if (n[k] !== undefined && !Array.isArray(n[k])) fail(`${where}: ${k} must be a list`);
     if (n.value !== undefined) {
@@ -185,17 +198,18 @@ export function validate({advisors, nodes, expeditions}, ctx) {
       }
     }
     for (const r of n.rivals ?? []) if (byId.has(r) && !(byId.get(r).rivals ?? []).includes(n.id)) fail(`${where}: rival ${r} does not name ${n.id} back`);
-    if (n.status === 'done') {
-      if (!(n.evidence ?? []).length) fail(`${where}: done needs evidence (a path, a claim grade or an accepted ADR)`);
+    if (n.status === 'done' && !(n.evidence ?? []).length) fail(`${where}: done needs evidence (a path, a claim grade or an accepted ADR)`);
+    if (n.status === 'done' || n.status === 'active') {
+      // Evidence an active node shows must hold as much as a done node's.
       for (const ev of n.evidence ?? []) {
         let e;
         try { e = checkEvidence(ev, ctx); } catch (x) { e = x.message; }
         if (e) fail(`${where}: ${e}`);
       }
-      for (const t of n.needs ?? []) if (byId.get(t)?.status !== 'done') fail(`${where}: done, but its need ${t} is not done`);
-    } else if (n.evidence !== undefined && n.status !== 'active') {
+    } else if (n.evidence !== undefined) {
       fail(`${where}: evidence belongs to a done or active node`);
     }
+    if (n.status === 'done') for (const t of n.needs ?? []) if (byId.get(t)?.status !== 'done') fail(`${where}: done, but its need ${t} is not done`);
   }
 
   // The needs form a DAG.
@@ -219,7 +233,7 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     if (!isStr(x.id, 20) || !/^X-\d{3}$/.test(x.id) || exIds.has(x.id)) fail(`${where}: id is X-NNN and unique`);
     exIds.add(x.id);
     for (const k of ['what', 'why']) if (!isStr(x[k])) fail(`${where}: ${k} is required`);
-    if (!(x.size in SIZES)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
+    if (!isSize(x.size)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(x.date ?? '')) fail(`${where}: date is YYYY-MM-DD`);
     if (!['out', 'grafted', 'archived'].includes(x.status)) fail(`${where}: status is out, grafted or archived`);
     if (x.status === 'grafted' && !byId.has(x.graft)) fail(`${where}: a grafted expedition names the node it became (graft)`);
@@ -236,7 +250,7 @@ export function validate({advisors, nodes, expeditions}, ctx) {
 export function derive(byId, advisors) {
   const children = new Map([...byId.keys()].map(id => [id, []]));
   for (const n of byId.values()) for (const t of n.needs ?? []) children.get(t).push(n.id);
-  for (const c of children.values()) c.sort();
+  for (const c of children.values()) c.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
   const depth = new Map();
   const depthOf = id => {
@@ -475,7 +489,10 @@ export function renderSvg(byId, d) {
   const frontier = new Set(d.frontier.map(n => n.id));
   const xOf = id => LEFT + d.depth.get(id) * COL;
   const o = [];
-  o.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">`);
+  // The SVG namespace is an identifier, never fetched, and XML Namespaces 1.0 fixes it as http.
+  o.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">`); // hypatia: allow code_safety/js_http_url_in_code -- the SVG namespace URI is an identifier, not a fetched URL
+  o.push('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
+  o.push('<!-- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) -->');
   o.push(`<title id="t">The Mathesis tech tree</title>`);
   o.push(`<desc id="d">Generated by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl. ${byId.size} nodes in ${maxDepth + 1} eras; each arrow runs from a node to a node it enables.</desc>`);
   o.push(`<rect x="0" y="0" width="${W}" height="${H}" rx="18" fill="#fffdf7" stroke="#e8dcc0"/>`);
@@ -524,7 +541,7 @@ export function renderSvg(byId, d) {
 export function context(root = ROOT) {
   const decisions = path.join(root, 'docs/decisions');
   return {
-    exists: p => existsSync(path.join(root, p)),
+    isFile: p => { try { return statSync(path.join(root, p)).isFile(); } catch { return false; } },
     read: p => readFileSync(path.join(root, p), 'utf8'),
     registry: existsSync(path.join(root, 'docs/atlas/generated/registry.adoc')) ? readFileSync(path.join(root, 'docs/atlas/generated/registry.adoc'), 'utf8') : '',
     adrFile: n => {

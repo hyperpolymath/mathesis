@@ -66,6 +66,7 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(out[VIEW]).toContain('== Research now: the frontier');
   expect(out[VIEW]).toContain('_Pick:_ <<theorem,🔷 theorem>>. The deep one.');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
+  expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
 });
 
 test('the views are deterministic', () => {
@@ -76,8 +77,10 @@ test('the views are deterministic', () => {
 
 test('done needs evidence that holds', () => {
   refuses({nodes: swap('root', {evidence: []})}, /node root: done needs evidence/);
-  refuses({nodes: swap('root', {evidence: [{path: 'NOPE.adoc'}]})}, /evidence path NOPE.adoc does not exist/);
+  refuses({nodes: swap('root', {evidence: [{path: 'NOPE.adoc'}]})}, /evidence path NOPE.adoc is not a file in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: '../etc/passwd'}]})}, /is not a repository path/);
+  refuses({nodes: swap('root', {evidence: [{path: '.'}]})}, /evidence path \. is not a file in the repository/);
+  refuses({nodes: swap('root', {evidence: [{path: 'docs/decisions'}]})}, /evidence path docs\/decisions is not a file/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
@@ -112,6 +115,13 @@ test('the me advisor writes nothing into the public tree', () => {
   refuses({nodes: swap('theorem', {owner_value: 'medium'})}, /owner_value is "high" or absent/);
 });
 
+test('evidence on an active node must hold too', () => {
+  refuses({nodes: swap('theorem', {status: 'active', evidence: [{}]})}, /exactly one of path, claim or adr/);
+  refuses({nodes: swap('theorem', {status: 'active', evidence: [{path: 'NOPE.adoc'}]})}, /is not a file in the repository/);
+  expect(() => generate(fixture({nodes: swap('theorem', {status: 'active', evidence: [{path: 'README.adoc'}]})}))).not.toThrow();
+  refuses({nodes: swap('paper', {evidence: [{path: 'README.adoc'}]})}, /evidence belongs to a done or active node/);
+});
+
 test(`at most ${ACTIVE_LIMIT} nodes are active`, () => {
   const busy = BASE.map(n => ['theorem', 'paper', 'cheap', 'panel'].includes(n.id) ? {...n, status: 'active'} : n);
   refuses({nodes: busy}, new RegExp(`4 nodes are active .* at most ${ACTIVE_LIMIT}`));
@@ -123,7 +133,14 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({nodes: swap('paper', {track: 'poetry'})}, /track must be one of/);
   refuses({nodes: swap('paper', {value: {maths: 4}})}, /value\.maths must be 0, 1, 2 or 3/);
   refuses({nodes: swap('paper', {where: 'elsewhere'})}, /where is estate:OWNER\/REPO/);
+  refuses({nodes: swap('paper', {size: 'toString'})}, /size must be one of S, M, L, XL/);
+  refuses({nodes: swap('paper', {size: 'constructor'})}, /size must be one of/);
   refuses({raw: {nodes: BASE.map(n => JSON.stringify(n, null, 0)).join('\n') + '\n'}}, /not in JCS form/);
+  // A lone surrogate survives JSON.parse and JSON.stringify alike; I-JSON refuses it.
+  const lone = jcs({...BASE[0], name: 'x'}).replace('"name":"x"', '"name":"\\ud800"');
+  refuses({raw: {nodes: [lone, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate/);
+  const pair = jcs({...BASE[0], name: 'x \u{1F600}'});
+  expect(() => generate(fixture({raw: {nodes: [pair, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}))).not.toThrow();
 });
 
 test('return tickets are grafted or archived honestly', () => {

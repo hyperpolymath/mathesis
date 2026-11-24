@@ -13,7 +13,7 @@ never typed. A node marked done carries evidence the generator checks: a file, a
 claim grade that the registry derives, or an accepted decision record. The value marks
 are judgements, written down so they can be argued with.
 
-Census of the tree: 12 done, 2 active (at most 3), 36 open, 2 blocked, 0 dropped, of 52 nodes. 13 can be started now.
+Census of the tree: 12 done, 2 active (at most 3), 35 open, 3 blocked, 0 dropped, of 52 nodes. 12 can be started now.
 
 toc::[]
 
@@ -37,7 +37,6 @@ counts the live nodes that depend on it, directly or through others.
 |<<dossier,🗂️ Theorem dossier>> |maths |S |1 |The eight-item dossier for each theorem (Line 0), scored first on THY-1, five januskey theorems and two each of secret-types and lintel (E-0). Its home (here or standards, R-5) is still open.
 |<<file-transport-bugs,🐛 File the transport reproducers>> |ecosystem |S |1 |File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act. _(upstream:Deducteam/agda2dedukti)_
 |<<pinned-image,📦 Proof lanes in a pinned image>> |engineering |M |1 |Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
-|<<publish-atlas,🌐 Publish the atlas>> |publications |S |1 |Deploy the built site (WO 4.3). The hold ran to 2026-11-24; deploying is outward-facing, so it waits for a fresh owner question first.
 |<<s2-monotone,📈 S-2: evaluation is monotone>> |maths |S |1 |Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
 |<<doc-drift-fix,🧹 Mend the status documents>> |engineering |S |0 |ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
 |<<paper-thy1,📄 Note: feature reachability>> |publications |M |0 |A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
@@ -79,7 +78,7 @@ _Pick:_ <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>. A forecast 
 
 _Asks:_ Is there a paper, a talk or a citable artefact here?
 
-_Pick:_ <<publish-atlas,🌐 Publish the atlas>>. Everything else here is invisible until this happens.
+_Pick:_ <<paper-thy1,📄 Note: feature reachability>>. A complete, small, checked result: the easiest first paper.
 
 === 🔍 Soundness auditor
 
@@ -506,14 +505,15 @@ A short note on THY-1: why requesting every feature is a sound check for absence
 * 📜 _Publisher:_ A complete, small, checked result: the easiest first paper.
 
 [[publish-atlas]]
-==== 🌱 🌐 Publish the atlas
+==== ⛔ 🌐 Publish the atlas
 
-Deploy the built site (WO 4.3). The hold ran to 2026-11-24; deploying is outward-facing, so it waits for a fresh owner question first.
+Deploy the built site (WO 4.3), once the owner says go. Publication is outward-facing, so it is gated on the owner, not on any node.
 
-*Track:* 📜 publications · *Kind:* view · *Size:* S · *Status:* open
+*Track:* 📜 publications · *Kind:* view · *Size:* S · *Status:* blocked
 
 *Needs:* <<site-build,🏗️ Atlas site (build)>> +
 *Enables:* <<talk-atlas,🎤 Talk: an atlas of an estate>> +
+*Blocked by:* the owner’s go-ahead to deploy (WO 4.3): deploying is outward-facing, so the hold that ended on 2026-11-24 is followed by a fresh owner question, through the decision desk +
 *Value (judgement):* publications ●●●, teaching ●●, ecosystem ●● +
 *See:* docs/status/ROADMAP.adoc:262; docs/proposals/mathesis-re-anchoring.adoc:1058
 
@@ -550,12 +550,12 @@ The full bridge record for two pilots, a squeakwell ladder row and resource-alge
 [[gels-maths-panel]]
 ==== ⛔ 🪟 Maths panel in GELS
 
-A panel in GELS, the estate display, for the maths: the frontier of this tree, the grade census with its denominator, and the open decisions.
+The tech tree as one panel type in GELS, beside the work-queue lanes and the Plan tab: frontier, grade census with its denominator, and claim pins, from a Mathesis feed whose fields the feed owns. Open decisions go to the owner’s decision desk, not this panel.
 
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked · *Beyond this repository:* estate:metadatastician/gels
 
 *Needs:* <<claims-registry,📒 Claims registry>>, <<ultraplan,🌳 The ultraplan>> +
-*Blocked by:* the estate coordinator's answer on how GELS panels take their data (asked 2026-11-24); no feed is written until a reader is agreed +
+*Blocked by:* the GELS feed and panel contract (docs/proposals/feed-panel-contract.adoc in metadatastician/gels), which the GELS thread is drafting (estate coordinator, 2026-11-24); Mathesis then publishes a read-only I-JSON/JCS feed and GELS renders it +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
 === ♾️ Era 4: Cantor

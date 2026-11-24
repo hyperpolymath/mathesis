@@ -74,8 +74,10 @@ and contrarian).
 
 Each asks one question of every node. Each names one pick from the frontier:
 
-* An advisor that reads a value mark ranks by it, then by how much the node
-unlocks.
+* An advisor that reads a value mark ranks the frontier nodes it marks above
+zero: by the mark, then by how much the node unlocks. A node it marks zero is
+not one it would pick, so when no node is marked above zero the advisor names
+nothing.
 * The contrarian names the frontier node the council rates lowest that still
 unlocks the most. That keeps the road not taken in view.
 * The *me* advisor looks out for what could help the owner's own life. Its notes

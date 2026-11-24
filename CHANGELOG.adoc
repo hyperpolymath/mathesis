@@ -74,7 +74,7 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 * **The ultraplan: a tech tree of Mathesis, data first.** `docs/ultraplan/`
   holds three JCS JSON Lines files:
-  ** `tree.jsonl`, 51 nodes whose needs are the edges;
+  ** `tree.jsonl`, the nodes, whose needs are the edges;
   ** `advisors.jsonl`, the ten advisors;
   ** `expeditions.jsonl`, the return tickets.
 +

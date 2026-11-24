@@ -84,6 +84,8 @@ test('done needs evidence that holds', () => {
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
+  refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
+  refuses({nodes: swap('tool', {evidence: [{adr: '0004', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
 });
 
 test('a claim is evidence only at the grade the registry derives', () => {
@@ -94,8 +96,10 @@ test('a claim is evidence only at the grade the registry derives', () => {
   refuses({nodes: swap('root', {evidence: [{claim: 'o/r#T-9'}]}), registry}, /does not list o\/r#T-9/);
 });
 
-test('a done node cannot rest on an unfinished need', () => {
+test('a done or active node cannot rest on an unfinished need', () => {
   refuses({nodes: swap('cheap', {status: 'done', evidence: [{path: 'README.adoc'}], needs: ['theorem']})}, /node cheap: done, but its need theorem is not done/);
+  refuses({nodes: swap('panel', {status: 'active'})}, /node panel: active, but its need theorem is not done/);
+  expect(() => generate(fixture({nodes: swap('cheap', {status: 'active'})}))).not.toThrow();
 });
 
 test('the needs form a DAG over known nodes', () => {
@@ -108,6 +112,11 @@ test('rivals name each other back', () => {
   refuses({nodes: swap('paper', {rivals: ['cheap']})}, /rival cheap does not name paper back/);
   const both = BASE.map(n => n.id === 'paper' ? {...n, rivals: ['cheap']} : n.id === 'cheap' ? {...n, rivals: ['paper']} : n);
   expect(generate(fixture({nodes: both})).derived.rivalries).toEqual([['cheap', 'paper']]);
+});
+
+test('exactly the me advisor is private', () => {
+  refuses({advisors: ADVISORS.map(a => a.id === 'me' ? {...a, private: undefined} : a).map(a => JSON.parse(JSON.stringify(a)))}, /advisor me: must be private/);
+  refuses({advisors: ADVISORS.map(a => a.id === 'maths' ? {...a, private: true} : a)}, /advisor maths: only the me advisor is private/);
 });
 
 test('the me advisor writes nothing into the public tree', () => {
@@ -149,6 +158,9 @@ test('return tickets are grafted or archived honestly', () => {
   refuses({expeditions: [{...x, status: 'grafted', graft: 'ghost'}]}, /names the node it became/);
   refuses({expeditions: [{...x, status: 'archived'}]}, /records what it taught/);
   refuses({expeditions: [x, {...x}]}, /id is X-NNN and unique/);
+  refuses({expeditions: [{...x, date: '2026-02-30'}]}, /date is a real calendar date/);
+  refuses({expeditions: [{...x, date: '2026-99-99'}]}, /date is a real calendar date/);
+  expect(() => generate(fixture({expeditions: [{...x, date: '2028-02-29'}]}))).not.toThrow();
 });
 
 test('the evidence parsers read the real registry view and ADRs', () => {

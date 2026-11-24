@@ -120,7 +120,16 @@ there.
 == GELS
 
 The owner asked for a maths panel in GELS, the estate display. The estate
-coordinator was asked on 2026-11-24 how GELS panels take their data. Until it
-answers, nothing here writes a feed for GELS. A feed with no agreed reader would
-be unwired. The panel is a node in the tree (`gels-maths-panel`), blocked on that
-answer.
+coordinator answered on 2026-11-24:
+
+* Mathesis publishes a read-only I-JSON/JCS feed, and GELS renders it as one
+panel type beside the work-queue lanes and the Plan tab.
+* The feed carries the tree's nodes, the advisors' picks (never the me
+advisor's), the grade census with its denominator, and the claim pins.
+* Open decisions go to the owner's decision desk, not this panel.
+
+The GELS thread is drafting the feed and panel contract
+(`docs/proposals/feed-panel-contract.adoc` in metadatastician/gels). Until it
+exists, nothing here writes a feed: a feed with no agreed reader would be
+unwired. The panel is a node in the tree (`gels-maths-panel`), blocked on that
+contract.

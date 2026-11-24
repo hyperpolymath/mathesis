@@ -62,6 +62,12 @@ export const TRACK_FILL = {
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // A size is one of the four own keys of SIZES, never an inherited name such as "toString".
 const isSize = s => typeof s === 'string' && Object.hasOwn(SIZES, s);
+// A YYYY-MM-DD that names a real day (no 2026-02-30).
+export const isDate = s => {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+};
 const isStr = (v, max = 400) => typeof v === 'string' && v.length > 0 && v.length <= max && v === v.trim() && !/[\u0000-\u001f]/.test(v);
 
 // ── Reading ──────────────────────────────────────────────────────────────────
@@ -116,6 +122,7 @@ export function checkEvidence(ev, ctx) {
   closed(ev, ['path', 'claim', 'min_pwg', 'adr'], 'evidence');
   const kinds = ['path', 'claim', 'adr'].filter(k => k in ev);
   if (kinds.length !== 1) return 'an evidence item names exactly one of path, claim or adr';
+  if (ev.min_pwg !== undefined && ev.claim === undefined) return 'min_pwg belongs to claim evidence only';
   if (ev.path !== undefined) {
     if (!isStr(ev.path, 300) || ev.path.startsWith('/') || ev.path.split('/').includes('..')) return `evidence path ${JSON.stringify(ev.path)} is not a repository path`;
     return ctx.isFile(ev.path) ? null : `evidence path ${ev.path} is not a file in the repository`;
@@ -147,6 +154,9 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     for (const k of ['name', 'glyph', 'asks']) if (!isStr(a[k])) fail(`advisor ${a.id}: ${k} is required`);
     if (a.reads !== undefined && !VALUE_KEYS.includes(a.reads)) fail(`advisor ${a.id}: reads must be one of ${VALUE_KEYS.join(', ')}`);
     if (a.private !== undefined && a.private !== true) fail(`advisor ${a.id}: private is true or absent`);
+    // Exactly the me advisor is private: its ranking and the page's privacy claim depend on it.
+    if (a.id === 'me' && a.private !== true) fail('advisor me: must be private ("private":true)');
+    if (a.id !== 'me' && a.private !== undefined) fail(`advisor ${a.id}: only the me advisor is private`);
   }
 
   const byId = new Map();
@@ -209,7 +219,8 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     } else if (n.evidence !== undefined) {
       fail(`${where}: evidence belongs to a done or active node`);
     }
-    if (n.status === 'done') for (const t of n.needs ?? []) if (byId.get(t)?.status !== 'done') fail(`${where}: done, but its need ${t} is not done`);
+    // A node is started only from the frontier, so an active node's needs are done too.
+    if (n.status === 'done' || n.status === 'active') for (const t of n.needs ?? []) if (byId.get(t)?.status !== 'done') fail(`${where}: ${n.status}, but its need ${t} is not done`);
   }
 
   // The needs form a DAG.
@@ -234,7 +245,7 @@ export function validate({advisors, nodes, expeditions}, ctx) {
     exIds.add(x.id);
     for (const k of ['what', 'why']) if (!isStr(x[k])) fail(`${where}: ${k} is required`);
     if (!isSize(x.size)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(x.date ?? '')) fail(`${where}: date is YYYY-MM-DD`);
+    if (!isDate(x.date)) fail(`${where}: date is a real calendar date, YYYY-MM-DD`);
     if (!['out', 'grafted', 'archived'].includes(x.status)) fail(`${where}: status is out, grafted or archived`);
     if (x.status === 'grafted' && !byId.has(x.graft)) fail(`${where}: a grafted expedition names the node it became (graft)`);
     if (x.status !== 'grafted' && x.graft !== undefined) fail(`${where}: graft belongs to a grafted expedition`);

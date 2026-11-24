@@ -13,7 +13,7 @@ never typed. A node marked done carries evidence the generator checks: a file, a
 claim grade that the registry derives, or an accepted decision record. The value marks
 are judgements, written down so they can be argued with.
 
-Census of the tree: 12 done, 2 active (at most 3), 36 open, 2 blocked, 0 dropped, of 52 nodes. 12 can be started now.
+Census of the tree: 12 done, 2 active (at most 3), 36 open, 2 blocked, 0 dropped, of 52 nodes. 13 can be started now.
 
 toc::[]
 
@@ -38,6 +38,7 @@ counts the live nodes that depend on it, directly or through others.
 |<<file-transport-bugs,🐛 File the transport reproducers>> |ecosystem |S |1 |File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act. _(upstream:Deducteam/agda2dedukti)_
 |<<pinned-image,📦 Proof lanes in a pinned image>> |engineering |M |1 |Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
 |<<publish-atlas,🌐 Publish the atlas>> |publications |S |1 |Deploy the built site (WO 4.3). The hold ran to 2026-11-24; deploying is outward-facing, so it waits for a fresh owner question first.
+|<<s2-monotone,📈 S-2: evaluation is monotone>> |maths |S |1 |Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
 |<<doc-drift-fix,🧹 Mend the status documents>> |engineering |S |0 |ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
 |<<paper-thy1,📄 Note: feature reachability>> |publications |M |0 |A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
 |<<statistical-bridge,🎲 From oracle to theorem>> |science |L |0 |S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are tested only, against MetaManifold-WebUI as oracle. Prove them in Agda, Rocq and Lean for admission (Q-2.6).
@@ -120,15 +121,15 @@ same place; the contrarian keeps the road not taken in view.
 * <<app-proofs,💧 APP-1 to APP-4: missing stays missing>> -> <<forecast-13wk,📅 Thirteen-week forecast>>, <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>>, <<teaching-cohort,📓 Cohort economics, taught>>
 * <<bridge-lock-pilot,🔗 Bridge lock pilot>> -> <<centre-computations,🎯 Centre computations>>, <<echo-mirrors,🪞 Echo mirror records>>, <<encoding-differences,🔤 Closed list of encoding differences>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>
 * <<centre-computations,🎯 Centre computations>> -> <<concept-commons,🏛️ Concept commons>>, <<corpus,🧪 Propose and dispose corpus>>
-* <<chain-question,🧩 Is a chain enough? (X-PF1)>> -> <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
-* <<claims-registry,📒 Claims registry>> -> <<bridge-candidates,🌉 Bridge candidates>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<token-order,⚖️ Settle the order of status tokens>>, <<whats-owed,📋 What is owed>>
+* <<claims-registry,📒 Claims registry>> -> <<bridge-candidates,🌉 Bridge candidates>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<whats-owed,📋 What is owed>>
 * <<proof-gate,🛡️ Proof gate in pinned Guix>> -> <<cohort-model,👥 Cohort model in Agda>>, <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipts,🔏 Proof receipts>>, <<thy1,🧭 THY-1: reachability is monotone>>
 * <<receipt-generator,🏭 Shared receipt generator>> -> <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>, <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>>
 * <<receipts,🔏 Proof receipts>> -> <<paper-thy1,📄 Note: feature reachability>>, <<receipt-generator,🏭 Shared receipt generator>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
 * <<s1-token-algebra,🔢 S-1: tokens form a dioid>> -> <<bridge-by-construction,🏗 Bridges by construction>>, <<idris-token-laws,🧬 Generated Idris2 token laws>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
 * <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<corpus,🧪 Propose and dispose corpus>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
-* <<theory-shelf,📚 Theory shelf and ledger>> -> <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<statistical-bridge,🎲 From oracle to theorem>>
+* <<theory-shelf,📚 Theory shelf and ledger>> -> <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<statistical-bridge,🎲 From oracle to theorem>>
 * <<thy1,🧭 THY-1: reachability is monotone>> -> <<dedukti-transport,🚂 Transport through Dedukti>>, <<file-transport-bugs,🐛 File the transport reproducers>>, <<paper-thy1,📄 Note: feature reachability>>, <<theory-shelf,📚 Theory shelf and ledger>>
+* <<token-order,⚖️ Settle the order of status tokens>> -> <<centre-computations,🎯 Centre computations>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
 
 .Confluences
 * <<encoding-differences,🔤 Closed list of encoding differences>> + <<s1-token-algebra,🔢 S-1: tokens form a dioid>> -> <<bridge-by-construction,🏗 Bridges by construction>>
@@ -140,8 +141,8 @@ same place; the contrarian keeps the road not taken in view.
 * <<s4-s5-verdict,🌦️ S-4 and S-5: honest cash verdicts>> + <<forecast-13wk,📅 Thirteen-week forecast>> -> <<liquidity-shelf,💶 Liquidity shelf>>
 * <<receipt-generator,🏭 Shared receipt generator>> + <<claims-registry,📒 Claims registry>> + <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<paper-receipts,📰 Paper: receipts, not claims>>
 * <<thy1,🧭 THY-1: reachability is monotone>> + <<receipts,🔏 Proof receipts>> -> <<paper-thy1,📄 Note: feature reachability>>
-* <<chain-question,🧩 Is a chain enough? (X-PF1)>> + <<bridge-lock-pilot,🔗 Bridge lock pilot>> -> <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>
-* <<chain-question,🧩 Is a chain enough? (X-PF1)>> + <<receipts,🔏 Proof receipts>> -> <<s3-grade-function,🎚️ S-3: the grade is a function>>
+* <<bridge-lock-pilot,🔗 Bridge lock pilot>> + <<token-order,⚖️ Settle the order of status tokens>> -> <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>
+* <<receipts,🔏 Proof receipts>> + <<token-order,⚖️ Settle the order of status tokens>> -> <<s3-grade-function,🎚️ S-3: the grade is a function>>
 * <<claims-registry,📒 Claims registry>> + <<thy1,🧭 THY-1: reachability is monotone>> -> <<theory-shelf,📚 Theory shelf and ledger>>
 
 .Rivals
@@ -232,7 +233,7 @@ Pins 53 claims in their home repositories and derives each grade from the home r
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
 *Needs:* <<census,🧾 Census of the estate>> +
-*Enables:* <<bridge-candidates,🌉 Bridge candidates>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<token-order,⚖️ Settle the order of status tokens>>, <<whats-owed,📋 What is owed>> +
+*Enables:* <<bridge-candidates,🌉 Bridge candidates>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<whats-owed,📋 What is owed>> +
 *Evidence:* ADR 0004 accepted; `docs/atlas/generated/registry.adoc` +
 *Value (judgement):* engineering ●●●, soundness ●●●, ecosystem ●●●
 
@@ -264,6 +265,21 @@ Missing inputs propagate and never read as zero; the cash identity; the least fu
 *Evidence:* hyperpolymath/mathesis#APP-1 at PWG-2ii or above; hyperpolymath/mathesis#APP-2 at PWG-2ii or above; hyperpolymath/mathesis#APP-3 at PWG-2ii or above; hyperpolymath/mathesis#APP-4 at PWG-2ii or above +
 *Value (judgement):* maths ●●, economics ●●●, teaching ●●
 
+[[chain-question]]
+==== 🔨 🧩 Is a chain enough? (X-PF1)
+
+Experiment X-PF1, pre-registered: list each rule, gate and report in the estate that reads a status token (at least the proof-route ABI, the registry and ledger rule 3) and ask whether its result changes between the two members of a fibre. Outcome A, B or C (or D: two tokens the wrong way round) decides the order.
+
+*Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* active
+
+*Needs:* <<claims-registry,📒 Claims registry>> +
+*Enables:* <<token-order,⚖️ Settle the order of status tokens>> +
+*Value (judgement):* maths ●●●, science ●●, soundness ●● +
+*See:* docs/proposals/mathesis-research-programme.adoc:390; docs/proposals/mathesis-research-programme.adoc:458
+
+* ∑ _Mathematician:_ The deepest open question on the board; it decides what S-1 even says.
+* 🔬 _Scientist:_ Pre-register what result means A, B or C before computing.
+
 [[theory-shelf]]
 ==== ✅ 📚 Theory shelf and ledger
 
@@ -272,24 +288,9 @@ The admission rule for theory no single system owns, with an append-only ledger 
 *Track:* ∑ maths · *Kind:* data · *Size:* S · *Status:* done
 
 *Needs:* <<claims-registry,📒 Claims registry>>, <<thy1,🧭 THY-1: reachability is monotone>> +
-*Enables:* <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<statistical-bridge,🎲 From oracle to theorem>> +
+*Enables:* <<dossier,🗂️ Theorem dossier>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<statistical-bridge,🎲 From oracle to theorem>> +
 *Evidence:* `docs/theory/admissions.jsonl`; `docs/theory/ledger.jsonl` +
 *Value (judgement):* maths ●●, soundness ●●
-
-[[token-order]]
-==== 🔨 ⚖️ Settle the order of status tokens
-
-The research programme rules open < argued < tested-only < proven-with-postulates < proven (R-1), but resource-algebra E-1 states tested-only < argued, and both cite PROOF-POLICY section 5. One order must win before the token algebra is proved.
-
-*Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* active
-
-*Needs:* <<claims-registry,📒 Claims registry>> +
-*Enables:* <<centre-computations,🎯 Centre computations>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>> +
-*Value (judgement):* maths ●●, soundness ●●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:337; docs/atlas/generated/registry.adoc:39
-
-* 🗺️ _Estate cartographer:_ The ruling lands in standards PROOF-POLICY, not here; carry it there.
-* ∑ _Mathematician:_ A theorem about an order is only as good as the order; settle it first.
 
 [[doc-drift-fix]]
 ==== 🌱 🧹 Mend the status documents
@@ -381,21 +382,6 @@ A view of the standards requirements master list beside the census and the regis
 
 === 🌌 Era 3: Kepler
 
-[[chain-question]]
-==== 🌱 🧩 Is a chain enough? (X-PF1)
-
-Decide whether proof status is a chain or needs a lattice: outcomes A, B or C, with a seven-value free distributive lattice as the candidate. Outcome C changes the standards canon.
-
-*Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
-
-*Needs:* <<token-order,⚖️ Settle the order of status tokens>> +
-*Enables:* <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
-*Value (judgement):* maths ●●●, science ●●, soundness ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:390
-
-* ∑ _Mathematician:_ The deepest open question on the board; it decides what S-1 even says.
-* 🔬 _Scientist:_ Pre-register what result means A, B or C before computing.
-
 [[dossier]]
 ==== 🌱 🗂️ Theorem dossier
 
@@ -407,6 +393,20 @@ The eight-item dossier for each theorem (Line 0), scored first on THY-1, five ja
 *Enables:* <<januskey-slice,🗝️ Theorem to code: januskey>> +
 *Value (judgement):* maths ●, teaching ●●, soundness ●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:291; docs/proposals/mathesis-research-programme.adoc:1017
+
+[[s2-monotone]]
+==== 🌱 📈 S-2: evaluation is monotone
+
+Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
+
+*Track:* ∑ maths · *Kind:* theorem · *Size:* S · *Status:* open
+
+*Needs:* <<theory-shelf,📚 Theory shelf and ledger>> +
+*Enables:* <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
+*Value (judgement):* maths ●●, soundness ● +
+*See:* docs/proposals/mathesis-research-programme.adoc:368
+
+* 🃏 _Contrarian:_ The one theorem of the line that does not wait for the order: start it early.
 
 [[s4-s5-verdict]]
 ==== 🌱 🌦️ S-4 and S-5: honest cash verdicts
@@ -422,6 +422,21 @@ A sound three-valued cash verdict over intervals, where missing means unbounded 
 
 * 🪙 _Economist:_ A forecast that can say undecided is worth more than one that guesses.
 * 🍎 _Teacher:_ Three-valued logic with money attached: an easy story to teach.
+
+[[token-order]]
+==== 🌱 ⚖️ Settle the order of status tokens
+
+Record the order X-PF1 decides, in Mathesis (R-1, provisional) and in the canon. Evidence it must answer: R-1 reads PROOF-POLICY section 5 as open < argued < tested-only, resource-algebra E-1 (PWG-2i) proves open < tested-only < argued, and section 5 itself lists the tokens without stating an order.
+
+*Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* open
+
+*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>> +
+*Enables:* <<centre-computations,🎯 Centre computations>>, <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s3-grade-function,🎚️ S-3: the grade is a function>> +
+*Value (judgement):* maths ●●, soundness ●●●, ecosystem ●● +
+*See:* docs/proposals/mathesis-research-programme.adoc:335; docs/atlas/generated/registry.adoc:39; metadatastician/standards 3-practice/PROOF-POLICY.adoc:348 (at 745fc74)
+
+* 🗺️ _Estate cartographer:_ The canon order is the owner’s ruling in standards, and resource-algebra E-1 may need re-proving; carry both.
+* ∑ _Mathematician:_ Two careful readings disagree; that is a sign the two tokens are incomparable, which is outcome C.
 
 [[dedukti-transport]]
 ==== ⛔ 🚂 Transport through Dedukti
@@ -564,7 +579,7 @@ The status tokens form a ResourceAlgebra and dioid with an annihilating zero, wi
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* L · *Status:* open
 
-*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<theory-shelf,📚 Theory shelf and ledger>> +
+*Needs:* <<theory-shelf,📚 Theory shelf and ledger>>, <<token-order,⚖️ Settle the order of status tokens>> +
 *Enables:* <<bridge-by-construction,🏗 Bridges by construction>>, <<idris-token-laws,🧬 Generated Idris2 token laws>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
 *Rivals:* <<s1-reuse,♻️ S-1 by reuse of resource-algebra>> +
 *Value (judgement):* maths ●●●, publications ●●, soundness ●● +
@@ -573,18 +588,6 @@ The status tokens form a ResourceAlgebra and dioid with an annihilating zero, wi
 * 🃏 _Contrarian:_ resource-algebra already pins E-1 to E-3; proving it again here may be duplication.
 * ∑ _Mathematician:_ A real algebra of evidence; the centre of the research programme.
 
-[[s2-monotone]]
-==== 🌱 📈 S-2: evaluation is monotone
-
-Positive evaluation of status is monotone; proved once, with its home in Mathesis (R-3).
-
-*Track:* ∑ maths · *Kind:* theorem · *Size:* S · *Status:* open
-
-*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>> +
-*Enables:* <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
-*Value (judgement):* maths ●●, soundness ● +
-*See:* docs/proposals/mathesis-research-programme.adoc:368
-
 [[s3-grade-function]]
 ==== 🌱 🎚️ S-3: the grade is a function
 
@@ -592,7 +595,7 @@ The Proof Witness Grade is a total monotone function of the receipt, and the can
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
 
-*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<receipts,🔏 Proof receipts>> +
+*Needs:* <<receipts,🔏 Proof receipts>>, <<token-order,⚖️ Settle the order of status tokens>> +
 *Enables:* <<corpus,🧪 Propose and dispose corpus>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>> +
 *Value (judgement):* maths ●●, engineering ●●, soundness ●●● +
 *See:* docs/proposals/mathesis-research-programme.adoc:378; docs/proposals/mathesis-research-programme.adoc:550
@@ -712,7 +715,7 @@ Prove only the morphism here, and take the dioid laws from resource-algebra's E-
 
 *Track:* 🗺 ecosystem · *Kind:* theorem · *Size:* M · *Status:* open · *Beyond this repository:* estate:hyperpolymath/resource-algebra
 
-*Needs:* <<chain-question,🧩 Is a chain enough? (X-PF1)>>, <<bridge-lock-pilot,🔗 Bridge lock pilot>> +
+*Needs:* <<bridge-lock-pilot,🔗 Bridge lock pilot>>, <<token-order,⚖️ Settle the order of status tokens>> +
 *Rivals:* <<s1-token-algebra,🔢 S-1: tokens form a dioid>> +
 *Value (judgement):* maths ●●, engineering ●, ecosystem ●●●
 

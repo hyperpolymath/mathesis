@@ -43,7 +43,8 @@ Typed by hand:
 Derived by `scripts/ultraplan/ultraplan.mjs`, and never typed:
 
 * *Era*: the length of the longest chain of needs below a node.
-* *Frontier*: the open nodes whose needs are all done, which can be started today.
+* *Frontier*: the open nodes whose needs are all done. They are ready, and one can
+start today whenever an active slot is free.
 * *Unlocks*: how many live nodes depend on a node, directly or through others.
 * *Forks*: nodes that enable two or more tracks, where work spreads.
 * *Confluences*: nodes that need two or more tracks, where work joins.

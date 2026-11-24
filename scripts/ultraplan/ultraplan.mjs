@@ -161,8 +161,10 @@ const EVIDENCE = {
   },
   adr(ev, ctx) {
     if (!isStr(ev.adr) || !/^\d{4}$/.test(ev.adr)) return `evidence adr ${JSON.stringify(ev.adr)} is not a four-digit ADR number`;
-    const file = ctx.adrFile(ev.adr);
-    if (!file) return `no ADR ${ev.adr} in docs/decisions`;
+    const files = ctx.adrFiles(ev.adr);
+    if (!files.length) return `no ADR ${ev.adr} in docs/decisions`;
+    if (files.length > 1) return `ADR ${ev.adr} is ambiguous: ${files.join(', ')} share the number`;
+    const [file] = files;
     if (!ctx.isFile(file)) return `ADR ${ev.adr} (${file}) is not a file in the repository`;
     return adrAccepted(ctx.read(file)) ? null : `ADR ${ev.adr} is not Accepted`;
   },
@@ -519,7 +521,8 @@ function evidenceText(ev) {
   if (ev.claim) return `${ev.claim} at ${ev.min_pwg ?? 'PWG-3'} or above`;
   return `ADR ${ev.adr} accepted`;
 }
-const marks = value => VALUE_KEYS.filter(k => value[k]).map(k => `${k} ${'●'.repeat(value[k])}`).join(', ');
+// Every mark the data holds is shown, a 0 as an open circle: a 0 is a judgement too.
+const marks = value => VALUE_KEYS.filter(k => Object.hasOwn(value, k)).map(k => `${k} ${'●'.repeat(value[k]) || '○'}`).join(', ');
 
 function nodeLines(byId, advisors, d, n) {
   const facts = [`*Track:* ${trackKey(n.track)}`, `*Kind:* ${n.kind}`, `*Size:* ${n.size}`, `*Status:* ${n.status}`];
@@ -751,10 +754,10 @@ export function context(root = ROOT) {
     read,
     // No registry view means no claim is listed; one that leads outside the repository is refused.
     registry: existsSync(path.join(root, registry)) ? read(registry) : '',
-    adrFile: n => {
-      const f = existsSync(decisions) && readdirSync(decisions).find(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && !x.includes('template'));
-      return f ? `docs/decisions/${f}` : null;
-    },
+    // Every decision record with this number (the template aside), in a fixed order.
+    adrFiles: n => (existsSync(decisions) ? readdirSync(decisions) : [])
+      .filter(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && !x.includes('template'))
+      .sort(cmp).map(x => `docs/decisions/${x}`),
   };
 }
 

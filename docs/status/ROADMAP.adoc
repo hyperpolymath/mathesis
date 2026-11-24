@@ -12,9 +12,10 @@ under <<rulings>>.
 
 What comes next is drawn as a tech tree, the ultraplan
 (link:../ultraplan/generated/ultraplan.adoc[`docs/ultraplan/generated/ultraplan.adoc`],
-from the data in `docs/ultraplan/`). Its frontier is the list of work that can
-start now, and each advisor of the council names a pick from it. This roadmap keeps the
-record of what happened; the tree says what each piece enables.
+from the data in `docs/ultraplan/`). Its frontier is the work that is ready, to
+start when an active slot is free, and each advisor of the council names a pick
+from it. This roadmap keeps the record of what happened; the tree says what each
+piece enables.
 
 === Applied Systems (2026-11-07)
 

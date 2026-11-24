@@ -77,6 +77,13 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(out[SVG]).toContain('<marker id="arrow-hot"');
 });
 
+test('every value mark is shown, a 0 included', () => {
+  const page = generate(fixture({nodes: swap('paper', {value: {maths: 0, publications: 3}})}))[VIEW];
+  expect(page).toContain('*Value (judgement):* maths ○, publications ●●●');
+  const zero = generate(fixture({nodes: swap('paper', {value: {maths: 0}})}))[VIEW];
+  expect(zero).toContain('*Value (judgement):* maths ○');
+});
+
 test('the views are deterministic', () => {
   const a = generate(fixture()), b = generate(fixture());
   expect(a[VIEW]).toBe(b[VIEW]);
@@ -115,6 +122,10 @@ test('done needs evidence that holds', () => {
   expect(() => generate(reg)).toThrow(/docs\/atlas\/generated\/registry\.adoc is not a file in the repository/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
+  // Two records with one number are refused, not picked between by directory order.
+  const twin = fixture();
+  writeFileSync(path.join(twin, 'docs/decisions/0004-second.adoc'), '= ADR\n\n=== Status\n\n*Proposed.*\n');
+  expect(() => generate(twin)).toThrow(/ADR 0004 is ambiguous: docs\/decisions\/0004-claims-registry\.adoc, docs\/decisions\/0004-second\.adoc share the number/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0004', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
@@ -297,8 +308,8 @@ test('return tickets are grafted or archived honestly', () => {
 test('the evidence parsers read the real registry view and ADRs', () => {
   const ctx = context(ROOT);
   expect(registryGrade(ctx.registry, 'hyperpolymath/mathesis#THY-1')).toMatch(/^PWG-/);
-  expect(adrAccepted(ctx.read(ctx.adrFile('0004')))).toBe(true);
-  expect(adrAccepted(ctx.read(ctx.adrFile('0005')))).toBe(false);
+  expect(adrAccepted(ctx.read(ctx.adrFiles('0004')[0]))).toBe(true);
+  expect(adrAccepted(ctx.read(ctx.adrFiles('0005')[0]))).toBe(false);
 });
 
 test('the committed views match the committed data', () => {

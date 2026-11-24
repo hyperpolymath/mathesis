@@ -69,6 +69,12 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
   // Three eras are narrower than the legend; the canvas still holds the legend.
   expect(Number(/width="(\d+)"/.exec(out[SVG])[1])).toBeGreaterThanOrEqual(24 + 6 * 128 + 260);
+  // Every edge (six in the fixture) ends in an arrowhead, gold where it leads to the frontier.
+  const edges = out[SVG].match(/<path d="M[^"]*" fill="none"[^>]*\/>/g);
+  expect(edges.length).toBe(6);
+  expect(edges.every(e => /marker-end="url\(#arrow(-hot)?\)"/.test(e))).toBe(true);
+  expect(out[SVG]).toContain('<marker id="arrow"');
+  expect(out[SVG]).toContain('<marker id="arrow-hot"');
 });
 
 test('the views are deterministic', () => {
@@ -101,6 +107,12 @@ test('done needs evidence that holds', () => {
   // The context reads no file outside the repository, whoever asks.
   expect(() => context(adr).read('docs/decisions/0007-outside.adoc')).toThrow(/is not a file in the repository/);
   expect(context(adr).read('README.adoc')).toBe('= Fixture\n');
+  // The registry view is evidence too: one that leads outside the repository is refused.
+  writeFileSync(path.join(outside, 'registry.adoc'), '|https://x/blob/c/P.adoc[o/r#T-1] at `c` |theorem |`PWG-1` |s |w\n');
+  const reg = fixture({nodes: swap('root', {evidence: [{claim: 'o/r#T-1'}]})});
+  rmSync(path.join(reg, 'docs/atlas/generated/registry.adoc'));
+  symlinkSync(path.join(outside, 'registry.adoc'), path.join(reg, 'docs/atlas/generated/registry.adoc'));
+  expect(() => generate(reg)).toThrow(/docs\/atlas\/generated\/registry\.adoc is not a file in the repository/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);

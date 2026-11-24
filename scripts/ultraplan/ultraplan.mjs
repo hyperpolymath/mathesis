@@ -609,7 +609,9 @@ export function renderAdoc(byId, advisors, expeditions, d) {
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const clip = (s, n) => [...s].length <= n ? s : [...s].slice(0, n - 1).join('') + '…';
 const COL = 250, BOX_W = 214, BOX_H = 50, GAP = 14, TOP = 96, LEFT = 24, LEGEND_STEP = 128;
-const GOLD = '#d4a017';
+const GOLD = '#d4a017', EDGE = '#b9ab8c';
+// An arrowhead of fixed size whose tip sits on the end of its edge.
+const arrowHead = (id, fill) => `<marker id="${id}" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto"><path d="M0,1 L10,5 L0,9 z" fill="${fill}"/></marker>`;
 
 // Where each node sits: its era is its column, and each column is ordered by
 // track, then by where its needs sit, so edges cross less.
@@ -643,6 +645,10 @@ function svgHead(byId, {maxDepth, W, H}) {
     '<!-- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) -->',
     '<title id="t">The Mathesis tech tree</title>',
     `<desc id="d">${desc}</desc>`,
+    '<defs>',
+    arrowHead('arrow', EDGE),
+    arrowHead('arrow-hot', GOLD),
+    '</defs>',
     `<rect x="0" y="0" width="${W}" height="${H}" rx="18" fill="#fffdf7" stroke="#e8dcc0"/>`,
     `<text x="${LEFT}" y="34" font-size="20" font-weight="700" fill="#4a3f2a">🦉 Mathesis tech tree</text>`,
     `<text x="${LEFT}" y="54" font-size="12" fill="#7a6a4a">each arrow: this enables that · gold border: start it now · ✅ done 🔨 active 🌱 open ⛔ blocked 🍂 dropped</text>`,
@@ -663,7 +669,7 @@ function svgEras({maxDepth, H}) {
 function svgEdge(n, t, hot, {xOf, yOf}) {
   const x1 = xOf(t) + BOX_W, y1 = yOf.get(t) + BOX_H / 2, x2 = xOf(n.id), y2 = yOf.get(n.id) + BOX_H / 2;
   const dx = Math.max(30, (x2 - x1) / 2);
-  const stroke = hot ? `stroke="${GOLD}" stroke-width="2"` : 'stroke="#b9ab8c" stroke-width="1.3"';
+  const stroke = hot ? `stroke="${GOLD}" stroke-width="2" marker-end="url(#arrow-hot)"` : `stroke="${EDGE}" stroke-width="1.3" marker-end="url(#arrow)"`;
   return `<path d="M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}" fill="none" ${stroke} opacity="${n.status === 'dropped' ? 0.35 : 0.85}"/>`;
 }
 
@@ -715,6 +721,7 @@ export function renderSvg(byId, d) {
 // ── Driver ───────────────────────────────────────────────────────────────────
 export function context(root = ROOT) {
   const decisions = path.join(root, 'docs/decisions');
+  const registry = 'docs/atlas/generated/registry.adoc';
   // The real path of a regular file inside the repository (symlinks resolved), or null.
   // Every file the evidence checks read goes through it.
   const inside = p => {
@@ -723,14 +730,16 @@ export function context(root = ROOT) {
       return real.startsWith(base + path.sep) && statSync(real).isFile() ? real : null;
     } catch { return null; }
   };
+  const read = p => {
+    const real = inside(p);
+    if (!real) throw new Error(`${p} is not a file in the repository`);
+    return readFileSync(real, 'utf8');
+  };
   return {
     isFile: p => inside(p) !== null,
-    read: p => {
-      const real = inside(p);
-      if (!real) throw new Error(`${p} is not a file in the repository`);
-      return readFileSync(real, 'utf8');
-    },
-    registry: existsSync(path.join(root, 'docs/atlas/generated/registry.adoc')) ? readFileSync(path.join(root, 'docs/atlas/generated/registry.adoc'), 'utf8') : '',
+    read,
+    // No registry view means no claim is listed; one that leads outside the repository is refused.
+    registry: existsSync(path.join(root, registry)) ? read(registry) : '',
     adrFile: n => {
       const f = existsSync(decisions) && readdirSync(decisions).find(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && !x.includes('template'));
       return f ? `docs/decisions/${f}` : null;

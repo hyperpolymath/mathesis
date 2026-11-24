@@ -712,7 +712,7 @@ check: check-views site-check check-proofs receipt-check
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
 # Views current: catalogue, census tests, atlas, claims registry, bridges and
 # the worked cohort examples
-check-views: catalogue-check census-test atlas-check registry-check applied-check
+check-views: catalogue-check census-test atlas-check registry-check applied-check ultraplan-check
 
 # Needs agda, coqc and lean, e.g. in the pinned Guix:
 #   guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
@@ -796,6 +796,17 @@ applied-build:
 applied-check:
     bun scripts/applied/cohort.mjs check
     bun test tests/applied/
+
+# Regenerate the ultraplan (the tech tree of Mathesis) from docs/ultraplan/*.jsonl:
+# the page docs/ultraplan/generated/ultraplan.adoc and its picture tree.svg
+ultraplan:
+    bun scripts/ultraplan/ultraplan.mjs build
+
+# Fail if the ultraplan views are stale, or the tree's data is not sound: an unknown
+# or cyclic need, a done node without evidence that holds, too many active nodes
+ultraplan-check:
+    bun scripts/ultraplan/ultraplan.mjs check
+    bun test tests/ultraplan/
 
 # ── mathesis: static site of the generated views (re-anchoring plan WO 4.3) ──
 

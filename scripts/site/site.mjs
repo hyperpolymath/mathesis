@@ -37,6 +37,9 @@ export const VIEWS = [
    how: 'Built by `scripts/registry/claims-registry.mjs` from `docs/theory/admissions.jsonl`, the claims and the receipt they pin.'},
   {file: 'applied-systems/finance/cohort-economics/generated/examples.adoc', needs: 'scripts/applied/cohort.mjs',
    how: 'Built by `scripts/applied/cohort.mjs` from the files in `applied-systems/finance/cohort-economics/examples/`.'},
+  {file: 'docs/ultraplan/generated/ultraplan.adoc', needs: 'scripts/ultraplan/ultraplan.mjs',
+   how: 'Built by `scripts/ultraplan/ultraplan.mjs` from `docs/ultraplan/tree.jsonl`, its advisors and its return tickets. Eras, frontier and picks are derived.',
+   assets: ['docs/ultraplan/generated/tree.svg']},
 ];
 
 export const htmlPath = adoc => adoc.replace(/\.adoc$/, '.html');
@@ -142,6 +145,12 @@ export function build(root, out) {
   writeFileSync(path.join(stage, 'index.adoc'), frontPage(read));
   asciidoctor(['-D', out, path.join(stage, 'index.adoc')]);
   asciidoctor(['-R', root, '-D', out, ...VIEWS.map(v => path.join(root, v.file))]);
+  // A view's assets (its pictures) are copied to the same path in the site, so
+  // a relative image stays relative there and is checked like any link.
+  for (const a of VIEWS.flatMap(v => v.assets ?? [])) {
+    mkdirSync(path.dirname(path.join(out, a)), {recursive: true});
+    writeFileSync(path.join(out, a), readFileSync(path.join(root, a)));
+  }
 
   const pages = walk(out).filter(f => f.endsWith('.html'));
   const files = new Set(walk(out));

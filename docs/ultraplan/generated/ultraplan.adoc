@@ -555,7 +555,7 @@ The tech tree as one panel type in GELS, beside the work-queue lanes and the Pla
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked · *Beyond this repository:* estate:metadatastician/gels
 
 *Needs:* xref:claims-registry[📒 Claims registry], xref:ultraplan[🌳 The ultraplan] +
-*Blocked by:* the GELS feed and panel contract (docs/proposals/feed-panel-contract.adoc in metadatastician/gels), which the GELS thread is drafting (estate coordinator, 2026-11-24); Mathesis then publishes a read-only I-JSON/JCS feed and GELS renders it +
+*Blocked by:* the GELS feed and panel contract (docs/proposals/feed-panel-contract.adoc in metadatastician/gels), which the GELS thread is drafting (estate coordinator, 2026-11-24); Mathesis then commits a read-only I-JSON/JCS feed, and GELS reads it pinned by commit (owner ruling 2026-11-24) and renders it +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
 === ♾️ Era 4: Cantor

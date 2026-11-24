@@ -140,6 +140,12 @@ panel type beside the work-queue lanes and the Plan tab.
 advisor's), the grade census with its denominator, and the claim pins.
 * Open decisions go to the owner's decision desk, not this panel.
 
+The owner ruled on 2026-11-24 that GELS pins by commit. Mathesis commits the
+feed as a generated view, which `just check` refuses when stale. GELS asks the
+GitHub API for the head commit of main and reads the feed at that commit, so
+each read names its commit. No secret comes into this repository, and nothing
+here needs a new permission.
+
 The GELS thread is drafting the feed and panel contract
 (`docs/proposals/feed-panel-contract.adoc` in metadatastician/gels). Until it
 exists, nothing here writes a feed: a feed with no agreed reader would be

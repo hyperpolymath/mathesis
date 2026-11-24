@@ -428,3 +428,8 @@ scheduled census, a view of what each repository owes
 ** The GELS maths panel waits on the GELS feed/panel contract, which the GELS
    thread is drafting. The estate coordinator has answered: a read-only feed,
    one panel type, and open decisions sent to the owner's decision desk.
+** GELS pins by commit (owner ruling 2026-11-24). Mathesis commits the feed as
+   a generated view, which `just check` refuses when stale. GELS asks the
+   GitHub API for the head commit of main, then reads the feed at that commit,
+   so each read names its commit. The fetch logic and its rate limits belong to
+   GELS. Mathesis needs no new permission and holds no inbound secret.

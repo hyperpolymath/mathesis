@@ -65,17 +65,21 @@ written down so they can be argued with. The page labels them as judgements.
 
 == The council
 
-Ten advisors read the tree:
+The council is the data in `advisors.jsonl`, and the generated page lists it. On
+2026-11-24 the owner set it to:
 
 * the six the owner named (mathematician, scientist, engineer, economist,
 publisher, and "me");
-* the four added on 2026-11-24 (soundness auditor, estate cartographer, teacher
-and contrarian).
+* four more (soundness auditor, estate cartographer, teacher and contrarian).
+
+The generator requires only the me advisor, because the page's privacy claim
+rests on it. Who else sits on the council is the owner's to change in the data.
 
 Each asks one question of every node. Each names one pick from the frontier:
 
 * An advisor that reads a value mark ranks the frontier nodes it marks above
-zero: by the mark, then by how much the node unlocks. A node it marks zero is
+zero: by the mark, then by how much the node unlocks, then by value for effort
+(its marks summed, over its size). A node it marks zero is
 not one it would pick, so when no node is marked above zero the advisor names
 nothing.
 * The contrarian names the frontier node the council rates lowest that still
@@ -84,7 +88,9 @@ unlocks the most. That keeps the road not taken in view.
 are kept privately, outside this public repository and out of every feed: in
 a private panel of GELS that the owner owns (owner ruling 2026-11-24). A node carries at most the
 neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
-the key `me`.
+the key `me`. The me advisor reads no value mark, since another advisor's mark
+is not the owner's preference. Among the frontier nodes the owner tagged, it
+names the one that unlocks the most, then the one with the best value for effort.
 
 == Wandering: return tickets
 

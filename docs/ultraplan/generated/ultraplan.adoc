@@ -108,7 +108,7 @@ _Pick:_ <<file-transport-bugs,🐛 File the transport reproducers>>.
 
 _Asks:_ Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.
 
-_Pick:_ <<paper-thy1,📄 Note: feature reachability>>.
+_Pick:_ <<forecast-13wk,📅 Thirteen-week forecast>>.
 
 == Forks and confluences
 

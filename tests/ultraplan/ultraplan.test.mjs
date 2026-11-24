@@ -93,6 +93,14 @@ test('done needs evidence that holds', () => {
   const inside = fixture({nodes: swap('root', {evidence: [{path: 'inner.adoc'}]})});
   symlinkSync('README.adoc', path.join(inside, 'inner.adoc'));
   expect(() => generate(inside)).not.toThrow();
+  // An ADR that is a symlink to an accepted record outside the repository is not one in it.
+  writeFileSync(path.join(outside, 'accepted.adoc'), '= ADR\n\n=== Status\n\n*Accepted.*\n');
+  const adr = fixture({nodes: swap('tool', {evidence: [{adr: '0007'}]})});
+  symlinkSync(path.join(outside, 'accepted.adoc'), path.join(adr, 'docs/decisions/0007-outside.adoc'));
+  expect(() => generate(adr)).toThrow(/ADR 0007 \(docs\/decisions\/0007-outside\.adoc\) is not a file in the repository/);
+  // The context reads no file outside the repository, whoever asks.
+  expect(() => context(adr).read('docs/decisions/0007-outside.adoc')).toThrow(/is not a file in the repository/);
+  expect(context(adr).read('README.adoc')).toBe('= Fixture\n');
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
@@ -210,6 +218,12 @@ test('every rule has a witness', () => {
   }
   const unwitnessed = Object.entries(RULES).flatMap(([kind, rules]) => rules.filter(([, m]) => !seen.has(m)).map(([, m]) => `${kind}: ${m}`));
   expect(unwitnessed).toEqual([]);
+});
+
+test('the me advisor ranks the owner\'s tags as the council does, not by another advisor\'s mark', () => {
+  // cheap carries the higher maths mark; theorem unlocks two nodes and cheap none.
+  const nodes = swap('cheap', {owner_value: 'high', value: {maths: 3}}, swap('theorem', {value: {maths: 1}}));
+  expect(generate(fixture({nodes})).derived.picks.get('me').id).toBe('theorem');
 });
 
 test('ids are slugs and unique, and counsel comes from the council', () => {

@@ -158,6 +158,7 @@ const EVIDENCE = {
     if (!isStr(ev.adr) || !/^\d{4}$/.test(ev.adr)) return `evidence adr ${JSON.stringify(ev.adr)} is not a four-digit ADR number`;
     const file = ctx.adrFile(ev.adr);
     if (!file) return `no ADR ${ev.adr} in docs/decisions`;
+    if (!ctx.isFile(file)) return `ADR ${ev.adr} (${file}) is not a file in the repository`;
     return adrAccepted(ctx.read(file)) ? null : `ADR ${ev.adr} is not Accepted`;
   },
 };
@@ -347,16 +348,18 @@ export function validate({advisors, nodes, expeditions}, ctx) {
 
 // ── Derivation ───────────────────────────────────────────────────────────────
 // Each advisor's pick from the frontier. An advisor that reads a value key
-// ranks the nodes it marks above zero by that mark, then by leverage, then by
-// value for effort; the contrarian takes the frontier node the council rates
-// lowest that still unlocks the most; the me advisor names only nodes tagged
-// owner_value, with no notes.
+// ranks the nodes it marks above zero by that mark, then as the council
+// ranks: by leverage, then by value for effort. The contrarian takes the
+// frontier node the council rates lowest that still unlocks the most. The me
+// advisor reads no mark, since another advisor's mark is not the owner's
+// preference: it ranks the nodes the owner tagged owner_value as the council
+// ranks, and has no notes.
 function pickFor(a, frontier, total, leverage) {
   const first = (pool, order) => [...pool].sort(order)[0] ?? null;
-  const byKey = k => (x, y) => (y.value?.[k] ?? 0) - (x.value?.[k] ?? 0) || leverage(y.id) - leverage(x.id)
-    || total(y) / SIZES[y.size] - total(x) / SIZES[x.size] || cmp(x.id, y.id);
+  const council = (x, y) => leverage(y.id) - leverage(x.id) || total(y) / SIZES[y.size] - total(x) / SIZES[x.size] || cmp(x.id, y.id);
+  const byKey = k => (x, y) => (y.value?.[k] ?? 0) - (x.value?.[k] ?? 0) || council(x, y);
   if (a.id === 'contrarian') return first(frontier, (x, y) => total(x) - total(y) || leverage(y.id) - leverage(x.id) || cmp(x.id, y.id));
-  if (a.private) return first(frontier.filter(n => n.owner_value === 'high'), byKey('maths'));
+  if (a.private) return first(frontier.filter(n => n.owner_value === 'high'), council);
   if (a.reads) return first(frontier.filter(n => (n.value?.[a.reads] ?? 0) > 0), byKey(a.reads));
   return null;
 }
@@ -712,15 +715,21 @@ export function renderSvg(byId, d) {
 // ── Driver ───────────────────────────────────────────────────────────────────
 export function context(root = ROOT) {
   const decisions = path.join(root, 'docs/decisions');
+  // The real path of a regular file inside the repository (symlinks resolved), or null.
+  // Every file the evidence checks read goes through it.
+  const inside = p => {
+    try {
+      const base = realpathSync(root), real = realpathSync(path.join(root, p));
+      return real.startsWith(base + path.sep) && statSync(real).isFile() ? real : null;
+    } catch { return null; }
+  };
   return {
-    // A regular file whose real path (symlinks resolved) stays inside the repository.
-    isFile: p => {
-      try {
-        const base = realpathSync(root), real = realpathSync(path.join(root, p));
-        return real.startsWith(base + path.sep) && statSync(real).isFile();
-      } catch { return false; }
+    isFile: p => inside(p) !== null,
+    read: p => {
+      const real = inside(p);
+      if (!real) throw new Error(`${p} is not a file in the repository`);
+      return readFileSync(real, 'utf8');
     },
-    read: p => readFileSync(path.join(root, p), 'utf8'),
     registry: existsSync(path.join(root, 'docs/atlas/generated/registry.adoc')) ? readFileSync(path.join(root, 'docs/atlas/generated/registry.adoc'), 'utf8') : '',
     adrFile: n => {
       const f = existsSync(decisions) && readdirSync(decisions).find(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && !x.includes('template'));

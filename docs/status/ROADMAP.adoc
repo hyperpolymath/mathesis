@@ -418,8 +418,9 @@ scheduled census, a view of what each repository owes
 ** The advisors are the owner's six (mathematician, scientist, engineer,
    economist, publisher, me) and four more (soundness auditor, estate
    cartographer, teacher, contrarian).
-** The me advisor is private. Its notes stay outside this repository, and a
-   node carries at most the tag `owner_value`.
+** The me advisor is private. Its notes stay outside this repository and every
+   feed, in a private GELS panel the owner owns, and a node carries at most the
+   tag `owner_value`.
 ** Off-tree trips are return tickets: each is grafted onto the tree or
    archived with what it taught.
 ** The GELS maths panel waits on the estate coordinator's answer about panel

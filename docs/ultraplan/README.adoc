@@ -81,7 +81,8 @@ nothing.
 * The contrarian names the frontier node the council rates lowest that still
 unlocks the most. That keeps the road not taken in view.
 * The *me* advisor looks out for what could help the owner's own life. Its notes
-are kept privately, outside this public repository. A node carries at most the
+are kept privately, outside this public repository and out of every feed: in
+a private panel of GELS that the owner owns (owner ruling 2026-11-24). A node carries at most the
 neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
 the key `me`.
 

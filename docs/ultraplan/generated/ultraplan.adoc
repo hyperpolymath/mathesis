@@ -13,7 +13,7 @@ never typed. A node marked done carries evidence the generator checks: a file, a
 claim grade that the registry derives, or an accepted decision record. The value marks
 are judgements, written down so they can be argued with.
 
-Census of the tree: 12 done, 1 active (at most 3), 36 open, 2 blocked, 0 dropped, of 51 nodes. 13 can be started now.
+Census of the tree: 12 done, 2 active (at most 3), 36 open, 2 blocked, 0 dropped, of 52 nodes. 12 can be started now.
 
 toc::[]
 
@@ -30,7 +30,6 @@ counts the live nodes that depend on it, directly or through others.
 [cols="3,1,1,1,5",options="header"]
 |===
 |Node |Track |Size |Unlocks |Summary
-|<<token-order,⚖️ Settle the order of status tokens>> |maths |S |13 |The research programme rules open < argued < tested-only < proven-with-postulates < proven (R-1), but resource-algebra E-1 states tested-only < argued, and both cite PROOF-POLICY section 5. One order must win before the token algebra is proved.
 |<<bridge-lock-pilot,🔗 Bridge lock pilot>> |ecosystem |M |8 |The full bridge record for two pilots, a squeakwell ladder row and resource-algebra to tropical-types (WO 5.2, ruling D-7 a): what is claimed equal, by which map, checked how.
 |<<census-workflow,⏰ Census on a schedule>> |engineering |M |2 |A scheduled census workflow as the one writer of the census rows (WO 5.3), so refreshes stop arriving by hand and unrecorded.
 |<<forecast-13wk,📅 Thirteen-week forecast>> |economics |M |2 |A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the first worked decision of the applied shelf.
@@ -55,7 +54,7 @@ nodes the owner has tagged.
 
 _Asks:_ Is it true, is it new, and does it join two things that were apart?
 
-_Pick:_ <<token-order,⚖️ Settle the order of status tokens>>. A theorem about an order is only as good as the order; settle it first.
+_Pick:_ <<bridge-lock-pilot,🔗 Bridge lock pilot>>. Equivalence as identity, made checkable.
 
 === 🔬 Scientist
 
@@ -85,7 +84,7 @@ _Pick:_ <<publish-atlas,🌐 Publish the atlas>>. Everything else here is invisi
 
 _Asks:_ Is every done backed by a receipt, and where is the hole?
 
-_Pick:_ <<token-order,⚖️ Settle the order of status tokens>>.
+_Pick:_ <<pinned-image,📦 Proof lanes in a pinned image>>. The only road back to PWG-1 for THY-1 and APP-1 to APP-4.
 
 === 🗺️ Estate cartographer
 
@@ -109,7 +108,7 @@ _Pick:_ <<file-transport-bugs,🐛 File the transport reproducers>>.
 
 _Asks:_ Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.
 
-_Pick:_ nothing on the frontier answers this advisor yet.
+_Pick:_ <<paper-thy1,📄 Note: feature reachability>>.
 
 == Forks and confluences
 
@@ -124,7 +123,7 @@ same place; the contrarian keeps the road not taken in view.
 * <<chain-question,🧩 Is a chain enough? (X-PF1)>> -> <<s1-reuse,♻️ S-1 by reuse of resource-algebra>>, <<s1-token-algebra,🔢 S-1: tokens form a dioid>>, <<s2-monotone,📈 S-2: evaluation is monotone>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
 * <<claims-registry,📒 Claims registry>> -> <<bridge-candidates,🌉 Bridge candidates>>, <<doc-drift-fix,🧹 Mend the status documents>>, <<gels-maths-panel,🪟 Maths panel in GELS>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<receipts,🔏 Proof receipts>>, <<theory-shelf,📚 Theory shelf and ledger>>, <<token-order,⚖️ Settle the order of status tokens>>, <<whats-owed,📋 What is owed>>
 * <<proof-gate,🛡️ Proof gate in pinned Guix>> -> <<cohort-model,👥 Cohort model in Agda>>, <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipts,🔏 Proof receipts>>, <<thy1,🧭 THY-1: reachability is monotone>>
-* <<receipt-generator,🏭 Shared receipt generator>> -> <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>
+* <<receipt-generator,🏭 Shared receipt generator>> -> <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>, <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>>
 * <<receipts,🔏 Proof receipts>> -> <<paper-thy1,📄 Note: feature reachability>>, <<receipt-generator,🏭 Shared receipt generator>>, <<s3-grade-function,🎚️ S-3: the grade is a function>>
 * <<s1-token-algebra,🔢 S-1: tokens form a dioid>> -> <<bridge-by-construction,🏗 Bridges by construction>>, <<idris-token-laws,🧬 Generated Idris2 token laws>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
 * <<s3-grade-function,🎚️ S-3: the grade is a function>> -> <<corpus,🧪 Propose and dispose corpus>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<paper-status-algebra,📘 Paper: an algebra of proof status>>
@@ -278,11 +277,11 @@ The admission rule for theory no single system owns, with an append-only ledger 
 *Value (judgement):* maths ●●, soundness ●●
 
 [[token-order]]
-==== 🌱 ⚖️ Settle the order of status tokens
+==== 🔨 ⚖️ Settle the order of status tokens
 
 The research programme rules open < argued < tested-only < proven-with-postulates < proven (R-1), but resource-algebra E-1 states tested-only < argued, and both cite PROOF-POLICY section 5. One order must win before the token algebra is proved.
 
-*Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* open
+*Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* active
 
 *Needs:* <<claims-registry,📒 Claims registry>> +
 *Enables:* <<centre-computations,🎯 Centre computations>>, <<chain-question,🧩 Is a chain enough? (X-PF1)>> +
@@ -447,7 +446,7 @@ Adopt the standards generator: the receipt is generated from a run ledger, and t
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* M · *Status:* active
 
 *Needs:* <<receipts,🔏 Proof receipts>> +
-*Enables:* <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>> +
+*Enables:* <<ci-recorder,🤖 CI records its own runs>>, <<paper-receipts,📰 Paper: receipts, not claims>>, <<pwg1-regained,🥇 Back to PWG-1>>, <<receipts-campaign,📣 Receipts campaign>>, <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>> +
 *Value (judgement):* engineering ●●●, soundness ●●●
 
 * ⚙️ _Engineer:_ One generator for the estate instead of one per repository.
@@ -631,6 +630,19 @@ THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the p
 
 *Needs:* <<pinned-image,📦 Proof lanes in a pinned image>>, <<receipt-generator,🏭 Shared receipt generator>> +
 *Value (judgement):* publications ●, soundness ●●
+
+[[superseded-manifests-option]]
+==== 🌱 🗄️ Keep superseded manifests (option)
+
+A generator option in standards that keeps the inputs digest, manifest and axioms on superseded receipts. Mathesis turns it on once it lands (owner ruling 2026-11-24); until then the run ledger keeps each digest.
+
+*Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
+
+*Needs:* <<receipt-generator,🏭 Shared receipt generator>> +
+*Value (judgement):* engineering ●, soundness ●●, ecosystem ●
+
+* 🃏 _Contrarian:_ The ledger already holds every digest; check the option earns its keep.
+* 🔍 _Soundness auditor:_ Lineage you can re-check without git archaeology.
 
 [[encoding-differences]]
 ==== 🌱 🔤 Closed list of encoding differences
@@ -822,5 +834,6 @@ carried to that repository, not done here.
 * estate:metadatastician/gels: <<gels-maths-panel,🪟 Maths panel in GELS>> (blocked)
 * estate:metadatastician/standards: <<ci-recorder,🤖 CI records its own runs>> (open)
 * estate:metadatastician/standards: <<idris-token-laws,🧬 Generated Idris2 token laws>> (open)
+* estate:metadatastician/standards: <<superseded-manifests-option,🗄️ Keep superseded manifests (option)>> (open)
 * upstream:Deducteam/agda2dedukti: <<file-transport-bugs,🐛 File the transport reproducers>> (open)
 * upstream:Deducteam/lambdapi: <<dedukti-transport,🚂 Transport through Dedukti>> (blocked)

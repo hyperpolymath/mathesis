@@ -6,7 +6,7 @@ import {test, expect, afterAll} from 'bun:test';
 import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, ACTIVE_LIMIT, ROOT, VIEW, SVG}
+import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, ACTIVE_LIMIT, ROOT, VIEW, SVG, RULES}
   from '../../scripts/ultraplan/ultraplan.mjs';
 import {jcs} from '../../scripts/registry/theory-ledger.mjs';
 
@@ -163,6 +163,11 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({nodes: swap('paper', {track: 'poetry'})}, /track must be one of/);
   refuses({nodes: swap('paper', {value: {maths: 4}})}, /value\.maths must be 0, 1, 2 or 3/);
   refuses({nodes: swap('paper', {where: 'elsewhere'})}, /where is estate:OWNER\/REPO/);
+  // A list holding a valid place is not a place (a regular expression would read it as one).
+  refuses({nodes: swap('paper', {where: ['estate:o/r']})}, /where is estate:OWNER\/REPO/);
+  // A list field that is not a list is refused by name, not by a crash.
+  refuses({nodes: swap('paper', {needs: {}})}, /node paper: needs must be a list/);
+  refuses({nodes: swap('paper', {rivals: 'cheap'})}, /node paper: rivals must be a list/);
   refuses({nodes: swap('paper', {size: 'toString'})}, /size must be one of S, M, L, XL/);
   refuses({nodes: swap('paper', {size: 'constructor'})}, /size must be one of/);
   refuses({raw: {nodes: BASE.map(n => JSON.stringify(n, null, 0)).join('\n') + '\n'}}, /not in JCS form/);
@@ -171,6 +176,49 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({raw: {nodes: [lone, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate/);
   const pair = jcs({...BASE[0], name: 'x \u{1F600}'});
   expect(() => generate(fixture({raw: {nodes: [pair, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}))).not.toThrow();
+});
+
+// Every rule in the generator's rule tables has a witness: a change to the sound
+// fixture that breaks the rule and is refused with its message. A rule with no
+// witness fails this test, so no rule can be vacuous, and none can be added
+// without a test.
+test('every rule has a witness', () => {
+  const ctx = context(fixture());
+  const on = (rows, id, extra) => rows.map(r => r.id === id ? strip({...r, ...extra}) : r);
+  const A = (id, extra) => ({advisors: on(ADVISORS, id, extra)});
+  const N = (id, extra) => ({nodes: on(BASE, id, extra)});
+  const T = extra => ({expeditions: [strip({id: 'X-001', what: 'A trip', why: 'Because', size: 'S', date: '2026-11-24', status: 'out', ...extra})]});
+  const witnesses = [
+    A('maths', {name: ''}), A('maths', {glyph: undefined}), A('maths', {asks: ' padded'}),
+    A('maths', {reads: 'poetry'}), A('me', {private: false}), A('maths', {private: true}),
+    A('contrarian', {reads: 'maths'}), A('engineering', {reads: undefined}),
+    N('paper', {name: 'x'.repeat(81)}), N('paper', {glyph: ''}), N('paper', {track: 'poetry'}),
+    N('paper', {kind: 'novel'}), N('paper', {status: 'finished'}), N('paper', {size: 'XXL'}),
+    N('paper', {summary: undefined}), N('paper', {needs: 'theorem'}), N('paper', {rivals: {}}),
+    N('root', {evidence: 'README.adoc'}), N('paper', {refs: 'see'}), N('paper', {where: ['estate:o/r']}),
+    N('paper', {owner_value: 'low'}), N('paper', {status: 'blocked'}), N('paper', {blocked_by: 'the owner'}),
+    N('paper', {refs: ['']}),
+    T({what: ''}), T({why: undefined}), T({size: 'toString'}), T({date: '2026-02-30'}), T({status: 'lost'}),
+    T({status: 'grafted', graft: 'ghost'}), T({graft: 'paper'}), T({status: 'archived'}), T({lesson: 'It taught.'}),
+  ];
+  const seen = new Set();
+  for (const w of witnesses) {
+    let refusal = '';
+    try { validate({advisors: ADVISORS, nodes: BASE, expeditions: [], ...w}, ctx); } catch (e) { refusal = e.message; }
+    expect(refusal).not.toBe('');
+    for (const line of refusal.split('\n')) seen.add(line.slice(line.indexOf(': ') + 2));
+  }
+  const unwitnessed = Object.entries(RULES).flatMap(([kind, rules]) => rules.filter(([, m]) => !seen.has(m)).map(([, m]) => `${kind}: ${m}`));
+  expect(unwitnessed).toEqual([]);
+});
+
+test('ids are slugs and unique, and counsel comes from the council', () => {
+  refuses({nodes: swap('paper', {id: 'Paper X'})}, /id must be a lowercase slug/);
+  refuses({nodes: [...BASE, BASE[4]]}, /node paper: repeated id/);
+  refuses({advisors: [...ADVISORS, ADVISORS[0]]}, /advisor id "maths" is missing, not a slug, or repeated/);
+  refuses({nodes: swap('paper', {rivals: ['paper']})}, /node paper: rivals names itself/);
+  refuses({nodes: swap('theorem', {counsel: {ghost: 'Hm.'}})}, /counsel from unknown advisor ghost/);
+  refuses({nodes: swap('theorem', {counsel: {maths: ''}})}, /counsel\.maths must be a short text/);
 });
 
 test('return tickets are grafted or archived honestly', () => {

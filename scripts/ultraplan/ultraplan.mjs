@@ -94,9 +94,24 @@ export function readSource(text, name) {
   return rows;
 }
 
+// ── Rules ────────────────────────────────────────────────────────────────────
+// The checks are data. A rule is [holds, message]: holds(record, env) is true
+// when the record keeps the rule, and the message says what it must be.
+const list = v => (Array.isArray(v) ? v : []);
+// Byte order, the same in every locale, so the views are deterministic.
+const cmp = (a, b) => (a < b ? -1 : Number(a > b));
+const oneOf = (name, allowed) => `${name} must be one of ${allowed.join(', ')}`;
+
 function closed(obj, allowed, where) {
   if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) throw new Error(`${where}: must be an object`);
   for (const k of Object.keys(obj)) if (!allowed.includes(k)) throw new Error(`${where}: unknown field "${k}"`);
+}
+// Whether a record is an object with only the allowed fields; a failure is recorded.
+function isClosed(obj, allowed, where, fail) {
+  try { closed(obj, allowed, where); return true; } catch (e) { fail(e.message); return false; }
+}
+function applyRules(rules, rec, env, where, fail) {
+  for (const [holds, message] of rules) if (!holds(rec, env)) fail(`${where}: ${message}`);
 }
 
 // ── Evidence ─────────────────────────────────────────────────────────────────
@@ -104,8 +119,9 @@ function closed(obj, allowed, where) {
 // does not list it. The view is generated and checked by registry-check.
 // A registry row opens with its claim cell (a link whose label is the claim id),
 // then its kind and its grade. Only the claim cell names the row's claim: an id
-// mentioned in another row's statement is not that claim's row.
-const ROW = /^\|https:\/\/\S*?\[([^\]]+)\][^|]* \|(?:theorem|demonstration|assumption) \|`(PWG-1|PWG-2ii|PWG-2i|PWG-3|ungraded)` \|/;
+// mentioned in another row's statement is not that claim's row. The link runs
+// to the first "[", so the pattern matches in linear time.
+const ROW = /^\|https:\/\/[^\s[]*\[([^\]]+)\][^|]* \|(?:theorem|demonstration|assumption) \|`(PWG-1|PWG-2ii|PWG-2i|PWG-3|ungraded)` \|/;
 export function registryGrade(registryText, id) {
   for (const line of registryText.split('\n')) {
     const m = ROW.exec(line);
@@ -123,160 +139,237 @@ export function adrAccepted(text) {
   return !!first && /^\**Accepted\b/.test(first.trim());
 }
 
-// Check one evidence item against the repository; return an error or null.
-export function checkEvidence(ev, ctx) {
-  closed(ev, ['path', 'claim', 'min_pwg', 'adr'], 'evidence');
-  const kinds = ['path', 'claim', 'adr'].filter(k => k in ev);
-  if (kinds.length !== 1) return 'an evidence item names exactly one of path, claim or adr';
-  if (ev.min_pwg !== undefined && ev.claim === undefined) return 'min_pwg belongs to claim evidence only';
-  if (ev.path !== undefined) {
-    if (!isStr(ev.path, 300) || ev.path.startsWith('/') || ev.path.split('/').includes('..')) return `evidence path ${JSON.stringify(ev.path)} is not a repository path`;
-    return ctx.isFile(ev.path) ? null : `evidence path ${ev.path} is not a file in the repository`;
-  }
-  if (ev.claim !== undefined) {
+// One check for each kind of evidence; each returns an error or null.
+const EVIDENCE = {
+  path(ev, ctx) {
+    const p = ev.path;
+    if (!isStr(p, 300) || p.startsWith('/') || p.split('/').includes('..')) return `evidence path ${JSON.stringify(p)} is not a repository path`;
+    return ctx.isFile(p) ? null : `evidence path ${p} is not a file in the repository`;
+  },
+  claim(ev, ctx) {
     if (!isStr(ev.claim) || !/^[\w.-]+\/[\w.-]+#[A-Z]+-[0-9A-Za-z]+$/.test(ev.claim)) return `evidence claim ${JSON.stringify(ev.claim)} is not OWNER/REPO#ID`;
     const min = ev.min_pwg ?? 'PWG-3';
     if (!PWG_ORDER.includes(min) || min === 'ungraded') return `evidence min_pwg ${JSON.stringify(min)} is not a grade`;
     const got = registryGrade(ctx.registry, ev.claim);
     if (got === null) return `the registry view does not list ${ev.claim}`;
     return PWG_ORDER.indexOf(got) >= PWG_ORDER.indexOf(min) ? null : `${ev.claim} derives ${got}, below ${min}`;
+  },
+  adr(ev, ctx) {
+    if (!isStr(ev.adr) || !/^\d{4}$/.test(ev.adr)) return `evidence adr ${JSON.stringify(ev.adr)} is not a four-digit ADR number`;
+    const file = ctx.adrFile(ev.adr);
+    if (!file) return `no ADR ${ev.adr} in docs/decisions`;
+    return adrAccepted(ctx.read(file)) ? null : `ADR ${ev.adr} is not Accepted`;
+  },
+};
+
+// Check one evidence item against the repository; return an error or null.
+export function checkEvidence(ev, ctx) {
+  closed(ev, ['path', 'claim', 'min_pwg', 'adr'], 'evidence');
+  const kinds = Object.keys(EVIDENCE).filter(k => k in ev);
+  if (kinds.length !== 1) return 'an evidence item names exactly one of path, claim or adr';
+  if (ev.min_pwg !== undefined && ev.claim === undefined) return 'min_pwg belongs to claim evidence only';
+  return EVIDENCE[kinds[0]](ev, ctx);
+}
+const evidenceError = (ev, ctx) => { try { return checkEvidence(ev, ctx); } catch (e) { return e.message; } };
+
+// ── Validation: the council ──────────────────────────────────────────────────
+const ADVISOR_FIELDS = ['id', 'name', 'glyph', 'asks', 'reads', 'private'];
+const ADVISOR_RULES = [
+  ...['name', 'glyph', 'asks'].map(k => [a => isStr(a[k]), `${k} is required`]),
+  [a => a.reads === undefined || VALUE_KEYS.includes(a.reads), oneOf('reads', VALUE_KEYS)],
+  [a => a.private === undefined || a.private === true, 'private is true or absent'],
+  // Exactly the me advisor is private: its ranking and the page's privacy claim depend on it.
+  [a => a.id !== 'me' || a.private === true, 'must be private ("private":true)'],
+  [a => a.id === 'me' || a.private === undefined, 'only the me advisor is private'],
+  // The contrarian and the me advisor have their own ranking; every other advisor ranks by one mark.
+  [a => !SPECIAL_ADVISORS.includes(a.id) || a.reads === undefined, 'reads no value mark (it has its own ranking)'],
+  [a => SPECIAL_ADVISORS.includes(a.id) || a.reads !== undefined, 'reads is required (the value mark it ranks by)'],
+];
+
+function checkAdvisors(advisors, fail) {
+  const ids = new Set();
+  for (const a of advisors) {
+    if (!isClosed(a, ADVISOR_FIELDS, `advisor ${a?.id}`, fail)) continue;
+    if (!isStr(a.id, 40) || !SLUG.test(a.id) || ids.has(a.id)) fail(`advisor id ${JSON.stringify(a.id)} is missing, not a slug, or repeated`);
+    ids.add(a.id);
+    applyRules(ADVISOR_RULES, a, null, `advisor ${a.id}`, fail);
   }
-  if (!isStr(ev.adr) || !/^\d{4}$/.test(ev.adr)) return `evidence adr ${JSON.stringify(ev.adr)} is not a four-digit ADR number`;
-  const file = ctx.adrFile(ev.adr);
-  if (!file) return `no ADR ${ev.adr} in docs/decisions`;
-  return adrAccepted(ctx.read(file)) ? null : `ADR ${ev.adr} is not Accepted`;
+  if (!ids.has('me')) fail('advisors: the me advisor is required ("id":"me","private":true)');
+  return ids;
 }
 
-// ── Validation ───────────────────────────────────────────────────────────────
-export function validate({advisors, nodes, expeditions}, ctx) {
-  const errors = [];
-  const fail = m => errors.push(m);
+// ── Validation: the nodes ────────────────────────────────────────────────────
+const NODE_FIELDS = ['id', 'name', 'glyph', 'track', 'kind', 'status', 'size', 'summary', 'needs', 'rivals', 'value',
+  'counsel', 'evidence', 'blocked_by', 'where', 'owner_value', 'refs'];
+const NODE_RULES = [
+  [n => isStr(n.name, 80), 'name is required (at most 80 characters)'],
+  [n => isStr(n.glyph, 16), 'glyph is required'],
+  [n => TRACKS.includes(n.track), oneOf('track', TRACKS)],
+  [n => KINDS.includes(n.kind), oneOf('kind', KINDS)],
+  [n => STATUSES.includes(n.status), oneOf('status', STATUSES)],
+  [n => isSize(n.size), oneOf('size', Object.keys(SIZES))],
+  [n => isStr(n.summary, 600), 'summary is required (at most 600 characters)'],
+  ...['needs', 'rivals', 'evidence', 'refs'].map(k => [n => n[k] === undefined || Array.isArray(n[k]), `${k} must be a list`]),
+  [n => n.where === undefined || (typeof n.where === 'string' && /^(estate|upstream):[\w.-]+\/[\w.-]+$/.test(n.where)),
+    'where is estate:OWNER/REPO or upstream:OWNER/REPO, or absent for this repository'],
+  [n => n.owner_value === undefined || n.owner_value === 'high', 'owner_value is "high" or absent'],
+  [n => n.status !== 'blocked' || isStr(n.blocked_by), 'a blocked node says what blocks it (blocked_by)'],
+  [n => n.status === 'blocked' || n.blocked_by === undefined, 'blocked_by belongs to a blocked node only'],
+  [n => list(n.refs).every(r => isStr(r, 300)), 'each ref is a short text'],
+];
 
-  const advisorIds = new Set();
-  for (const a of advisors) {
-    try { closed(a, ['id', 'name', 'glyph', 'asks', 'reads', 'private'], `advisor ${a?.id}`); } catch (e) { fail(e.message); continue; }
-    if (!isStr(a.id, 40) || !SLUG.test(a.id) || advisorIds.has(a.id)) fail(`advisor id ${JSON.stringify(a.id)} is missing, not a slug, or repeated`);
-    advisorIds.add(a.id);
-    for (const k of ['name', 'glyph', 'asks']) if (!isStr(a[k])) fail(`advisor ${a.id}: ${k} is required`);
-    if (a.reads !== undefined && !VALUE_KEYS.includes(a.reads)) fail(`advisor ${a.id}: reads must be one of ${VALUE_KEYS.join(', ')}`);
-    if (a.private !== undefined && a.private !== true) fail(`advisor ${a.id}: private is true or absent`);
-    // Exactly the me advisor is private: its ranking and the page's privacy claim depend on it.
-    if (a.id === 'me' && a.private !== true) fail('advisor me: must be private ("private":true)');
-    if (a.id !== 'me' && a.private !== undefined) fail(`advisor ${a.id}: only the me advisor is private`);
-    // The contrarian and the me advisor have their own ranking; every other advisor ranks by one mark.
-    if (SPECIAL_ADVISORS.includes(a.id) && a.reads !== undefined) fail(`advisor ${a.id}: reads no value mark (it has its own ranking)`);
-    if (!SPECIAL_ADVISORS.includes(a.id) && a.reads === undefined) fail(`advisor ${a.id}: reads is required (the value mark it ranks by)`);
+function checkValue(n, where, fail) {
+  if (n.value === undefined) return;
+  isClosed(n.value, VALUE_KEYS, `${where} value`, fail);
+  for (const [k, v] of Object.entries(n.value ?? {})) if (!Number.isInteger(v) || v < 0 || v > 3) fail(`${where}: value.${k} must be 0, 1, 2 or 3`);
+}
+
+function checkCounsel(n, advisorIds, where, fail) {
+  if (n.counsel === undefined) return;
+  if (n.counsel === null || typeof n.counsel !== 'object' || Array.isArray(n.counsel)) { fail(`${where}: counsel must be an object`); return; }
+  for (const [k, v] of Object.entries(n.counsel)) {
+    if (k === 'me') fail(`${where}: counsel.me is refused; the me advisor's notes stay outside the public repository`);
+    else if (!advisorIds.has(k)) fail(`${where}: counsel from unknown advisor ${k}`);
+    if (!isStr(v, 300)) fail(`${where}: counsel.${k} must be a short text`);
   }
-  if (!advisorIds.has('me')) fail('advisors: the me advisor is required ("id":"me","private":true)');
+}
 
+function checkNodes(nodes, advisorIds, fail) {
   const byId = new Map();
   for (const n of nodes) {
     const where = `node ${n?.id}`;
-    try {
-      closed(n, ['id', 'name', 'glyph', 'track', 'kind', 'status', 'size', 'summary', 'needs', 'rivals', 'value',
-        'counsel', 'evidence', 'blocked_by', 'where', 'owner_value', 'refs'], where);
-    } catch (e) { fail(e.message); continue; }
+    if (!isClosed(n, NODE_FIELDS, where, fail)) continue;
     if (!isStr(n.id, 60) || !SLUG.test(n.id)) { fail(`${where}: id must be a lowercase slug`); continue; }
     if (byId.has(n.id)) { fail(`${where}: repeated id`); continue; }
     byId.set(n.id, n);
-    if (!isStr(n.name, 80)) fail(`${where}: name is required (at most 80 characters)`);
-    if (!isStr(n.glyph, 16)) fail(`${where}: glyph is required`);
-    if (!TRACKS.includes(n.track)) fail(`${where}: track must be one of ${TRACKS.join(', ')}`);
-    if (!KINDS.includes(n.kind)) fail(`${where}: kind must be one of ${KINDS.join(', ')}`);
-    if (!STATUSES.includes(n.status)) fail(`${where}: status must be one of ${STATUSES.join(', ')}`);
-    if (!isSize(n.size)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
-    if (!isStr(n.summary, 600)) fail(`${where}: summary is required (at most 600 characters)`);
-    for (const k of ['needs', 'rivals', 'evidence', 'refs']) if (n[k] !== undefined && !Array.isArray(n[k])) fail(`${where}: ${k} must be a list`);
-    if (n.value !== undefined) {
-      try { closed(n.value, VALUE_KEYS, `${where} value`); } catch (e) { fail(e.message); }
-      for (const [k, v] of Object.entries(n.value ?? {})) if (!Number.isInteger(v) || v < 0 || v > 3) fail(`${where}: value.${k} must be 0, 1, 2 or 3`);
-    }
-    if (n.counsel !== undefined) {
-      if (n.counsel === null || typeof n.counsel !== 'object' || Array.isArray(n.counsel)) fail(`${where}: counsel must be an object`);
-      else for (const [k, v] of Object.entries(n.counsel)) {
-        if (k === 'me') fail(`${where}: counsel.me is refused; the me advisor's notes stay outside the public repository`);
-        else if (!advisorIds.has(k)) fail(`${where}: counsel from unknown advisor ${k}`);
-        if (!isStr(v, 300)) fail(`${where}: counsel.${k} must be a short text`);
-      }
-    }
-    if (n.where !== undefined && !/^(estate|upstream):[\w.-]+\/[\w.-]+$/.test(n.where)) fail(`${where}: where is estate:OWNER/REPO or upstream:OWNER/REPO, or absent for this repository`);
-    if (n.owner_value !== undefined && n.owner_value !== 'high') fail(`${where}: owner_value is "high" or absent`);
-    if (n.status === 'blocked' && !isStr(n.blocked_by)) fail(`${where}: a blocked node says what blocks it (blocked_by)`);
-    if (n.status !== 'blocked' && n.blocked_by !== undefined) fail(`${where}: blocked_by belongs to a blocked node only`);
-    for (const r of n.refs ?? []) if (!isStr(r, 300)) fail(`${where}: each ref is a short text`);
+    applyRules(NODE_RULES, n, null, where, fail);
+    checkValue(n, where, fail);
+    checkCounsel(n, advisorIds, where, fail);
   }
+  return byId;
+}
 
-  for (const n of byId.values()) {
-    const where = `node ${n.id}`;
-    for (const k of ['needs', 'rivals']) {
-      const seen = new Set();
-      for (const t of n[k] ?? []) {
-        if (!byId.has(t)) fail(`${where}: ${k} names unknown node ${t}`);
-        if (t === n.id) fail(`${where}: ${k} names itself`);
-        if (seen.has(t)) fail(`${where}: ${k} names ${t} twice`);
-        seen.add(t);
-      }
-    }
-    for (const r of n.rivals ?? []) if (byId.has(r) && !(byId.get(r).rivals ?? []).includes(n.id)) fail(`${where}: rival ${r} does not name ${n.id} back`);
-    if (n.status === 'done' && !(n.evidence ?? []).length) fail(`${where}: done needs evidence (a path, a claim grade or an accepted ADR)`);
-    if (n.status === 'done' || n.status === 'active') {
-      // Evidence an active node shows must hold as much as a done node's.
-      for (const ev of n.evidence ?? []) {
-        let e;
-        try { e = checkEvidence(ev, ctx); } catch (x) { e = x.message; }
-        if (e) fail(`${where}: ${e}`);
-      }
-    } else if (n.evidence !== undefined) {
-      fail(`${where}: evidence belongs to a done or active node`);
-    }
-    // A node is started only from the frontier, so an active node's needs are done too.
-    if (n.status === 'done' || n.status === 'active') for (const t of n.needs ?? []) if (byId.get(t)?.status !== 'done') fail(`${where}: ${n.status}, but its need ${t} is not done`);
+// ── Validation: the edges ────────────────────────────────────────────────────
+// needs and rivals name known nodes, never the node itself, and each at most once.
+function checkNames(n, k, byId, fail) {
+  const seen = new Set();
+  for (const t of list(n[k])) {
+    if (!byId.has(t)) fail(`node ${n.id}: ${k} names unknown node ${t}`);
+    if (t === n.id) fail(`node ${n.id}: ${k} names itself`);
+    if (seen.has(t)) fail(`node ${n.id}: ${k} names ${t} twice`);
+    seen.add(t);
   }
+}
 
-  // The needs form a DAG.
+function checkLinks(n, byId, fail) {
+  checkNames(n, 'needs', byId, fail);
+  checkNames(n, 'rivals', byId, fail);
+  for (const r of list(n.rivals)) if (byId.has(r) && !list(byId.get(r).rivals).includes(n.id)) fail(`node ${n.id}: rival ${r} does not name ${n.id} back`);
+}
+
+// What a node's status asks of it: a done node shows evidence, a started
+// node's evidence holds, and only a started node carries evidence.
+function checkStarted(n, byId, ctx, fail) {
+  const where = `node ${n.id}`;
+  if (n.status === 'done' && !list(n.evidence).length) fail(`${where}: done needs evidence (a path, a claim grade or an accepted ADR)`);
+  if (n.status !== 'done' && n.status !== 'active') {
+    if (n.evidence !== undefined) fail(`${where}: evidence belongs to a done or active node`);
+    return;
+  }
+  // Evidence an active node shows must hold as much as a done node's.
+  for (const ev of list(n.evidence)) {
+    const e = evidenceError(ev, ctx);
+    if (e) fail(`${where}: ${e}`);
+  }
+  // A node is started only from the frontier, so an active node's needs are done too.
+  for (const t of list(n.needs)) if (byId.get(t)?.status !== 'done') fail(`${where}: ${n.status}, but its need ${t} is not done`);
+}
+
+// The needs form a DAG.
+function checkAcyclic(byId, fail) {
   const state = new Map();
   const visit = (id, trail) => {
     if (state.get(id) === 2) return;
     if (state.get(id) === 1) { fail(`the needs form a cycle: ${[...trail, id].join(' -> ')}`); return; }
     state.set(id, 1);
-    for (const t of byId.get(id)?.needs ?? []) if (byId.has(t)) visit(t, [...trail, id]);
+    for (const t of list(byId.get(id)?.needs)) if (byId.has(t)) visit(t, [...trail, id]);
     state.set(id, 2);
   };
   for (const id of byId.keys()) visit(id, []);
+}
 
+function checkActiveLimit(byId, fail) {
   const active = [...byId.values()].filter(n => n.status === 'active');
   if (active.length > ACTIVE_LIMIT) fail(`${active.length} nodes are active (${active.map(n => n.id).join(', ')}); at most ${ACTIVE_LIMIT} may be, so finish or park one first`);
+}
 
-  const exIds = new Set();
+// ── Validation: the return tickets ───────────────────────────────────────────
+const EXPEDITION_FIELDS = ['id', 'what', 'why', 'size', 'date', 'status', 'graft', 'lesson'];
+const EXPEDITION_RULES = [
+  ...['what', 'why'].map(k => [x => isStr(x[k]), `${k} is required`]),
+  [x => isSize(x.size), oneOf('size', Object.keys(SIZES))],
+  [x => isDate(x.date), 'date is a real calendar date, YYYY-MM-DD'],
+  [x => ['out', 'grafted', 'archived'].includes(x.status), 'status is out, grafted or archived'],
+  [(x, byId) => x.status !== 'grafted' || byId.has(x.graft), 'a grafted expedition names the node it became (graft)'],
+  [x => x.status === 'grafted' || x.graft === undefined, 'graft belongs to a grafted expedition'],
+  [x => x.status !== 'archived' || isStr(x.lesson), 'an archived expedition records what it taught (lesson)'],
+  [x => x.status === 'archived' || x.lesson === undefined, 'lesson belongs to an archived expedition'],
+];
+
+// The rule tables, exported so the tests can show that every rule has a witness.
+export const RULES = {advisor: ADVISOR_RULES, node: NODE_RULES, expedition: EXPEDITION_RULES};
+
+function checkExpeditions(expeditions, byId, fail) {
+  const ids = new Set();
   for (const x of expeditions) {
     const where = `expedition ${x?.id}`;
-    try { closed(x, ['id', 'what', 'why', 'size', 'date', 'status', 'graft', 'lesson'], where); } catch (e) { fail(e.message); continue; }
-    if (!isStr(x.id, 20) || !/^X-\d{3}$/.test(x.id) || exIds.has(x.id)) fail(`${where}: id is X-NNN and unique`);
-    exIds.add(x.id);
-    for (const k of ['what', 'why']) if (!isStr(x[k])) fail(`${where}: ${k} is required`);
-    if (!isSize(x.size)) fail(`${where}: size must be one of ${Object.keys(SIZES).join(', ')}`);
-    if (!isDate(x.date)) fail(`${where}: date is a real calendar date, YYYY-MM-DD`);
-    if (!['out', 'grafted', 'archived'].includes(x.status)) fail(`${where}: status is out, grafted or archived`);
-    if (x.status === 'grafted' && !byId.has(x.graft)) fail(`${where}: a grafted expedition names the node it became (graft)`);
-    if (x.status !== 'grafted' && x.graft !== undefined) fail(`${where}: graft belongs to a grafted expedition`);
-    if (x.status === 'archived' && !isStr(x.lesson)) fail(`${where}: an archived expedition records what it taught (lesson)`);
-    if (x.status !== 'archived' && x.lesson !== undefined) fail(`${where}: lesson belongs to an archived expedition`);
+    if (!isClosed(x, EXPEDITION_FIELDS, where, fail)) continue;
+    if (!isStr(x.id, 20) || !/^X-\d{3}$/.test(x.id) || ids.has(x.id)) fail(`${where}: id is X-NNN and unique`);
+    ids.add(x.id);
+    applyRules(EXPEDITION_RULES, x, byId, where, fail);
   }
+}
 
+// ── Validation ───────────────────────────────────────────────────────────────
+// Every failure is collected, so one run reports them all.
+export function validate({advisors, nodes, expeditions}, ctx) {
+  const errors = [];
+  const fail = m => errors.push(m);
+  const advisorIds = checkAdvisors(advisors, fail);
+  const byId = checkNodes(nodes, advisorIds, fail);
+  for (const n of byId.values()) { checkLinks(n, byId, fail); checkStarted(n, byId, ctx, fail); }
+  checkAcyclic(byId, fail);
+  checkActiveLimit(byId, fail);
+  checkExpeditions(expeditions, byId, fail);
   if (errors.length) throw new Error(errors.join('\n'));
   return byId;
 }
 
 // ── Derivation ───────────────────────────────────────────────────────────────
+// Each advisor's pick from the frontier. An advisor that reads a value key
+// ranks the nodes it marks above zero by that mark, then by leverage, then by
+// value for effort; the contrarian takes the frontier node the council rates
+// lowest that still unlocks the most; the me advisor names only nodes tagged
+// owner_value, with no notes.
+function pickFor(a, frontier, total, leverage) {
+  const first = (pool, order) => [...pool].sort(order)[0] ?? null;
+  const byKey = k => (x, y) => (y.value?.[k] ?? 0) - (x.value?.[k] ?? 0) || leverage(y.id) - leverage(x.id)
+    || total(y) / SIZES[y.size] - total(x) / SIZES[x.size] || cmp(x.id, y.id);
+  if (a.id === 'contrarian') return first(frontier, (x, y) => total(x) - total(y) || leverage(y.id) - leverage(x.id) || cmp(x.id, y.id));
+  if (a.private) return first(frontier.filter(n => n.owner_value === 'high'), byKey('maths'));
+  if (a.reads) return first(frontier.filter(n => (n.value?.[a.reads] ?? 0) > 0), byKey(a.reads));
+  return null;
+}
+
 export function derive(byId, advisors) {
   const children = new Map([...byId.keys()].map(id => [id, []]));
-  for (const n of byId.values()) for (const t of n.needs ?? []) children.get(t).push(n.id);
-  for (const c of children.values()) c.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  for (const n of byId.values()) for (const t of list(n.needs)) children.get(t).push(n.id);
+  for (const c of children.values()) c.sort(cmp);
 
   const depth = new Map();
   const depthOf = id => {
     if (depth.has(id)) return depth.get(id);
-    const ns = byId.get(id).needs ?? [];
+    const ns = list(byId.get(id).needs);
     const d = ns.length ? 1 + Math.max(...ns.map(depthOf)) : 0;
     depth.set(id, d);
     return d;
@@ -292,273 +385,329 @@ export function derive(byId, advisors) {
   for (const id of byId.keys()) { depthOf(id); belowOf(id); }
 
   const live = n => n.status !== 'dropped';
-  const frontier = [...byId.values()].filter(n => n.status === 'open' && (n.needs ?? []).every(t => byId.get(t).status === 'done'));
+  const nodes = [...byId.values()];
+  const frontier = nodes.filter(n => n.status === 'open' && list(n.needs).every(t => byId.get(t).status === 'done'));
   const total = n => Object.values(n.value ?? {}).reduce((a, b) => a + b, 0);
   const leverage = id => [...below.get(id)].filter(x => live(byId.get(x))).length;
+  const tracksOf = ids => new Set(ids.map(t => byId.get(t)).filter(live).map(t => t.track));
+  const byNodeId = (a, b) => cmp(a.id, b.id);
 
-  const forks = [...byId.values()].filter(n => live(n) && new Set(children.get(n.id).map(c => byId.get(c)).filter(live).map(c => c.track)).size >= 2);
-  const confluences = [...byId.values()].filter(n => live(n) && new Set((n.needs ?? []).map(t => byId.get(t).track)).size >= 2);
+  const forks = nodes.filter(n => live(n) && tracksOf(children.get(n.id)).size >= 2).sort(byNodeId);
+  const confluences = nodes.filter(n => live(n) && new Set(list(n.needs).map(t => byId.get(t).track)).size >= 2).sort(byNodeId);
   const rivalries = [];
-  for (const n of byId.values()) for (const r of n.rivals ?? []) if (n.id < r) rivalries.push([n.id, r]);
+  for (const n of nodes) for (const r of list(n.rivals)) if (n.id < r) rivalries.push([n.id, r]);
 
-  // Each advisor's pick from the frontier. An advisor that reads a value key
-  // ranks by it, then by leverage, then by value for effort; the contrarian
-  // takes the frontier node the council rates lowest that still unlocks the
-  // most; the me advisor names only nodes tagged owner_value, with no notes.
-  const byKey = (k) => (a, b) => (b.value?.[k] ?? 0) - (a.value?.[k] ?? 0) || leverage(b.id) - leverage(a.id)
-    || total(b) / SIZES[b.size] - total(a) / SIZES[a.size] || (a.id < b.id ? -1 : 1);
-  const picks = new Map();
-  for (const a of advisors) {
-    let pick = null;
-    if (a.id === 'contrarian') {
-      pick = [...frontier].sort((x, y) => total(x) - total(y) || leverage(y.id) - leverage(x.id) || (x.id < y.id ? -1 : 1))[0] ?? null;
-    } else if (a.private) {
-      pick = [...frontier].filter(n => n.owner_value === 'high').sort(byKey('maths'))[0] ?? null;
-    } else if (a.reads) {
-      pick = [...frontier].filter(n => (n.value?.[a.reads] ?? 0) > 0).sort(byKey(a.reads))[0] ?? null;
-    }
-    picks.set(a.id, pick);
-  }
+  const picks = new Map(advisors.map(a => [a.id, pickFor(a, frontier, total, leverage)]));
   return {children, depth, below, frontier, forks, confluences, rivalries, picks, leverage, total};
 }
 
 // ── Rendering: AsciiDoc ──────────────────────────────────────────────────────
-const cell = s => String(s).replace(/\|/g, '\\|');
+// The page is a list of sections; each section is a list of lines.
+const cell = s => String(s).replaceAll('|', String.raw`\|`);
 const nameOf = (byId, id) => `${byId.get(id).glyph} ${byId.get(id).name}`;
 const xref = (byId, id) => `<<${id},${cell(nameOf(byId, id))}>>`;
+const xrefs = (byId, ids, sep = ', ') => ids.map(t => xref(byId, t)).join(sep);
+const orNone = (items, none) => (items.length ? items : [none]);
+const trackKey = t => `${TRACK_GLYPH[t]} ${t}`;
 
-export function renderAdoc(byId, advisors, expeditions, d) {
-  const L = [];
+function introLines(byId, d) {
   const nodes = [...byId.values()];
   const count = s => nodes.filter(n => n.status === s).length;
-  L.push('// SPDX-License-Identifier: CC-BY-SA-4.0');
-  L.push('// GENERATED by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl,');
-  L.push('// docs/ultraplan/advisors.jsonl and docs/ultraplan/expeditions.jsonl; do not hand-edit.');
-  L.push('= Mathesis ultraplan: the tech tree');
-  L.push(':toc: macro');
-  L.push(':toclevels: 1');
-  L.push('');
-  L.push('Each node is a capability. Its needs are the nodes it is built on, so the tree reads');
-  L.push('like a civilisation game: one discovery enables the next. The data in');
-  L.push('`docs/ultraplan/` is the source; this page and its picture are generated from it.');
-  L.push('The era, the frontier, the forks, the confluences and each advisor\'s pick are derived,');
-  L.push('never typed. A node marked done carries evidence the generator checks: a file, a');
-  L.push('claim grade that the registry derives, or an accepted decision record. The value marks');
-  L.push('are judgements, written down so they can be argued with.');
-  L.push('');
-  L.push(`Census of the tree: ${count('done')} done, ${count('active')} active (at most ${ACTIVE_LIMIT}), ${count('open')} open, ${count('blocked')} blocked, ${count('dropped')} dropped, of ${nodes.length} nodes. ${d.frontier.length} can be started now.`);
-  L.push('');
-  L.push('toc::[]');
-  L.push('');
-  L.push('image::tree.svg[The tech tree of Mathesis, from the first era on the left to the frontier on the right]');
-  L.push('');
-  L.push('Key: ✅ done · 🔨 active · 🌱 open · ⛔ blocked · 🍂 dropped. A gold border marks a node');
-  L.push('that can be started now. Colours are tracks: ' + TRACKS.map(t => `${TRACK_GLYPH[t]} ${t}`).join(' · ') + '.');
-  L.push('');
+  return [
+    '// SPDX-License-Identifier: CC-BY-SA-4.0',
+    '// GENERATED by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl,',
+    '// docs/ultraplan/advisors.jsonl and docs/ultraplan/expeditions.jsonl; do not hand-edit.',
+    '= Mathesis ultraplan: the tech tree',
+    ':toc: macro',
+    ':toclevels: 1',
+    '',
+    'Each node is a capability. Its needs are the nodes it is built on, so the tree reads',
+    'like a civilisation game: one discovery enables the next. The data in',
+    '`docs/ultraplan/` is the source; this page and its picture are generated from it.',
+    'The era, the frontier, the forks, the confluences and each advisor\'s pick are derived,',
+    'never typed. A node marked done carries evidence the generator checks: a file, a',
+    'claim grade that the registry derives, or an accepted decision record. The value marks',
+    'are judgements, written down so they can be argued with.',
+    '',
+    `Census of the tree: ${count('done')} done, ${count('active')} active (at most ${ACTIVE_LIMIT}), ${count('open')} open, ${count('blocked')} blocked, ${count('dropped')} dropped, of ${nodes.length} nodes. ${d.frontier.length} can be started now.`,
+    '',
+    'toc::[]',
+    '',
+    'image::tree.svg[The tech tree of Mathesis, from the first era on the left to the frontier on the right]',
+    '',
+    'Key: ✅ done · 🔨 active · 🌱 open · ⛔ blocked · 🍂 dropped. A gold border marks a node',
+    `that can be started now. Colours are tracks: ${TRACKS.map(trackKey).join(' · ')}.`,
+    '',
+  ];
+}
 
-  L.push('== Research now: the frontier');
-  L.push('');
-  L.push('These open nodes have every need done, so any of them can start today. "Unlocks"');
-  L.push('counts the live nodes that depend on it, directly or through others.');
-  L.push('');
-  if (!d.frontier.length) L.push('Nothing is on the frontier.');
-  else {
-    L.push('[cols="3,1,1,1,5",options="header"]');
-    L.push('|===');
-    L.push('|Node |Track |Size |Unlocks |Summary');
-    for (const n of [...d.frontier].sort((a, b) => d.leverage(b.id) - d.leverage(a.id) || (a.id < b.id ? -1 : 1))) {
-      L.push(`|${xref(byId, n.id)} |${n.track} |${n.size} |${d.leverage(n.id)} |${cell(n.summary)}${n.where ? ` _(${cell(n.where)})_` : ''}`);
-    }
-    L.push('|===');
-  }
-  L.push('');
+const beyondNote = n => (n.where ? ` _(${cell(n.where)})_` : '');
+function frontierLines(byId, d) {
+  const head = [
+    '== Research now: the frontier',
+    '',
+    'These open nodes have every need done, so any of them can start today. "Unlocks"',
+    'counts the live nodes that depend on it, directly or through others.',
+    '',
+  ];
+  if (!d.frontier.length) return [...head, 'Nothing is on the frontier.', ''];
+  const rows = [...d.frontier].sort((a, b) => d.leverage(b.id) - d.leverage(a.id) || cmp(a.id, b.id));
+  return [
+    ...head,
+    '[cols="3,1,1,1,5",options="header"]',
+    '|===',
+    '|Node |Track |Size |Unlocks |Summary',
+    ...rows.map(n => `|${xref(byId, n.id)} |${n.track} |${n.size} |${d.leverage(n.id)} |${cell(n.summary)}${beyondNote(n)}`),
+    '|===',
+    '',
+  ];
+}
 
-  L.push('== The council');
-  L.push('');
-  L.push('Each advisor asks one question of every node and names one pick from the frontier.');
-  L.push('The me advisor is private: its notes stay outside this repository, and it names only');
-  L.push('nodes the owner has tagged.');
-  L.push('');
-  for (const a of advisors) {
-    const p = d.picks.get(a.id);
-    L.push(`=== ${a.glyph} ${a.name}`);
-    L.push('');
-    L.push(`_Asks:_ ${a.asks}`);
-    L.push('');
-    if (!p) L.push('_Pick:_ nothing on the frontier answers this advisor yet.');
-    else {
-      const note = p.counsel?.[a.id];
-      L.push(`_Pick:_ ${xref(byId, p.id)}${note ? `. ${note}` : '.'}`);
-    }
-    L.push('');
-  }
+function pickLine(byId, a, p) {
+  if (!p) return '_Pick:_ nothing on the frontier answers this advisor yet.';
+  const note = p.counsel?.[a.id];
+  return `_Pick:_ ${xref(byId, p.id)}${note ? '. ' + note : '.'}`;
+}
+function councilLines(byId, advisors, d) {
+  return [
+    '== The council',
+    '',
+    'Each advisor asks one question of every node and names one pick from the frontier.',
+    'The me advisor is private: its notes stay outside this repository, and it names only',
+    'nodes the owner has tagged.',
+    '',
+    ...advisors.flatMap(a => [`=== ${a.glyph} ${a.name}`, '', `_Asks:_ ${a.asks}`, '', pickLine(byId, a, d.picks.get(a.id)), '']),
+  ];
+}
 
-  L.push('== Forks and confluences');
-  L.push('');
-  L.push('A fork enables nodes on two or more tracks: work there spreads. A confluence needs');
-  L.push('nodes from two or more tracks: work there joins. Rivals are different routes to the');
-  L.push('same place; the contrarian keeps the road not taken in view.');
-  L.push('');
-  L.push('.Forks');
-  for (const n of d.forks.sort((a, b) => (a.id < b.id ? -1 : 1))) {
-    L.push(`* ${xref(byId, n.id)} -> ${d.children.get(n.id).map(c => xref(byId, c)).join(', ')}`);
-  }
-  if (!d.forks.length) L.push('* None yet.');
-  L.push('');
-  L.push('.Confluences');
-  for (const n of d.confluences.sort((a, b) => (a.id < b.id ? -1 : 1))) {
-    L.push(`* ${(n.needs ?? []).map(t => xref(byId, t)).join(' + ')} -> ${xref(byId, n.id)}`);
-  }
-  if (!d.confluences.length) L.push('* None yet.');
-  L.push('');
-  L.push('.Rivals');
-  for (const [a, b] of d.rivalries) L.push(`* ${xref(byId, a)} or ${xref(byId, b)}`);
-  if (!d.rivalries.length) L.push('* None yet.');
-  L.push('');
+function forkLines(byId, d) {
+  return [
+    '== Forks and confluences',
+    '',
+    'A fork enables nodes on two or more tracks: work there spreads. A confluence needs',
+    'nodes from two or more tracks: work there joins. Rivals are different routes to the',
+    'same place; the contrarian keeps the road not taken in view.',
+    '',
+    '.Forks',
+    ...orNone(d.forks.map(n => `* ${xref(byId, n.id)} -> ${xrefs(byId, d.children.get(n.id))}`), '* None yet.'),
+    '',
+    '.Confluences',
+    ...orNone(d.confluences.map(n => `* ${xrefs(byId, list(n.needs), ' + ')} -> ${xref(byId, n.id)}`), '* None yet.'),
+    '',
+    '.Rivals',
+    ...orNone(d.rivalries.map(([a, b]) => `* ${xref(byId, a)} or ${xref(byId, b)}`), '* None yet.'),
+    '',
+  ];
+}
 
-  L.push('== The eras');
-  L.push('');
-  const maxDepth = Math.max(0, ...[...d.depth.values()]);
+function evidenceText(ev) {
+  if (ev.path) return `\`${ev.path}\``;
+  if (ev.claim) return `${ev.claim} at ${ev.min_pwg ?? 'PWG-3'} or above`;
+  return `ADR ${ev.adr} accepted`;
+}
+const marks = value => VALUE_KEYS.filter(k => value[k]).map(k => `${k} ${'●'.repeat(value[k])}`).join(', ');
+
+function nodeLines(byId, advisors, d, n) {
+  const facts = [`*Track:* ${trackKey(n.track)}`, `*Kind:* ${n.kind}`, `*Size:* ${n.size}`, `*Status:* ${n.status}`];
+  if (n.where) facts.push(`*Beyond this repository:* ${n.where}`);
+  const enables = d.children.get(n.id);
+  // Each fact the node has, one a line, joined by hard line breaks.
+  const details = [
+    [list(n.needs).length, () => `*Needs:* ${xrefs(byId, n.needs)}`],
+    [enables.length, () => `*Enables:* ${xrefs(byId, enables)}`],
+    [list(n.rivals).length, () => `*Rivals:* ${xrefs(byId, n.rivals)}`],
+    [n.status === 'blocked', () => `*Blocked by:* ${n.blocked_by}`],
+    [list(n.evidence).length, () => `*Evidence:* ${n.evidence.map(evidenceText).join('; ')}`],
+    [n.value && Object.keys(n.value).length, () => `*Value (judgement):* ${marks(n.value)}`],
+    [list(n.refs).length, () => `*See:* ${n.refs.join('; ')}`],
+  ].filter(([has]) => has).map(([, text]) => text());
+  const counsel = Object.entries(n.counsel ?? {}).map(([id, text]) => {
+    const adv = advisors.find(x => x.id === id);
+    return `* ${adv.glyph} _${adv.name}:_ ${text}`;
+  });
+  return [
+    `[[${n.id}]]`,
+    `==== ${STATUS_GLYPH[n.status]} ${n.glyph} ${n.name}`,
+    '',
+    n.summary,
+    '',
+    facts.join(' · '),
+    '',
+    ...details.map((line, i) => (i < details.length - 1 ? `${line} +` : line)),
+    '',
+    ...(counsel.length ? [...counsel, ''] : []),
+  ];
+}
+
+function eraLines(byId, advisors, d) {
+  const nodes = [...byId.values()];
+  const maxDepth = Math.max(0, ...d.depth.values());
+  const L = ['== The eras', ''];
   for (let k = 0; k <= maxDepth; k++) {
-    const [g, name] = era(k);
-    const inEra = nodes.filter(n => d.depth.get(n.id) === k).sort((a, b) => TRACKS.indexOf(a.track) - TRACKS.indexOf(b.track) || (a.id < b.id ? -1 : 1));
+    const inEra = nodes.filter(n => d.depth.get(n.id) === k).sort((a, b) => TRACKS.indexOf(a.track) - TRACKS.indexOf(b.track) || cmp(a.id, b.id));
     if (!inEra.length) continue;
-    L.push(`=== ${g} Era ${k}: ${name}`);
-    L.push('');
-    for (const n of inEra) {
-      L.push(`[[${n.id}]]`);
-      L.push(`==== ${STATUS_GLYPH[n.status]} ${n.glyph} ${n.name}`);
-      L.push('');
-      L.push(n.summary);
-      L.push('');
-      const facts = [`*Track:* ${TRACK_GLYPH[n.track]} ${n.track}`, `*Kind:* ${n.kind}`, `*Size:* ${n.size}`, `*Status:* ${n.status}`];
-      if (n.where) facts.push(`*Beyond this repository:* ${n.where}`);
-      L.push(facts.join(' · '));
-      L.push('');
-      if ((n.needs ?? []).length) L.push(`*Needs:* ${n.needs.map(t => xref(byId, t)).join(', ')}` + ' +');
-      if (d.children.get(n.id).length) L.push(`*Enables:* ${d.children.get(n.id).map(c => xref(byId, c)).join(', ')}` + ' +');
-      if ((n.rivals ?? []).length) L.push(`*Rivals:* ${n.rivals.map(t => xref(byId, t)).join(', ')}` + ' +');
-      if (n.status === 'blocked') L.push(`*Blocked by:* ${n.blocked_by}` + ' +');
-      if ((n.evidence ?? []).length) L.push(`*Evidence:* ${n.evidence.map(ev => ev.path ? `\`${ev.path}\`` : ev.claim ? `${ev.claim} at ${ev.min_pwg ?? 'PWG-3'} or above` : `ADR ${ev.adr} accepted`).join('; ')}` + ' +');
-      if (n.value && Object.keys(n.value).length) L.push(`*Value (judgement):* ${VALUE_KEYS.filter(k => n.value[k]).map(k => `${k} ${'●'.repeat(n.value[k])}`).join(', ')}` + ' +');
-      if ((n.refs ?? []).length) L.push(`*See:* ${n.refs.join('; ')}` + ' +');
-      if (L[L.length - 1].endsWith(' +')) L[L.length - 1] = L[L.length - 1].slice(0, -2);
-      L.push('');
-      const counsel = Object.entries(n.counsel ?? {});
-      if (counsel.length) {
-        for (const [a, text] of counsel) {
-          const adv = advisors.find(x => x.id === a);
-          L.push(`* ${adv.glyph} _${adv.name}:_ ${text}`);
-        }
-        L.push('');
-      }
-    }
+    const [g, name] = era(k);
+    L.push(`=== ${g} Era ${k}: ${name}`, '', ...inEra.flatMap(n => nodeLines(byId, advisors, d, n)));
   }
+  return L;
+}
 
-  L.push('== Return tickets');
-  L.push('');
-  L.push('Wandering off the tree is allowed. Each trip gets a card: what, why, and how big.');
-  L.push('On return it is grafted onto the tree as a node, or archived with what it taught.');
-  L.push('');
-  if (!expeditions.length) L.push('No trip is out.');
-  else {
-    L.push('[cols="1,1,1,3,3,3",options="header"]');
-    L.push('|===');
-    L.push('|Card |Date |Size |What |Why |Outcome');
-    for (const x of expeditions) {
-      const out = x.status === 'out' ? '🎒 out' : x.status === 'grafted' ? `🌿 grafted as ${xref(byId, x.graft)}` : `📦 archived: ${cell(x.lesson)}`;
-      L.push(`|${x.id} |${x.date} |${x.size} |${cell(x.what)} |${cell(x.why)} |${out}`);
-    }
-    L.push('|===');
-  }
-  L.push('');
+function outcomeText(byId, x) {
+  if (x.status === 'out') return '🎒 out';
+  if (x.status === 'grafted') return `🌿 grafted as ${xref(byId, x.graft)}`;
+  return `📦 archived: ${cell(x.lesson)}`;
+}
+function ticketLines(byId, expeditions) {
+  const head = [
+    '== Return tickets',
+    '',
+    'Wandering off the tree is allowed. Each trip gets a card: what, why, and how big.',
+    'On return it is grafted onto the tree as a node, or archived with what it taught.',
+    '',
+  ];
+  if (!expeditions.length) return [...head, 'No trip is out.', ''];
+  return [
+    ...head,
+    '[cols="1,1,1,3,3,3",options="header"]',
+    '|===',
+    '|Card |Date |Size |What |Why |Outcome',
+    ...expeditions.map(x => `|${x.id} |${x.date} |${x.size} |${cell(x.what)} |${cell(x.why)} |${outcomeText(byId, x)}`),
+    '|===',
+    '',
+  ];
+}
 
-  L.push('== Beyond this repository');
-  L.push('');
-  L.push('Nodes whose work lands in another repository. They are listed here so they can be');
-  L.push('carried to that repository, not done here.');
-  L.push('');
-  const beyond = nodes.filter(n => n.where).sort((a, b) => (a.where < b.where ? -1 : a.where > b.where ? 1 : a.id < b.id ? -1 : 1));
-  if (!beyond.length) L.push('None.');
-  for (const n of beyond) L.push(`* ${n.where}: ${xref(byId, n.id)} (${n.status})`);
-  L.push('');
-  return L.join('\n');
+function beyondLines(byId) {
+  const beyond = [...byId.values()].filter(n => n.where).sort((a, b) => cmp(a.where, b.where) || cmp(a.id, b.id));
+  return [
+    '== Beyond this repository',
+    '',
+    'Nodes whose work lands in another repository. They are listed here so they can be',
+    'carried to that repository, not done here.',
+    '',
+    ...orNone(beyond.map(n => `* ${n.where}: ${xref(byId, n.id)} (${n.status})`), 'None.'),
+    '',
+  ];
+}
+
+export function renderAdoc(byId, advisors, expeditions, d) {
+  return [
+    ...introLines(byId, d),
+    ...frontierLines(byId, d),
+    ...councilLines(byId, advisors, d),
+    ...forkLines(byId, d),
+    ...eraLines(byId, advisors, d),
+    ...ticketLines(byId, expeditions),
+    ...beyondLines(byId),
+  ].join('\n');
 }
 
 // ── Rendering: SVG ───────────────────────────────────────────────────────────
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const clip = (s, n) => [...s].length <= n ? s : [...s].slice(0, n - 1).join('') + '…';
+const COL = 250, BOX_W = 214, BOX_H = 50, GAP = 14, TOP = 96, LEFT = 24, LEGEND_STEP = 128;
+const GOLD = '#d4a017';
 
-export function renderSvg(byId, d) {
-  const COL = 250, BOX_W = 214, BOX_H = 50, GAP = 14, TOP = 96, LEFT = 24;
-  const maxDepth = Math.max(0, ...[...d.depth.values()]);
+// Where each node sits: its era is its column, and each column is ordered by
+// track, then by where its needs sit, so edges cross less.
+function layout(byId, d) {
+  const maxDepth = Math.max(0, ...d.depth.values());
   const cols = Array.from({length: maxDepth + 1}, () => []);
   for (const n of byId.values()) cols[d.depth.get(n.id)].push(n);
-  // Order each column by track, then by where its needs sit, so edges cross less.
   const yOf = new Map();
-  for (let k = 0; k <= maxDepth; k++) {
-    const bary = n => {
-      const ys = (n.needs ?? []).map(t => yOf.get(t)).filter(v => v !== undefined);
-      return ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : -1;
-    };
-    cols[k].sort((a, b) => TRACKS.indexOf(a.track) - TRACKS.indexOf(b.track) || bary(a) - bary(b) || (a.id < b.id ? -1 : 1));
-    cols[k].forEach((n, i) => yOf.set(n.id, TOP + i * (BOX_H + GAP)));
+  const bary = n => {
+    const ys = list(n.needs).map(t => yOf.get(t)).filter(v => v !== undefined);
+    return ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : -1;
+  };
+  for (const col of cols) {
+    col.sort((a, b) => TRACKS.indexOf(a.track) - TRACKS.indexOf(b.track) || bary(a) - bary(b) || cmp(a.id, b.id));
+    col.forEach((n, i) => yOf.set(n.id, TOP + i * (BOX_H + GAP)));
   }
   const tallest = Math.max(1, ...cols.map(c => c.length));
   // At least as wide as the fixed legend (six tracks and the beyond-repository key).
-  const LEGEND_W = LEFT + TRACKS.length * 128 + 260;
-  const W = Math.max(LEFT * 2 + (maxDepth + 1) * COL - (COL - BOX_W), LEGEND_W);
+  const legendW = LEFT + TRACKS.length * LEGEND_STEP + 260;
+  const W = Math.max(LEFT * 2 + (maxDepth + 1) * COL - (COL - BOX_W), legendW);
   const H = TOP + tallest * (BOX_H + GAP) + 70;
-  const frontier = new Set(d.frontier.map(n => n.id));
-  const xOf = id => LEFT + d.depth.get(id) * COL;
-  const o = [];
-  // The SVG namespace is an identifier, never fetched, and XML Namespaces 1.0 fixes it as http.
-  o.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">`); // hypatia: allow code_safety/js_http_url_in_code -- the SVG namespace URI is an identifier, not a fetched URL
-  o.push('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
-  o.push('<!-- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) -->');
-  o.push(`<title id="t">The Mathesis tech tree</title>`);
-  o.push(`<desc id="d">Generated by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl. ${byId.size} nodes in ${maxDepth + 1} eras; each arrow runs from a node to a node it enables.</desc>`);
-  o.push(`<rect x="0" y="0" width="${W}" height="${H}" rx="18" fill="#fffdf7" stroke="#e8dcc0"/>`);
-  o.push(`<text x="${LEFT}" y="34" font-size="20" font-weight="700" fill="#4a3f2a">🦉 Mathesis tech tree</text>`);
-  o.push(`<text x="${LEFT}" y="54" font-size="12" fill="#7a6a4a">each arrow: this enables that · gold border: start it now · ✅ done 🔨 active 🌱 open ⛔ blocked 🍂 dropped</text>`);
-  for (let k = 0; k <= maxDepth; k++) {
+  return {maxDepth, yOf, xOf: id => LEFT + d.depth.get(id) * COL, W, H};
+}
+
+function svgHead(byId, {maxDepth, W, H}) {
+  const desc = `Generated by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl. ${byId.size} nodes in ${maxDepth + 1} eras; each arrow runs from a node to a node it enables.`;
+  return [
+    // The SVG namespace is an identifier, never fetched, and XML Namespaces 1.0 fixes it as http.
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">`, // hypatia: allow code_safety/js_http_url_in_code -- the SVG namespace URI is an identifier, not a fetched URL
+    '<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->',
+    '<!-- SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) -->',
+    '<title id="t">The Mathesis tech tree</title>',
+    `<desc id="d">${desc}</desc>`,
+    `<rect x="0" y="0" width="${W}" height="${H}" rx="18" fill="#fffdf7" stroke="#e8dcc0"/>`,
+    `<text x="${LEFT}" y="34" font-size="20" font-weight="700" fill="#4a3f2a">🦉 Mathesis tech tree</text>`,
+    `<text x="${LEFT}" y="54" font-size="12" fill="#7a6a4a">each arrow: this enables that · gold border: start it now · ✅ done 🔨 active 🌱 open ⛔ blocked 🍂 dropped</text>`,
+  ];
+}
+
+function svgEras({maxDepth, H}) {
+  return Array.from({length: maxDepth + 1}, (_, k) => {
     const [g, name] = era(k);
     const x = LEFT + k * COL;
-    o.push(`<rect x="${x - 6}" y="64" width="${BOX_W + 12}" height="${H - 80}" rx="12" fill="${k % 2 ? '#fbf6ea' : '#f7f0de'}"/>`);
-    o.push(`<text x="${x + BOX_W / 2}" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#6b5a36">${esc(`${g} ${name}`)}</text>`);
-  }
-  for (const n of byId.values()) {
-    for (const t of n.needs ?? []) {
-      const x1 = xOf(t) + BOX_W, y1 = yOf.get(t) + BOX_H / 2, x2 = xOf(n.id), y2 = yOf.get(n.id) + BOX_H / 2;
-      const dx = Math.max(30, (x2 - x1) / 2);
-      const hot = frontier.has(n.id);
-      o.push(`<path d="M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}" fill="none" stroke="${hot ? '#d4a017' : '#b9ab8c'}" stroke-width="${hot ? 2 : 1.3}" opacity="${n.status === 'dropped' ? 0.35 : 0.85}"/>`);
-    }
-  }
-  for (const n of byId.values()) {
-    const x = xOf(n.id), y = yOf.get(n.id);
-    const hot = frontier.has(n.id);
-    const faded = n.status === 'dropped' ? ' opacity="0.45"' : '';
-    o.push(`<g${faded}>`);
-    o.push(`<title>${esc(`${n.name}: ${n.summary}`)}</title>`);
-    o.push(`<rect x="${x}" y="${y}" width="${BOX_W}" height="${BOX_H}" rx="12" fill="${TRACK_FILL[n.track]}" stroke="${hot ? '#d4a017' : '#a8977a'}" stroke-width="${hot ? 3 : 1}"${n.status === 'blocked' ? ' stroke-dasharray="5 3"' : ''}/>`);
-    o.push(`<text x="${x + 10}" y="${y + 21}" font-size="15">${esc(n.glyph)}</text>`);
-    o.push(`<text x="${x + 34}" y="${y + 21}" font-size="12.5" font-weight="600" fill="#2f2a20">${esc(clip(n.name, 22))}</text>`);
-    o.push(`<text x="${x + 34}" y="${y + 39}" font-size="10.5" fill="#6b5f48">${esc(`${TRACK_GLYPH[n.track]} ${n.track} · ${n.size}${n.where ? ' · 🌍' : ''}`)}</text>`);
-    o.push(`<text x="${x + BOX_W - 8}" y="${y + 20}" font-size="14" text-anchor="end">${STATUS_GLYPH[n.status]}</text>`);
-    o.push('</g>');
-  }
-  let lx = LEFT;
-  const ly = H - 22;
-  for (const t of TRACKS) {
-    o.push(`<rect x="${lx}" y="${ly - 12}" width="16" height="16" rx="4" fill="${TRACK_FILL[t]}" stroke="#a8977a"/>`);
-    o.push(`<text x="${lx + 22}" y="${ly + 1}" font-size="11.5" fill="#4a3f2a">${esc(`${TRACK_GLYPH[t]} ${t}`)}</text>`);
-    lx += 128;
-  }
-  o.push(`<text x="${lx + 8}" y="${ly + 1}" font-size="11.5" fill="#4a3f2a">🌍 lands in another repository</text>`);
-  o.push('</svg>');
-  return o.join('\n') + '\n';
+    return [
+      `<rect x="${x - 6}" y="64" width="${BOX_W + 12}" height="${H - 80}" rx="12" fill="${k % 2 ? '#fbf6ea' : '#f7f0de'}"/>`,
+      `<text x="${x + BOX_W / 2}" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#6b5a36">${esc(g + ' ' + name)}</text>`,
+    ];
+  }).flat();
 }
+
+function svgEdge(n, t, hot, {xOf, yOf}) {
+  const x1 = xOf(t) + BOX_W, y1 = yOf.get(t) + BOX_H / 2, x2 = xOf(n.id), y2 = yOf.get(n.id) + BOX_H / 2;
+  const dx = Math.max(30, (x2 - x1) / 2);
+  const stroke = hot ? `stroke="${GOLD}" stroke-width="2"` : 'stroke="#b9ab8c" stroke-width="1.3"';
+  return `<path d="M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}" fill="none" ${stroke} opacity="${n.status === 'dropped' ? 0.35 : 0.85}"/>`;
+}
+
+function svgBox(n, hot, {xOf, yOf}) {
+  const x = xOf(n.id), y = yOf.get(n.id);
+  const faded = n.status === 'dropped' ? ' opacity="0.45"' : '';
+  const border = hot ? `stroke="${GOLD}" stroke-width="3"` : 'stroke="#a8977a" stroke-width="1"';
+  const dashed = n.status === 'blocked' ? ' stroke-dasharray="5 3"' : '';
+  const tag = `${trackKey(n.track)} · ${n.size}${n.where ? ' · 🌍' : ''}`;
+  return [
+    `<g${faded}>`,
+    `<title>${esc(n.name + ': ' + n.summary)}</title>`,
+    `<rect x="${x}" y="${y}" width="${BOX_W}" height="${BOX_H}" rx="12" fill="${TRACK_FILL[n.track]}" ${border}${dashed}/>`,
+    `<text x="${x + 10}" y="${y + 21}" font-size="15">${esc(n.glyph)}</text>`,
+    `<text x="${x + 34}" y="${y + 21}" font-size="12.5" font-weight="600" fill="#2f2a20">${esc(clip(n.name, 22))}</text>`,
+    `<text x="${x + 34}" y="${y + 39}" font-size="10.5" fill="#6b5f48">${esc(tag)}</text>`,
+    `<text x="${x + BOX_W - 8}" y="${y + 20}" font-size="14" text-anchor="end">${STATUS_GLYPH[n.status]}</text>`,
+    '</g>',
+  ];
+}
+
+function svgLegend({H}) {
+  const ly = H - 22;
+  const keys = TRACKS.flatMap((t, i) => {
+    const lx = LEFT + i * LEGEND_STEP;
+    return [
+      `<rect x="${lx}" y="${ly - 12}" width="16" height="16" rx="4" fill="${TRACK_FILL[t]}" stroke="#a8977a"/>`,
+      `<text x="${lx + 22}" y="${ly + 1}" font-size="11.5" fill="#4a3f2a">${esc(trackKey(t))}</text>`,
+    ];
+  });
+  return [...keys, `<text x="${LEFT + TRACKS.length * LEGEND_STEP + 8}" y="${ly + 1}" font-size="11.5" fill="#4a3f2a">🌍 lands in another repository</text>`];
+}
+
+export function renderSvg(byId, d) {
+  const g = layout(byId, d);
+  const frontier = new Set(d.frontier.map(n => n.id));
+  const nodes = [...byId.values()];
+  return [
+    ...svgHead(byId, g),
+    ...svgEras(g),
+    ...nodes.flatMap(n => list(n.needs).map(t => svgEdge(n, t, frontier.has(n.id), g))),
+    ...nodes.flatMap(n => svgBox(n, frontier.has(n.id), g)),
+    ...svgLegend(g),
+    '</svg>',
+  ].join('\n') + '\n';
+}
+
 
 // ── Driver ───────────────────────────────────────────────────────────────────
 export function context(root = ROOT) {

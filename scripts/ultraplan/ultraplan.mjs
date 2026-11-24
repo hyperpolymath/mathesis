@@ -366,7 +366,9 @@ function pickFor(a, frontier, total, leverage) {
   const council = (x, y) => leverage(y.id) - leverage(x.id) || total(y) / SIZES[y.size] - total(x) / SIZES[x.size] || cmp(x.id, y.id);
   const byKey = k => (x, y) => (y.value?.[k] ?? 0) - (x.value?.[k] ?? 0) || council(x, y);
   if (a.id === 'contrarian') return first(frontier, (x, y) => total(x) - total(y) || leverage(y.id) - leverage(x.id) || cmp(x.id, y.id));
-  if (a.private) return first(frontier.filter(n => n.owner_value === 'high'), council);
+  // The me advisor names no public pick (owner ruling 2026-11-24): the owner chooses in a
+  // private GELS panel, and the page lists the tagged frontier unranked (ownerTagged).
+  if (a.private) return null;
   if (a.reads) return first(frontier.filter(n => (n.value?.[a.reads] ?? 0) > 0), byKey(a.reads));
   return null;
 }
@@ -410,7 +412,9 @@ export function derive(byId, advisors) {
   for (const n of nodes) for (const r of list(n.rivals)) if (n.id < r) rivalries.push([n.id, r]);
 
   const picks = new Map(advisors.map(a => [a.id, pickFor(a, frontier, total, leverage)]));
-  return {children, depth, below, frontier, forks, confluences, rivalries, picks, leverage, total, slots};
+  // The frontier nodes the owner tagged, in id order: a list, never a ranking.
+  const ownerTagged = frontier.filter(n => n.owner_value === 'high').sort(byNodeId);
+  return {children, depth, below, frontier, forks, confluences, rivalries, picks, ownerTagged, leverage, total, slots};
 }
 
 // ── Rendering: AsciiDoc ──────────────────────────────────────────────────────
@@ -489,15 +493,21 @@ function pickLine(byId, a, p) {
   const note = p.counsel?.[a.id];
   return `_Pick:_ ${xref(byId, p.id)}${note ? '. ' + note : '.'}`;
 }
+// The me advisor's line: its choice is made privately, so the page shows only what the
+// owner tagged, unranked.
+function privateLine(byId, d) {
+  const tagged = d.ownerTagged.length ? `Tagged on the frontier, in id order: ${xrefs(byId, d.ownerTagged.map(n => n.id))}.` : 'Nothing tagged is on the frontier.';
+  return `_No public pick:_ the owner chooses in a private GELS panel. ${tagged}`;
+}
 function councilLines(byId, advisors, d) {
   return [
     '== The council',
     '',
-    'Each advisor asks one question of every node and names one pick from the frontier.',
-    'The me advisor is private: its notes stay outside this repository, and it names only',
-    'nodes the owner has tagged.',
+    'Each advisor asks one question of every node and names one pick from the frontier,',
+    'except the me advisor. It is private: its notes and its choice stay outside this',
+    'repository, and the page lists, unranked, the frontier nodes the owner has tagged.',
     '',
-    ...advisors.flatMap(a => [`=== ${a.glyph} ${a.name}`, '', `_Asks:_ ${a.asks}`, '', pickLine(byId, a, d.picks.get(a.id)), '']),
+    ...advisors.flatMap(a => [`=== ${a.glyph} ${a.name}`, '', `_Asks:_ ${a.asks}`, '', a.private ? privateLine(byId, d) : pickLine(byId, a, d.picks.get(a.id)), '']),
   ];
 }
 

@@ -46,9 +46,9 @@ counts the live nodes that depend on it, directly or through others.
 
 == The council
 
-Each advisor asks one question of every node and names one pick from the frontier.
-The me advisor is private: its notes stay outside this repository, and it names only
-nodes the owner has tagged.
+Each advisor asks one question of every node and names one pick from the frontier,
+except the me advisor. It is private: its notes and its choice stay outside this
+repository, and the page lists, unranked, the frontier nodes the owner has tagged.
 
 === ∑ Mathematician
 
@@ -108,7 +108,7 @@ _Pick:_ xref:file-transport-bugs[🐛 File the transport reproducers].
 
 _Asks:_ Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.
 
-_Pick:_ xref:forecast-13wk[📅 Thirteen-week forecast].
+_No public pick:_ the owner chooses in a private GELS panel. Tagged on the frontier, in id order: xref:forecast-13wk[📅 Thirteen-week forecast], xref:paper-thy1[📄 Note: feature reachability], xref:teaching-cohort[📓 Cohort economics, taught].
 
 == Forks and confluences
 

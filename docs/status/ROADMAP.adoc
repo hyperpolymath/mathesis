@@ -421,7 +421,8 @@ scheduled census, a view of what each repository owes
    cartographer, teacher, contrarian).
 ** The me advisor is private. Its notes stay outside this repository and every
    feed, in a private GELS panel the owner owns, and a node carries at most the
-   tag `owner_value`.
+   tag `owner_value`. It names no public pick: the page lists the tagged
+   frontier nodes unranked, and the owner chooses in that panel.
 ** Off-tree trips are return tickets: each is grafted onto the tree or
    archived with what it taught.
 ** The GELS maths panel waits on the GELS feed/panel contract, which the GELS

@@ -78,7 +78,8 @@ publisher, and "me");
 The generator requires only the me advisor, because the page's privacy claim
 rests on it. Who else sits on the council is the owner's to change in the data.
 
-Each asks one question of every node. Each names one pick from the frontier:
+Each asks one question of every node. Each names one pick from the frontier,
+except the me advisor:
 
 * An advisor that reads a value mark ranks the frontier nodes it marks above
 zero: by the mark, then by how much the node unlocks, then by value for effort
@@ -91,9 +92,9 @@ unlocks the most. That keeps the road not taken in view.
 are kept privately, outside this public repository and out of every feed: in
 a private panel of GELS that the owner owns (owner ruling 2026-11-24). A node carries at most the
 neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
-the key `me`. The me advisor reads no value mark, since another advisor's mark
-is not the owner's preference. Among the frontier nodes the owner tagged, it
-names the one that unlocks the most, then the one with the best value for effort.
+the key `me`. The me advisor names no public pick (owner ruling 2026-11-24): the
+owner chooses in the private GELS panel, and the page lists, in id order and
+unranked, the frontier nodes the owner tagged.
 
 == Wandering: return tickets
 

@@ -62,9 +62,11 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(d.picks.get('maths').id).toBe('theorem');
   expect(d.picks.get('engineering').id).toBe('cheap');
   expect(d.picks.get('contrarian').id).toBe('cheap');                  // rated lowest by the council
-  expect(d.picks.get('me').id).toBe('theorem');                        // tagged owner_value, no notes
+  expect(d.picks.get('me')).toBe(null);                                // no public pick (owner ruling 2026-11-24)
+  expect(d.ownerTagged.map(n => n.id)).toEqual(['theorem']);            // tagged owner_value, no notes
   expect(out[VIEW]).toContain('== Research now: the frontier');
   expect(out[VIEW]).toContain('_Pick:_ xref:theorem[🔷 theorem]. The deep one.');
+  expect(out[VIEW]).toContain('_No public pick:_ the owner chooses in a private GELS panel. Tagged on the frontier, in id order: xref:theorem[🔷 theorem].');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
   // Three eras are narrower than the legend; the canvas still holds the legend.
@@ -271,10 +273,15 @@ test('every rule has a witness', () => {
   expect(unwitnessed).toEqual([]);
 });
 
-test('the me advisor ranks the owner\'s tags as the council does, not by another advisor\'s mark', () => {
-  // cheap carries the higher maths mark; theorem unlocks two nodes and cheap none.
+test('the me advisor names no public pick, and lists the owner\'s tags unranked', () => {
+  // theorem unlocks more and cheap carries the higher maths mark: neither orders the list.
   const nodes = swap('cheap', {owner_value: 'high', value: {maths: 3}}, swap('theorem', {value: {maths: 1}}));
-  expect(generate(fixture({nodes})).derived.picks.get('me').id).toBe('theorem');
+  const out = generate(fixture({nodes}));
+  expect(out.derived.picks.get('me')).toBe(null);
+  expect(out.derived.ownerTagged.map(n => n.id)).toEqual(['cheap', 'theorem']);
+  expect(out[VIEW]).toContain('Tagged on the frontier, in id order: xref:cheap[🔷 cheap], xref:theorem[🔷 theorem].');
+  const none = generate(fixture({nodes: swap('theorem', {owner_value: undefined})}))[VIEW];
+  expect(none).toContain('_No public pick:_ the owner chooses in a private GELS panel. Nothing tagged is on the frontier.');
 });
 
 test('when every active slot is taken, the frontier is ready but cannot start', () => {

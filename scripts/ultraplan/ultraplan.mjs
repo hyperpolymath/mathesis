@@ -60,7 +60,9 @@ export const TRACK_FILL = {
   economics: '#ffe0d6', publications: '#eee0ff', ecosystem: '#ffe9c7',
 };
 
-const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// A lowercase slug that begins with a letter: a node's id is also its AsciiDoc
+// anchor, and an anchor cannot begin with a digit.
+const SLUG = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 // A size is one of the four own keys of SIZES, never an inherited name such as "toString".
 const isSize = s => typeof s === 'string' && Object.hasOwn(SIZES, s);
 // A YYYY-MM-DD that names a real day (no 2026-02-30).
@@ -74,13 +76,16 @@ const isStr = (v, max = 400) => typeof v === 'string' && v.length > 0 && v.lengt
 // ── Reading ──────────────────────────────────────────────────────────────────
 // Each source line must already be its own JCS form, so the data has one
 // spelling and a diff shows only real change.
-// I-JSON (RFC 7493) and JCS (RFC 8785) refuse a string or a member name that
-// holds a lone surrogate, which JSON.parse would otherwise accept and
-// JSON.stringify would write back unchanged.
+// I-JSON (RFC 7493 §2.1) refuses a string or a member name that holds a lone
+// surrogate or a Unicode noncharacter (U+FDD0 to U+FDEF, and the last two code
+// points of every plane). JSON.parse accepts both and JSON.stringify writes them
+// back unchanged, so they are refused here, as the I-JSON gate refuses them.
+const isNonchar = cp => (cp >= 0xFDD0 && cp <= 0xFDEF) || (cp & 0xFFFE) === 0xFFFE;
+const isIJsonString = s => s.isWellFormed() && ![...s].some(c => isNonchar(c.codePointAt(0)));
 export function wellFormed(v) {
-  if (typeof v === 'string') return v.isWellFormed();
+  if (typeof v === 'string') return isIJsonString(v);
   if (Array.isArray(v)) return v.every(wellFormed);
-  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => k.isWellFormed() && wellFormed(x));
+  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => isIJsonString(k) && wellFormed(x));
   return true;
 }
 
@@ -88,7 +93,7 @@ export function readSource(text, name) {
   const rows = parseJsonl(text, name);
   const lines = text === '' ? [] : text.slice(0, -1).split('\n');
   rows.forEach((r, i) => {
-    if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate, which I-JSON and JCS refuse`);
+    if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate or a Unicode noncharacter, which I-JSON refuses`);
     if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
   });
   return rows;
@@ -240,7 +245,7 @@ function checkNodes(nodes, advisorIds, fail) {
   for (const n of nodes) {
     const where = `node ${n?.id}`;
     if (!isClosed(n, NODE_FIELDS, where, fail)) continue;
-    if (!isStr(n.id, 60) || !SLUG.test(n.id)) { fail(`${where}: id must be a lowercase slug`); continue; }
+    if (!isStr(n.id, 60) || !SLUG.test(n.id)) { fail(`${where}: id must be a lowercase slug that begins with a letter`); continue; }
     if (byId.has(n.id)) { fail(`${where}: repeated id`); continue; }
     byId.set(n.id, n);
     applyRules(NODE_RULES, n, null, where, fail);
@@ -389,6 +394,8 @@ export function derive(byId, advisors) {
 
   const live = n => n.status !== 'dropped';
   const nodes = [...byId.values()];
+  // Active slots still free: when none is, the frontier is ready but cannot start.
+  const slots = ACTIVE_LIMIT - nodes.filter(n => n.status === 'active').length;
   const frontier = nodes.filter(n => n.status === 'open' && list(n.needs).every(t => byId.get(t).status === 'done'));
   const total = n => Object.values(n.value ?? {}).reduce((a, b) => a + b, 0);
   const leverage = id => [...below.get(id)].filter(x => live(byId.get(x))).length;
@@ -401,7 +408,7 @@ export function derive(byId, advisors) {
   for (const n of nodes) for (const r of list(n.rivals)) if (n.id < r) rivalries.push([n.id, r]);
 
   const picks = new Map(advisors.map(a => [a.id, pickFor(a, frontier, total, leverage)]));
-  return {children, depth, below, frontier, forks, confluences, rivalries, picks, leverage, total};
+  return {children, depth, below, frontier, forks, confluences, rivalries, picks, leverage, total, slots};
 }
 
 // ── Rendering: AsciiDoc ──────────────────────────────────────────────────────
@@ -432,19 +439,21 @@ function introLines(byId, d) {
     'claim grade that the registry derives, or an accepted decision record. The value marks',
     'are judgements, written down so they can be argued with.',
     '',
-    `Census of the tree: ${count('done')} done, ${count('active')} active (at most ${ACTIVE_LIMIT}), ${count('open')} open, ${count('blocked')} blocked, ${count('dropped')} dropped, of ${nodes.length} nodes. ${d.frontier.length} can be started now.`,
+    `Census of the tree: ${count('done')} done, ${count('active')} active (at most ${ACTIVE_LIMIT}), ${count('open')} open, ${count('blocked')} blocked, ${count('dropped')} dropped, of ${nodes.length} nodes. ${startable(d)}`,
     '',
     'toc::[]',
     '',
     'image::tree.svg[The tech tree of Mathesis, from the first era on the left to the frontier on the right]',
     '',
     'Key: ✅ done · 🔨 active · 🌱 open · ⛔ blocked · 🍂 dropped. A gold border marks a node',
-    `that can be started now. Colours are tracks: ${TRACKS.map(trackKey).join(' · ')}.`,
+    `that ${d.slots > 0 ? 'can be started now' : 'is ready, once an active slot is free'}. Colours are tracks: ${TRACKS.map(trackKey).join(' · ')}.`,
     '',
   ];
 }
 
 const beyondNote = n => (n.where ? ` _(${cell(n.where)})_` : '');
+const startable = d => (d.slots > 0 ? `${d.frontier.length} can be started now.` : `${d.frontier.length} are ready, but all ${ACTIVE_LIMIT} active slots are full.`);
+const slotsFull = `*All ${ACTIVE_LIMIT} active slots are full.* These nodes are ready, but none can start until an active node is finished or parked.`;
 function frontierLines(byId, d) {
   const head = [
     '== Research now: the frontier',
@@ -454,6 +463,7 @@ function frontierLines(byId, d) {
     '',
   ];
   if (!d.frontier.length) return [...head, 'Nothing is on the frontier.', ''];
+  if (d.slots <= 0) head.push(slotsFull, '');
   const rows = [...d.frontier].sort((a, b) => d.leverage(b.id) - d.leverage(a.id) || cmp(a.id, b.id));
   return [
     ...head,
@@ -636,7 +646,7 @@ function layout(byId, d) {
   return {maxDepth, yOf, xOf: id => LEFT + d.depth.get(id) * COL, W, H};
 }
 
-function svgHead(byId, {maxDepth, W, H}) {
+function svgHead(byId, {maxDepth, W, H}, d) {
   const desc = `Generated by scripts/ultraplan/ultraplan.mjs from docs/ultraplan/tree.jsonl. ${byId.size} nodes in ${maxDepth + 1} eras; each arrow runs from a node to a node it enables.`;
   return [
     // The SVG namespace is an identifier, never fetched, and XML Namespaces 1.0 fixes it as http.
@@ -651,7 +661,7 @@ function svgHead(byId, {maxDepth, W, H}) {
     '</defs>',
     `<rect x="0" y="0" width="${W}" height="${H}" rx="18" fill="#fffdf7" stroke="#e8dcc0"/>`,
     `<text x="${LEFT}" y="34" font-size="20" font-weight="700" fill="#4a3f2a">🦉 Mathesis tech tree</text>`,
-    `<text x="${LEFT}" y="54" font-size="12" fill="#7a6a4a">each arrow: this enables that · gold border: start it now · ✅ done 🔨 active 🌱 open ⛔ blocked 🍂 dropped</text>`,
+    `<text x="${LEFT}" y="54" font-size="12" fill="#7a6a4a">each arrow: this enables that · gold border: ${d.slots > 0 ? 'start it now' : 'ready, once an active slot is free'} · ✅ done 🔨 active 🌱 open ⛔ blocked 🍂 dropped</text>`,
   ];
 }
 
@@ -708,7 +718,7 @@ export function renderSvg(byId, d) {
   const frontier = new Set(d.frontier.map(n => n.id));
   const nodes = [...byId.values()];
   return [
-    ...svgHead(byId, g),
+    ...svgHead(byId, g, d),
     ...svgEras(g),
     ...nodes.flatMap(n => list(n.needs).map(t => svgEdge(n, t, frontier.has(n.id), g))),
     ...nodes.flatMap(n => svgBox(n, frontier.has(n.id), g)),

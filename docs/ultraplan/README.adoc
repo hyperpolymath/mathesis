@@ -57,6 +57,8 @@ above a stated grade, or a decision record whose status is Accepted. A done
 node's needs must be done too.
 * *Active* is limited: at most three nodes may be active at once. To start a
 fourth, finish or park one first. This is the guard against starting everything.
+When every slot is taken, the page and the picture still show the frontier, and
+say that it is ready but cannot start.
 * *Blocked* must say what blocks it.
 
 The value marks (0 to 3 on maths, science, engineering, economics, publications,
@@ -113,7 +115,8 @@ still counts.
 
 . Add or edit the line in `tree.jsonl`, keeping its JCS form. Keys are sorted
 and there are no spaces; `bun scripts/ijson-jcs-cli.js` or the generator's error
-message gives the exact form.
+message gives the exact form. Its id is a lowercase slug that begins with a
+letter, because the id is also the node's anchor on the page.
 . Give it needs, so it sits in the right era. A node with no needs starts a new
 root.
 . If it is another route to a node that already exists, name each in the other's

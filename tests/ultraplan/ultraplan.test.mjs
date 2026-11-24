@@ -196,6 +196,13 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({raw: {nodes: [lone, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate/);
   const pair = jcs({...BASE[0], name: 'x \u{1F600}'});
   expect(() => generate(fixture({raw: {nodes: [pair, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}))).not.toThrow();
+  // I-JSON refuses Unicode noncharacters too: U+FDD0 to U+FDEF and the last two code points of each plane.
+  for (const nc of ['\uFFFE', '\uFDD0', '\u{1FFFF}', '\u{10FFFE}']) {
+    const line = jcs({...BASE[0], name: `x${nc}y`});
+    refuses({raw: {nodes: [line, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate or a Unicode noncharacter/);
+  }
+  const key = jcs({...BASE[0], value: {maths: 1}}).replace('"maths"', '"m\uFFFEaths"');
+  refuses({raw: {nodes: [key, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate or a Unicode noncharacter/);
 });
 
 // Every rule in the generator's rule tables has a witness: a change to the sound
@@ -221,14 +228,19 @@ test('every rule has a witness', () => {
     T({what: ''}), T({why: undefined}), T({size: 'toString'}), T({date: '2026-02-30'}), T({status: 'lost'}),
     T({status: 'grafted', graft: 'ghost'}), T({graft: 'paper'}), T({status: 'archived'}), T({lesson: 'It taught.'}),
   ];
+  // Within a table each message names one rule, so (table, message) is the rule's identity.
+  for (const rules of Object.values(RULES)) expect(new Set(rules.map(([, m]) => m)).size).toBe(rules.length);
   const seen = new Set();
   for (const w of witnesses) {
     let refusal = '';
     try { validate({advisors: ADVISORS, nodes: BASE, expeditions: [], ...w}, ctx); } catch (e) { refusal = e.message; }
     expect(refusal).not.toBe('');
-    for (const line of refusal.split('\n')) seen.add(line.slice(line.indexOf(': ') + 2));
+    for (const line of refusal.split('\n')) {
+      const m = /^(advisor|node|expedition) [^\s:]+: (.*)$/.exec(line);
+      if (m) seen.add(`${m[1]}: ${m[2]}`);
+    }
   }
-  const unwitnessed = Object.entries(RULES).flatMap(([kind, rules]) => rules.filter(([, m]) => !seen.has(m)).map(([, m]) => `${kind}: ${m}`));
+  const unwitnessed = Object.entries(RULES).flatMap(([kind, rules]) => rules.map(([, m]) => `${kind}: ${m}`).filter(id => !seen.has(id)));
   expect(unwitnessed).toEqual([]);
 });
 
@@ -238,8 +250,28 @@ test('the me advisor ranks the owner\'s tags as the council does, not by another
   expect(generate(fixture({nodes})).derived.picks.get('me').id).toBe('theorem');
 });
 
+test('when every active slot is taken, the frontier is ready but cannot start', () => {
+  const open = generate(fixture());
+  expect(open.derived.slots).toBe(ACTIVE_LIMIT);
+  expect(open[VIEW]).toContain('can be started now.');
+  expect(open[VIEW]).not.toContain('active slots are full');
+  expect(open[SVG]).toContain('gold border: start it now');
+  // theorem and cheap are ready; with a third started node, every slot is taken and spare waits.
+  const nodes = [...swap('cheap', {status: 'active'}, swap('theorem', {status: 'active'})),
+    node('extra', {needs: ['root'], status: 'active'}), node('spare', {needs: ['root']})];
+  const full = generate(fixture({nodes}));
+  expect(full.derived.slots).toBe(0);
+  expect(full.derived.frontier.map(n => n.id)).toEqual(['spare']);
+  expect(full[VIEW]).toContain(`1 are ready, but all ${ACTIVE_LIMIT} active slots are full.`);
+  expect(full[VIEW]).toContain(`*All ${ACTIVE_LIMIT} active slots are full.* These nodes are ready`);
+  expect(full[VIEW]).toContain('A gold border marks a node\nthat is ready, once an active slot is free.');
+  expect(full[SVG]).toContain('gold border: ready, once an active slot is free');
+});
+
 test('ids are slugs and unique, and counsel comes from the council', () => {
   refuses({nodes: swap('paper', {id: 'Paper X'})}, /id must be a lowercase slug/);
+  refuses({nodes: swap('paper', {id: '13-week'})}, /node 13-week: id must be a lowercase slug that begins with a letter/);
+  refuses({advisors: [...ADVISORS, {id: '2nd', name: 'Second', glyph: '2', asks: 'Again?', reads: 'maths'}]}, /advisor id "2nd" is missing, not a slug, or repeated/);
   refuses({nodes: [...BASE, BASE[4]]}, /node paper: repeated id/);
   refuses({advisors: [...ADVISORS, ADVISORS[0]]}, /advisor id "maths" is missing, not a slug, or repeated/);
   refuses({nodes: swap('paper', {rivals: ['paper']})}, /node paper: rivals names itself/);

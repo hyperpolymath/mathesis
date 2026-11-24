@@ -72,6 +72,27 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Added
 
+* **The ultraplan: a tech tree of Mathesis, data first.** `docs/ultraplan/`
+  holds three JCS JSON Lines files:
+  ** `tree.jsonl`, 51 nodes whose needs are the edges;
+  ** `advisors.jsonl`, the ten advisors;
+  ** `expeditions.jsonl`, the return tickets.
++
+  `scripts/ultraplan/ultraplan.mjs` generates `generated/ultraplan.adoc` and a
+  picture, `generated/tree.svg`. They show the eras, the frontier, the forks,
+  the confluences and each advisor's pick, all derived and none typed.
++
+  The generator refuses:
+  ** a done node without evidence that holds: a file, a claim grade the
+     registry derives, or an accepted ADR;
+  ** a done node whose needs are not done;
+  ** a cycle;
+  ** more than three active nodes;
+  ** any note from the private me advisor.
++
+  `just ultraplan` and `just ultraplan-check` run it, and `check-views` includes
+  the check. The site copies a view's pictures, so the tree's image works there.
+
 * The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
   (2026-11-17), whose receipt describes `47de4a8`, the merge of
   hyperpolymath/resource-algebra#36. F-5 now names `maps-disagree-at-positive`,

@@ -1,0 +1,123 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
+= The ultraplan: how to read and grow the tech tree
+:toc: preamble
+
+The ultraplan is the plan of Mathesis drawn as a tech tree, like a civilisation
+game. Each node is a capability: a theorem, a tool, a view, a paper or a decision.
+A node's *needs* are the nodes it builds on. Read the other way, each node
+*enables* the nodes that need it. The generated page,
+link:generated/ultraplan.adoc[`generated/ultraplan.adoc`], and its picture,
+`generated/tree.svg`, show the whole tree. They are rebuilt from the data here by
+`just ultraplan`, and `just check` refuses them when they are stale.
+
+The plan is data first (owner ruling 2026-11-24). The three files in this
+directory are its whole source. Each holds I-JSON, one record a line in JCS form,
+so a diff shows only real change.
+
+[cols="1,3",options="header"]
+|===
+|File |What it holds
+
+|`tree.jsonl`
+|The nodes. Each names its needs, so the edges live in the data.
+
+|`advisors.jsonl`
+|The council: who reads the tree, the one question each asks, and which value
+mark each reads.
+
+|`expeditions.jsonl`
+|Return tickets: trips off the tree, each grafted on as a node or archived with
+what it taught.
+|===
+
+== What is typed and what is derived
+
+Typed by hand:
+
+* each node's name, track, kind, size, summary and needs;
+* its status;
+* its value marks;
+* the counsel advisors give on it.
+
+Derived by `scripts/ultraplan/ultraplan.mjs`, and never typed:
+
+* *Era*: the length of the longest chain of needs below a node.
+* *Frontier*: the open nodes whose needs are all done, which can be started today.
+* *Unlocks*: how many live nodes depend on a node, directly or through others.
+* *Forks*: nodes that enable two or more tracks, where work spreads.
+* *Confluences*: nodes that need two or more tracks, where work joins.
+* *Each advisor's pick*: one node from the frontier.
+
+A typed status is held to account:
+
+* *Done* needs evidence that the generator checks against the repository. It
+accepts a file that exists, a claim whose grade the registry view derives at or
+above a stated grade, or a decision record whose status is Accepted. A done
+node's needs must be done too.
+* *Active* is limited: at most three nodes may be active at once. To start a
+fourth, finish or park one first. This is the guard against starting everything.
+* *Blocked* must say what blocks it.
+
+The value marks (0 to 3 on maths, science, engineering, economics, publications,
+teaching, soundness and ecosystem) are judgements, not measurements. They are
+written down so they can be argued with. The page labels them as judgements.
+
+== The council
+
+Ten advisors read the tree:
+
+* the six the owner named (mathematician, scientist, engineer, economist,
+publisher, and "me");
+* the four added on 2026-11-24 (soundness auditor, estate cartographer, teacher
+and contrarian).
+
+Each asks one question of every node. Each names one pick from the frontier:
+
+* An advisor that reads a value mark ranks by it, then by how much the node
+unlocks.
+* The contrarian names the frontier node the council rates lowest that still
+unlocks the most. That keeps the road not taken in view.
+* The *me* advisor looks out for what could help the owner's own life. Its notes
+are kept privately, outside this public repository. A node carries at most the
+neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
+the key `me`.
+
+== Wandering: return tickets
+
+Going off the tree is allowed, and expected. Before a trip, add a card to
+`expeditions.jsonl`:
+
+[source,json]
+----
+{"date":"2026-11-24","id":"X-001","size":"S","status":"out","what":"Try a tropical semiring model of proof cost","why":"It might give the economist a real cost measure"}
+----
+
+On return, change the card:
+
+* *grafted*: the trip found something the tree should hold. Add the node, and set
+`"graft":"<node id>"`.
+* *archived*: it did not belong. Set `"lesson"` to what it taught, so the trip
+still counts.
+
+== Adding or changing a node
+
+. Add or edit the line in `tree.jsonl`, keeping its JCS form. Keys are sorted
+and there are no spaces; `bun scripts/ijson-jcs-cli.js` or the generator's error
+message gives the exact form.
+. Give it needs, so it sits in the right era. A node with no needs starts a new
+root.
+. If it is another route to a node that already exists, name each in the other's
+`rivals`.
+. If the work lands in another repository, set `"where":"estate:OWNER/REPO"` or
+`"upstream:OWNER/REPO"`. The page lists those nodes so they can be carried
+there.
+. Run `just ultraplan`, then `just check`.
+
+== GELS
+
+The owner asked for a maths panel in GELS, the estate display. The estate
+coordinator was asked on 2026-11-24 how GELS panels take their data. Until it
+answers, nothing here writes a feed for GELS. A feed with no agreed reader would
+be unwired. The panel is a node in the tree (`gels-maths-panel`), blocked on that
+answer.

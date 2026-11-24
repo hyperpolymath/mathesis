@@ -10,6 +10,12 @@ Phase `incubating`, maturity `experimental` (the deed's `(status)` and
 truth". The stages are under <<stages>>; the rulings that steer them are
 under <<rulings>>.
 
+What comes next is drawn as a tech tree, the ultraplan
+(link:../ultraplan/generated/ultraplan.adoc[`docs/ultraplan/generated/ultraplan.adoc`],
+from the data in `docs/ultraplan/`). Its frontier is the list of work that can
+start now, and ten advisors each name a pick from it. This roadmap keeps the
+record of what happened; the tree says what each piece enables.
+
 === Applied Systems (2026-11-07)
 
 * Added the owner-requested `applied-systems/` area for reusable applications,
@@ -406,3 +412,15 @@ scheduled census, a view of what each repository owes
   the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
   requests; the laws of the integer instance proved in the second pull
   request.
+* Ultraplan (2026-11-24), through the selector:
+** The plan is a data-first tech tree. Views are generated from the data, and
+   `just check` checks them.
+** The advisors are the owner's six (mathematician, scientist, engineer,
+   economist, publisher, me) and four more (soundness auditor, estate
+   cartographer, teacher, contrarian).
+** The me advisor is private. Its notes stay outside this repository, and a
+   node carries at most the tag `owner_value`.
+** Off-tree trips are return tickets: each is grafted onto the tree or
+   archived with what it taught.
+** The GELS maths panel waits on the estate coordinator's answer about panel
+   data.

@@ -287,7 +287,10 @@ proposed, and that corrected form is what is marked here.
   already does tree-keyed skips.
 * *Corrected form.* Only for pure checks: export the footprint with
   `git archive` into a directory with no `.git`, run in a digest-pinned
-  container with no network and no secrets, and key the receipt by that.
+  container with no network and no secrets. Key the receipt by the
+  exported footprint together with the checker: the gate definition and
+  its pin, the action SHAs and the container digest. A receipt made by an
+  older or defective checker must not satisfy a new one.
   Classify every gate first (pure, whole-tree, history, diff, API, effect);
   never skip API or effect gates by receipt. The receipt form already exists
   in PROOF-POLICY §8.5.
@@ -493,8 +496,12 @@ part most likely to last.
   not known to be a check.
 
 Reading (the author's view): in each verified case the estate's maths
-supplied the specification and the soundness argument, and an existing tool
-supplied the mechanism. That division is the honest use of Mathesis here.
+supplied the specification and the soundness argument. In five of the six,
+an existing tool or canon design supplies the mechanism. The exception is
+copy versus moment files, whose corrected form needs a new check that
+regenerates or validates moment files from receipts. That division,
+specification from Mathesis and mechanism adopted where one exists, is the
+honest use of Mathesis here.
 
 [[recommendations]]
 == Recommendations

@@ -207,11 +207,15 @@ function lineKinds(lines) {
     return kindOf(l, block);
   });
 }
-// A heading in any form AsciiDoc or Markdown gives one, whose title could read "Status".
-const HEADING = /^[=#]+[ \t]+(.*)$/;
+// A heading in any form AsciiDoc or Markdown gives one: its markers and a blank,
+// then a title that could read "Status". The title is the rest of the line, taken
+// whole, so the pattern cannot backtrack and no character of the title escapes it.
+const HEADING = /^[=#]+[ \t]/;
 const mayBeStatus = l => {
   const m = HEADING.exec(l);
-  return m !== null && (/\{|&#?\w+;/.test(m[1]) || /status/i.test(m[1].replace(/[^\p{L}]/gu, '')));
+  if (m === null) return false;
+  const title = l.slice(m[0].length);
+  return /\{|&#?\w+;/.test(title) || /status/i.test(title.replace(/[^\p{L}]/gu, ''));
 };
 // Asciidoctor reads a line over an underline within one character of its
 // length as a two-line section title; two characters are allowed here.

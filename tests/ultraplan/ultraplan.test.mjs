@@ -480,6 +480,12 @@ test('a second heading that could read Status leaves the ADR unread', () => {
     'Status\n------', 'Status\n~~~~~~', ':s: Status\n\n== {s}', '== +Status+', '== pass:[Status]',
     '== Stat{empty}us', '== ((Status))', '[#sid]\n== Status', '[appendix]\n== Status', '----\ncode\n----\n== Status'])
     expect(adrAccepted(adr(second))).toBe(false);
+  // A title is read whole, past a line separator (which the earlier pattern's "."
+  // stopped at), and a long run of blanks before one costs no backtracking.
+  for (const title of ['Status ', 'x Status']) expect(adrAccepted(adr(`== ${title}`))).toBe(false);
+  const started = performance.now();
+  expect(adrAccepted(adr(`=${' '.repeat(50000)} `))).toBe(true);
+  expect(performance.now() - started).toBeLessThan(200);
   // Seven markers make no heading, so the line cannot be the Status section.
   expect(adrAccepted('= ADR\n\n======= Status\n\nAccepted\n')).toBe(false);
   for (const level of ['==', '===', '======']) expect(adrAccepted(`= ADR\n\n${level} Status\n\nAccepted\n`)).toBe(true);

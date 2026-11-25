@@ -33,6 +33,7 @@ import {readJsonl} from '../atlas/census-atlas.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex, HOME} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
+import {readEngineeringReceipt, deriveEngineering} from './engineering-receipt.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
@@ -155,6 +156,10 @@ export async function loadReader(standardsDir = process.env.MATHESIS_STANDARDS) 
 // why the grade is not higher, and `evidence` is the commit that the receipt
 // describes (its :source-commit), which can differ from the commit that holds it.
 export function derive(row, read) {
+  if (read?.engineering) return deriveEngineering(row, read.engineering);
+  if (row.kind !== 'theorem' && read?.refusal)
+    return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`,
+      `the canon reader refuses the receipt: ${read.refusal}`]};
   if (row.kind !== 'theorem') return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`]};
   if (read === null) return {pwg: 'ungraded', reasons: ['no machine receipt in the home repository']};
   if (read.refusal) return {pwg: 'ungraded', reasons: [`the canon reader refuses the receipt: ${read.refusal}`]};
@@ -271,7 +276,14 @@ export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) 
 }
 
 // The reader's record of one receipt text: {record, text} or {refusal}.
-function readReceipt(text, row, readProofReceipt) {
+async function readReceipt(text, row, readProofReceipt, receiptsDir) {
+  if (row.receipt.path.endsWith('.json')) {
+    // ADR 0006 is engineering-only; the theorem JSON prototype of ADR 0005
+    // remains unwired. Invalid engineering receipts fail the build outright.
+    const engineering = await readEngineeringReceipt(text,
+      ref => loadReceipt({...row, receipt: ref}, receiptsDir));
+    return {engineering, text};
+  }
   try {
     return {record: readProofReceipt(text, path.basename(row.receipt.path)), text};
   } catch (e) {
@@ -292,7 +304,7 @@ const receiptKey = row =>
 export async function deriveAll(rows, receiptsDir, readProofReceipt, gitCheck = null) {
   const once = list => [...new Map(list.map(row => [receiptKey(row), row]))];
   const reads = new Map(await Promise.all(once(rows.filter(receiptKey)).map(async ([key, row]) =>
-    [key, readReceipt(await loadReceipt(row, receiptsDir), row, readProofReceipt)])));
+    [key, await readReceipt(await loadReceipt(row, receiptsDir), row, readProofReceipt, receiptsDir)])));
   const derived = rows.map(row => ({row, ...derive(row, reads.get(receiptKey(row)) ?? null)}));
   const graded = derived.filter(d => d.pwg === 'PWG-1').map(d => d.row);
   const checks = new Map(await Promise.all(once(graded).map(async ([key, row]) =>

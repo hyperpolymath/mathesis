@@ -22,11 +22,11 @@ Agda/Rocq/Lean theory grade is assigned or implied.
 Six fixture-only engineering-receipt checks and fourteen existing claims-registry
 tests passed with the exact pinned reader. They registered no source or theorem.
 The demonstration row pins signed receipt carrier
-`d8dd1489e7a91efa309b1231f79ab6d9df4e10c2`, which binds signed implementation
-snapshot `e7a0aa8a46601df22f0853c28ec26424a3874321`. The public receipt SHA-256 is
-`65d00249d0d055f84d8bd34f7b8469f53f8ded66c46db49316f92b99b615bc6c`.
-Final canonical registry build/check passed against the published pin, as did all fourteen registry tests and six negative fixture controls. The generated view adds one ungraded demonstration; all 48 theorem entries, their grades, admissions and the append-only theory ledger are unchanged.
-Receipts remain in Proven; private bridge source is not vendored here.
+`4ac09e36c6b710099b4ceadb26066a83d949dd8f`, which binds signed implementation
+snapshot `8da3131d19ef2304c9a5fccc3a8f31fcfa492d7c`. The public receipt SHA-256 is
+`653e399024a61d3d990cc31f1e25f052ffbe9ce26b5c84d51f9c80b642992643`.
+The earlier registration passed canonical build/check, fourteen registry tests and six fixture controls. Revalidation against this updated integration receipt is pending. The generated view adds one ungraded demonstration; all 48 theorem entries, their grades, admissions and the append-only theory ledger are unchanged.
+Receipts remain in Proven. The integrated lifecycle adapter uses the public pinned Idris2 SDK; no private bridge source is required or vendored here.
 The broader ABI's missing exports, compiler/marshaling/ownership
 assumptions and Rust wrapper proof obligations remain open in the home ledger.
 

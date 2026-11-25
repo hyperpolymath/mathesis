@@ -29,7 +29,7 @@ jobs:
       NICKEL_SHA256: '9cba4dd65ae9915ec61f73033aafcff307a377665a83fd8f530df086763318cb'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
 
@@ -44,7 +44,7 @@ jobs:
           git -C "$RUNNER_TEMP/standards" checkout -q FETCH_HEAD
 
       - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        uses: oven-sh/setup-bun@v2.2.0
       # PROOF-POLICY 8.5.1: the receipt must read, and the grade it records must
       # be the grade the canon reader derives (re-anchoring plan WO 1.5). The
       # canon pin above (8e48b1c) predates the reader, so the reader has its own
@@ -74,6 +74,34 @@ jobs:
       # reader re-derives every grade from the home repositories' receipts at
       # their pinned commits (fetched, digest-checked). The check fails if the
       # committed view is stale (re-anchoring plan WO 2.2).
+      - name: Build and test an isolated registry preview
+        env:
+          MATHESIS_STANDARDS: ${{ runner.temp }}/receipt-reader
+        run: |
+          set -euo pipefail
+          preview="$RUNNER_TEMP/registry-preview"
+          source="$RUNNER_TEMP/registry-preview-source"
+          mkdir -p "$preview" "$source"
+          git rev-parse HEAD > "$preview/source-commit.txt"
+          git archive HEAD | tar -x -C "$source"
+          cd "$source"
+          sha256sum scripts/registry/*.mjs tests/registry/*.mjs docs/atlas/claims/*.jsonl > "$preview/inputs.sha256"
+          bun scripts/registry/claims-registry.mjs build 2>&1 | tee "$preview/build.log"
+          bun scripts/registry/claims-registry.mjs check 2>&1 | tee "$preview/check.log"
+          bun test tests/registry/ 2>&1 | tee "$preview/tests.log"
+          sha256sum --check --quiet "$preview/inputs.sha256"
+          cp docs/atlas/generated/registry.adoc "$preview/registry.adoc"
+          cp docs/atlas/generated/bridges.adoc "$preview/bridges.adoc"
+          cp docs/theory/generated/index.adoc "$preview/theory-index.adoc"
+      - name: Retain registry preview and regression evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: registry-preview
+          path: ${{ runner.temp }}/registry-preview/
+          if-no-files-found: error
+      # The real checkout is untouched by preview generation: a stale committed
+      # view still fails this gate, even when the isolated preview passed.
       - name: Mathesis claims registry derivation and tests
         env:
           # The canon reader checked out above, at the pin the registry checks.
@@ -121,7 +149,7 @@ jobs:
 
       - name: Cache pinned ijson-jcs and panic-attack binaries
         id: cache-ijson
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache@v6.1.0
         with:
           path: |
             ~/.cargo/bin/ijson-jcs

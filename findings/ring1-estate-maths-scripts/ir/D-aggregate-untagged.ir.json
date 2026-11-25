@@ -1,0 +1,4 @@
+{"version":"0.2","profile":"prevent",
+ "nodes":[{"id":"count_a","type":"Trope","present":["quality","bearer","context","record"]},{"id":"count_b","type":"Trope","present":["quality","bearer","context","record"]},{"id":"summary","type":"Trope","present":["quality","bearer","context","record"]}],
+ "edges":[{"id":"e_sum","effect":"fuse","inputs":["count_a","count_b"],"output":"summary","grade":{"fate":{"quality":{"k":"Present"},"bearer":{"k":"Present"},"context":{"k":"Present"},"record":{"k":"Present"}},"bond":{"k":"Intact"},"merge":{"k":"Fused"}}}],
+ "use_model":{"output":"summary","floor":{"merge":{"k":"Fused","tau":"any"}}}}

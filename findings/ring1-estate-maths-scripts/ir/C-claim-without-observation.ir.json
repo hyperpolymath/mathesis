@@ -1,0 +1,4 @@
+{"version":"0.2","profile":"prevent",
+ "nodes":[{"id":"claim","type":"Trope","present":["quality","bearer","context","record"]}],
+ "edges":[{"id":"e_assert","effect":"preserve","inputs":["tests_passed_observation"],"output":"claim","grade":{"fate":{"quality":{"k":"Present"},"bearer":{"k":"Present"},"context":{"k":"Present"},"record":{"k":"Present"}},"bond":{"k":"Intact"},"merge":{"k":"Single"}}}],
+ "use_model":{"output":"claim","floor":{"fate":{"record":{"k":"Present"}}}}}

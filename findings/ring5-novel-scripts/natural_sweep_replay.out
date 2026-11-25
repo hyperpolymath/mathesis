@@ -1,0 +1,5 @@
+schema-valid files before the sweep: 7983 in 2004 L4 shape classes
+PARSED sweep: files made schema-invalid: 1970
+free-theorem prediction: classes with a MIXED verdict after the sweep: 0 (prediction: 0)
+classes whose single canary fails: 399; files those classes contain: 1970
+T1 quotient-respect, TEXT vs PARSED on 7983 valid files: TEXT output unparseable 0; has a duplicate key 4397; parses but differs from PARSED 9; agrees 3577

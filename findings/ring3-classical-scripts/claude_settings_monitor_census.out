@@ -1,0 +1,1 @@
+28 .claude/settings*.json files within depth 4 of 484 repos; 24 declare hooks (23 SessionStart only, 1 PreToolUse: nextgen-databases); 1 declares permissions.deny (hypatia: Edit(/LICENSE), Edit(/LICENSES/**), Edit(/NOTICE), Edit(/.github/workflows/actions.lock), Bash(git push --force *), Bash(git push -f *))

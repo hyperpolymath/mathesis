@@ -1,0 +1,12 @@
+gates: 1 invisible-chars (count of flagged files) 2 spdx-headers 3 duplicate-keys 4 action-pinning 5 lock-sync
+baseline (clean copy) exit codes: 0 0 0 0 0
+m1 NBSP inside README.adoc                           exits: 1 0 0 0 0   killed-by: 1
+m2 zero-width space inside a workflow                exits: 1 0 0 0 0   killed-by: 1
+m3 duplicate key (contents read + write)             exits: 0 0 1 0 0   killed-by: 3
+m4 permissions child dedented (schema-dead)          exits: 0 0 0 0 0   killed-by: NONE
+m5 timeout-minutes on a reusable-call job            exits: 0 0 0 0 0   killed-by: NONE
+m6 fabricated 40-hex SHA pin (real prefix)           exits: 0 0 0 0 1   killed-by: 5
+m7 conflict markers committed into LICENSE           exits: 0 0 0 0 0   killed-by: NONE
+m8 SPDX header removed from a workflow               exits: 0 0 0 0 0   killed-by: NONE
+m9 npermissions: (uninterpreted \\n artefact)        exits: 0 0 0 0 0   killed-by: NONE
+m10 action bumped without the lock (half-nucleus)    exits: 0 0 0 0 1   killed-by: 5

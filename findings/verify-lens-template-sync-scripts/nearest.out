@@ -1,0 +1,7 @@
+== governance: nearest template version 8161ec24d differs in 1 leaf paths
+   /permissions/actions: child="read" template=nil
+== mirror: nearest template version 2083ca600 differs in 1 leaf paths
+   /permissions/actions: child="read" template=nil
+== hypatia-scan: nearest template version 394053dec differs in 2 leaf paths
+   /concurrency/group: child=nil template="${{ github.workflow }}-${{ github.ref }}"
+   /concurrency/cancel-in-progress: child=nil template=true

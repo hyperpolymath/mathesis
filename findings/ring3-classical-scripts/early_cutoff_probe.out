@@ -1,0 +1,4 @@
+repos with rust-ci.yml: 135
+first-parent non-merge commits since 2026-01-01: 17362
+commits changing a declared Rust CI input: 4433
+commits whose Rust CI task key equals the parent: 12929

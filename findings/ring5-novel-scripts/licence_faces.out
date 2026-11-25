@@ -1,0 +1,16 @@
+repos with >=2 readable licence faces: 235
+repos whose faces name different code-licence family sets: 43
+  14  MPL+PMPL:{guix.scm} vs MPL:{LICENSE}   e.g. hyperpolymath/ZeroProb.jl
+   8  MPL+PMPL:{guix.scm} vs MPL:{Cargo.toml,LICENSE}   e.g. hyperpolymath/squeakwell
+   4  AGPL:{CITATION.cff} vs MPL:{LICENSE}   e.g. hyperpolymath/civic-connect
+   2  MPL+PMPL:{guix.scm} vs MPL:{CITATION.cff,LICENSE}   e.g. hyperpolymath/supernorma
+   2  MPL:{LICENSE} vs PMPL:{CITATION.cff}   e.g. hyperpolymath/robot-vacuum-cleaner
+   2  AGPL:{CITATION.cff} vs MPL:{Cargo.toml,LICENSE}   e.g. hyperpolymath/filesoup
+   1  AGPL:{CITATION.cff,LICENSE,deed} vs MPL:{guix.scm}   e.g. metadatastician/paint-type
+   1  MPL+PMPL:{guix.scm} vs MPL:{CITATION.cff,Cargo.toml,LICENSE}   e.g. metadatastician/common-signal
+   1  AGPL:{guix.scm} vs MPL:{CITATION.cff,LICENSE}   e.g. metadatastician/_pathroot
+   1  MPL:{LICENSE} vs PMPL:{guix.scm}   e.g. hyperpolymath/nextgen-databases
+   1  AGPL+MPL:{LICENSE} vs AGPL:{package.json}   e.g. hyperpolymath/lol
+   1  MIT+MPL:{LICENSE} vs MIT:{CITATION.cff,Cargo.toml}   e.g. hyperpolymath/cargo-zigbuild
+   1  MPL:{Cargo.toml,LICENSE} vs PMPL:{CITATION.cff}   e.g. hyperpolymath/bunsenite
+   1  MPL:{LICENSE} vs PMPL:{mix.exs}   e.g. hyperpolymath/aggregate-library

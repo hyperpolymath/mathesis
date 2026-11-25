@@ -1,0 +1,131 @@
+# Sweep 1 - .stats.tsv lines 122-242 (121 repos, all hyperpolymath/*)
+Method: README head, *_chora.deed (:purpose/:not) where present, git ls-files extension counts, and the repo's own PROOF-STATUS/AFFIRMATION/STATUS docs for the (a)/(b) candidates. I did NOT rerun any checker. Statuses below are what each repo's own docs claim, labelled accordingly. Caveat: ~60 repos are RSR-template instantiations whose "proof" file counts (idr, 'proof:N') are mostly template ABI stubs (src/interface/Abi/{Foreign,Layout,Types}.idr), not real proofs. Categories: (a) formal maths/type/logic/proof, (b) engineering-pain tooling, (c) neither.
+
+## Repo index (one line each)
+- chapeliser | Rust | c | Generates Chapel distributed-computing scaffolding from chapeliser.toml (README). Template-heavy.
+- checky-monkey | not determined from README head | c | README head uninformative; RSR template scaffolding (contractiles, Idris ABI stubs).
+- chimichanga | Elixir | c | "Munition (Chimichanga)"; has REVERSIBILITY.adoc and PROOF-NEEDS.adoc but no proof files found (0 proof-extension files). Not read further.
+- chora-registry | VCL/JS/adoc | b (light) | Estate registry of repo identities/clades, VeriSimDB-backed, VCL queries for "drift detection and work tracking" (README, deed). Data/registry, not a checker.
+- choreographic-types | Agda | a | K-CUT graded multiparty-session type theory; 33 .agda; PROOF-STATUS.adoc 2026-11-07. See construct.
+- cicd-squabbler | Rust (+SPARK/Idris claims) | b | CI/CD fighter that drives a red pipeline to legitimate green, never bypassing the gate. See construct.
+- civic-connect | Rust | c | Civic community app (README head only).
+- claude-gecko-browser-extension | JS | c | Unofficial Claude for Firefox/Gecko extension.
+- claude-integrations | AffineScript/JS | c | Monorepo of Claude browser/service integrations (firefox-lsp, firefox-mcp, gitlab-bridge).
+- cloud-sync-tuner | shell/Ada/Zig | c | Cloud sync tuning tool.
+- cloudflare-dns-terraform | Terraform | c | DNS-as-code for the owner's domains.
+- cloudguard-cli | Rust | c | Cloudflare domain security audit/hardening CLI (ops compliance, not software-engineering pain per se).
+- cloudguard-server | Rust | c | REST/WebSocket wrapper over cloudguard-cli.
+- conative-gating | Rust | b | Early-stage research prototype for gating LLM behaviour ("not a safety guarantee", README). See construct.
+- conflow | Rust | b | Orchestrates CUE/Nickel config validation pipelines; recommends tool per config. TLA+ files present (4 .tla). See construct.
+- continuation-mesh | Elixir/Zig/WASM | c | "Bag-of-Actions" capability-aware continuation mesh; wasm artefacts committed.
+- contractiles | Rust/Ada/adoc | b | Normative six-verb contract set-points (intend/must/trust/adjust/dust/bust) as counterpart to descriptiles; Ada .ads/.adb + Rust CLI. See construct.
+- cookie-rebound | Zig/Idris2 | c | Cookie vault claiming Idris2-verified ABI; only template-sized Idris stubs found (3 idr). Claim not checked.
+- coord-tui | Rust | b (light) | Terminal UI over BoJ local-coord-mcp giving each AI tool window a peer-coordination view (clash avoidance between agent sessions). Tiny (1 .rs).
+- coq-jr | AffineScript/JS | a (tool) | Web-native interactive theorem proving frontend for Coq; no proofs of its own.
+- cut-calculus | Agda | a | Choreographic fusion of echo grades (tropical semiring) and epistemic warrant over causal-order cuts; 4 .agda. See construct.
+- cyo | shell/adoc | c | "Choose Your Own": prose map of language/route choices and what code can survive.
+- czech-file-knife | Rust | c | Unified file tool over 20+ storage backends; deed :purpose "UNASSIGNED".
+- dafniser | Rust | a (scaffold) | Generates Dafny correct-by-construction code; Phase-0 scaffold; 9 template-ish proof files. See construct.
+- ddraig-ssg | Idris2 | a (weak) | Static-site generator in pure Idris2 ("types that breathe fire"); golden-output tests; 7 .idr. Dependent types used for site construction, no proof census.
+- deed-core | Idris2/Zig/AffineScript | b | A2ML (Attested Markup Language) core, now retired in favour of deed; typed attested core; ~674 .a2ml files. Legacy per standards ruling.
+- deed-ecosystem | Rust/Gleam/Haskell/Deno | b | Coordination hub of A2ML/DEED validators and conformance fixtures.
+- deed-validate-action | shell/YAML | b | GitHub Action validating DEED/A2ML manifests (action.yml, validate-a2ml.sh, validate-manifest-dialect.sh).
+- defiant | not determined | c | README head uninformative (badges only); RSR scaffold, Zig ffi.
+- developer-ecosystem | ReScript/OCaml/JS (mega-hub) | c | Hub of dev-workflow tools; 6422 .res files (migration inventory), not itself a construct.
+- dictask | Haskell/Idris2 | c | Voice-recorder to prioritised task list pipeline (offline ASR).
+- dicti0nary-attack | AffineScript/Chapel | c | Password-guessing security utility (humorous).
+- docmatrix | Rust/Zig/Ada | c | Multi-format document conversion.
+- docudactyl | Zig/Chapel/Julia/Idris2 | c | HPC document toolchain.
+- dotmatrix-fileprinter | AffineScript/JS | b | Deterministic byte-level file injection "eliminating encoding drift and NBSP contamination" (README). See construct.
+- double-track-browser | AffineScript/Rust | c | Privacy-by-fake-identity browser experiment.
+- echidna | Rust/Julia/Idris2 | a (tooling) | Trust-hardened neurosymbolic theorem-proving platform; 141 ProverKind variants, 12 default (deed :purpose). 121 proof-extension files. See construct.
+- echidnabot | Rust | b | "Proof-aware CI bot" (README); 11 proof-ext files. See construct.
+- echo-types | Agda (+Lean) | a | Constructive Agda treatment of proof-relevant fibres / loss-with-residue; 162 .agda. See construct.
+- echobox | Elixir/Julia | c | Paleoclimate data workbench that applies Echo Types as a lens; an application.
+- eclexia | Rust/.ecl | a (language) | Economics/energy-as-type language ("resource-cost"); 140 .rs, 114 .ecl, 5 Coq .v. Not examined further.
+- eclexiaiser | Rust | c | Instrument code with energy/carbon tracking; scaffold.
+- empty-linter | JS/AffineScript | b | Finds invisible/empty characters that corrupt documents (origin: IETF Datatracker rejection). See construct.
+- ensaid-spec | spec | c | Spec for neurosymbolic IDEs with human+AI "Binary Star" workspace.
+- ephapax | Rust/Idris2/Coq | a | Research language for compile-time WASM memory safety (linear types); 149 .eph, 85 .rs, Coq in formal/. See construct.
+- ephapaxiser | Rust | a (scaffold) | Wraps resource handles in Ephapax linear types for exactly-once use; scaffold stage. See construct.
+- epistemic-types | Agda | a | Standpoint-indexed epistemic modalities (knowledge/belief/warrant); 59 .agda. See construct.
+- error-lang | AffineScript/Rust | c | Pedagogical language where "the language itself is" the lesson; conformance/invalid/*.err fixtures for syntax errors. Teaching language, no formal content found.
+- excel-economic-numbers-tool | Julia | c | Excel/LibreOffice economics add-in.
+- explicit-trust-plane | Zig/Idris2 | c | Mostly empty template scaffold (3 zig, 3 idr).
+- explore | Ruby/PNG | c | Fork of GitHub Topics/Collections content (third-party; leave alone).
+- feedback-o-tron | Elixir | c | Autonomous bug-report submission for AI agents (Bugzilla validated 2026-02-07).
+- ffmpeg-ffi | Zig/Idris2 | c | FFmpeg FFI bindings.
+- filesoup | Rust | c | "FSLint" filesystem linter producing metadata bundles.
+- fireflag | JS/AffineScript | c | Safe Firefox about:config flag manager.
+- firmboot | Agda/Lean/Elixir | a | Research language for evolving running systems under continuity guarantees; proofs/agda + proofs/lean (Lean has sorry in 14 places). See construct.
+- flat-mate | JS | c | Student house-share "squad audit" app.
+- flatracoon | Elixir/Zig | c | Consolidated OS/netstack monorepo.
+- formatrix-docs | Rust/Zig/Ada | c | Tabbed multi-format document viewer/editor.
+- frayed-knot-toolkit | Idris2/Agda/Zig | a | "Frayed Knot" theory formalised in Agda (verification/proofs/agda/ChoreographicFrayedKnot.agda; 7 .agda). See construct.
+- fraying-model-computational-testbed | Julia/Idris2 | c | Computational testbed; README head is session-protocol boilerplate, content not determined. Idris files are template stubs.
+- futharkiser | Rust | c | Extracts array-parallel code to Futhark/GPU; scaffold.
+- git-reticulator | Rust | b | Builds a lattice of a repo and returns token-budgeted context for LLMs ("reticulate build/query" dogfood loop). See construct.
+- git-scripts | Elixir | c | Git helper scripts (90 .ex), content not further examined.
+- gitbot-fleet | Rust | b | Bot orchestration hub for repo-quality enforcement over ~500 repos; 290 .rs. See construct.
+- glyphbase | AffineScript/Gleam | c | Airtable-like DB on Lithoglyph with provenance per change.
+- gnpl | Lean | a | Lithoglyph narration/projection language; Lean 4 checker constructs warrant-indexed Narration/Account witnesses; 48 .lean. See construct.
+- grim-repo | AffineScript/JS | b (weak) | "Audit-grade tooling for narratable, scaffolded repositories": structure bootstrapper and repo audits. Generic.
+- gsbot | Rust | c | Garment Sustainability Bot.
+- haec | Idris2/.haec | a | Turing-complete language typed by "trope-particularity" (README); design pass only per AFFIRMATION 2026-06-22. See construct.
+- halideiser | Rust | c | Halide image-pipeline scheduler generator; scaffold.
+- hermeneia | Rust/Idris2 | a | Query language for Vocarium trope database ("what a particular can become under a use"); Rust workspace + AFFIRMATION. See construct.
+- heron-polyfeed-reader | Zig | c | Local feed reader/site monitor.
+- hesiod-dns-map | Rust | c | Hesiod DNS naming for FlatRacoon netstack.
+- heterogenous-mobile-computing | Rust | c | mobile-ai-orchestrator library: route AI inference local/remote.
+- hfsgtfoomw | HTML/Idris2 | c | Auto-dodging picture-in-picture idea; deed :purpose "UNASSIGNED".
+- homebrew-tap | Ruby | c | Homebrew tap.
+- hottchpotch | template | c | README is the RSR template verbatim (despite the name); no HoTT content found.
+- hpm-crypto-rsr | Zig/Idris2 | c | Webhook signature and RS256 JWT primitives; Idris2 ABI + Zig FFI; 3 idr (ABI types, not shown to be proofs).
+- hpm-github-api-rsr | Zig/Idris2 | c | GitHub App API client composing hpm-* siblings.
+- hpm-http-client-rsr | Zig/Idris2 | c | One-shot HTTPS client.
+- hpm-json-rsr | Zig/Idris2 | c | JSON parse/escape on std.json.
+- http-capability-gateway | Elixir | c | HTTP gateway with capability policy; 5 proof-ext files not examined.
+- hybrid-automation-router | Rust | c | Event routing layer for automation targets.
+- hypatia | Elixir/Rust/Ada | b | CI/CD governance scanner for ~400 repos; deterministic Elixir rules + neural classification; dispatches fixes to gitbot-fleet; deed :purpose confirms. See construct.
+- hyperpolymath.github.io | SVG/HTML | c | Public portfolio site.
+- hyperpolymath | PHP/misc | c | GitHub profile repo (research statement: "transformation equivalence rather than raw value representation").
+- i-human | adoc | c | AI-driven setup repo.
+- ideas-to-alphas | Idris2/JS | c | Idea-to-prototype pipeline; Idris files not shown to be proofs.
+- idrisiser | Rust | a (scaffold) | Meta-prover of the -iser family: generate Idris2 dependent types from OpenAPI/C headers/.proto; ROADMAP shows only Phase 0 scaffold complete. See construct.
+- ijson-jcs | Rust | b | I-JSON (RFC 7493) validation + JCS (RFC 8785) canonicalisation crate; the estate JSON gate (scripts/ci, standards, tests). See construct.
+- im-docs | docs | c | "Wayfinder" capability-development pathway concept.
+- infrastructure-automation | Ansible/Terraform | c | Local system IaC replacing SaltStack.
+- intsoc-transactor | Rust/Haskell | b | Check, fix and submit documents for IETF/IRTF/IAB/IANA/RFC Editor; crates intsoc-parser/-fixer/-core. See construct.
+- invariant-path | Rust/Agda | b+a | "Claim-path debugger": follows a claim across re-expressions and finds where meaning changed; proofs/SameCube.agda proves `{ a; }` and `{ a }` lowerings observationally identical for unit-returning actions. See construct.
+- ipfs-overlay | AffineScript | c | IPFS-on-Kubernetes over ZeroTier.
+- ipv6-only | Rust | c | IPv6 utilities.
+- ipv6-site-enforcer | Haskell/config | c | IPv6-only ingress enforcement configs.
+- ipv6-tools | Rust | c | Monorepo of the two ipv6 repos.
+- iseriser | Rust/Idris2 | c (scaffold) | Generator for the 29 -iser CLIs; Phase 0 scaffold complete (codegen stubs, ABI stubs). 248 proof-ext files are overwhelmingly template/ABI stubs. Meta-scaffolding, possible template-drift source.
+- jaffascript | AffineScript | c | AffineScript with JS/TS-looking `jaffa` face; thin repo. Relevant only via invariant-path's same-cube claim.
+- januskey | Rust (+Agda/Lean/Rocq) | b+a | Reversible file operations with inversion metadata in an append-only content-addressed log; README: "Formal proofs of complete reversibility are pending"; verification/proofs/{agda,lean,rocq} with Reversibility.agda, SingleActiveLog.agda, TransactionAtomicity.agda and tests/reject-agda negative controls. See construct.
+- jtv-halting-islands-ct | Rust | a (weak) | Harvard-architecture language: total DATA sublanguage + Turing-complete CONTROL with one-way "diode"; Rust only, no proof files (proof:0).
+- jtv-lang | Rust/Lean | a | Language where code injection is grammatically impossible; STATUS.adoc: core model mechanised in Lean (jtv_proofs/, no sorry found), interpreter not wired to proofs. See construct.
+- julia-ecosystem | Julia | c | Julia package monorepo (565 .jl).
+- julia-professional-registry | Julia | c | Custom Julia package registry.
+- julianiser | Rust | c | Python/R to Julia translator; scaffold.
+- k9-ecosystem | Rust/Zig/Deno | b | Coordination of K9 self-validating components and Nickel contractile implementations and conformance fixtures; satellite of standards (README). See construct.
+- kaldor-iiot | AffineScript/Idris2 | c | Microscale textile manufacturing IIoT platform (Verdoorn's-law framing); Idris src/abi are HAL/MQTT types.
+- kategoria | Idris2 | a | "Five approaches to a language with every known level of type safety"; PROOF-STATUS.adoc: every module type-checks under Idris2 0.7.0, no postulate/believe_me (self-reported, not rerun). See construct.
+- kea | Rust | c | Infra orchestration/WASM interface tooling.
+- kitchenspeak | .ks/Agda/OCaml | a | Choreographic kitchen DSL; cost accounting intended to commute with cutting the day (K-CUT); proofs/agda/{Dough,EchoBridge,NoCurdle,PoachedEgg}.agda with TRUSTED-BASE.txt. See construct.
+- krl | Idris2 | a | Normative spec of KRL ("curl"), resolution language for QuandleDB; PROOF-STATUS (2026-06-01): Typing 2 total / 0 done / 2 not started; Invariants 3 total / 0 done. So STATED, not proved.
+- laminar | Elixir/Zig | c | Cloud-to-cloud streaming relay in RAM.
+- laniakea | AffineScript/Elixir | c | Browser-as-peer-node concept.
+- launch-scaffolder | Rust | c | Mints portable launcher scripts and desktop integration from a spec; uses deed files and templates.
+- lithoglyph | AffineScript/Zig/Elixir | c | Provenance-tracking database for journalism; 25 proof-ext files not examined.
+- live-files | not determined | c | README head uninformative; template scaffold.
+- llm-grace | Zig/Idris2 | b | Graceful degradation for concurrent LLM/agent terminals: back off in priority order before OS OOM kill. Resource-clash tool. See construct.
+- lol | AffineScript/Idris2 | c | Multilingual alignment index across 1,500+ languages.
+- lucidscript | AffineScript | c | AffineScript with PureScript/Haskell-looking `lucid` face; thin repo.
+
+## Notes for the programme
+- Repos that carry real, checkable formal content in this range: echo-types, epistemic-types, choreographic-types, cut-calculus, kitchenspeak, frayed-knot-toolkit, firmboot, gnpl, jtv-lang, januskey, kategoria, ephapax, invariant-path/SameCube, echidna (tooling). Not rerun by me.
+- Soundness flags seen: echo-types has 1 `postulate` (proofs/agda/EchoImageFactorizationPropPostulated.agda, name says postulated); ephapax Coq has 43 Admitted/sorry-matching lines (many in formal/Semantics_L1.v, and some may be counterexample files); firmboot Lean has 14 sorry-matching lines; gnpl Lean has 2; choreographic-types has 1 postulate (not located). Counts are grep matches, not audited.
+- Banned-language residue seen: developer-ecosystem 6422 .res; many repos still ship .a2ml (retired).
+- 15 of 121 repos are scaffold-only -iser/-rsr/hpm style repos whose "proof" file counts come from template Idris ABI stubs; do not count them as proof content.

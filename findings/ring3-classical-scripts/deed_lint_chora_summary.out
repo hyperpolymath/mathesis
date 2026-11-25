@@ -1,0 +1,1 @@
+deed_lint.js (standards 75d38f8) over 80 repo-root *_chora.deed files: 46 pass, 34 fail; 24 fail on one 1159-octet line (limit 998), 10 on a #u5 literal in an identity field; the template's own deed passes

@@ -1,0 +1,47 @@
+distinct owner/name tokens mentioned: 1326
+resolve to a known repo:              489
+unresolved against the known universe: 837
+mentions (occurrences) of unresolved names: 16666
+total mentions: 45841
+--- top unresolved by mention count
+   5615 hyperpolymath/standards
+    814 hyperpolymath/rhodium-standard-repositories
+    701 hyperpolymath/elegant-state
+    462 hyperpolymath/svalinn
+    259 hyperpolymath/stapeln
+    228 hyperpolymath/burble
+    223 hyperpolymath/panic-attacker
+    206 hyperpolymath/template-repo
+    204 hyperpolymath/myproject-worker
+    204 hyperpolymath/myproject-api
+    148 metadatastician/pong-ping
+    138 hyperpolymath/gossamer
+    126 hyperpolymath/cicd-suite
+    125 hyperpolymath/developer
+    118 hyperpolymath/poly-ssg-mcp
+     89 metadatastician/enaction-engine
+     89 hyperpolymath/gv-clade-index
+     80 metadatastician/chronicles-of-slavia
+     68 metadatastician/idaptik
+     68 hyperpolymath/rokur
+     58 hyperpolymath/terrapin-ssg
+     51 hyperpolymath/algorithm-shield
+     50 hyperpolymath/claude-gitlab-bridge
+     47 hyperpolymath/selur
+     47 hyperpolymath/first-post
+     46 metadatastician/harvard-dehallucinator
+     46 hyperpolymath/cerro-torre
+     43 hyperpolymath/vordr
+     41 hyperpolymath/rescript-tea
+     40 hyperpolymath/marid
+     40 hyperpolymath/asdf-haproxy-plugin
+     40 hyperpolymath/asdf-grype-plugin
+     40 hyperpolymath/asdf-gitleaks-plugin
+     40 hyperpolymath/asdf-git-crypt-plugin
+     40 hyperpolymath/asdf-fulcio-plugin
+     40 hyperpolymath/asdf-franklin-plugin
+     40 hyperpolymath/asdf-fortran-plugin
+     40 hyperpolymath/asdf-fornax-plugin
+     40 hyperpolymath/asdf-envoy-plugin
+     39 hyperpolymath/v-grpc
+--- owner-moved subset (computed separately, same token extraction): 63 distinct tokens whose NAME exists under a different estate owner; 7807 mentions

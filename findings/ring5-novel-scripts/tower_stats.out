@@ -1,0 +1,28 @@
+files 8005
+files with >=1 call job 1976
+L4 classes containing a call job 405
+L1 classes straddling >1 L2 class (text comment-strip is not a parse quotient): 5
+L4 classes 2018, singletons 1545
+L4 classes needed to cover 50%/80%/90% of files: 70 / 445 / 1218
+top 8 L4 classes (files, distinct repos, names): 353/353/label-triage.yml  353/353/labels.yml  285/285/push-email-notify.yml  124/74/guix-policy.yml+security-policy.yml  122/122/rsr-compliance-canary.yml+rhodibot.yml  121/121/mirror.yml  86/86/hypatia-scan.yml  86/86/governance.yml
+--- per template name: files / L0 raw / L2 parsed / L3 pins-abstracted / L4 shape / L5 skeleton / largest L4 class
+secret-scanner.yml            446  279  169   84   71   64   50
+label-triage.yml              423   27   10   10    2    2  353
+labels.yml                    423   28   11   11    3    3  353
+hypatia-scan.yml              386  223  170   91   77   75   86
+governance.yml                380  221  153   59   52   51   86
+codeql.yml                    371  301  241  151   95   78   52
+push-email-notify.yml         361   70   31   13   11   11  285
+scorecard.yml                 356  221  173   83   79   79   54
+mirror.yml                    352  187  120   54   46   46  121
+dogfood-gate.yml              276  251  231  214   96   94   22
+instant-sync.yml              261  139   82   67   56   49   54
+pages.yml                     248  101   61   45   37   36   78
+boj-build.yml                 236  116   73   46   40   40   46
+casket-pages.yml              199  109   71   50   33   32   46
+dependabot-automerge.yml      175   83   52   37   17   17   29
+release.yml                   175  121   98   79   66   65   56
+workflow-linter.yml           173  101   81   69   41   33   33
+rust-ci.yml                   135   91   76   48   47   47   24
+static-analysis-gate.yml      135   78   64   50   35   34   37
+names with >=20 files: 55 names, 7205 files, L4 classes summed per name 1314, L3 1825

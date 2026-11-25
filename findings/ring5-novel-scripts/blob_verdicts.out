@@ -1,0 +1,6 @@
+E full-tree evaluations 1137864
+C per-repo changed-file evaluations 85908
+post-image blob events 85842
+D distinct blobs estate-wide 34948
+workflow files at HEAD (running count) 8005
+E/C 13.2  C/D 2.46  E/D 32.6

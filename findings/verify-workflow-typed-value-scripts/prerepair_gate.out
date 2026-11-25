@@ -1,0 +1,69 @@
+A_linter_0512	n=14	post:PASS=14  pre:L1-parse=6  pre:PASS=8
+B_timeout_0717	n=34	post:L2-dup=2  post:PASS=32  pre:L2-dup=2  pre:L3-schema=32
+C_k9svc_0803	n=11	post:PASS=11  pre:L1-parse=11
+D_perm_insert_0728_0806	n=14	post:PASS=14  pre:L1-parse=12  pre:L2-dup=2
+E_unbreak_0827	n=56	post:L3-schema=1  post:PASS=55  pre:L3-schema=1  pre:PASS=55
+F_perm_scalar_0915	n=17	post:L3-schema=5  post:PASS=12  pre:L1-parse=17
+G_perm_indent_0921	n=31	post:PASS=31  pre:L1-parse=31
+H_dogfood	n=4	post:PASS=4  pre:L1-parse=2  pre:PASS=2
+other	n=18	post:PASS=18  pre:L1-parse=10  pre:L3-schema=3  pre:PASS=5
+
+  MISS A_linter_0512 hyperpolymath/betlang 012c221619 files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/tangle 0441a88bdd files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/error-lang 08a2cd0fb5 files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/phronesis 43004cd12d files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/quandledb 4bf4b3cac4 files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/echidnabot 4dee07989b files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/dicti0nary-attack 5c0ff225d6 files=workflow-linter.yml
+  MISS A_linter_0512 hyperpolymath/eclexia 60bc67cc89 files=workflow-linter.yml
+  MISS E_unbreak_0827 hyperpolymath/bebop-ffi 02561f9fd5 files=codeql.yml,governance.yml,hypatia-scan.yml,instant-sync.yml
+  MISS E_unbreak_0827 hyperpolymath/Cliodynamics.jl 07e086a3f5 files=CI.yml,CompatHelper.yml,Documenter.yml,TagBot.yml
+  MISS E_unbreak_0827 hyperpolymath/coord-tui 0da0e2d5ec files=codeql.yml,governance.yml,hypatia-scan.yml,push-email-notify.yml
+  MISS E_unbreak_0827 hyperpolymath/gitbot-fleet 0df025a732 files=boj-build.yml,casket-pages.yml,codeql.yml,dogfood-gate.yml
+  MISS E_unbreak_0827 catachresis-colloquium/Cytoville 123bcaa83a files=boj-build.yml,codeql.yml,container-build.yml,dependabot-automerge.yml
+  MISS E_unbreak_0827 hyperpolymath/polyglot-i18n 13290bc4c6 files=benchmarks.yml,boj-build.yml,casket-pages.yml,codeql.yml
+  MISS E_unbreak_0827 hyperpolymath/continuation-mesh 13b02f6499 files=codeql.yml,governance.yml,owned-ci.yml,push-email-notify.yml
+  MISS E_unbreak_0827 hyperpolymath/git-scripts 161edbe281 files=codeql.yml,governance.yml,hypatia-scan.yml,push-email-notify.yml
+  MISS E_unbreak_0827 hyperpolymath/verisimdb-data 1bc33c7efe files=codeql.yml,dependabot-automerge.yml,dogfood-gate.yml,governance.yml
+  MISS E_unbreak_0827 hyperpolymath/januskey 1d8c7abc19 files=boj-build.yml,cargo-audit.yml,casket-pages.yml,codeql.yml
+  MISS E_unbreak_0827 hyperpolymath/lithoglyph 1ded7a5bc6 files=boj-build.yml,ci.yml,codeql.yml,container-build.yml
+  MISS E_unbreak_0827 hyperpolymath/bunsenite 1f0722ec8c files=boj-build.yml,cargo-audit.yml,casket-pages.yml,cflite_batch.yml
+  MISS E_unbreak_0827 hyperpolymath/patallm-gallery 1f4a69c969 files=boj-build.yml,casket-pages.yml,codeql.yml,dogfood-gate.yml
+  MISS other hyperpolymath/verisimdb-data 2d23a06446 files=codeql.yml
+  MISS other hyperpolymath/gitbot-fleet 34a43faa63 files=inbox-steward.yml
+A_linter_0512	commits=14  caught_by_NONE=8  post_clean=14  caught_by_L1=6
+B_timeout_0717	commits=14  caught_by_L3=13  post_clean=13  caught_by_L2=1
+C_k9svc_0803	commits=11  caught_by_L1=11  post_clean=11
+D_perm_insert_0728_0806	commits=14  caught_by_L1=12  post_clean=14  caught_by_L2=2
+E_unbreak_0827	commits=14  caught_by_NONE=13  post_clean=13  caught_by_L3=1
+F_perm_scalar_0915	commits=14  caught_by_L1=14  post_clean=9
+G_perm_indent_0921	commits=14  caught_by_L1=14  post_clean=14
+H_dogfood	commits=2  caught_by_L1=2  post_clean=2
+other	commits=13  caught_by_L1=10  post_clean=13  caught_by_L3=1  caught_by_NONE=2
+
+E_unbreak_0827 hyperpolymath/bebop-ffi 02561f9f files=11 rejected=0 
+E_unbreak_0827 hyperpolymath/Cliodynamics.jl 07e086a3 files=16 rejected=1 scorecard.yml:L3-schema job analysis inhabits neither StepsJob nor CallJob
+E_unbreak_0827 hyperpolymath/coord-tui 0da0e2d5 files=5 rejected=0 
+E_unbreak_0827 hyperpolymath/gitbot-fleet 0df025a7 files=20 rejected=0 
+E_unbreak_0827 catachresis-colloquium/Cytoville 123bcaa8 files=24 rejected=0 
+E_unbreak_0827 hyperpolymath/polyglot-i18n 13290bc4 files=19 rejected=0 
+E_unbreak_0827 hyperpolymath/continuation-mesh 13b02f64 files=5 rejected=0 
+E_unbreak_0827 hyperpolymath/git-scripts 161edbe2 files=5 rejected=0 
+E_unbreak_0827 hyperpolymath/verisimdb-data 1bc33c7e files=22 rejected=0 
+E_unbreak_0827 hyperpolymath/januskey 1d8c7abc files=19 rejected=0 
+E_unbreak_0827 hyperpolymath/lithoglyph 1ded7a5b files=28 rejected=0 
+E_unbreak_0827 hyperpolymath/bunsenite 1f0722ec files=36 rejected=1 publish-nixpkgs.yml:L3-schema step: needs exactly one of run/uses
+E_unbreak_0827 hyperpolymath/patallm-gallery 1f4a69c9 files=14 rejected=0 
+other hyperpolymath/verisimdb-data 2d23a064 files=1 rejected=0 
+other hyperpolymath/gitbot-fleet 34a43faa files=1 rejected=0 
+
+S_scorecard_clear
+   commits = 14
+   pre_all_pass = 13
+   pre_rejected = 1
+   kind:L3-schema CallJob key 'timeout-minutes' = 1
+T_scorecard_valid
+   commits = 13
+   pre_all_pass = 10
+   pre_rejected = 3
+   kind:L3-schema CallJob key 'timeout-minutes' = 3

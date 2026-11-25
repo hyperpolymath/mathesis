@@ -1,0 +1,25 @@
+non-template-version writes on template paths: 20875; blob shared by >=5 repos in the same sweep: 8917; blob written to exactly one repo: 8268
+
+subject | path | writes | distinct new blobs | top blob count
+fix: unbreak workflow yaml and add a complete actions.lock | .github/workflows/actions.lock                |  137 |  124 |    4
+fix: reconcile the workflows with actions.lock (gh-actions | .github/workflows/codeql.yml                  |  103 |   89 |    6
+ci: bump hyperpolymath upstream reusable pins to head (fix | .github/workflows/secret-scanner.yml          |  164 |   87 |   14
+fix: enforce granular permissions and add fuzzing placehol | .github/workflows/scorecard.yml               |  131 |   36 |   39
+fix: pin third-party actions to full commit shas           | .github/workflows/codeql.yml                  |  121 |  102 |    6
+fix: close the governance gate — spdx, permissions, sha  | .github/workflows/governance.yml              |  313 |   22 |  203
+fix: reconcile actions.lock so the lockfile validates      | .github/workflows/actions.lock                |  185 |  148 |    9
+fix: correct email jonathan.jewell → j.d.a.jewell        | contractiles/k9/template-kennel.k9.ncl        |   75 |    4 |   70
+fix: repoint codeql-action at a sha that exists            | .github/workflows/codeql.yml                  |   59 |   21 |   24
+fix: update reusable workflow shas to @H                   | .github/workflows/governance.yml              |   74 |   21 |   22
+chore: fix license headers to pmpl-N-or-later              | .github/workflows/rsr-antipattern.yml         |   46 |    8 |   13
+fix: adopt actions dependency lockfile (estate startup_fai | .github/workflows/governance.yml              |   21 |   15 |    4
+fix: the invisible-character gate never matched anything   | .github/workflows/dogfood-gate.yml            |  249 |  178 |   12
+fix: grant callers the permissions their reusable workflow | .github/workflows/governance.yml              |   65 |   44 |   11
+fix: remove erroneous squisher-corpus guix.scm placeholder | .github/workflows/scorecard.yml               |   23 |    7 |   10
+fix: pin standards reusables to default-branch head        | .github/workflows/governance.yml              |   54 |   18 |   18
+fix: gate on the deed grammar, per the template and standa | .github/workflows/dogfood-gate.yml            |  240 |  200 |    4
+fix: update reusable workflow shas to @H                   | .github/workflows/scorecard.yml               |   51 |   24 |   13
+fix: restore reachable standards workflow pins             | .github/workflows/governance.yml              |   51 |   20 |   18
+chore: bump standards reusable pins to fix bug a and bug b | .github/workflows/mirror.yml                  |   40 |   16 |   12
+fix: apply foundation ci/cd security fixes                 | .github/workflows/codeql.yml                  |   24 |   22 |    3
+ci: fix ci/cd configuration (campaigns cN-cN)              | .github/workflows/governance.yml              |  123 |    5 |  100

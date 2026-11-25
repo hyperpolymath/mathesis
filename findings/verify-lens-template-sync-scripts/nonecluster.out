@@ -1,0 +1,10 @@
+governance       none=206 unparseable=0 clusters=41 top=102/19/15/11/9/4 singletons=27  in clusters>=5: 156
+   example of top cluster: /home/user/estate/catachresis-colloquium/blue-screen-of-app/.github/workflows/governance.yml
+scorecard        none=301 unparseable=0 clusters=65 top=57/49/39/16/14/14 singletons=43  in clusters>=5: 223
+   example of top cluster: /home/user/estate/catachresis-colloquium/airborne-submarine-squadron/.github/workflows/scorecard.yml
+hypatia-scan     none=313 unparseable=0 clusters=72 top=100/49/43/12/8/8 singletons=55  in clusters>=5: 237
+   example of top cluster: /home/user/estate/catachresis-colloquium/airborne-submarine-squadron/.github/workflows/hypatia-scan.yml
+mirror           none=243 unparseable=0 clusters=41 top=126/20/17/13/11/7 singletons=27  in clusters>=5: 194
+   example of top cluster: /home/user/estate/catachresis-colloquium/airborne-submarine-squadron/.github/workflows/mirror.yml
+secret-scanner   none=284 unparseable=0 clusters=63 top=39/38/35/25/15/14 singletons=38  in clusters>=5: 216
+   example of top cluster: /home/user/estate/catachresis-colloquium/dosovoi/.github/workflows/secret-scanner.yml

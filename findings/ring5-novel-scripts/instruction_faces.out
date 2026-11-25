@@ -1,0 +1,8 @@
+623 agent-instruction files (CLAUDE.md 327, GEMINI.md 96, copilot-instructions.md 171, AGENTS.md 13, AGENTS.adoc 10, CLAUDE.adoc 6), depth <= 4:
+name hyperpolymath/standards: 98 ; name metadatastician/standards: 34
+name gv-clade-index: 73 ; name chora-registry: 14
+mention .a2ml with no retirement wording (retired|never create|entirely gone|legacy): 117
+banned-table TypeScript -> ReScript: 10 ; TypeScript -> AffineScript: 96
+'replaces Node' (Deno as the replacement): 8 ; cite STANDING-RULES: 2
+CLAUDE.md numbered doctrine items: 16 items in 37 files, 15 in 14, 14 in 21, 13 in 2, 10 in 1, none in 252
+CLAUDE.md 327 files / 290 distinct ; GEMINI.md 96 / 11 ; copilot-instructions.md 171 / 70

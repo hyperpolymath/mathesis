@@ -1,0 +1,328 @@
+ext-pain-evidence.txt — line-numbered extracts (pdftotext output) backing the [P] rows of ext-pain.md
+Generated 2026-11-24. Format: <source file>:<line>:<text>. Short quotes only; see ext-pain.md section 17 for URLs.
+
+## Brindescu et al. EMSE (brindescu.txt)
+18:found that almost 1 in 5 merges cause conflicts. In 75.23% of these cases, a developer
+20:with a merge conflict is twice as likely to have a bug. When the code associated with merge
+21:conflicts require manual intervention, the code is 26× more likely to have a bug.
+109:19.32% of these merges, in turn, resulted in conflicts.
+113:entangled (henceforth called SEMANTIC merge conflicts). We also found that code associated with a merge conflict is twice as likely to have a bug, and code associated with
+317:an average of 252.6 merge commits. Out of all the merges, we identified 6,979 (19.32%)
+327:or 19.32% of all merges. Merge conflicts, therefore, are a common part of the developer
+844:In our dataset, 19.32% of merges resulted in merge conflicts (6,979 merge conflicts in
+845:36,122 merge commits). This means that almost 1 in 5 merges resulted in conflicts that
+863:(59.46% of all merge conflicts) where changes are entangled. 14.53% of merge conflicts
+865:can co-exist (DISJOINT). This means that in the vast majority (at least 75.23% of cases, for
+868:conflicts (at least 59.46% of cases, which represents the SEMANTIC category), new code
+872:(1.24%) of all merge conflicts.
+873:Although resolving merge conflicts due to FORMATTING changes (23.21% of all merge
+874:conflicts) or COMMENTS (0.60% of all merge conflicts) require human intervention, they
+893:59.46%
+903:14.53%
+923:23.21%
+933:0.60%
+1323:conflicts shows that in 60% of cases, merge conflicts arise because of interacting, semantic changes. Furthermore, lines of code involved in these types of merge conflicts are 26×
+1443:was 26× times more likely to be buggy as compared to that from other conflicts. They
+
+## Brun et al. FSE 2011 (brun.txt)
+21:nine open-source systems totaling 3.4 million lines of code; our
+75:• We analyze nine open-source systems and show that, in practice, conflicts between developers’ copies of a project are: (1)
+358:of all merges, 23% to 47% had textual conflicts (T EXTUAL8) while
+378:merges, one in six, or 17%, had textual conflicts as determined by
+465:Voldemort, 76% of merges completed cleanly, 16% of merges resulted in a textual conflict (T EXTUAL8), 1% of merges resulted in a
+466:build failure (B UILD8), and 6% of merges resulted in a test failure
+467:(T EST8). The 266 textual conflicts reported by the version control system only represent 67% of all conflicts. Stated another way,
+468:33% of the 399 merges that the version control system reported as
+546:On average, the T EXTUAL8 relationship persisted for 9.8 days
+551:334 days and included 676 changesets by one of its developers.
+1443:Our retrospective, quantitative study of over 550,000 development versions of nine open-source systems, spanning 3.4 million
+
+## Shen et al. TOSEM 2023 (ghiotto.txt is misnamed; it is Shen et al.)
+12:types of conflicts in 208 open-source repositories: textual conflicts, build conflicts (i.e., conflicts causing build
+13:errors), and test conflicts (i.e., conflicts triggering test failures). We manually inspected 538 conflicts and their
+15:Our analysis revealed three interesting phenomena. First, higher-order conflicts (i.e., build and test conflicts) are harder to detect and resolve, while existing tools mainly focus on textual conflicts. Second, developers manually resolved most higher-order conflicts by applying similar edits to multiple program locations;
+17:Third, developers resolved 64% of true textual conflicts by keeping complete edits from either a left or right
+68:merged code to reveal higher-order conflicts (i.e., build conflicts and test conflicts).
+420:total number of higher-order conflicts (i.e., 107 + 46) is larger than the total number of examined
+1520:Threats to External Validity: Our study is based on the 538 conflicts extracted from 208 Java
+
+## Apel et al. FSE 2011 (apel.txt)
+62:24 software projects developed in Java, C#, and Python comprising
+124:• We conduct an empirical study on 24 software projects to
+128:sample merge scenarios by 34±21 %.4 Furthermore, our
+130:merge that can increase the number of conflicts (in 26 % of the
+1167:the sample merge scenarios by 34±21 % (the number of conflicting
+1171:Remarkably, in 26 % (46 of 180) of the sample merge scenarios, semistructured merge increases the number of conflicts by
+1646:(34±21 %), the number of conflicting lines of code (61±22 %), and
+
+## Seo et al. ICSE 2014 (seo.txt)
+104:Our results reveal that C++ developers build 10.1 times
+105:a day and Java developers build 6.98 times a day when averaged over months. 37.4% and 29.7%, respectively, of these
+403:(38.4%) than Java (28.5%). The differences across languages
+535:expected_rparen occur more frequently than in Java.
+740:in Figure 6. Dependency-related errors are the most common error type for both C++ (52.68%) and Java (64.71%).2
+1013:resolution time of build errors were 5 and 12 minutes for
+1052:resolved was 1. 75% of build errors were resolved within
+1058:does.not.override.abstract), 75% of build errors were resolved within two builds.
+1064:condition), 75% of build errors were resolved within two
+1156:during the build process revealed that, independent of programming language, approximately 10 percent of the error
+1358:errors. Jadud also found that 44% of failed compiles were
+
+## Bouzenia & Pradel ICSE 2024 (bouzenia.txt)
+21:show that CI/CD imposes significant costs, e.g., $504 per year for
+23:is consumed by testing and building (91.2%), which is triggered
+24:by pull requests (50.7%), pushes (30.9%), and regularly scheduled
+26:(adopted by 32.9% of paid-tier repositories), demonstrate a positive
+31:in reductions of execution time between 1.1% and 31.6% over the
+98:This paper presents the first empirical study that analyzes computational resource usage and optimization opportunities of workflows. Our study is based on a dataset of 952 repositories that
+120:optimizations, such as caching, which is used by 32.9% of paid-tier
+235:952 repositories
+273:workflow runs of 952 repositories. The repositories contain code
+430:around $504 per year, on average. GitHub covers $107 and
+568:and VM time corresponding to each conclusion. While the majority of workflows for both the paid tier (78.8%) and the free tier
+569:(88.9%) succeed, i.e., all jobs and steps complete successfully, a nonnegligible fraction of workflows fails (17.4% and 10%, respectively).
+697:Prevalence and Impact. 32.9% of paid-tier repositories and 17.8%
+808:Prevalence and impact. This optimization is used by 10.1% of
+810:the paid tier, Cancel-in-progress impacts 9.1% of runs, reduces VM
+811:time by 4.1%, and saves $55.14 yearly per repository.
+898:Prevalence and impact. 14.0% of the paid-tier repositories use
+900:leads to a decrease of 8.1% in VM time, equivalent to saving $58.33
+914:The studied mechanisms save up to $60, on average per year
+1158:based on a dataset of 952 repositories, which is a small subset of
+
+## Zheng et al. TOSEM 2026 (zheng.txt)
+15:manually analyzing 375 failed workflow executions across 260 open-source Java projects, we built a comprehensive taxonomy categorizing the common failure types. The taxonomy was further validated by surveying
+282:involving 375 failed workflow executions.
+550:factors, accounting for 84% (315/375) of the total cases. The reasons behind these failures can be
+560:cause in our study, accounting for 14.4% (54/375) of the total cases. When a developer automates
+618:the code does not meet established standards and guidelines [7, 34]; 12% (44/375) of the analyzed
+667:most common reason for GHA workflow failures, accounting for 32% (120/375) of the cases.
+696:Our manual analysis of sampled logs led to the identification of 60 GHA workflow failures related
+716:W2: Workflow executions fail due to workflow configuration issues or incorrect instructions. These
+791:Our analysis of 375 failed workflow executions shows that most failures occur during the CI
+1171:R5: “YAML grammar is so tedious and hard to maintain.”
+
+## Huang & Lin TOSEM 2026 (rerun.txt)
+11:In this work, we conducted an empirical study on 3,320 open source Java repositories to understand how
+411:Of the 9,202 WFs collected, 60.6% (5,576) of them contain execution failures, indicating that GHA
+425:(Observation 2) 54.8% of the workflow reruns are triggered fully automatically. As previously
+520:(Observation 6) 33.9% of the workflow rerun sets and 73.6% of the job rerun sets led to outcome
+586:(Observation 8) Around 3.7 years were spent waiting for workflow reruns. Table 4 shows the waiting
+592:(Observation 9) Around 2.7 years and 1.8 years of computational time were spent on workflow
+
+## Ge & Zhang arXiv 2602.02307
+11:Actions based on rerun data from 1,960 open-source Java projects. Our results show that 3.2% of builds are
+13:an in-depth failure analysis, we identify 15 distinct categories of flaky failures, among which flaky tests,
+64:of flaky builds and find that 3.2% of builds are rerun, among which 67.73% are flaky builds. We
+
+## Luo et al. FSE 2014 (luo.txt)
+71:in the past 15 months, and 73K out of 1.6M (4.56%) test
+103:F.2 Most flaky tests (78%) are flaky the first time they are written.
+105:F.3 Almost all flaky tests (96%) are independent of the platform
+130:F.12 Some fixes to flaky tests (24%) modify the CUT, and most of
+767:74 out of 161 (45%) commits are from the Async Wait
+832:32 out of 161 (20%) commits are from the Concurrency
+880:19 out of 161 (12%) commits are from the Test Order
+
+## Habchi et al. arXiv 2112.04919 citing Google (flakyqual.txt)
+60:incur significant cost. Google reports indicate that 16% of their
+61:tests exhibit some flakiness whereas 84% of the transitions
+63:computational resources since 2-16% of the company’s testing
+
+## Gallaba et al. ASE 2018 (gallaba.txt)
+42:breakage hold, we perform an empirical study of 3.7 million build
+43:jobs spanning 1,276 open source projects. We ind that: (1) 12% of
+44:passing builds have an actively ignored failure; (2) 9% of builds have
+45:a misleading or incorrect outcome on average; and (3) at least 44%
+428:Observation 1: 12% of passing builds have an actively ignored
+433:In an extreme case, 87% of the jobs were actively ignored. We
+541:build was broken, 3,426 builds (83%) are not ixed in the immediately subsequent build. These breakages are suspicious because
+1438:build jobs of 1,276 open source projects, we investigate whether two
+
+## Hilton et al. ASE 2016 (hilton.txt)
+354:We found that 40% of all the projects in our breadth corpus
+
+## Hasan et al. arXiv 2604.13129 (caching.txt)
+18:evolve caching in CI/CD workflows on GitHub Actions. We analyze 952 GitHub
+22:17,185 workflow configuration changes, including an average of 9.37 cacherelated changes per repository. Our main observations are: (1) cache-adopting
+109:drawn from a broader sample of 952 GitHub repositories that use GHA. Our
+375:952 GitHub repositories that use GitHub Actions (GHA) as their CI/CD
+
+## Rostami Mazrae et al. arXiv 2602.14572 (ghaevol.txt)
+16:changes to workflows. Next, we performed a quantitative analysis over 49K+
+18:that repositories contain a median of three workflow files, and 7.3% of all workflow files are being changed every week. The changes made to workflows tend to
+19:be small, with about three-quarters containing only a single change. The large
+94:workflow files across 49K+ public GitHub repositories covering 3.4M+ workflow
+
+## Ochoa et al. arXiv 2110.07889
+53:Our key findings, derived from the analysis of 119, 879 library upgrades and
+155:Repository are not “breaking bad”. First, 83.4% of all library upgrades comply
+157:20.1% of non-major releases are breaking, being a potential threat to their
+160:BCs has gradually decreased from 67.7% in 2005 to 16.0% in 2018. Third, only
+161:7.9% of clients are actually impacted by BCs introduced in library releases.
+648:consisting of 119, 879 upgrade pairs. Most upgrades are discarded because
+1392:20.1% of non-major upgrades are still breaking and thus do not comply with the
+1547:not always strictly applied (20.1% of non-major releases are breaking),
+1938:from 67.7% in 2005 to 16.0% in 2018.
+2767:20.1% of non-major releases are breaking, threatening client projects.
+2770:releases has decreased from 67.7% in 2005 to 16.0% in 2018.
+
+## Venturini et al. arXiv 2301.04563
+79:select client packages with at least one provider. We found that manifesting breaking changes impacted 11.7% of all client
+80:packages (regardless of their releases) and 13.9% of their releases. In addition, 2.6% of providers introduced manifesting
+85:minor and patch releases (approximately 44% in each release type). Providers fixed most of the manifesting breaking change
+87:documented in issue reports, pull requests, or changelogs in 78.1% of cases.
+89:Client packages recovered from manifesting breaking changes in 39.1% of the cases, and their recovery took about 134 days
+718:We detected that 261 (8.1%) releases suffered a particular error type that we call breaking due to external change.
+1290:39.1% of the cases clients and transitive providers need to take actions to recover from the manifesting breaking change.
+1620:is introduced, while we claim that Feature Change is the main breaking change type (Finding 3). Also, the authors
+
+## Pinckney et al. arXiv 2304.00394
+46:in the majority of cases (90.09%), but this does not always
+908:of flow is 90.09% of all analyzed update flows, it is by far the
+
+## He et al. arXiv 2206.07230 (Dependabot)
+19:suspicion; developers tend to configure Dependabot toward reducing the number of notifications; and 11.3% of projects have
+71:Greenkeeper [9] reveals that: only 32% of Greenkeeper PRs
+107:To answer the RQs, we sample 1,823 popular and actively maintained GitHub projects as the study subjects. We
+108:conduct exploratory data analysis on 502,752 Dependabot
+258:PRs well: 65.42% of PRs are merged and most are merged
+260:portion of Dependabot PRs (6.9% in our dataset), and developers perceive security updates as highly relevant [13].
+327:1,823
+384:After all the filtering steps, we end up with 1,823 projects.
+837:design and conduct a survey with developers from the 1,823
+1263:502,752
+1967:Only 3.4% of the PRs and 0.5% of the dependency version
+2067:For this purpose, we find all commits in the 1,823 projects
+2082:5. Note that 235 of the 1,823 projects do not have dependabot.yml
+2178:of the 1,823 projects in our dataset have modified the
+2304:that our dataset only contains 1,823 projects. From Figure 9,
+
+## Hejderup & Gousios arXiv 2109.11921
+12:direct and indirect uses of dependencies in 521 well-tested Java projects. We find that tests only cover 58% of direct and
+15:that tests can only detect 47% of direct and 35% of indirect artificial faults on average. To increase reliability, we
+
+## Tanaka et al. arXiv 2609.16605 (cooldown.txt)
+21:motivations. We find that security concerns motivated 83 of 92 adoption events with
+22:known motivations. Security linter warnings triggered 43 of 75 security-only adoptions. Among 251 ecosystems within repositories that retained cooldown, 97.2% set
+23:a general delay. Of these, 64.3% used seven days, while use of each update type
+
+## Brown & Altadmri TOCE (altadmri.txt)
+13:the Blackbox dataset (with more than 900 thousand users and almost 100 million compilation events) with
+16:that educators’ estimates do not agree with one another or the student data, and discuss the implications
+503:C-brktSyn, the most frequent mistake, occurs 1.8 million times, but its median timeto-fix is 17 seconds: students do not get stuck for long. Mistake I-calTyp occurs only
+504:1.0 million times, but its median time-to-fix is 59 seconds: three times as long. Which
+798:Our results in Table I show that mismatched brackets are the most frequent mistake. However, while it is much more frequent (1.8 million) than the next most frequent
+
+## Yin et al. SOSP 2011 (yin.txt)
+42:four widely used open source systems (CentOS, MySQL,
+91:Similar to results from previous studies [11, 29, 30], data from COMP-A shows that a signiﬁcant portion (27%) of customer cases
+93:Conﬁguration issues cause the largest percentage (31%) of high-severity support requests.
+95:Conﬁguration-parameter mistakes account for the majority (70.0%∼85.5%) of the examined misconﬁgurations.
+98:38.1%∼53.7% of parameter misconﬁgurations are caused by illegal parameters that violate formats or semantic rules deﬁned by the
+100:A signiﬁcant portion (12.2%∼29.7%) of parameter mistakes are due to value-based inconsistency, calling for an inconsistency checker
+104:Only 7.2%∼15.5% of the studied misconﬁguration problems provide explicit messages that pinpoint the conﬁguration error.
+111:percentage (16.7%∼32.4%) of misconﬁgurations were introduced into systems that used to work.
+116:Although most studied misconﬁguration cases only lead to partial unavailability of the system, 16.1%∼47.3% of them make the
+435:Finding 1.2: Conﬁguration issues cause the largest percentage (31%) of high-severity support requests.
+661:the majority (70.0%∼85.5%) of the examined misconﬁgurations.
+692:Finding 4: A signiﬁcant portion (12.2%∼29.7%) of parameter mistakes are due to value-based inconsistency, calling
+710:Finding 3.1: 38.1%∼53.7% of parameter misconﬁgurations
+1126:Finding 7: Only 7.2%∼15.5% of the studied misconﬁguration problems provide explicit messages that pinpoint the
+1438:However, for more complex systems, COMP-A and CentOS, a signiﬁcant portion (16.7%∼32.4%) of the misconﬁgurations happen in the middle of the system’s lifetime. There
+1455:systems, a signiﬁcant percentage (16.7%∼32.4%) of misconﬁgurations were introduced into systems that used to work.
+1545:only lead to partial unavailability of the system, 16.1%∼47.3%
+1818:from both a commercial system that is deployed to thousands of customers, and four widely used open-source systems, namely CentOS, MySQL, Apache, and OpenLDAP.
+
+## Gunawi et al. SoCC 2016 (gunawi.txt)
+45:We conducted a cloud outage study (COS) of 32 popular Internet services. We analyzed 1247 headline news and public
+46:post-mortem reports that detail 597 unplanned outages that
+154:post-mortem reports that detail 597 unplanned outages that
+1022:shows that U PGRADE is one of the largest root causes (16%).
+1058:C ONFIG problems cause 10% of service outages. Table 4
+1078:“bugs” or “software errors”. With this, B UGS are responsible for 15% of outages with known root causes. Many other
+
+## CrowdStrike RCA 2024-08-06 (crowdstrike.txt)
+44:The new IPC Template Type defined 21 input parameter fields, but the integration code that
+64:20 values. Therefore, the attempt to access the 21st value produced an out-of-bounds
+91:Mitigation: Validate the number of input fields in the Template Type at sensor compile
+
+## Pearce et al. arXiv 2108.09293
+48:total, we produce 89 different scenarios for Copilot to complete,
+50:40 % to be vulnerable.
+
+## Perry et al. arXiv 2211.03622
+80:user study where 47 participants conducted five security-related
+88:Participants with access to an AI assistant wrote insecure solutions more often than those without access to an AI assistant for
+94:were more likely to believe that they wrote secure code than those
+286:study, we were left with 47 participants— 33 in the experiment
+
+## Kabir et al. arXiv 2308.02312
+30:517 programming questions on Stack Overﬂow and examined the
+33:analysis shows that 52% of ChatGPT answers contain incorrect information and 77% are verbose. Nonetheless, our user study participants still preferred ChatGPT answers 35% of the time due to their
+113:Stack Overﬂow. However, participants still preferred ChatGPT answers 35% of the time and overlooked misinformation in the answers 39% of the time. When asked why they preferred ChatGPT
+
+## Spracklen et al. arXiv 2406.10279
+34:576,000 code samples in two programming languages that
+38:models, including a staggering 205,474 unique examples of
+639:576,000 code samples using both the Stack Overflow and
+692:in response to our prompts, of which 440,445 (19.7%) were
+693:determined to be hallucinations, including 205,474 unique
+906:with the same prompt that generated a hallucination: 43% of
+910:In addition, 58% of the time, a hallucinated package is repeated more than once in 10 iterations, which shows that a
+
+## METR arXiv 2507.09089
+14:experience complete 246 tasks in mature projects on which they have an average of 5 years of prior experience. Each task is randomly assigned to allow or
+18:reduced completion time by 20%. Surprisingly, we find that allowing AI actually
+19:increases completion time by 19%—AI tooling slowed developers down. This
+50:controlled trial by having 16 developers complete 246 tasks (2.0 hours on average) on well-known
+58:20%. Surprisingly, we find that allowing AI actually increases completion time by 19%— developers are slower when using AI tooling. Figure 1 displays this observed slowdown in contrast with
+469:• Developers accept <44% of AI generations
+471:• 9% of time spent reviewing/cleaning AI outputs
+
+## Li, Zhang, Hassan arXiv 2507.15003 (aidev.txt)
+422:The collected AIDev dataset contains 456,535 pull requests opened by 47,303 distinct developers across 61,453 repositories
+1072:Agents, OpenAI Codex achieves the highest acceptance rate at 64%, followed by Devin at 49% and GitHub Copilot
+1073:at 35%. These substantial performance gaps, ranging from 15 to 40 percentage points below human performance,
+1076:report success rates exceeding 70%8 . This significant disparity between benchmark and real-world performance raises
+
+## Ehsani et al. arXiv 2601.15195 (agentfail.txt)
+48:a large-scale study of 33k agent-authored PRs made by five coding
+243:represents the smallest share with 459 PRs. Across all agents, 71.48%
+246:rate, with 82.59% (18,004) of its PRs being accepted. Cursor follows
+247:with a 65.22% merge rate (1,005), then Claude Code at 59.04% (271),
+248:and Devin at 53.76% (2,595). Copilot exhibits the lowest merge rate,
+249:with only 43.04% (2,139) of its PRs being merged.
+273:test (0.37), and performance (0.27). Across agents, tasks with consistently higher merge rates include documentations (84%), CI
+274:(79%), and build (74%). In contrast, performance (55%) and fix
+275:(64%) display the lowest merge rates overall. These results indicate
+
+## Czerwonka et al. ICSE-SEIP 2015 (czerwonka.txt)
+68:code submission. Only about 15% of comments provided by
+72:comments provided by reviewers; at least 50% of all.
+82:code base being reviewed, on average only 33% of any
+86:usefulness ratio increases to about 67% of their comments. By
+
+## Wolter et al. TOSEM 2023 (wolter.txt)
+9:licenses found in the code. We analysed a sample of 1,000 open source GitHub repositories. We find that about half of the repositories
+10:did not fully declare all licenses found in the code. Of these, approximately ten percent represented a permissive vs. copyleft license
+225:achieved a recall of 82.3% and a precision of 96.6% in a sample of 0.8 million source code files in Debian 5.0.2 [22].
+296:Moraes et al. [42] describe that about 62% of repositories in their sample of 1,552 JavaScript projects showed the
+
+## Da Silva et al. arXiv 2606.14616 (templates.txt)
+14:has been available since 2019, little is known about the domains
+17:gap, we conduct a large-scale empirical study of GitHub template
+1000:large-scale empirical study of GitHub templates across the
+
+## Pimentel et al. MSR 2019 (pimentel.txt)
+32:we discuss in Section IV, out of 863,878 attempted executions
+34:and execution order), only 24.11% executed without errors and
+35:only 4.03% produced the same results. Based on our findings,
+472:which correspond to 863,878 (74.53%) notebooks.
+945:In the remainder of this section, we describe a reproducibility study in which we executed all 863,878 Python
+1431:to run without exceptions, and only 4.03% produced the same
+
+## Pages fetched (no local text copy): sre.google/workbook/postmortem-analysis (Table C-1: binary push 37%, configuration push 31%, ...);
+## blog.cloudflare.com/18-november-2025-outage ('doubled in size'; 'limit is set to 200'; 'Result::unwrap() on an Err value');
+## daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty ('north of 15%' -> 'below 5%'; 87 confirmed; >100,000 USD);
+## docs.github.com/en/billing/reference/actions-runner-pricing (Linux 2-core 0.006, arm64 0.005, Windows 0.010, macOS 0.062 USD/min).

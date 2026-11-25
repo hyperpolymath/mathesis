@@ -1,0 +1,6 @@
+{"version":"0.2","profile":"prevent",
+ "nodes":[{"id":"receipt","type":"Trope","present":["quality","bearer","context","record"]},{"id":"row","type":"Trope","present":["quality","bearer","context","record"]},{"id":"readme","type":"Trope","present":["quality","context"]}],
+ "edges":[
+  {"id":"e1_record_row","effect":"preserve","inputs":["receipt"],"output":"row","grade":{"fate":{"quality":{"k":"Present"},"bearer":{"k":"Present"},"context":{"k":"Present"},"record":{"k":"Present"}},"bond":{"k":"Intact"},"merge":{"k":"Single"}}},
+  {"id":"e2_handtype_readme","effect":"project","inputs":["row"],"output":"readme","grade":{"fate":{"quality":{"k":"Present"},"bearer":{"k":"Dropped"},"context":{"k":"Present"},"record":{"k":"Dropped"}},"bond":{"k":"Withheld"},"merge":{"k":"Single"}}}],
+ "use_model":{"output":"readme","floor":{"fate":{"record":{"k":"Present"},"bearer":{"k":"Present"}},"bond":{"k":"Intact"}}}}

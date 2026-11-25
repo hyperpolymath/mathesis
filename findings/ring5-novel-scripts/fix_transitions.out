@@ -1,0 +1,9 @@
+sampled fix-worded single-workflow commits (distinct subjects): 120
+  parse  FP=5  PF=1  PP=106  gone=3  new=5
+  schema FP=8  PF=3  PP=101  gone=3  new=5
+  pins   FF=33  FP=6  PF=2  PP=71  gone=3  new=5
+  std    FP=3  PP=12  gone=3  na=97  new=5
+commits with at least one decidable fail->pass: 13
+commits with at least one decidable pass->fail (a 'fix' that breaks a gate): 4
+commits that leave a decidable gate failing and repair none: 31
+commits with no decidable transition and nothing failing (fix not observable offline): 72

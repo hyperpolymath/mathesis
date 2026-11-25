@@ -1,0 +1,5 @@
+E full-tree evaluations 59640160
+C per-repo changed-file evaluations 809996
+D distinct blobs estate-wide 427833
+files at HEAD (running count) 270905
+E/C 73.6  C/D 1.89  E/D 139.4

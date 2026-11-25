@@ -1,0 +1,10 @@
+catachresis-colloquium/befunge93-vault-cracker/.github/workflows/scorecard.yml	c6d78606	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+catachresis-colloquium/game-server-admin/.github/workflows/scorecard.yml	8e48b1ca	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+hyperpolymath/candy-crash/.github/workflows/scorecard.yml	1ded685a	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+hyperpolymath/laniakea/.github/workflows/scorecard.yml	80014df4	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+hyperpolymath/polyglot-i18n/.github/workflows/scorecard.yml	ae8492ae	metadatastician	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+hyperpolymath/quintessence/.github/workflows/scorecard.yml	b3ce78e1	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+hyperpolymath/twingate-helm-deploy/.github/workflows/scorecard.yml	1ded685a	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+metadatastician/ZeroInflatedCounts.jl/.github/workflows/scorecard.yml	60382738	metadatastician	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+metadatastician/gossamer/.github/workflows/scorecard.yml	01c9b0c9	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}
+metadatastician/paint-type/.github/workflows/scorecard.yml	01c9b0c9	hyperpolymath	{"contents"=>"read", "security-events"=>"write", "id-token"=>"write"}

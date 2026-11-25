@@ -1,0 +1,8 @@
+dependabot commits changing workflow yml (HEAD): 6078
+  with actions.lock present in the commit tree: 2018
+    lock also changed (whole nucleus): 916
+    lock NOT changed (half-nucleus commit): 1102
+repos with at least one half-nucleus commit: 223
+half-nucleus commits: 1102
+followed within 10 commits by a commit changing actions.lock: 1008
+  ...where that commit is not by dependabot: 701

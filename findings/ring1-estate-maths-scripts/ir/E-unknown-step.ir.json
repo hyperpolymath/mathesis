@@ -1,0 +1,6 @@
+{"version":"0.2","profile":"prevent",
+ "nodes":[{"id":"obs","type":"Trope","present":["quality","bearer","context","record"]},{"id":"paraphrase","type":"Trope","present":["quality","bearer","context","record"]},{"id":"claim","type":"Trope","present":["quality","bearer","context","record"]}],
+ "edges":[
+  {"id":"e1_paraphrase","effect":"attenuate","inputs":["obs"],"output":"paraphrase","grade":{"fate":{"quality":{"k":"Attenuated","delta":"top"},"bearer":{"k":"Present"},"context":{"k":"Present"},"record":{"k":"Present"}},"bond":{"k":"Intact"},"merge":{"k":"Single"}}},
+  {"id":"e2_restate","effect":"preserve","inputs":["paraphrase"],"output":"claim","grade":{"fate":{"quality":{"k":"Present"},"bearer":{"k":"Present"},"context":{"k":"Present"},"record":{"k":"Present"}},"bond":{"k":"Intact"},"merge":{"k":"Single"}}}],
+ "use_model":{"output":"claim","floor":{"fate":{"quality":{"k":"Attenuated","delta":3}}}}}

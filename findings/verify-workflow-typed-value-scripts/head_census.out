@@ -1,0 +1,27 @@
+files 8005; anchors/aliases 0; CRLF 0
+comment lines in body (outside header, outside block scalars): 4415 files; trailing inline comments: 3617 files
+header-comment only: 2406; no comments at all: 6
+flow collections ([..]/{..} values): 6763; folded scalars (>): 106; files with ${{ }} expressions: 6613
+steps 40348; uses-steps 17578; run scalars 22768 in 5264 files; multi-line 16646; total script lines 306479
+run scalars interpolating ${{ }} directly: 3428
+  1 lines: 6122
+  2-5 lines: 4606
+  6-20 lines: 7483
+  21-50 lines: 2811
+  >50 lines: 1746
+{"PASS"=>7965, "L3-schema"=>21, "L2-dup"=>14, "L1-parse"=>5}
+10	L2-dup :: /jobs/*/permissions/contents	 e.g. hyperpolymath/affinescript-vite/.github/workflows/release.yml
+6	L3-schema :: top level not a mapping	 e.g. hyperpolymath/Cladistics.jl/.github/workflows/ci.yml
+5	L3-schema :: no jobs	 e.g. hyperpolymath/affinescript-vite/.github/workflows/e2e.yml
+5	L3-schema :: CallJob key 'timeout-minutes'	 e.g. hyperpolymath/kitchenspeak/.github/workflows/mirror.yml
+4	L3-schema :: step: needs exactly one of run/uses	 e.g. hyperpolymath/bunsenite/.github/workflows/publish-nixpkgs.yml
+2	L1-parse :: (<unknown>): did not find expected comment or line break whi	 e.g. hyperpolymath/cloudguard-server/.github/workflows/dogfood-gate.yml
+2	L1-parse :: (<unknown>): did not find expected <document start> at 	 e.g. stuff-of-awe/awesome-fsharp/.github/workflows/check-links.yml
+1	L2-dup :: /jobs	 e.g. hyperpolymath/MacroPower.jl/.github/workflows/secret-scanner.yml
+1	L3-schema :: job not a mapping; job security-events: not a mapping	 e.g. hyperpolymath/bgp-backbone-lab/.github/workflows/scorecard.yml
+1	L2-dup :: /jobs/*/secrets	 e.g. hyperpolymath/excel-economic-numbers-tool/.github/workflows/mirror.yml
+1	L2-dup :: /jobs/*/steps[1]/run,/jobs/lint-workflows/steps[1]/run	 e.g. hyperpolymath/ideas-to-alphas/.github/workflows/workflow-linter.yml
+1	L1-parse :: (<unknown>): did not find expected key while parsing a block	 e.g. hyperpolymath/pimcore-fortress/.github/workflows/main-estate-audit.yml
+1	L2-dup :: /jobs/*/permissions/actions,/jobs/provenance/permissions/con	 e.g. hyperpolymath/project-wharf/.github/workflows/generator-generic-ossf-slsa3-publish.yml
+vulnerability-alerts values: {"read"=>31}
+scopes in use: contents=11192 actions=2957 security-events=1435 id-token=1117 issues=883 pull-requests=539 pages=488 attestations=161 packages=57 vulnerability-alerts=31 checks=14 statuses=12 repository-projects=2 deployments=1 discussions=1 code-quality=1

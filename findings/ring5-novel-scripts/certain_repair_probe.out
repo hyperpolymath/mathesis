@@ -1,0 +1,14 @@
+== cloudguard-server dogfood-gate.yml L398: valid as committed? false
+   re-indent line(s) [398] to k spaces: valid for k in [10, 11, 12, 13, 14, 15, 16]; distinct normal forms among valid: 7
+   delete the line(s) instead: valid? true (content-losing alternative)
+== rrecord-verity dogfood-gate.yml L305: valid as committed? false
+   re-indent line(s) [305] to k spaces: valid for k in [10, 11, 12, 13, 14, 15, 16]; distinct normal forms among valid: 7
+   delete the line(s) instead: valid? true (content-losing alternative)
+== bgp-backbone-lab scorecard.yml L20-22: valid as committed? false
+   re-indent line(s) [20, 21, 22] to k spaces: valid for k in [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]; distinct normal forms among valid: 1
+   delete the line(s) instead: valid? true (content-losing alternative)
+== kitchenspeak/.github/workflows/mirror.yml: valid as committed? false; single-line deletions that make it valid: ["timeout-minutes: 10"]
+== kitchenspeak/.github/workflows/rust-ci.yml: valid as committed? false; single-line deletions that make it valid: ["timeout-minutes: 10"]
+== kitchenspeak/.github/workflows/scorecard.yml: valid as committed? false; single-line deletions that make it valid: ["timeout-minutes: 10"]
+== lucidscript/.github/workflows/governance.yml: valid as committed? false; single-line deletions that make it valid: ["timeout-minutes: 10"]
+== veridical-simulation-core/.github/workflows/spark-theatre-gate.yml: valid as committed? false; single-line deletions that make it valid: ["timeout-minutes: 10"]

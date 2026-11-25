@@ -1,0 +1,12 @@
+# pre-repair blobs (parent of the named repair commit) run through pain-first-scripts/p2_workflow_closed_schema.rb, one file at a time (EST=<tmp>)
+blindperm-blocky-writer/ci.yml:  inhabit the closed sum-type schema: 0 1 does not parse e.g. a/b/.github/workflows/ci.yml 
+k9svc-Cladistics.jl/instant-sync.yml:  inhabit the closed sum-type schema: 0 1 does not parse e.g. a/b/.github/workflows/instant-sync.yml 
+scorecap-Axiom.jl/scorecard.yml:  inhabit the closed sum-type schema: 1 
+scorecard-absolute-zero/scorecard.yml:  inhabit the closed sum-type schema: 0 1 CallJob key 'timeout-minutes' e.g. a/b/.github/workflows/scorecard.yml 
+scorecard-aerie/scorecard.yml:  inhabit the closed sum-type schema: 1 
+timeout-absolute-zero/deno-ci.yml:  inhabit the closed sum-type schema: 0 1 CallJob key 'timeout-minutes' e.g. a/b/.github/workflows/deno-ci.yml 
+timeout-absolute-zero/governance.yml:  inhabit the closed sum-type schema: 0 1 CallJob key 'timeout-minutes' e.g. a/b/.github/workflows/governance.yml 
+timeout-absolute-zero/hypatia-scan.yml:  inhabit the closed sum-type schema: 0 1 CallJob key 'timeout-minutes' e.g. a/b/.github/workflows/hypatia-scan.yml 
+toolchain-proof-of-work/publish.yml:  inhabit the closed sum-type schema: 0 1 duplicate key e.g. a/b/.github/workflows/publish.yml 
+toolchain-proof-of-work/release.yml:  inhabit the closed sum-type schema: 0 1 duplicate key e.g. a/b/.github/workflows/release.yml 
+toolchain-proof-of-work/stress-test.yml:  inhabit the closed sum-type schema: 1 

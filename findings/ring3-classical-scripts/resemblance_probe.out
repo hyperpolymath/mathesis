@@ -1,0 +1,14 @@
+verification/proofs/agda/Properties.agda                   repos=  79 distinct=   4 largest-identical=  63
+verification/proofs/lean4/ApiTypes.lean                    repos=  79 distinct=   8 largest-identical=  44
+verification/proofs/coq/TypeSafety.v                       repos=  79 distinct=   4 largest-identical=  74
+verification/proofs/idris2/Types.idr                       repos=  81 distinct=  10 largest-identical=  27
+docs/status/PROOF-STATUS.adoc                              repos=  84 distinct=  80 largest-identical=   4
+docs/status/PROOF-NEEDS.adoc                               repos=  83 distinct=  77 largest-identical=   3
+src/interface/Abi/Types.idr                                repos=  74 distinct=  25 largest-identical=  47
+src/interface/Abi/Layout.idr                               repos=  74 distinct=   9 largest-identical=  64
+EXPLAINME.adoc                                             repos= 303 distinct= 290 largest-identical=   7
+docs/status/ROADMAP.adoc                                   repos=  89 distinct=  62 largest-identical=  24
+.github/CODEOWNERS                                         repos= 429 distinct=  74 largest-identical=  90
+LICENSES/MPL-2.0.txt                                       repos= 440 distinct=   4 largest-identical= 370
+LICENSES/CC-BY-SA-4.0.txt                                  repos= 443 distinct=   4 largest-identical= 373
+CODE_OF_CONDUCT.adoc                                       repos= 313 distinct= 169 largest-identical=  89

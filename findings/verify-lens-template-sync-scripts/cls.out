@@ -1,0 +1,42 @@
+file changes: 56229; on a path the template has ever held: 25479; not: 30750 (of which .github/workflows: 2290)
+ on template paths: new blob is a template version: 4384; old blob a template version (or file added): 6203; both: 3364; old-yes/new-no: 2839; new-yes/old-no: 1020
+commits with raw rows: 9662
+    6365  all-template-paths, no new blob is a template version
+    1273  mixed
+     820  no-template-path
+     491  PURE (all files: old=template version, new=template version)
+     486  all-template-paths, some new=template
+     216  all-new-are-template-versions (old was edited)
+      11  mixed:template-part-pure
+
+per subject (top 30 by commits): n | pure | allnew | tp-none-new | notp | mixed*
+ 352    3   10  283    3   53  fix: close the governance gate — spdx, permissions, sha pins, reusab
+ 296    0    0   89  207    0  fix: build hypatia escript from repo root (estate dogfood drift)
+ 251    2    0  232    0   17  fix: the invisible-character gate never matched anything 
+ 242    2    6   93   22  119  fix: pin third-party actions to full commit shas 
+ 242    2    0  237    0    3  fix: gate on the deed grammar, per the template and standards#N 
+ 196    3    2  191    0    0  fix: clear ossf scorecard startup_failure 
+ 187    2    3  129    0   53  fix: reconcile actions.lock so the lockfile validates 
+ 182    1    3  105    0   73  ci: bump hyperpolymath upstream reusable pins to head (fix workflow st
+ 173    0    0  173    0    0  chore: quality pass - fix stub/invalid names 
+ 171   70   94    4    0    3  fix: resolve workflow-linter self-matching and metadata issues
+ 160    4   78    0    0   78  fix: enforce granular permissions and add fuzzing placeholder
+ 152   14    0  123   13    2  ci: fix ci/cd configuration (campaigns cN-cN)
+ 150    0    0  150    0    0  fix: re-point validate-action references at the ecosystem repos 
+ 145    0    0  145    0    0  fix: bump aNml/kN-validate-action pins to canonical (standards#N) 
+ 144    0    0   52   34   58  fix: repoint references to the relocated contributing guide 
+ 141    2    9   18    0  112  fix: unbreak workflow yaml and add a complete actions.lock 
+ 138    0    0  138    0    0  fix: adopt canonical hypatia-scan.yml (env.home/scanner-layout + comme
+ 136    0    0  131    0    5  fix: update reusable workflow shas to @H 
+ 115    0    0  113    0    2  fix: update reusable workflow shas to @H
+ 113    0    0  113    0    0  fix: sync hypatia-scan.yml to canonical (kill cd-scanner build drift) 
+ 113   43   60    6    0    4  ci: deploy dogfood-gate, fix hypatia-scan, add pre-commit hooks
+ 112    2   20    0    0   90  fix: reconcile the workflows with actions.lock (gh-actions-lock) 
+ 109    3   80    0    0   26  fix: remove duplicate scm files from root
+ 107    0    0  107    0    0  fix: sync hypatia-scan.yml to canonical (N: env.home+phase-N+sarif) 
+ 106    2   41   16    5   42  chore: standardise, justfile, (rename,, fix, parse, errors,, remove, u
+ 105    1    0   94    1    9  fix: agentic licence line + aNml-validate-action repin 
+  97    0    0   52   13   32  fix: correct email jonathan.jewell → j.d.a.jewell
+  95    5    9   16   23   42  fix spdx headers: agpl-N-or-later → pmpl-N-or-later
+  95    5    0   88    0    2  fix: the hypatia gate could never fire — the defects that made it un
+  91    0    6   22   18   45  fix: spdx headers (agpl→pmpl), email, author name

@@ -1,0 +1,7 @@
+name                 files | rawHEAD  rawOLD  parsed    view    none | tmpl versions/views
+governance             379 |       0      35       9     129     206 | 32/13
+scorecard              355 |       5      25      11      13     301 | 48/14
+hypatia-scan           385 |       4      30       8      30     313 | 54/27
+mirror                 351 |      25      14       7      62     243 | 42/13
+secret-scanner         445 |       4      25      50      82     284 | 48/20
+TOTAL                 1915 |      38     129      85     316    1347

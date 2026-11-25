@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+= Types and tropes against estate upkeep: raw findings (interim copy)
+
+This branch is a temporary safety copy, not part of Mathesis. It holds the
+raw notes and probe scripts behind `docs/proposals/types-tropes-estate-upkeep.adoc`
+(hyperpolymath/mathesis#126). It moves to `hyperpolymath/types-tropes-upkeep`
+(private) once that repository exists, and this branch is then deleted.
+
+These are working notes by agents. Figures are as each agent measured them;
+only those reproduced by a verifier are marked tested in the proposal.
+`workflow-script.js` is the orchestration script that produced them.

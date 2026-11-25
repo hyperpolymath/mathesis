@@ -1,0 +1,11 @@
+distinct (pin, callee) pairs read: 312
+  1761  valid at pin
+    16  INVALID at pin
+    16  pin or file does not resolve in the local canon clone
+     1  no explicit grant (undecidable offline)
+--- INVALID at pin, by cause
+    11  scorecard-reusable.yml: lacks actions
+     2  mirror-reusable.yml: lacks actions
+     1  governance-reusable.yml: lacks actions
+     1  hypatia-scan-reusable.yml: lacks actions
+     1  scorecard-reusable.yml: lacks contents

@@ -1,0 +1,30 @@
+workflow files: 8005; fail to parse: 5
+   PARSE hyperpolymath/cloudguard-server/.github/workflows/dogfood-gate.yml
+   PARSE hyperpolymath/pimcore-fortress/.github/workflows/main-estate-audit.yml
+   PARSE hyperpolymath/rrecord-verity/.github/workflows/dogfood-gate.yml
+   PARSE stuff-of-awe/awesome-fsharp/.github/workflows/check-links.yml
+   PARSE stuff-of-awe/awesome-fsharp/.github/workflows/main.yml
+jobs: 12185; StepsJob: 10172; CallJob: 2005; inhabit neither constructor: 8
+   NEITHER hyperpolymath/bgp-backbone-lab/.github/workflows/scorecard.yml :: contents :: not a mapping
+   NEITHER hyperpolymath/bgp-backbone-lab/.github/workflows/scorecard.yml :: security-events :: not a mapping
+   NEITHER hyperpolymath/bgp-backbone-lab/.github/workflows/scorecard.yml :: id-token :: not a mapping
+   NEITHER hyperpolymath/kitchenspeak/.github/workflows/mirror.yml :: mirror :: call job with timeout-minutes
+   NEITHER hyperpolymath/kitchenspeak/.github/workflows/rust-ci.yml :: rust-ci :: call job with timeout-minutes
+   NEITHER hyperpolymath/kitchenspeak/.github/workflows/scorecard.yml :: analysis :: call job with timeout-minutes
+   NEITHER hyperpolymath/lucidscript/.github/workflows/governance.yml :: governance :: call job with timeout-minutes
+   NEITHER hyperpolymath/veridical-simulation-core/.github/workflows/spark-theatre-gate.yml :: spark-theatre-gate :: call job with timeout-minutes
+files with a duplicate mapping key: 14
+   DUP hyperpolymath/MacroPower.jl/.github/workflows/secret-scanner.yml :: jobs
+   DUP hyperpolymath/affinescript-vite/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/anvomidaviser/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/excel-economic-numbers-tool/.github/workflows/mirror.yml :: secrets
+   DUP hyperpolymath/fraying-model-computational-testbed/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/ideas-to-alphas/.github/workflows/workflow-linter.yml :: run
+   DUP hyperpolymath/mylangiser/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/otpiser/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/panoply/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/project-wharf/.github/workflows/generator-generic-ossf-slsa3-publish.yml :: actions,contents
+   DUP hyperpolymath/tlaiser/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/typedqliser/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/vcl-ut/.github/workflows/release.yml :: contents
+   DUP hyperpolymath/verisimiser/.github/workflows/release.yml :: contents

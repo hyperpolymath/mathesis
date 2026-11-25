@@ -1,0 +1,60 @@
+call sites: 1794   workflow files failing YAML parse (skipped): 3
+
+secret-scanner-reusable.yml  sites=388  distinct pins=44
+     388  SAFE
+
+governance-reusable.yml  sites=344  distinct pins=53
+     279  SAFE
+      65  effect: caller lacks actions
+
+scorecard-reusable.yml  sites=319  distinct pins=52
+     207  effect: caller lacks actions
+     110  SAFE
+       1  no explicit grant (repo default token; undecidable offline)
+       1  effect: caller lacks actions+contents
+
+hypatia-scan-reusable.yml  sites=313  distinct pins=51
+     254  SAFE
+      59  effect: caller lacks actions
+
+mirror-reusable.yml  sites=282  distinct pins=46
+     238  SAFE
+      44  effect: caller lacks actions
+
+rust-ci-reusable.yml  sites=91  distinct pins=26
+      91  SAFE
+
+spark-theatre-gate.yml  sites=16  distinct pins=10
+      16  SAFE
+
+k9-conformance.yml  sites=10  distinct pins=8
+      10  SAFE
+
+codeql-reusable.yml  sites=8  distinct pins=4
+       8  SAFE
+
+deed-conformance.yml  sites=8  distinct pins=8
+       8  SAFE
+
+ci-pipeline.yml  sites=6  distinct pins=3
+       6  SAFE
+
+cicd-squabbler-reusable.yml  sites=3  distinct pins=1
+       3  SAFE
+
+fork-governance-reusable.yml  sites=2  distinct pins=2
+       2  SAFE
+
+elixir-ci-reusable.yml  sites=1  distinct pins=1
+       1  SAFE
+
+js-runtimes-reusable.yml  sites=1  distinct pins=1
+       1  SAFE
+
+readme-derive-reusable.yml  sites=1  distinct pins=1
+       1  SAFE
+
+changelog-reusable.yml  sites=1  distinct pins=1
+       1  SAFE
+
+TOTAL SAFE to move to HEAD: 1417 of 1794

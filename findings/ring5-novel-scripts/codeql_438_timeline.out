@@ -1,0 +1,5 @@
+codeql-action 4.38.1, HEAD-reachable commits only (committer dates):
+merged bumps to 4.38.1: 49 commits in 48 repos; by day 09-21:9 09-22:12 09-23:5 09-24:4 09-25:5 09-26:12 09-27:2
+rollback commits (4.38.1 -> 4.38.0): 47, all on 2026-09-22
+repos that merged a bump to 4.38.1 after 2026-09-22: 27 (28 commits); overlap with repos rolled back on 09-22: 0
+HEAD workflows still labelled 4.38.1: 0

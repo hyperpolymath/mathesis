@@ -149,27 +149,49 @@ export function registryGrade(registryText, id) {
 }
 
 // Whether an ADR's Status section opens with "Accepted", read as AsciiDoc reads
-// it. A heading inside a delimited block (a comment, a listing, an example) is
-// not a section of the ADR. The ADR must have exactly one Status section, and
-// the first line after its heading must say "Accepted": a comment line or a
-// block delimiter there does not. A preprocessor directive could change which
-// lines count, so an ADR that holds one is not read: it fails closed, as an
-// unaccepted ADR.
+// it. It must never say yes where Asciidoctor finds no such section; where the
+// two could differ, it says no (fails closed).
+// - A heading inside a delimited block (a comment, a listing, an example) is
+//   not a section of the ADR.
+// - A heading starts a section only after a blank line, with no block attribute
+//   line or block title waiting above it, across blank lines and comments:
+//   "[discrete]" makes it a floating title.
+// - The ADR must have exactly one Status section, and its first line of text,
+//   after any comments, must say "Accepted".
+// - A preprocessor directive could change which lines count, so an ADR that
+//   holds one is not read.
 // A delimiter is one of these characters four or more times, "--", or a table's "|===".
 const DELIMITER = /^(?:([/\-.+*=_])\1{3,}|--|[|,:!]={3,})$/;
 const PREPROCESSOR = /^(?:ifdef|ifndef|ifeval|endif|include)::/;
+// What each line is: inside a delimited block or one of its delimiters
+// ('block'), part of a comment, which AsciiDoc drops ('comment'), or text.
+const kindOf = (l, block) => {
+  if (block) return block.startsWith('//') ? 'comment' : 'block';
+  return l.startsWith('//') ? 'comment' : 'text';
+};
+function lineKinds(lines) {
+  let open = null;
+  return lines.map(l => {
+    const block = open ?? (DELIMITER.test(l) ? l : null);
+    const closes = open !== null && l === open;
+    open = closes ? null : block;
+    return kindOf(l, block);
+  });
+}
+function startsSection(lines, kinds, i) {
+  if (i > 0 && lines[i - 1] !== '') return false;
+  let j = i - 1;
+  while (j >= 0 && (lines[j] === '' || kinds[j] === 'comment')) j--;
+  return j < 0 || !/^(?:\[.*\]|\.[^.\s].*)$/.test(lines[j]);
+}
 export function adrAccepted(text) {
   const lines = text.split('\n').map(l => l.trimEnd());
   if (lines.some(l => PREPROCESSOR.test(l))) return false;
-  const heads = [];
-  let open = null;
-  lines.forEach((l, i) => {
-    if (open) open = l === open ? null : open;
-    else if (DELIMITER.test(l)) open = l;
-    else if (/^=+ Status$/.test(l)) heads.push(i);
-  });
+  const kinds = lineKinds(lines);
+  const heads = lines.flatMap((l, i) =>
+    kinds[i] === 'text' && /^=+ Status$/.test(l) && startsSection(lines, kinds, i) ? [i] : []);
   if (heads.length !== 1) return false;
-  const next = lines.find((l, i) => i > heads[0] && l.trim() !== '');
+  const next = lines.find((l, i) => i > heads[0] && l !== '' && kinds[i] !== 'comment');
   return /^\**Accepted\b/.test(next?.trim() ?? '');
 }
 

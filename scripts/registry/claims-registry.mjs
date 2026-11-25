@@ -99,6 +99,10 @@ export const CHECKER = {
 // rows obey this rule, and readers that cite a claim (the ultraplan) use it too.
 export const CLAIM_REPO = /^[-\w.]+\/[-\w.]+$/;
 export const CLAIM_NAME = /^[-\w.]+$/;
+// A status document is named by a relative path in its repository. The view puts
+// it in a link's target, so it uses the same characters, with "/" between its
+// parts, and no part is "." or "..": "[", "]", "|", "#" and white space cannot occur.
+const isDocPath = p => p.split('/').every(s => CLAIM_NAME.test(s) && s !== '.' && s !== '..');
 export function isClaimId(id) {
   if (typeof id !== 'string') return false;
   const i = id.indexOf('#');
@@ -122,7 +126,7 @@ export function validate(rows, inventory) {
     seen.add(r.id);
     if (!KINDS.has(r.kind)) throw new Error(`Unknown kind ${r.kind}: ${r.id}`);
     if (typeof r.statement !== 'string' || r.statement.length < 10) throw new Error(`Missing statement: ${r.id}`);
-    if (typeof r.status_doc !== 'string' || r.status_doc === '') throw new Error(`Missing status_doc: ${r.id}`);
+    if (typeof r.status_doc !== 'string' || !isDocPath(r.status_doc)) throw new Error(`Missing or invalid status_doc (a relative path of letters, digits, "-", "_", "." and "/"): ${r.id}`);
     if (typeof r.source_commit !== 'string' || !/^[0-9a-f]{40}$/.test(r.source_commit)) throw new Error(`source_commit must be 40 lowercase hex: ${r.id}`);
     if (r.kind === 'theorem') {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)

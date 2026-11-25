@@ -91,7 +91,12 @@ test('validation is closed over the ADR 0004 field set', () => {
   expect(validate([{...theorem, receipt}], inv)).toHaveLength(1);
   expect(() => validate([{...theorem, receipt: {...receipt, pwg: 'PWG-1'}}], inv)).toThrow(/Unknown receipt field/);
   const {status_doc: _, ...missing} = theorem;
-  expect(() => validate([missing], inv)).toThrow(/Missing status_doc/);
+  expect(() => validate([missing], inv)).toThrow(/Missing or invalid status_doc/);
+  // The view puts the path in a link's target, so it holds only what survives there.
+  for (const status_doc of ['', 'docs/P[old].adoc', 'docs/a b.adoc', 'docs/x|y.adoc', 'a#b.adoc', '../x.adoc', '/abs.adoc', 'a//b.adoc', './x.adoc'])
+    expect(() => validate([{...theorem, status_doc}], inv)).toThrow(/Missing or invalid status_doc/);
+  for (const status_doc of ['PROOF-STATUS.adoc', 'docs/status/PROOF-STATUS.adoc', 'v1.2/notes_x.adoc'])
+    expect(validate([{...theorem, status_doc}], inv)).toHaveLength(1);
 });
 
 test('only the pinned reader is loaded', async () => {

@@ -63,6 +63,12 @@ When every slot is taken, the page and the picture still show the frontier, and
 say that it is ready but cannot start.
 * *Blocked* must say what blocks it.
 
+Each text (a name, a summary, a piece of counsel, a reason) is one line of
+AsciiDoc inline markup. A code span, bold text or an attribute reference such as
+`+{nbsp}+` renders as it would in any AsciiDoc paragraph. Block syntax cannot
+occur: the generator refuses a line break or any other control character, and it
+writes a summary, the one text that starts a line of the page, after `+{empty}+`.
+
 The value marks (0 to 3 on maths, science, engineering, economics, publications,
 teaching, soundness and ecosystem) are judgements, not measurements. They are
 written down so they can be argued with. The page labels them as judgements.

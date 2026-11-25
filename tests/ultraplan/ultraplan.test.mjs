@@ -378,6 +378,19 @@ test('an ADR is accepted only by its own one Status section', () => {
   expect(adrAccepted(adr('=== Status\n----\nAccepted\n----'))).toBe(false);
   expect(adrAccepted(adr('include::status.adoc[]\n\n=== Status\n\nAccepted'))).toBe(false);
   expect(adrAccepted(adr('// === Status\n// Accepted'))).toBe(false);
+  // Each of these agrees with Asciidoctor 2.0.26: a "[discrete]" waiting above the
+  // heading, across blank lines and comments, makes it a floating title, not a
+  // section; a heading straight after a paragraph line belongs to the paragraph.
+  for (const above of ['[discrete]\n', '[float]\n', '[discrete]\n\n', '[discrete]\n////\nx\n////\n\n', '[discrete]\n// note\n\n', 'Some text.\n'])
+    expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n// a comment\nAccepted'))).toBe(true);
+  // A heading inside a block is not a section even with a blank line above it.
+  for (const block of ['----\nexample\n\n=== Status\n\nAccepted\n----', '////\nold\n\n=== Status\n\nAccepted\n////', '====\n\n=== Status\n\nAccepted\n===='])
+    expect(adrAccepted(adr(block))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n\n////\nAccepted\n////\n\nProposed.'))).toBe(false);
+  // Asciidoctor reads a section here, but the reader says no: it fails closed on
+  // any attribute line or block title above a Status heading.
+  for (const above of ['[[status]]\n', '.A title\n']) expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
 });
 
 test('the committed views match the committed data', () => {

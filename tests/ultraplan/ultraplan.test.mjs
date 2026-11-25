@@ -65,6 +65,18 @@ const refuses = (opts, re) => expect(() => generate(fixture(opts))).toThrow(re);
 const strip = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
 const swap = (id, extra, nodes = BASE) => nodes.map(n => n.id === id ? strip({...n, ...extra}) : n);
 
+// The contrarian names the node the council rates lowest; leverage only breaks a
+// tie between nodes rated equally low, and the id breaks a tie after that.
+test('the contrarian takes the lowest-rated node, and unlocks break the tie', () => {
+  const nodes = [...BASE, node('alpha', {needs: ['root']}), node('zeta', {needs: ['root']}), node('zeta-next', {needs: ['zeta']})];
+  const d = generate(fixture({nodes})).derived;
+  // alpha and zeta are both rated 0, below cheap (1); zeta unlocks one live node, alpha none.
+  expect(d.picks.get('contrarian').id).toBe('zeta');
+  // A node that unlocks more but is rated higher is not the contrarian's.
+  const rated = nodes.map(n => (n.id === 'zeta' ? {...n, value: {maths: 1}} : n));
+  expect(generate(fixture({nodes: rated})).derived.picks.get('contrarian').id).toBe('alpha');
+});
+
 test('derives eras, the frontier, forks, confluences and each advisor\'s pick', () => {
   const out = generate(fixture());
   const d = out.derived;

@@ -446,8 +446,11 @@ export function validate({advisors, nodes, expeditions}, ctx) {
 // ── Derivation ───────────────────────────────────────────────────────────────
 // Each advisor's pick from the frontier. An advisor that reads a value key
 // ranks the nodes it marks above zero by that mark, then as the council
-// ranks: by leverage, then by value for effort. The contrarian takes the
-// frontier node the council rates lowest that still unlocks the most. The me
+// ranks: by leverage, then by value for effort. The contrarian asks which node
+// everyone is overlooking: it takes the frontier node the council rates lowest
+// (its marks summed), and among nodes rated equally low, the one that unlocks
+// the most. Leverage only breaks the tie: ranked by leverage first, it would
+// name what the council already ranks first. The me
 // advisor reads no mark, since another advisor's mark is not the owner's
 // preference: it ranks the nodes the owner tagged owner_value as the council
 // ranks, and has no notes.

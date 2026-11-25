@@ -119,8 +119,11 @@ zero: by the mark, then by how much the node unlocks, then by value for effort
 (its marks summed, over its size). A node it marks zero is
 not one it would pick, so when no node is marked above zero the advisor names
 nothing.
-* The contrarian names the frontier node the council rates lowest that still
-unlocks the most. That keeps the road not taken in view.
+* The contrarian asks which node everyone is overlooking. It names the frontier
+node the council rates lowest (its value marks summed), and among nodes rated
+equally low, the one that unlocks the most. Leverage only breaks the tie: ranked
+by leverage first, the contrarian would name what the council already ranks
+first. That keeps the road not taken in view.
 * The *me* advisor looks out for what could help the owner's own life. Its notes
 are kept privately, outside this public repository and out of every feed: in
 a private panel that the owner owns (owner ruling 2026-11-24; which system hosts

@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
+import {isClaimId, validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -226,4 +226,11 @@ test('the checker runs only beside the pinned canon reader', async () => {
   expect(await checkerScript(std)).toBe(path.resolve(std, CHECKER.path));
   writeFileSync(path.join(std, READER.path), '// changed\n', {flag: 'a'});
   await expect(checkerScript(std)).rejects.toThrow(/is not the pinned file/);
+});
+
+// A claim's repository is named by GitHub's own rule: the registry makes a
+// github.com link and a clone URL from it.
+test('a claim id names a GitHub repository by GitHub\'s own rule', () => {
+  expect(isClaimId('hyperpolymath/resource-algebra#C-1')).toBe(true);
+  for (const id of ['../..#C-1', 'o/..#C-1', 'o_x/r#C-1', 'o#C-1', '#C-1', 'o/r#']) expect(isClaimId(id)).toBe(false);
 });

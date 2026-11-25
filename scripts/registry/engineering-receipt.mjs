@@ -4,6 +4,7 @@
 // validates their identity, declared source binding and retained evidence, not
 // the truth of an execution log or compiler correctness. See ADR 0006.
 import {jcs} from './theory-ledger.mjs';
+import {isGitHubRepo} from '../repo/github.mjs';
 
 const need = (ok, message) => { if (!ok) throw new Error(`engineering receipt: ${message}`); };
 const object = (v, fields) => {
@@ -38,7 +39,7 @@ export function parseEngineeringReceipt(text) {
   need(r.profile === 'engineering-receipt' && r.schema_version === '1.0.0', 'unsupported profile/version');
   need(r.kind === 'demonstration', 'engineering evidence is only a demonstration');
   for (const k of ['repository', 'source_commit', 'claim', 'statement', 'status_doc']) string(r[k]);
-  need(/^[-\w.]+\/[-\w.]+$/.test(r.repository), 'invalid repository');
+  need(isGitHubRepo(r.repository), 'invalid repository');
   need(/^[a-f0-9]{40}$/.test(r.source_commit) && !/^0+$/.test(r.source_commit), 'invalid implementation source commit');
   file(r.source_inputs);
   file(r.evidence_manifest);

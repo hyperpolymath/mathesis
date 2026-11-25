@@ -34,6 +34,7 @@ import {jcs} from '../registry/theory-ledger.mjs';
 import {isClaimId, isDocPath} from '../registry/claims-registry.mjs';
 import {adrStatus} from '../decisions/adr-status.mjs';
 import {repoFiles} from '../repo/files.mjs';
+import {isGitHubRepo} from '../repo/github.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DIR = 'docs/ultraplan';
@@ -229,10 +230,10 @@ const occurrences = (text, s) => {
   return k;
 };
 const REF = {
-  issue: r => (Object.keys(r).length === 1 && typeof r.issue === 'string' && /^[\w.-]+\/[\w.-]+#[1-9]\d*$/.test(r.issue)
+  issue: r => (Object.keys(r).length === 1 && typeof r.issue === 'string' && /^[^#]+#[1-9]\d*$/.test(r.issue) && isGitHubRepo(r.issue.split('#')[0])
     ? null : `ref issue ${JSON.stringify(r.issue)} is not OWNER/REPO#N, alone`),
   pinned(r) {
-    if (typeof r.repo !== 'string' || !/^[\w.-]+\/[\w.-]+$/.test(r.repo)) return `ref repo ${JSON.stringify(r.repo)} is not OWNER/REPO`;
+    if (!isGitHubRepo(r.repo)) return `ref repo ${JSON.stringify(r.repo)} is not OWNER/REPO`;
     return typeof r.commit === 'string' && /^[0-9a-f]{40}$/.test(r.commit) ? null : `ref commit ${JSON.stringify(r.commit)} is not a full commit id`;
   },
   here(r, ctx) {
@@ -296,7 +297,7 @@ const NODE_RULES = [
   [n => isSize(n.size), oneOf('size', Object.keys(SIZES))],
   [n => isStr(n.summary, 600), 'summary is required (at most 600 characters)'],
   ...['needs', 'rivals', 'evidence', 'refs'].map(k => [n => n[k] === undefined || Array.isArray(n[k]), `${k} must be a list`]),
-  [n => n.where === undefined || (typeof n.where === 'string' && /^(estate|upstream):[\w.-]+\/[\w.-]+$/.test(n.where)),
+  [n => n.where === undefined || (typeof n.where === 'string' && /^(estate|upstream):/.test(n.where) && isGitHubRepo(n.where.replace(/^\w+:/, ''))),
     'where is estate:OWNER/REPO or upstream:OWNER/REPO, or absent for this repository'],
   [n => n.owner_value === undefined || n.owner_value === 'high', 'owner_value is "high" or absent'],
   [n => n.status !== 'blocked' || isStr(n.blocked_by), 'a blocked node says what blocks it (blocked_by)'],

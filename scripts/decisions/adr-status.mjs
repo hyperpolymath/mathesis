@@ -12,8 +12,8 @@
 // and once in its prose, as the opening word of its Status section. The header
 // is what a machine reads; the section is what a person reads; `check` keeps
 // the two in step. An ADR counts as ACCEPTED only when both say so.
-import {readdirSync, readFileSync, lstatSync} from 'node:fs';
 import path from 'node:path';
+import {repoFiles} from '../repo/files.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DECISIONS = 'docs/decisions';
@@ -123,11 +123,16 @@ export function sectionStatus(text) {
 //   and none ends in a continuation ("\" or "+"). An author or revision line,
 //   or a comment block, could change what the header holds, so it is refused.
 // - Exactly one line in the whole file sets or unsets "status", and it is in
-//   the header. Nothing later (":status:", ":status!:", ":!status:", or an
-//   inline "{set:...}") can change it.
+//   the header. Nothing later can change it: no ":status:", ":status!:" or
+//   ":!status:", and no inline reference that changes an attribute
+//   ("{set:...}", "{counter:...}" or "{counter2:...}"; a counter turns
+//   ACCEPTED into ACCEPTEE). Any such reference, to any attribute, leaves the
+//   header unread.
 // - Its value is one of the template's words: PROPOSED, ACCEPTED, DEPRECATED,
 //   SUPERSEDED (optionally "by NNNN") or REJECTED, written exactly so.
 const ENTRY = /^:!?[\w-]+!?:(?: |$)/;
+// An inline reference that changes an attribute where it stands.
+const MUTATES = /\{(?:set|counter2?):/i;
 const STATUS_ENTRY = /^:!?status!?:/;
 const STATUS_VALUE = /^:status: (PROPOSED|ACCEPTED|DEPRECATED|SUPERSEDED(?: by \d{4})?|REJECTED)$/;
 function headerRange(lines) {
@@ -142,7 +147,7 @@ function headerRange(lines) {
 }
 export function headerStatus(text) {
   const lines = linesOf(text);
-  if (lines.some(l => PREPROCESSOR.test(l) || l.includes('{set:'))) return null;
+  if (lines.some(l => PREPROCESSOR.test(l) || MUTATES.test(l))) return null;
   const range = headerRange(lines);
   if (range === null) return null;
   const entries = lines.flatMap((l, i) => (STATUS_ENTRY.test(l) ? [i] : []));
@@ -168,13 +173,18 @@ export const adrAccepted = text => {
 // Every decision record, NNNN-title.adoc with the boilerplate NNNN-template.adoc
 // set aside, states its status in both places and they agree; or it states it in
 // neither (a status the owner has yet to set), which is reported, not refused.
+// The records are the files git tracks in docs/decisions, read at their own path
+// (scripts/repo/files.mjs): a directory or a record that is a link leads out of
+// the repository, so it is refused, and never read.
 export function checkDecisions(root = ROOT) {
-  const dir = path.join(root, DECISIONS);
-  const files = readdirSync(dir).filter(f => /^\d{4}-.+\.adoc$/.test(f) && !/^\d{4}-template\.adoc$/.test(f)).sort();
-  return files.map(f => {
-    const p = path.join(dir, f);
-    if (!lstatSync(p).isFile()) return {file: f, problem: 'is not a plain file'};
-    const s = adrStatus(readFileSync(p, 'utf8'));
+  const files = repoFiles(root);
+  if (!files.isDir(DECISIONS)) return [{file: DECISIONS, problem: 'is not a directory in the repository that holds a file git tracks'}];
+  const records = files.under(DECISIONS).map(p => p.slice(DECISIONS.length + 1))
+    .filter(f => /^\d{4}-[^/]+\.adoc$/.test(f) && !/^\d{4}-template\.adoc$/.test(f));
+  return records.map(f => {
+    const p = `${DECISIONS}/${f}`;
+    if (!files.isFile(p)) return {file: f, problem: 'is not a file that git tracks in the repository, at its own path'};
+    const s = adrStatus(files.read(p));
     if (s.inStep) return {file: f, status: s.header};
     if (s.header === null && s.section === null) return {file: f, status: null};
     return {file: f, problem: `its header says ${s.header ?? 'nothing readable'} but its Status section says ${s.section ?? 'nothing readable'}`};

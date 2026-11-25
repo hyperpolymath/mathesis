@@ -10,6 +10,13 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* **A repository named `../..` is no longer accepted.** The census, the claims
+  registry, engineering receipts and the ultraplan each checked `OWNER/REPO`
+  with a pattern like `[-\w.]+/[-\w.]+`, which accepts dot segments. A
+  github.com link made from such a name resolves, in a browser, to some other
+  page. All of them now use one rule, GitHub's own, in `scripts/repo/github.mjs`:
+  a login, then a repository name that is not dots alone. Every name in the
+  current data passes it.
 * **A `CI/gate` publisher may not filter `workflow_run` by branch.**
   GitHub applies `branches` and `branches-ignore` to the triggering run's
   branch, so a filtered publisher never posts the status on a PR head and the
@@ -92,7 +99,11 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
      a linked worktree read the same; An ADR is accepted only when its
      header states `:status: ACCEPTED` and its Status section agrees (owner
      ruling 2026-11-25), each read by `scripts/decisions/adr-status.mjs` so
-     that it never finds a status Asciidoctor would not;
+     that it never finds a status Asciidoctor would not. A record holding an
+     inline reference that changes an attribute (`{set:...}`, `{counter:...}`
+     or `{counter2:...}`; a counter turns ACCEPTED into ACCEPTEE) has no
+     readable header. `just adr-check` reads the records git tracks, each at
+     its own path, and fails when `docs/decisions` is a link;
   ** a done node whose needs are not done;
   ** a cycle;
   ** more than three active nodes;

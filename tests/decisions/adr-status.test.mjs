@@ -151,6 +151,13 @@ test('nothing but the one header entry can set or unset the status', () => {
   // A second entry, an unset, an inline set or a conditional anywhere.
   for (const body of [':status: PROPOSED\n', ':status!:\n', ':!status:\n', 'Text {set:status:PROPOSED} here.\n', 'ifdef::x[]\n:status: PROPOSED\nendif::[]\n'])
     expect(headerStatus(doc(':status: ACCEPTED', body))).toBe(null);
+  // A counter changes the attribute it names (Asciidoctor 2.0.26 turns ACCEPTED
+  // into ACCEPTEE), so any inline reference that changes an attribute, whichever
+  // it names and in whatever case, leaves the header unread.
+  for (const ref of ['{counter:status}', '{counter2:status}', '{counter:status:A}', '{counter:other}', '{COUNTER:status}', '{Set:status:x}'])
+    expect(headerStatus(doc(':status: ACCEPTED', `Accepted ${ref}\n`))).toBe(null);
+  // A brace that changes nothing is plain text.
+  expect(headerStatus(doc(':status: ACCEPTED', 'A {status} and a {counterpart}.\n'))).toBe('ACCEPTED');
   expect(headerStatus(doc(':status: ACCEPTED\n:status: ACCEPTED'))).toBe(null);
   // An included file could set the status where no line here does.
   expect(headerStatus(doc(':status: ACCEPTED', 'include::more.adoc[]\n'))).toBe(null);
@@ -176,12 +183,20 @@ test('an ADR is accepted only when its header and its Status section both say so
   expect(adrAccepted(adr(':status: PROPOSED', 'Proposed.'))).toBe(false);
 });
 
+// git, run in a fixture: the check reads only the records git tracks there.
+const git = (root, ...args) => {
+  const r = Bun.spawnSync(['git', '-C', root, '-c', 'init.defaultBranch=main', ...args]);
+  if (r.exitCode !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr}`);
+};
+
 test('the check keeps every decision record in step, and reports one that states none', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'adr-'));
   roots.push(root);
   const dir = path.join(root, 'docs/decisions');
   mkdirSync(dir, {recursive: true});
-  const put = (f, s) => writeFileSync(path.join(dir, f), s);
+  git(root, 'init', '-q');
+  // Each record is written and tracked, as a commit would track it.
+  const put = (f, s) => { writeFileSync(path.join(dir, f), s); git(root, 'add', '-A'); };
   put('0001-a.adoc', '= A\n:status: ACCEPTED\n\n=== Status\n\nAccepted\n');
   put('0002-b.adoc', '= B\n\n== Scope\n\nNo status yet.\n');
   put('0003-template.adoc', '= Template\n:status: PROPOSED\n');
@@ -201,7 +216,23 @@ test('the check keeps every decision record in step, and reports one that states
   roots.push(other);
   writeFileSync(path.join(other, 'x.adoc'), '= X\n:status: ACCEPTED\n\n=== Status\n\nAccepted\n');
   symlinkSync(path.join(other, 'x.adoc'), path.join(dir, '0007-link.adoc'));
-  expect(checkDecisions(root).find(r => r.file === '0007-link.adoc')).toEqual({file: '0007-link.adoc', problem: 'is not a plain file'});
+  git(root, 'add', '-A');
+  expect(checkDecisions(root).find(r => r.file === '0007-link.adoc')).toEqual({file: '0007-link.adoc', problem: 'is not a file that git tracks in the repository, at its own path'});
+  // A record git does not track is not one, nor is a file in a directory named like one.
+  writeFileSync(path.join(dir, '0008-draft.adoc'), '= D\n:status: ACCEPTED\n\n=== Status\n\nProposed.\n');
+  mkdirSync(path.join(dir, '0009-notes'));
+  writeFileSync(path.join(dir, '0009-notes/x.adoc'), '= N\n:status: ACCEPTED\n\n=== Status\n\nProposed.\n');
+  git(root, 'add', 'docs/decisions/0009-notes');
+  expect(checkDecisions(root).map(r => r.file)).toEqual(['0001-a.adoc', '0002-b.adoc', '0004-c.adoc', '0005-d.adoc', '0006-e.adoc', '0007-link.adoc']);
+  // A decisions directory that is a link out of the repository is refused, and
+  // nothing through it is read, though git tracks the link.
+  const linked = mkdtempSync(path.join(tmpdir(), 'adr-linked-'));
+  roots.push(linked);
+  mkdirSync(path.join(linked, 'docs'));
+  symlinkSync(dir, path.join(linked, 'docs/decisions'));
+  git(linked, 'init', '-q');
+  git(linked, 'add', '-A');
+  expect(checkDecisions(linked)).toEqual([{file: 'docs/decisions', problem: 'is not a directory in the repository that holds a file git tracks'}]);
 });
 
 test('the decision records here are in step', () => {

@@ -31,7 +31,9 @@ the word in any case and add what it likes after it, such as "*Accepted
 
 `just adr-check` (part of `just check-views`) runs
 `scripts/decisions/adr-status.mjs check`. It fails when a record's header and
-Status section disagree, or when only one of them states a status. A record that
+Status section disagree, or when only one of them states a status. It reads the
+records that git tracks here, each at its own path: when this directory, or a
+record, is a link, the check fails and reads nothing through it. A record that
 states neither is listed, for the owner to set; it does not count as accepted.
 
 Both are read conservatively, so the reader never finds a status Asciidoctor
@@ -41,7 +43,9 @@ would not:
 the lines up to the first blank line. Each of those lines is a line comment or
 an attribute entry, and none ends in a continuation. Exactly one line in the
 whole record sets or unsets `status`, and it is in the header. A preprocessor
-directive or an inline `{set:...}` anywhere leaves the header unread.
+directive, or an inline reference that changes an attribute (`{set:...}`,
+`{counter:...}` or `{counter2:...}`), anywhere leaves the header unread: a
+counter turns ACCEPTED into ACCEPTEE.
 * In the Status section, every line that could be a heading titled Status counts,
 inside a block or not. The section is read only when exactly one does, and that
 one is a plain section heading (`==` to `======`, then `Status`) whose first

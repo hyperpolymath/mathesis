@@ -30,6 +30,7 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
+import {GITHUB_REPO} from '../repo/github.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex, HOME} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
@@ -98,7 +99,8 @@ export const CHECKER = {
 // name, so every id survives the registry view, where it is a link's text inside
 // a table row: "]", "|", "#" and white space cannot occur in it. The registry's
 // rows obey this rule, and readers that cite a claim (the ultraplan) use it too.
-export const CLAIM_REPO = /^[-\w.]+\/[-\w.]+$/;
+// A claim's repository is named by GitHub's own rule (scripts/repo/github.mjs).
+export const CLAIM_REPO = GITHUB_REPO;
 export const CLAIM_NAME = /^[-\w.]+$/;
 // A status document is named by a relative path in its repository. The view puts
 // it in a link's target, so it uses the same characters, with "/" between its

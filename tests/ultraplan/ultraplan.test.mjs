@@ -267,6 +267,10 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({nodes: swap('paper', {where: 'elsewhere'})}, /where is estate:OWNER\/REPO/);
   // A list holding a valid place is not a place (a regular expression would read it as one).
   refuses({nodes: swap('paper', {where: ['estate:o/r']})}, /where is estate:OWNER\/REPO/);
+  // A place is a GitHub repository by GitHub's own rule: no dot segments.
+  for (const where of ['estate:../..', 'upstream:o/..', 'estate:o', 'elsewhere:o/r'])
+    refuses({nodes: swap('paper', {where})}, /where is estate:OWNER\/REPO/);
+  expect(() => generate(fixture({nodes: swap('paper', {where: 'upstream:o/.github'})}))).not.toThrow();
   // A list field that is not a list is refused by name, not by a crash.
   refuses({nodes: swap('paper', {needs: {}})}, /node paper: needs must be a list/);
   refuses({nodes: swap('paper', {rivals: 'cheap'})}, /node paper: rivals must be a list/);
@@ -356,6 +360,10 @@ test('a ref points at one place, and each ref in this repository is checked', ()
   refused([{commit: 'a'.repeat(40), path: 'a.adoc', repo: 'nobody'}], /ref repo "nobody" is not OWNER\/REPO/);
   refused([{commit: 'a'.repeat(40), path: 'a.adoc'}], /ref repo undefined is not OWNER\/REPO/);
   refused([{issue: 'standards#1705'}], /ref issue "standards#1705" is not OWNER\/REPO#N, alone/);
+  // A link made from "../.." would resolve to some other page of GitHub.
+  refused([{commit: 'a'.repeat(40), path: 'a.adoc', repo: '../..'}], /ref repo "\.\.\/\.\." is not OWNER\/REPO/);
+  refused([{issue: '../..#1'}], /ref issue "\.\.\/\.\.#1" is not OWNER\/REPO#N, alone/);
+  refused([{issue: 'o/r#1#2'}], /is not OWNER\/REPO#N, alone/);
   refused([{issue: 'o/r#1', path: 'README.adoc'}], /is not OWNER\/REPO#N, alone/);
   refused([{line: 92, path: 'README.adoc'}], /node paper: ref: unknown field "line"/);
   refused(['README.adoc:46'], /node paper: ref: must be an object/);

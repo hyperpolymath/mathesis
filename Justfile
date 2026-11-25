@@ -712,7 +712,7 @@ check: check-views site-check check-proofs receipt-check
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
 # Views current: catalogue, census tests, atlas, claims registry, bridges and
 # the worked cohort examples
-check-views: catalogue-check census-test atlas-check registry-check applied-check ultraplan-check
+check-views: catalogue-check census-test atlas-check registry-check applied-check ultraplan-check adr-check
 
 # Needs agda, coqc and lean, e.g. in the pinned Guix:
 #   guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
@@ -809,6 +809,13 @@ ultraplan:
 ultraplan-check: registry-check
     bun scripts/ultraplan/ultraplan.mjs check
     bun test tests/ultraplan/
+
+# Fail if a decision record's header status (`:status:`) and its Status section
+# disagree, or only one of them states a status (owner ruling 2026-11-25). A
+# record that states neither is listed, for the owner to set.
+adr-check:
+    bun scripts/decisions/adr-status.mjs check
+    bun test tests/decisions/
 
 # ── mathesis: static site of the generated views (re-anchoring plan WO 4.3) ──
 

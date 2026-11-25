@@ -85,10 +85,10 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 +
   The generator refuses:
   ** a done node without evidence that holds: a file, a claim grade the
-     registry derives, or an accepted ADR. The ADR reader over-counts: every
-     line that could be a Status heading counts, inside a block or not, and
-     the ADR is read only when exactly one does, a plain section whose first
-     paragraph begins "Accepted";
+     registry derives, or an accepted ADR. An ADR is accepted only when its
+     header states `:status: ACCEPTED` and its Status section agrees (owner
+     ruling 2026-11-25), each read by `scripts/decisions/adr-status.mjs` so
+     that it never finds a status Asciidoctor would not;
   ** a done node whose needs are not done;
   ** a cycle;
   ** more than three active nodes;

@@ -6,9 +6,10 @@ import {test, expect, afterAll} from 'bun:test';
 import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, symlinkSync, existsSync, readdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, staleViews, writeViews, ACTIVE_LIMIT, ROOT, VIEW, SVG, RULES}
+import {generate, validate, derive, readSource, registryGrade, context, staleViews, writeViews, ACTIVE_LIMIT, ROOT, VIEW, SVG, RULES}
   from '../../scripts/ultraplan/ultraplan.mjs';
 import {jcs} from '../../scripts/registry/theory-ledger.mjs';
+import {adrAccepted} from '../../scripts/decisions/adr-status.mjs';
 
 const roots = [];
 afterAll(() => { for (const r of roots) rmSync(r, {recursive: true, force: true}); });
@@ -37,8 +38,8 @@ function fixture({advisors = ADVISORS, nodes = BASE, expeditions = [], registry 
   mkdirSync(path.join(root, 'docs/decisions'), {recursive: true});
   mkdirSync(path.join(root, 'docs/atlas/generated'), {recursive: true});
   writeFileSync(path.join(root, 'README.adoc'), '= Fixture\n');
-  writeFileSync(path.join(root, 'docs/decisions/0004-claims-registry.adoc'), '= ADR\n\n=== Status\n\n*Accepted (ratified).*\n');
-  writeFileSync(path.join(root, 'docs/decisions/0005-jcs.adoc'), '= ADR\n\n=== Status\n\n*Proposed. Not accepted.*\n');
+  writeFileSync(path.join(root, 'docs/decisions/0004-claims-registry.adoc'), '= ADR\n:status: ACCEPTED\n\n=== Status\n\n*Accepted (ratified).*\n');
+  writeFileSync(path.join(root, 'docs/decisions/0005-jcs.adoc'), '= ADR\n:status: PROPOSED\n\n=== Status\n\n*Proposed. Not accepted.*\n');
   writeFileSync(path.join(root, 'docs/atlas/generated/registry.adoc'), registry);
   const jl = rows => rows.map(r => jcs(r) + '\n').join('');
   writeFileSync(path.join(root, 'docs/ultraplan/advisors.jsonl'), raw.advisors ?? jl(advisors));
@@ -135,7 +136,7 @@ test('done needs evidence that holds', () => {
   rmSync(path.join(reg, 'docs/atlas/generated/registry.adoc'));
   symlinkSync(path.join(outside, 'registry.adoc'), path.join(reg, 'docs/atlas/generated/registry.adoc'));
   expect(() => generate(reg)).toThrow(/docs\/atlas\/generated\/registry\.adoc is not a file in the repository/);
-  refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is not Accepted/);
+  refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is PROPOSED, not ACCEPTED/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   // Two records with one number are refused, not picked between by directory order.
   const twin = fixture();
@@ -144,7 +145,7 @@ test('done needs evidence that holds', () => {
   // Only the boilerplate NNNN-template.adoc is set aside: a record whose title says template counts,
   // and a template that shares a number with a record does not make it ambiguous.
   const titled = fixture({nodes: swap('tool', {evidence: [{adr: '0006'}]})});
-  writeFileSync(path.join(titled, 'docs/decisions/0006-template-inheritance.adoc'), '= ADR\n\n=== Status\n\n*Accepted.*\n');
+  writeFileSync(path.join(titled, 'docs/decisions/0006-template-inheritance.adoc'), '= ADR\n:status: ACCEPTED\n\n=== Status\n\n*Accepted.*\n');
   expect(() => generate(titled)).not.toThrow();
   const boiler = fixture();
   writeFileSync(path.join(boiler, 'docs/decisions/0004-template.adoc'), '= Template\n\n=== Status\n\nProposed\n');
@@ -506,104 +507,19 @@ test('the evidence parsers read the real registry view and ADRs', () => {
   for (const n of ['0001', '0002', '0003']) expect(adrAccepted(ctx.read(ctx.adrFiles(n)[0]))).toBe(true);
 });
 
-// The status is the ADR's own text, as AsciiDoc reads it. Each of these was
-// accepted when the first "Status" heading anywhere in the file was taken.
-test('an ADR is accepted only by its own one Status section', () => {
-  const adr = body => `= ADR\n\n${body}\n`;
-  expect(adrAccepted(adr('=== Status\n\n*Accepted (ratified).*'))).toBe(true);
-  // A heading that could read Status counts even inside a block, so this ADR is
-  // not read. Asciidoctor finds one Status section here; the reader fails closed.
-  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n----\n=== Status\nProposed\n----'))).toBe(false);
-  expect(adrAccepted(adr('----\nan example\n----\n\n=== Status\n\nAccepted'))).toBe(true);
-  expect(adrAccepted(adr('=== Status'))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('////\n=== Status\nAccepted\n////\n\n=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('----\n=== Status\nAccepted\n----\n\n=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('....\n=== Status\nAccepted\n....\n\n=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('ifdef::never[]\n=== Status\nAccepted\nendif::[]\n\n=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n=== Status\n\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n// Accepted\nProposed.'))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n----\nAccepted\n----'))).toBe(false);
-  expect(adrAccepted(adr('include::status.adoc[]\n\n=== Status\n\nAccepted'))).toBe(false);
-  expect(adrAccepted(adr('// === Status\n// Accepted'))).toBe(false);
-  // Each of these agrees with Asciidoctor 2.0.26: a "[discrete]" waiting above the
-  // heading, across blank lines and comments, makes it a floating title, not a
-  // section; a heading straight after a paragraph line belongs to the paragraph.
-  for (const above of ['[discrete]\n', '[float]\n', '[discrete]\n\n', '[discrete]\n////\nx\n////\n\n', '[discrete]\n// note\n\n', 'Some text.\n'])
-    expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n// a comment\nAccepted'))).toBe(true);
-  // "= Status" is the document's title, not a section (Asciidoctor agrees), also
-  // after leading comments, which may come before a document header.
-  expect(adrAccepted('= Status\n\nAccepted\n')).toBe(false);
-  expect(adrAccepted('// note\n////\nx\n////\n\n= Status\n\nAccepted\n')).toBe(false);
-  expect(adrAccepted('== Status\n\nAccepted\n')).toBe(true);
-  // A heading inside a block is not a section even with a blank line above it.
-  for (const block of ['----\nexample\n\n=== Status\n\nAccepted\n----', '////\nold\n\n=== Status\n\nAccepted\n////', '====\n\n=== Status\n\nAccepted\n===='])
-    expect(adrAccepted(adr(block))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n\n////\nAccepted\n////\n\nProposed.'))).toBe(false);
-  // Asciidoctor reads a section here, but the reader says no: it fails closed on
-  // any attribute line or block title above a Status heading.
-  for (const above of ['[[status]]\n', '.A title\n']) expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
-});
-
-// Each case below was checked against Asciidoctor 2.0.26. Where the comment says
-// the reader fails closed, Asciidoctor would accept and the reader refuses.
-test('a Markdown fence hides what it holds, as Asciidoctor reads it', () => {
-  const adr = body => `= ADR\n\n${body}\n`;
-  // A heading inside a fence is not a section, blank lines around it or not.
-  expect(adrAccepted(adr('```\n\n=== Status\n\nAccepted\n```'))).toBe(false);
-  expect(adrAccepted(adr('```\n=== Status\nAccepted\n```'))).toBe(false);
-  // A fence opens with a language after it, and only three bare backticks close it.
-  expect(adrAccepted(adr('```ruby\ncode\n```\n\n=== Status\n\nAccepted'))).toBe(true);
-  expect(adrAccepted(adr('```ruby\ncode\n```ruby\n\n=== Status\n\nAccepted'))).toBe(false);
-  expect(adrAccepted(adr('``` ruby\ncode\n``` ruby\n\n=== Status\n\nAccepted'))).toBe(false);
-  // "````" and "~~~" delimit nothing, so a later "```" opens a fence that hides the rest.
-  expect(adrAccepted(adr('````\ncode\n````\n\n=== Status\n\nAccepted'))).toBe(true);
-  for (const lead of ['````', '~~~', '`` `']) expect(adrAccepted(adr(`${lead}\ncode\n\`\`\`\n\n=== Status\n\nAccepted`))).toBe(false);
-});
-
-test('a second heading that could read Status leaves the ADR unread', () => {
-  const adr = body => `= ADR\n\n=== Status\n\nAccepted\n\n${body}\n\nProposed.\n`;
-  expect(adrAccepted(adr('=== Context'))).toBe(true);
-  // Each is a second section titled Status to Asciidoctor: a later level-0 title,
-  // Markdown and symmetric markers, extra blanks, an underlined title, a title that
-  // a substitution spells, an attribute line above, and a heading straight after a block.
-  for (const second of ['= Status', '## Status', '### Status', '== Status ==', '==  Status', '==\tStatus',
-    'Status\n------', 'Status\n~~~~~~', ':s: Status\n\n== {s}', '== +Status+', '== pass:[Status]',
-    '== Stat{empty}us', '== ((Status))', '[#sid]\n== Status', '[appendix]\n== Status', '----\ncode\n----\n== Status'])
-    expect(adrAccepted(adr(second))).toBe(false);
-  // A title is read whole, past a line separator (which the earlier pattern's "."
-  // stopped at), and a long run of blanks before one costs no backtracking.
-  for (const title of ['Status ', 'x Status']) expect(adrAccepted(adr(`== ${title}`))).toBe(false);
-  const started = performance.now();
-  expect(adrAccepted(adr(`=${' '.repeat(50000)} `))).toBe(true);
-  expect(performance.now() - started).toBeLessThan(200);
-  // Seven markers make no heading, so the line cannot be the Status section.
-  expect(adrAccepted('= ADR\n\n======= Status\n\nAccepted\n')).toBe(false);
-  for (const level of ['==', '===', '======']) expect(adrAccepted(`= ADR\n\n${level} Status\n\nAccepted\n`)).toBe(true);
-});
-
-test('the Status section opens with a paragraph that says Accepted', () => {
-  const adr = body => `= ADR\n\n${body}\n`;
-  // To Asciidoctor none of these opens with such a paragraph: a literal (indented)
-  // line, a description-list term, an underlined title, and "///", which is text.
-  for (const opening of [' Accepted', 'Accepted:: yes', 'Accepted::', 'Accepted;; yes', 'Accepted\n--------', '/// x\nAccepted', '///\nAccepted'])
-    expect(adrAccepted(adr(`=== Status\n\n${opening}`))).toBe(false);
-  expect(adrAccepted(adr('=== Status\n\n// a comment\nAccepted'))).toBe(true);
-  // A heading inside a comment block is no section, though text follows the block.
-  expect(adrAccepted(adr('////\n\n=== Status\n////\nAccepted'))).toBe(false);
-  // A heading below a list continuation, or below a term with nothing after it,
-  // belongs to the list. Below a term with a description the reader fails closed.
-  for (const above of ['* item\n+\n\n', 'term::\n\n', 'term:: words\n\n'])
-    expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
-  expect(adrAccepted(adr('* item\n\n=== Status\n\nAccepted'))).toBe(true);
-  // A short line over a delimiter of about its length is a two-line title, so no
-  // block opens there; the reader does not read such an ADR.
-  expect(adrAccepted(adr('foo\n----\n=== Status\nProposed\n----\n\n=== Status\n\nAccepted'))).toBe(false);
-  // A line far from the delimiter's length leaves it a delimiter, and inside a
-  // block no title is read at all, whatever the lengths.
-  expect(adrAccepted(adr('A much longer paragraph line\n----\ncode\n----\n\n=== Status\n\nAccepted'))).toBe(true);
-  expect(adrAccepted(adr('----\nfoo\n----\n\n=== Status\n\nAccepted'))).toBe(true);
+// ADR evidence counts only when the header states ACCEPTED and the Status
+// section agrees (owner ruling 2026-11-25); each failure says which part fails.
+test('ADR evidence needs its header and its Status section to agree', () => {
+  const root = fixture({nodes: swap('tool', {evidence: [{adr: '0007'}]})});
+  const put = s => writeFileSync(path.join(root, 'docs/decisions/0007-x.adoc'), s);
+  put('= ADR\n\n=== Status\n\nAccepted\n');
+  expect(() => generate(root)).toThrow(/node tool: ADR 0007 states no readable status in its header/);
+  put('= ADR\n:status: ACCEPTED\n\n=== Status\n\nProposed.\n');
+  expect(() => generate(root)).toThrow(/node tool: ADR 0007's header says ACCEPTED but its Status section says PROPOSED/);
+  put('= ADR\n:status: ACCEPTED\n\nNo section.\n');
+  expect(() => generate(root)).toThrow(/its Status section says nothing readable/);
+  put('= ADR\n:status: ACCEPTED\n\n=== Status\n\nAccepted\n');
+  expect(() => generate(root)).not.toThrow();
 });
 
 test('the committed views match the committed data', () => {

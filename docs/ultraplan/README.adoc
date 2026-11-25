@@ -58,12 +58,11 @@ accepts a file that exists, a claim whose grade the registry view derives at or
 above a stated grade, or a decision record whose status is Accepted. A done
 node's needs must be done too.
 +
-The decision record is read conservatively, so the reader never finds an
-Accepted that Asciidoctor would not. Every line that could be a heading titled
-Status counts, inside a block or not. The record is read only when exactly one
-does, and that one is a plain section heading (`==` to `======`, then `Status`)
-whose first paragraph begins "Accepted". Anything it cannot read plainly, such
-as a preprocessor directive or an underlined title, is refused.
+A decision record counts only when it states its status twice, in agreement
+(owner ruling 2026-11-25). Its header must hold `:status: ACCEPTED`, and its
+Status section must open with the same word. `scripts/decisions/adr-status.mjs`
+reads both conservatively, so it never finds a status that Asciidoctor would
+not; `docs/decisions/README.adoc` sets out the rules.
 * *Active* is limited: at most three nodes may be active at once. To start a
 fourth, finish or park one first. This is the guard against starting everything.
 When every slot is taken, the page and the picture still show the frontier, and

@@ -32,6 +32,7 @@ import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
 import {isClaimId, isDocPath} from '../registry/claims-registry.mjs';
+import {adrStatus} from '../decisions/adr-status.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DIR = 'docs/ultraplan';
@@ -100,11 +101,6 @@ function oneLine(v) {
   if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !hasControl(k) && oneLine(x));
   return true;
 }
-// A description-list marker ("::", ":::", "::::" or ";;", then a blank or the
-// end) makes Asciidoctor read the line that holds it as a list term, wherever
-// in the line it sits. The ADR reader looks for one; the plan's own texts are
-// escaped on the page (text(), below), so they can hold one harmlessly.
-const LIST_MARKER = /(?::{2,4}|;;)(?:[ \t]|$)/;
 
 export function readSource(text, name) {
   const rows = parseJsonl(text, name);
@@ -153,94 +149,6 @@ export function registryGrade(registryText, id) {
   return null;
 }
 
-// Whether an ADR's Status section opens with "Accepted", as AsciiDoc reads it.
-// It must never say yes where Asciidoctor finds no such section. So it does not
-// try to mirror every way Asciidoctor reads a heading: it over-counts, and it
-// accepts one plain shape only (it fails closed).
-// - Every line that could be a heading titled Status counts, inside a block or
-//   not: "=" or "#" markers and a blank, then a title that holds the letters
-//   "status" in any case, or a reference that could spell them. An ADR with a
-//   count other than one is not read.
-// - That one line is "==" to "======", one space and "Status"; it is outside any
-//   delimited block; and it follows a blank line, with nothing above it, across
-//   blank lines and comments, that attaches it to what came before: a block
-//   attribute line, a block title, a list continuation or a description-list term.
-// - The first line after it, past blank lines and comments, is text that begins
-//   "Accepted": not indented, and holding no description-list marker.
-// - No text line stands over an underline ("-", "=", "~", "^" or "+" repeated)
-//   of about its length: Asciidoctor reads such a pair as a section title.
-// - A preprocessor directive could change which lines count, so an ADR that
-//   holds one is not read.
-// A delimiter is one of these characters four or more times, "--", or a table's "|===".
-// It closes on the same line again.
-const DELIMITER = /^(?:([/\-.+*=_])\1{3,}|--|[|,:!]={3,})$/;
-// A Markdown fence, which Asciidoctor reads too: three backticks open it, with
-// any language after them but never a fourth backtick, and only a line of
-// exactly three backticks closes it. "````" and "~~~" delimit nothing.
-const FENCE = /^```(?!`)/;
-const opener = l => {
-  if (DELIMITER.test(l)) return l;
-  return FENCE.test(l) ? '```' : null;
-};
-const PREPROCESSOR = /^(?:ifdef|ifndef|ifeval|endif|include)::/;
-// "//" begins a line comment, but "///" begins text.
-const COMMENT = /^\/\/(?!\/)/;
-// What each line is: inside a delimited block or one of its delimiters
-// ('block'), part of a comment, which AsciiDoc drops ('comment'), or text.
-const kindOf = (l, block) => {
-  if (block) return block.startsWith('//') ? 'comment' : 'block';
-  return COMMENT.test(l) ? 'comment' : 'text';
-};
-function lineKinds(lines) {
-  let open = null;
-  return lines.map(l => {
-    const block = open ?? opener(l);
-    const closes = open !== null && l === open;
-    open = closes ? null : block;
-    return kindOf(l, block);
-  });
-}
-// A heading in any form AsciiDoc or Markdown gives one: its markers and a blank,
-// then a title that could read "Status". The title is the rest of the line, taken
-// whole, so the pattern cannot backtrack and no character of the title escapes it.
-const HEADING = /^[=#]+[ \t]/;
-const mayBeStatus = l => {
-  const m = HEADING.exec(l);
-  if (m === null) return false;
-  const title = l.slice(m[0].length);
-  return /\{|&#?\w+;/.test(title) || /status/i.test(title.replace(/[^\p{L}]/gu, ''));
-};
-// Asciidoctor reads a line over an underline within one character of its
-// length as a two-line section title; two characters are allowed here.
-const UNDERLINE = /^([-=~^+])\1+$/;
-const width = s => [...s].length;
-const overUnderline = (lines, kinds, i) => kinds[i] === 'text' && lines[i] !== '' && UNDERLINE.test(lines[i + 1] ?? '')
-  && Math.abs(width(lines[i + 1]) - width(lines[i])) <= 2;
-// What, standing above a heading across blank lines and comments, attaches the
-// heading to it: a block attribute line, a block title, a list continuation or
-// a description-list term.
-const ATTACHES = /^(?:\[.*\]|\.[^.\s].*|\+)$|(?::{2,4}|;;)(?:[ \t]|$)/;
-function startsSection(lines, kinds, i) {
-  if (i > 0 && lines[i - 1] !== '') return false;
-  let j = i - 1;
-  while (j >= 0 && (lines[j] === '' || kinds[j] === 'comment')) j--;
-  return j < 0 || !ATTACHES.test(lines[j]);
-}
-export function adrAccepted(text) {
-  const lines = text.split('\n').map(l => l.trimEnd());
-  if (lines.some(l => PREPROCESSOR.test(l))) return false;
-  const kinds = lineKinds(lines);
-  if (lines.some((_, i) => overUnderline(lines, kinds, i))) return false;
-  const heads = lines.flatMap((l, i) => (mayBeStatus(l) ? [i] : []));
-  if (heads.length !== 1) return false;
-  const [h] = heads;
-  if (kinds[h] !== 'text' || !/^={2,6} Status$/.test(lines[h]) || !startsSection(lines, kinds, h)) return false;
-  // The heading is text, so the line after it is text too, unless it opens a
-  // block, and no delimiter that opens one begins "Accepted".
-  const n = lines.findIndex((l, i) => i > h && l !== '' && kinds[i] !== 'comment');
-  return n > h && /^\**Accepted\b/.test(lines[n]) && !LIST_MARKER.test(lines[n]);
-}
-
 // A path in this repository, by the registry's own rule: letters, digits, "-", "_"
 // and "." in each part, "/" between parts, and no part "." or "..". Nothing in it
 // can end a code span on the page, and it cannot climb out of the repository.
@@ -269,7 +177,11 @@ const EVIDENCE = {
     if (files.length > 1) return `ADR ${ev.adr} is ambiguous: ${files.join(', ')} share the number`;
     const [file] = files;
     if (!ctx.isFile(file)) return `ADR ${ev.adr} (${file}) is not a file in the repository`;
-    return adrAccepted(ctx.read(file)) ? null : `ADR ${ev.adr} is not Accepted`;
+    // Its header states the status and its Status section agrees (owner ruling 2026-11-25).
+    const st = adrStatus(ctx.read(file));
+    if (st.header === null) return `ADR ${ev.adr} states no readable status in its header (:status: ACCEPTED, as the ADR template has it)`;
+    if (!st.inStep) return `ADR ${ev.adr}'s header says ${st.header} but its Status section says ${st.section ?? 'nothing readable'}`;
+    return st.header === 'ACCEPTED' ? null : `ADR ${ev.adr} is ${st.header}, not ACCEPTED`;
   },
 };
 

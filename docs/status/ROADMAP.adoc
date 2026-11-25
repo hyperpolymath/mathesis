@@ -467,17 +467,20 @@ scheduled census, a view of what each repository owes
    reads the feed at that commit, so each read names its commit. The fetch
    logic and its rate limits belong to the reader. Mathesis needs no new
    permission and holds no inbound secret.
-** These rulings were recorded as GELS's. See the clarification of 2026-11-25
-   below.
-* Owner clarification (2026-11-25): two systems had been mixed up.
-** GELS is the Git Estate Logistics System, in metadatastician/gels.
-** MPSCI is the Master Production and Scheduling Command Interface, also in
-   metadatastician.
-** Earlier text here and in the ultraplan called GELS "the estate display".
-   Which system shows the maths panel and the owner's private panel, and which
-   reads the feed, is open for the owner. The panel node is now `maths-panel`.
-** The gels feed-panel contract thread, the estate coordinator and the
-   decision desk were told the same day.
+** These rulings were recorded while the panel was taken to be in GELS, a name
+   now retired. See the clarification of 2026-11-25 below.
+* Owner clarification (2026-11-25): two systems had been mixed up. The owner
+  named them the same day (relayed to this work by the estate hub session).
+  Both are in metadatastician:
+** MPSCI is the Master Production and Scheduling Command Interface.
+** GELO is the Git Estate Logistics Office. It was called GELS, the Git
+   Estate Logistics System; "GELS" is retired.
+** Earlier text here and in the ultraplan called that system GELS, and "the
+   estate display". Which system, MPSCI or GELO, shows the maths panel and the
+   owner's private panel, and reads the feed, is open for the owner. The
+   panel node is now `maths-panel`.
+** The feed-panel contract thread, the estate coordinator and the decision
+   desk were told of the clarification the same day.
 * Owner rulings (2026-11-25), through the selector:
 ** Plan texts are plain text everywhere: in the data, on the page and in the
    feed. The page writes each ASCII punctuation mark in a text as a character

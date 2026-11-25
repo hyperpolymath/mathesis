@@ -712,7 +712,7 @@ check: check-views site-check check-proofs receipt-check
 # Needs bun, network for the receipts, and MATHESIS_STANDARDS (see `registry`).
 # Views current: catalogue, census tests, atlas, claims registry, bridges and
 # the worked cohort examples
-check-views: catalogue-check census-test atlas-check registry-check applied-check ultraplan-check adr-check
+check-views: catalogue-check census-test atlas-check registry-check applied-check ultraplan-check adr-check repo-files-test
 
 # Needs agda, coqc and lean, e.g. in the pinned Guix:
 #   guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- just check-proofs
@@ -810,6 +810,12 @@ ultraplan-check: registry-check
     bun scripts/ultraplan/ultraplan.mjs check
     bun test tests/ultraplan/
 
+# Test what the generators may read from the repository: a file that git tracks,
+# at its own path, with no link along it (scripts/repo/files.mjs). The ultraplan's
+# evidence and the site's views and assets are read only so.
+repo-files-test:
+    bun test tests/repo/
+
 # Fail if a decision record's header status (`:status:`) and its Status section
 # disagree, or only one of them states a status (owner ruling 2026-11-25). A
 # record that states neither is listed, for the owner to set.
@@ -825,15 +831,16 @@ adr-check:
 site out="":
     bun scripts/site/site.mjs build {{out}}
 
-# Build the site into a temp dir, then discard it. `check` runs this, so CI
-# builds the site on every pull request and push to main.
-site-check:
+# Test the site, then build it into a temp dir and discard it. `check` runs
+# this, so CI tests and builds the site on every pull request and push to main.
+site-check: site-test
     #!/usr/bin/env bash
     set -euo pipefail
     out="$(mktemp -d)"
     trap 'rm -rf "$out"' EXIT
     bun scripts/site/site.mjs build "$out"
 
-# Test the front-page generator and the link check (no asciidoctor needed)
+# Test the front page, the link check, and that the build reads nothing from
+# outside the repository. Needs asciidoctor, as `site` does.
 site-test:
     bun test tests/site/

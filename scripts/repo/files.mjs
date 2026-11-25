@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: MPL-2.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
+//
+// The files of the repository, as the generators may read them.
+//
+// A generator that checks evidence, or copies a file into the site, reads only
+// what a reviewer can read in the commit: a file that git tracks, at its own
+// path. So a path counts only when
+//   - git tracks it (it is in the index): nothing untracked, nothing in .git;
+//   - no part of it is a link: the file system holds, at that very path, what
+//     the path names, so nothing is read from outside the repository;
+//   - it is a regular file, or, where a directory may be named, a directory that
+//     holds a tracked file.
+// The answer is the same in a clone and in a linked worktree, where .git is a file.
+//
+// The generated views are the one exception: a generator writes them before git
+// tracks them, so `local` reads and checks a path with the same link rule but
+// without asking git.
+import {readFileSync, realpathSync, statSync, lstatSync, existsSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+
+// Find a program in the absolute directories of PATH, and run it by that absolute
+// path, so no relative PATH entry (such as ".") can pick the program.
+export function findProgram(name, env = process.env) {
+  for (const d of (env.PATH || '').split(path.delimiter)) {
+    if (path.isAbsolute(d) && existsSync(path.join(d, name))) return path.join(d, name);
+  }
+  throw new Error(`${name} not found in an absolute directory of PATH`);
+}
+
+// The paths git tracks in the checkout at `base`, which must be the top of its
+// work tree, relative to it.
+function trackedPaths(base) {
+  const git = args => spawnSync(findProgram('git'), ['-C', base, ...args], {encoding: 'utf8', maxBuffer: 1 << 28});
+  const top = git(['rev-parse', '--show-toplevel']);
+  if (top.error || top.status !== 0 || realpathSync(top.stdout.trim()) !== base) {
+    throw new Error(`${base} is not the top of a git checkout; the files read here are the files git tracks`);
+  }
+  const ls = git(['ls-files', '-z', '--full-name']);
+  if (ls.error || ls.status !== 0) throw new Error(`git ls-files failed in ${base}`);
+  return new Set(ls.stdout.split('\0').filter(Boolean));
+}
+
+export function repoFiles(root) {
+  const base = realpathSync(root);
+  let tracked = null;
+  const isTracked = p => (tracked ??= trackedPaths(base)).has(p);
+  const holdsTracked = p => { tracked ??= trackedPaths(base); return [...tracked].some(t => t.startsWith(`${p}/`)); };
+  // What stands at the path itself, when no part of it is a link; else null.
+  const at = p => {
+    if (typeof p !== 'string' || p === '') return null;
+    const full = path.join(base, p);
+    try { return realpathSync(full) === full ? statSync(full) : null; } catch { return null; }
+  };
+  const isFile = p => isTracked(p) && at(p)?.isFile() === true;
+  const isDir = p => at(p)?.isDirectory() === true && holdsTracked(p);
+  const bytes = p => {
+    if (!isFile(p)) throw new Error(`${p} is not a file that git tracks in the repository`);
+    return readFileSync(path.join(base, p));
+  };
+  const localFile = p => at(p)?.isFile() === true;
+  return {
+    root: base,
+    isFile,
+    isDir,
+    // A file or a directory: a ref may name either.
+    exists: p => isFile(p) || isDir(p),
+    bytes,
+    read: p => bytes(p).toString('utf8'),
+    // The tracked paths under a directory, in the order git lists them (sorted).
+    under: dir => { tracked ??= trackedPaths(base); return [...tracked].filter(t => t.startsWith(`${dir}/`)); },
+    local: {
+      isFile: localFile,
+      isDir: p => at(p)?.isDirectory() === true,
+      // Nothing at all stands at the path, not even a link that leads nowhere.
+      isAbsent: p => { try { lstatSync(path.join(base, p)); return false; } catch { return true; } },
+      read: p => {
+        if (!localFile(p)) throw new Error(`${p} is not a plain file inside the repository`);
+        return readFileSync(path.join(base, p), 'utf8');
+      },
+    },
+  };
+}

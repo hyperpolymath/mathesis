@@ -555,7 +555,7 @@ The tech tree as one panel type in the estate’s interface&#58; frontier&#44; g
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked
 
 *Needs:* xref:claims-registry[📒 Claims registry], xref:ultraplan[🌳 The ultraplan] +
-*Blocked by:* the owner’s choice of host &#40;owner clarification 2026&#45;11&#45;25&#41;&#58; GELS&#44; the Git Estate Logistics System&#44; and MPSCI&#44; the Master Production and Scheduling Command Interface&#44; are separate systems in metadatastician&#44; and which of them shows the panel and reads the feed is open&#59; then their feed and panel contract +
+*Blocked by:* the owner’s choice of host &#40;owner clarification 2026&#45;11&#45;25&#41;&#58; MPSCI&#44; the Master Production and Scheduling Command Interface&#44; or GELO&#44; the Git Estate Logistics Office&#44; both in metadatastician&#59; then their feed and panel contract +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
 === ♾️ Era 4: Cantor

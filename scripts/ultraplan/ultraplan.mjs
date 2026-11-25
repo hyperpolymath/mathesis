@@ -27,12 +27,13 @@
 // The "me" advisor is private (owner ruling 2026-11-24): its notes are kept
 // outside this public repository, and a node carries at most the neutral tag
 // `owner_value: "high"`. Counsel under the key `me` is refused.
-import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, lstatSync, realpathSync} from 'node:fs';
+import {writeFileSync, mkdirSync} from 'node:fs';
 import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
 import {isClaimId, isDocPath} from '../registry/claims-registry.mjs';
 import {adrStatus} from '../decisions/adr-status.mjs';
+import {repoFiles} from '../repo/files.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DIR = 'docs/ultraplan';
@@ -91,15 +92,29 @@ export function wellFormed(v) {
   return true;
 }
 
-// Each text in the plan is one line: a control character (a line break among
-// them) would let a text start a line of the page, where AsciiDoc reads block
-// syntax. This is the plan's own rule, stricter than I-JSON.
-const hasControl = s => /[\u0000-\u001f\u007f-\u009f]/.test(s);
-function oneLine(v) {
-  if (typeof v === 'string') return !hasControl(v);
-  if (Array.isArray(v)) return v.every(oneLine);
-  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !hasControl(k) && oneLine(x));
-  return true;
+// Each text in the plan is one line of plain text, and the page shows it exactly
+// as written. So no string in a record, its keys included, holds any of these.
+// This is the plan's own rule, stricter than I-JSON.
+// - A control character: a line break among them would let a text start a line
+//   of the page, where AsciiDoc reads block syntax.
+// - A line or paragraph separator (U+2028, U+2029): a browser breaks the line there.
+// - A run of two or more spaces, or a space at the start or end: HTML shows a run
+//   of spaces as one, and drops a space at the edge of a cell.
+const TEXT_FAULTS = [
+  [/[\u0000-\u001f\u007f-\u009f]/, 'a control character'],
+  [/[\u2028\u2029]/, 'a line or paragraph separator (U+2028 or U+2029)'],
+  [/ {2}/, 'a run of spaces'],
+  [/^ | $/, 'a space at the start or end of a text'],
+];
+// The first fault of any string in a record, or null.
+function textFault(v) {
+  if (typeof v === 'string') return TEXT_FAULTS.find(([re]) => re.test(v))?.[1] ?? null;
+  const parts = Array.isArray(v) ? v : (v !== null && typeof v === 'object' ? Object.entries(v).flat() : []);
+  for (const x of parts) {
+    const fault = textFault(x);
+    if (fault) return fault;
+  }
+  return null;
 }
 
 export function readSource(text, name) {
@@ -107,8 +122,9 @@ export function readSource(text, name) {
   const lines = text === '' ? [] : text.slice(0, -1).split('\n');
   rows.forEach((r, i) => {
     if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate or a Unicode noncharacter, which I-JSON refuses`);
-    if (!oneLine(r)) throw new Error(`${name}: line ${i + 1} holds a control character; each text in the plan is one line`);
-    if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
+    const fault = textFault(r);
+    if (fault) throw new Error(`${name}: line ${i + 1} holds ${fault}; each text in the plan is one line of plain text, shown as written`);
+    if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); run: sed -n ${i + 1}p ${name} | bun scripts/ijson-jcs-cli.js canon`);
   });
   return rows;
 }
@@ -159,7 +175,7 @@ const EVIDENCE = {
   path(ev, ctx) {
     const p = ev.path;
     if (!isRepoPath(p)) return `evidence path ${JSON.stringify(p)} is not a repository path`;
-    return ctx.isFile(p) ? null : `evidence path ${p} is not a file in the repository`;
+    return ctx.isFile(p) ? null : `evidence path ${p} is not a file that git tracks in the repository`;
   },
   claim(ev, ctx) {
     // The registry's own rule, so any claim it can list can be cited here.
@@ -176,7 +192,7 @@ const EVIDENCE = {
     if (!files.length) return `no ADR ${ev.adr} in docs/decisions`;
     if (files.length > 1) return `ADR ${ev.adr} is ambiguous: ${files.join(', ')} share the number`;
     const [file] = files;
-    if (!ctx.isFile(file)) return `ADR ${ev.adr} (${file}) is not a file in the repository`;
+    if (!ctx.isFile(file)) return `ADR ${ev.adr} (${file}) is not a file that git tracks in the repository`;
     // Its header states the status and its Status section agrees (owner ruling 2026-11-25).
     const st = adrStatus(ctx.read(file));
     if (st.header === null) return `ADR ${ev.adr} states no readable status in its header (:status: ACCEPTED, as the ADR template has it)`;
@@ -220,8 +236,8 @@ const REF = {
     return typeof r.commit === 'string' && /^[0-9a-f]{40}$/.test(r.commit) ? null : `ref commit ${JSON.stringify(r.commit)} is not a full commit id`;
   },
   here(r, ctx) {
-    if (r.at === undefined) return ctx.exists(r.path) ? null : `ref path ${r.path} is not in the repository`;
-    if (!ctx.isFile(r.path)) return `ref path ${r.path} is not a file in the repository`;
+    if (r.at === undefined) return ctx.exists(r.path) ? null : `ref path ${r.path} is not a file or directory that git tracks in the repository`;
+    if (!ctx.isFile(r.path)) return `ref path ${r.path} is not a file that git tracks in the repository`;
     const k = occurrences(ctx.read(r.path), r.at);
     return k === 1 ? null : `ref ${r.path} holds ${JSON.stringify(r.at)} ${k} times; a ref quotes a passage that occurs exactly once`;
   },
@@ -497,7 +513,7 @@ export function derive(byId, advisors) {
 // end no table cell or link, form no span and name no attribute, wherever it
 // stands: at the start of a line, in a table, in a heading or in a link's text.
 // Letters, digits, blanks and every character beyond ASCII pass unchanged.
-const text = s => String(s).replace(/[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]/g, c => `&#${c.charCodeAt(0)};`);
+const text = s => String(s).replace(/[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]/g, c => `&#${c.codePointAt(0)};`);
 const nameOf = (byId, id) => `${byId.get(id).glyph} ${byId.get(id).name}`;
 // A link to a node, as the xref macro, with its text escaped like any other.
 const xref = (byId, id) => `xref:${id}[${text(nameOf(byId, id))}]`;
@@ -832,40 +848,26 @@ export function renderSvg(byId, d) {
 
 
 // ── Driver ───────────────────────────────────────────────────────────────────
+// Every path a check reads goes through the repository's files (scripts/repo/files.mjs):
+// a file that git tracks, at its own path, with no link along it. The views are
+// read and written as plain files inside the repository, tracked yet or not.
 export function context(root = ROOT) {
-  const decisions = path.join(root, 'docs/decisions');
+  const files = repoFiles(root);
   const registry = 'docs/atlas/generated/registry.adoc';
-  // The real path inside the repository (symlinks resolved) of a regular file, or
-  // of what `kind` accepts, or null. Every path the checks read goes through it.
-  const inside = (p, kind = s => s.isFile()) => {
-    try {
-      const base = realpathSync(root), real = realpathSync(path.join(root, p));
-      return real.startsWith(base + path.sep) && kind(statSync(real)) ? real : null;
-    } catch { return null; }
-  };
-  const read = p => {
-    const real = inside(p);
-    if (!real) throw new Error(`${p} is not a file in the repository`);
-    return readFileSync(real, 'utf8');
-  };
-  // What stands at a path itself, a link not followed, or null when nothing does.
-  const entry = p => { try { return lstatSync(path.join(root, p)); } catch { return null; } };
   return {
-    isFile: p => inside(p) !== null,
-    // A file or a directory: a ref may name either.
-    exists: p => inside(p, s => s.isFile() || s.isDirectory()) !== null,
-    isDir: p => inside(p, s => s.isDirectory()) !== null,
-    // A regular file inside the repository that is not itself a link.
-    isPlainFile: p => entry(p)?.isFile() === true && inside(p) !== null,
-    isAbsent: p => entry(p) === null,
-    read,
-    // No registry view means no claim is listed; one that leads outside the repository is refused.
-    registry: existsSync(path.join(root, registry)) ? read(registry) : '',
-    // Every decision record with this number, in a fixed order. Only the boilerplate
-    // NNNN-template.adoc is set aside; a record such as 0006-template-inheritance.adoc counts.
-    adrFiles: n => (existsSync(decisions) ? readdirSync(decisions) : [])
-      .filter(x => x.startsWith(`${n}-`) && x.endsWith('.adoc') && x !== `${n}-template.adoc`)
-      .sort(cmp).map(x => `docs/decisions/${x}`),
+    isFile: files.isFile,
+    exists: files.exists,
+    read: files.read,
+    local: files.local,
+    // No registry view means no claim is listed; anything else at its path must be
+    // a tracked file, or it is refused.
+    registry: files.local.isAbsent(registry) ? '' : files.read(registry),
+    // Every tracked decision record with this number, in a fixed order. Only the
+    // boilerplate NNNN-template.adoc is set aside; a record such as
+    // 0006-template-inheritance.adoc counts.
+    adrFiles: n => files.under('docs/decisions')
+      .filter(x => /^docs\/decisions\/[^/]+\.adoc$/.test(x) && x.startsWith(`docs/decisions/${n}-`) && x !== `docs/decisions/${n}-template.adoc`)
+      .sort(cmp),
   };
 }
 
@@ -884,13 +886,13 @@ export function generate(root = ROOT) {
 const VIEWS = [VIEW, SVG];
 export function staleViews(out, root = ROOT) {
   const ctx = context(root);
-  return VIEWS.filter(f => !ctx.isPlainFile(f) || ctx.read(f) !== out[f]);
+  return VIEWS.filter(f => !ctx.local.isFile(f) || ctx.local.read(f) !== out[f]);
 }
 export function writeViews(out, root = ROOT) {
   const ctx = context(root);
-  if (!ctx.isDir(DIR)) throw new Error(`${DIR} is not a directory in the repository`);
+  if (!ctx.local.isDir(DIR)) throw new Error(`${DIR} is not a directory in the repository`);
   mkdirSync(path.join(root, DIR, 'generated'), {recursive: true});
-  const unsafe = VIEWS.filter(f => !ctx.isDir(path.dirname(f)) || !(ctx.isAbsent(f) || ctx.isPlainFile(f)));
+  const unsafe = VIEWS.filter(f => !ctx.local.isDir(path.dirname(f)) || !(ctx.local.isAbsent(f) || ctx.local.isFile(f)));
   if (unsafe.length) throw new Error(`not written: ${unsafe.join(', ')}; a view is a plain file inside the repository, not a link`);
   for (const f of VIEWS) writeFileSync(path.join(root, f), out[f]);
 }

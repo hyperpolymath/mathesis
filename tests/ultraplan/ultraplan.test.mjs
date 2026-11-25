@@ -12,6 +12,14 @@ import {jcs} from '../../scripts/registry/theory-ledger.mjs';
 import {adrAccepted} from '../../scripts/decisions/adr-status.mjs';
 
 const roots = [];
+// git, run in a fixture: the generator reads only what git tracks there.
+const git = (root, ...args) => {
+  const r = Bun.spawnSync(['git', '-C', root, '-c', 'user.name=t', '-c', 'user.email=t@example.invalid', '-c', 'init.defaultBranch=main', ...args]);
+  if (r.exitCode !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr}`);
+  return r.stdout.toString();
+};
+// Track everything now in the fixture, as a commit would.
+const track = root => { git(root, 'add', '-A'); return root; };
 afterAll(() => { for (const r of roots) rmSync(r, {recursive: true, force: true}); });
 
 const ADVISORS = [
@@ -45,12 +53,13 @@ function fixture({advisors = ADVISORS, nodes = BASE, expeditions = [], registry 
   writeFileSync(path.join(root, 'docs/ultraplan/advisors.jsonl'), raw.advisors ?? jl(advisors));
   writeFileSync(path.join(root, 'docs/ultraplan/tree.jsonl'), raw.nodes ?? jl(nodes));
   writeFileSync(path.join(root, 'docs/ultraplan/expeditions.jsonl'), raw.expeditions ?? jl(expeditions));
-  return root;
+  git(root, 'init', '-q');
+  return track(root);
 }
 // The page shows each text as written: every ASCII punctuation mark in it is a
 // numeric character reference (the rule, stated here apart from the generator).
 const PUNCTUATION = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
-const plainOnPage = t => [...t].map(c => (PUNCTUATION.includes(c) ? `&#${c.charCodeAt(0)};` : c)).join('');
+const plainOnPage = t => [...t].map(c => (PUNCTUATION.includes(c) ? `&#${c.codePointAt(0)};` : c)).join('');
 const refuses = (opts, re) => expect(() => generate(fixture(opts))).toThrow(re);
 // Replace fields of one node; a field set to undefined is removed.
 const strip = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
@@ -107,48 +116,80 @@ test('the views are deterministic', () => {
 
 test('done needs evidence that holds', () => {
   refuses({nodes: swap('root', {evidence: []})}, /node root: done needs evidence/);
-  refuses({nodes: swap('root', {evidence: [{path: 'NOPE.adoc'}]})}, /evidence path NOPE.adoc is not a file in the repository/);
+  refuses({nodes: swap('root', {evidence: [{path: 'NOPE.adoc'}]})}, /evidence path NOPE.adoc is not a file that git tracks in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: '../etc/passwd'}]})}, /is not a repository path/);
   refuses({nodes: swap('root', {evidence: [{path: '.'}]})}, /evidence path "." is not a repository path/);
-  refuses({nodes: swap('root', {evidence: [{path: 'docs'}]})}, /evidence path docs is not a file in the repository/);
+  refuses({nodes: swap('root', {evidence: [{path: 'docs'}]})}, /evidence path docs is not a file that git tracks in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: 'docs/decisions'}]})}, /evidence path docs\/decisions is not a file/);
   // A committed symlink to a file outside the repository is not evidence in it.
   const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-outside-'));
   roots.push(outside);
   writeFileSync(path.join(outside, 'secret.txt'), 'x\n');
   const root = fixture({nodes: swap('root', {evidence: [{path: 'link.txt'}]})});
-  symlinkSync(path.join(outside, 'secret.txt'), path.join(root, 'link.txt'));
-  expect(() => generate(root)).toThrow(/evidence path link.txt is not a file in the repository/);
+  symlinkSync(path.join(outside, 'secret.txt'), path.join(track(root), 'link.txt'));
+  track(root);
+  expect(() => generate(root)).toThrow(/evidence path link.txt is not a file that git tracks in the repository/);
   const inside = fixture({nodes: swap('root', {evidence: [{path: 'inner.adoc'}]})});
+  // A link that stays inside is refused too: a path names the file itself, and
+  // git tracks a link, not the file it leads to.
   symlinkSync('README.adoc', path.join(inside, 'inner.adoc'));
-  expect(() => generate(inside)).not.toThrow();
+  track(inside);
+  expect(() => generate(inside)).toThrow(/evidence path inner\.adoc is not a file that git tracks in the repository/);
+  // So is a path through a linked directory, though the file it reaches is tracked.
+  const viaDir = fixture({nodes: swap('root', {evidence: [{path: 'notes/README.adoc'}]})});
+  symlinkSync('.', path.join(viaDir, 'notes'));
+  track(viaDir);
+  expect(() => generate(viaDir)).toThrow(/evidence path notes\/README\.adoc is not a file that git tracks/);
+  // A file git does not track is no evidence, though it stands in the checkout:
+  // nothing a reviewer could read in the commit. Nor is anything in .git.
+  const loose = fixture({nodes: swap('root', {evidence: [{path: 'draft.adoc'}]})});
+  writeFileSync(path.join(loose, 'draft.adoc'), 'x\n');
+  expect(() => generate(loose)).toThrow(/evidence path draft\.adoc is not a file that git tracks in the repository/);
+  track(loose);
+  expect(() => generate(loose)).not.toThrow();
+  for (const p of ['.git/config', '.git/HEAD']) refuses({nodes: swap('root', {evidence: [{path: p}]})}, /is not a file that git tracks in the repository/);
+  // A tracked file that is gone from the checkout is no evidence either.
+  const gone = fixture();
+  rmSync(path.join(gone, 'README.adoc'));
+  expect(() => generate(gone)).toThrow(/evidence path README\.adoc is not a file that git tracks/);
   // An ADR that is a symlink to an accepted record outside the repository is not one in it.
   writeFileSync(path.join(outside, 'accepted.adoc'), '= ADR\n\n=== Status\n\n*Accepted.*\n');
   const adr = fixture({nodes: swap('tool', {evidence: [{adr: '0007'}]})});
   symlinkSync(path.join(outside, 'accepted.adoc'), path.join(adr, 'docs/decisions/0007-outside.adoc'));
-  expect(() => generate(adr)).toThrow(/ADR 0007 \(docs\/decisions\/0007-outside\.adoc\) is not a file in the repository/);
+  track(adr);
+  expect(() => generate(adr)).toThrow(/ADR 0007 \(docs\/decisions\/0007-outside\.adoc\) is not a file that git tracks in the repository/);
   // The context reads no file outside the repository, whoever asks.
-  expect(() => context(adr).read('docs/decisions/0007-outside.adoc')).toThrow(/is not a file in the repository/);
+  expect(() => context(adr).read('docs/decisions/0007-outside.adoc')).toThrow(/is not a file that git tracks in the repository/);
   expect(context(adr).read('README.adoc')).toBe('= Fixture\n');
   // The registry view is evidence too: one that leads outside the repository is refused.
   writeFileSync(path.join(outside, 'registry.adoc'), '|https://x/blob/c/P.adoc[o/r#T-1] at `c` |theorem |`PWG-1` |s |w\n');
   const reg = fixture({nodes: swap('root', {evidence: [{claim: 'o/r#T-1'}]})});
   rmSync(path.join(reg, 'docs/atlas/generated/registry.adoc'));
   symlinkSync(path.join(outside, 'registry.adoc'), path.join(reg, 'docs/atlas/generated/registry.adoc'));
-  expect(() => generate(reg)).toThrow(/docs\/atlas\/generated\/registry\.adoc is not a file in the repository/);
+  track(reg);
+  expect(() => generate(reg)).toThrow(/docs\/atlas\/generated\/registry\.adoc is not a file that git tracks in the repository/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0005'}]})}, /ADR 0005 is PROPOSED, not ACCEPTED/);
   refuses({nodes: swap('tool', {evidence: [{adr: '0009'}]})}, /no ADR 0009/);
   // Two records with one number are refused, not picked between by directory order.
   const twin = fixture();
   writeFileSync(path.join(twin, 'docs/decisions/0004-second.adoc'), '= ADR\n\n=== Status\n\n*Proposed.*\n');
+  expect(() => generate(twin)).not.toThrow(); // untracked, so not yet a record
+  track(twin);
+  // A file in a directory named like a record is not a record.
+  const nested = fixture();
+  mkdirSync(path.join(nested, 'docs/decisions/0004-notes'));
+  writeFileSync(path.join(nested, 'docs/decisions/0004-notes/draft.adoc'), '= Draft\n:status: PROPOSED\n\n=== Status\n\nProposed.\n');
+  expect(() => generate(track(nested))).not.toThrow();
   expect(() => generate(twin)).toThrow(/ADR 0004 is ambiguous: docs\/decisions\/0004-claims-registry\.adoc, docs\/decisions\/0004-second\.adoc share the number/);
   // Only the boilerplate NNNN-template.adoc is set aside: a record whose title says template counts,
   // and a template that shares a number with a record does not make it ambiguous.
   const titled = fixture({nodes: swap('tool', {evidence: [{adr: '0006'}]})});
   writeFileSync(path.join(titled, 'docs/decisions/0006-template-inheritance.adoc'), '= ADR\n:status: ACCEPTED\n\n=== Status\n\n*Accepted.*\n');
+  track(titled);
   expect(() => generate(titled)).not.toThrow();
   const boiler = fixture();
   writeFileSync(path.join(boiler, 'docs/decisions/0004-template.adoc'), '= Template\n\n=== Status\n\nProposed\n');
+  track(boiler);
   expect(() => generate(boiler)).not.toThrow();
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', adr: '0004'}]})}, /exactly one of path, claim or adr/);
   refuses({nodes: swap('root', {evidence: [{path: 'README.adoc', min_pwg: 'PWG-1'}]})}, /min_pwg belongs to claim evidence only/);
@@ -208,7 +249,7 @@ test('the me advisor writes nothing into the public tree', () => {
 
 test('evidence on an active node must hold too', () => {
   refuses({nodes: swap('theorem', {status: 'active', evidence: [{}]})}, /exactly one of path, claim or adr/);
-  refuses({nodes: swap('theorem', {status: 'active', evidence: [{path: 'NOPE.adoc'}]})}, /is not a file in the repository/);
+  refuses({nodes: swap('theorem', {status: 'active', evidence: [{path: 'NOPE.adoc'}]})}, /is not a file that git tracks in the repository/);
   expect(() => generate(fixture({nodes: swap('theorem', {status: 'active', evidence: [{path: 'README.adoc'}]})}))).not.toThrow();
   refuses({nodes: swap('paper', {evidence: [{path: 'README.adoc'}]})}, /evidence belongs to a done or active node/);
 });
@@ -232,6 +273,16 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({nodes: swap('paper', {size: 'toString'})}, /size must be one of S, M, L, XL/);
   refuses({nodes: swap('paper', {size: 'constructor'})}, /size must be one of/);
   refuses({raw: {nodes: BASE.map(n => JSON.stringify(n, null, 0)).join('\n') + '\n'}}, /not in JCS form/);
+  // The message names the line and a command that writes its JCS form. It never
+  // echoes the record: a log is no place for a file's content.
+  const loose = BASE.map((n, i) => (i === 1 ? JSON.stringify(n, null, 1).replaceAll('\n', '') : jcs(n)));
+  let msg = '';
+  try { generate(fixture({raw: {nodes: loose.join('\n') + '\n'}})); } catch (e) { msg = e.message; }
+  expect(msg).toBe('docs/ultraplan/tree.jsonl: line 2 is not in JCS form (RFC 8785); run: sed -n 2p docs/ultraplan/tree.jsonl | bun scripts/ijson-jcs-cli.js canon');
+  // The command does what the message says: it writes the line's JCS form.
+  const canon = Bun.spawnSync(['bun', path.join(ROOT, 'scripts/ijson-jcs-cli.js'), 'canon'], {stdin: Buffer.from(loose[1] + '\n')});
+  expect(canon.exitCode).toBe(0);
+  expect(canon.stdout.toString()).toBe(jcs(BASE[1]));
   // A lone surrogate survives JSON.parse and JSON.stringify alike; I-JSON refuses it.
   const lone = jcs({...BASE[0], name: 'x'}).replace('"name":"x"', '"name":"\\ud800"');
   refuses({raw: {nodes: [lone, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate/);
@@ -251,6 +302,18 @@ test('closed schema, blocked reasons and canonical lines', () => {
   }
   const ckey = jcs({...BASE[0], value: {maths: 1}}).replace('"maths":', '"m\\naths":');
   refuses({raw: {nodes: [ckey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a control character/);
+  // And the page shows each text as written: a browser breaks a line at U+2028 or
+  // U+2029, and HTML shows a run of spaces as one and drops a space at a cell's edge.
+  const faulty = (extra, re) => refuses({raw: {nodes: [jcs({...BASE[0], ...extra}), ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, re);
+  for (const sep of ['\u2028', '\u2029']) faulty({summary: `one${sep}two`}, /line 1 holds a line or paragraph separator \(U\+2028 or U\+2029\)/);
+  faulty({summary: 'two  spaces'}, /line 1 holds a run of spaces; each text in the plan is one line of plain text, shown as written/);
+  faulty({counsel: {maths: 'a   wide gap'}}, /line 1 holds a run of spaces/);
+  faulty({refs: [{at: 'a  b', path: 'README.adoc'}]}, /line 1 holds a run of spaces/);
+  faulty({summary: ' leading'}, /line 1 holds a space at the start or end of a text/);
+  faulty({counsel: {maths: 'trailing '}}, /line 1 holds a space at the start or end of a text/);
+  // One space, a no-break space and a tab-free text are as written, and pass.
+  const fine = generate(fixture({nodes: swap('root', {summary: 'one space and a\u00a0no-break space'})}))[VIEW];
+  expect(fine).toContain(plainOnPage('one space and a\u00a0no-break space'));
 });
 
 // Every text is plain (owner ruling 2026-11-25). A description-list marker, which
@@ -279,15 +342,16 @@ test('a ref points at one place, and each ref in this repository is checked', ()
   const odd = 'a `tick` + back\\slash';
   const oddRoot = fixture({nodes: swap('paper', {refs: [{at: odd, path: 'notes.adoc'}]})});
   writeFileSync(path.join(oddRoot, 'notes.adoc'), `${odd}\n`);
+  track(oddRoot);
   expect(generate(oddRoot)[VIEW]).toContain(`at \`${P(odd)}\``);
   // A quote that is gone, or that occurs more than once, names no one place.
   refused([{at: 'Gone', path: 'README.adoc'}], /node paper: ref README\.adoc holds "Gone" 0 times; a ref quotes a passage that occurs exactly once/);
   refused([{at: 'at', path: 'docs/decisions/0004-claims-registry.adoc'}], /holds "at" [2-9] times/);
   // Each part is checked: the path, what it names, the quote, the commit and the issue.
-  refused([{path: 'missing.adoc'}], /node paper: ref path missing\.adoc is not in the repository/);
-  refused([{at: 'x', path: 'docs/decisions'}], /ref path docs\/decisions is not a file in the repository/);
+  refused([{path: 'missing.adoc'}], /node paper: ref path missing\.adoc is not a file or directory that git tracks in the repository/);
+  refused([{at: 'x', path: 'docs/decisions'}], /ref path docs\/decisions is not a file that git tracks in the repository/);
   for (const p of ['../outside', '/etc/passwd', 'a/./b', 'a b', '']) refused([{path: p}], /is not a repository path/);
-  for (const q of [' padded', 'x'.repeat(161), '']) refused([{at: q, path: 'README.adoc'}], /is not a short quote/);
+  for (const q of ['\u00a0padded', 'x'.repeat(161), '']) refused([{at: q, path: 'README.adoc'}], /is not a short quote/);
   refused([{at: 'x', commit: '745fc74', path: 'a.adoc', repo: 'o/r'}], /ref commit "745fc74" is not a full commit id/);
   refused([{commit: 'a'.repeat(40), path: 'a.adoc', repo: 'nobody'}], /ref repo "nobody" is not OWNER\/REPO/);
   refused([{commit: 'a'.repeat(40), path: 'a.adoc'}], /ref repo undefined is not OWNER\/REPO/);
@@ -300,6 +364,7 @@ test('a ref points at one place, and each ref in this repository is checked', ()
 test('a quote counts every place it occurs, overlaps included', () => {
   const root = fixture({nodes: swap('paper', {refs: [{at: 'aaaa', path: 'notes.adoc'}]})});
   writeFileSync(path.join(root, 'notes.adoc'), 'aaaaa\n');
+  track(root);
   expect(() => generate(root)).toThrow(/ref notes\.adoc holds "aaaa" 2 times/);
   writeFileSync(path.join(root, 'notes.adoc'), 'aaaa b\n');
   expect(() => generate(root)).not.toThrow();
@@ -321,7 +386,8 @@ test('the sources are read only as regular files inside the repository', () => {
     const root = fixture();
     rmSync(path.join(root, 'docs/ultraplan', file));
     symlinkSync(target, path.join(root, 'docs/ultraplan', file));
-    expect(() => generate(root)).toThrow(new RegExp(`docs/ultraplan/${file.replace('.', '\\.')} is not a file in the repository`));
+    track(root);
+    expect(() => generate(root)).toThrow(new RegExp(`docs/ultraplan/${file.replace('.', '\\.')} is not a file that git tracks in the repository`));
   }
 });
 
@@ -385,10 +451,34 @@ test('a ref cannot lead out of the repository', () => {
   writeFileSync(path.join(outside, 'secret.adoc'), 'only once\n');
   const root = fixture({nodes: swap('paper', {refs: [{at: 'only once', path: 'link.adoc'}]})});
   symlinkSync(path.join(outside, 'secret.adoc'), path.join(root, 'link.adoc'));
-  expect(() => generate(root)).toThrow(/ref path link\.adoc is not a file in the repository/);
+  track(root);
+  expect(() => generate(root)).toThrow(/ref path link\.adoc is not a file that git tracks in the repository/);
   const dirRoot = fixture({nodes: swap('paper', {refs: [{path: 'away'}]})});
   symlinkSync(outside, path.join(dirRoot, 'away'));
-  expect(() => generate(dirRoot)).toThrow(/ref path away is not in the repository/);
+  track(dirRoot);
+  expect(() => generate(dirRoot)).toThrow(/ref path away is not a file or directory that git tracks in the repository/);
+});
+
+// The answer does not hang on how the checkout is laid out: a linked worktree,
+// where .git is a file, reads what a clone reads. And the generator runs only at
+// the top of a checkout, where git can say what it tracks.
+test('a linked worktree reads what a clone reads, and only a checkout is read', () => {
+  const main = fixture();
+  git(main, 'commit', '-q', '-m', 'fixture');
+  const linked = path.join(mkdtempSync(path.join(tmpdir(), 'ultraplan-wt-')), 'linked');
+  roots.push(path.dirname(linked));
+  git(main, 'worktree', 'add', '-q', linked);
+  expect(generate(linked)[VIEW]).toBe(generate(main)[VIEW]);
+  for (const root of [main, linked]) {
+    rmSync(path.join(root, 'docs/ultraplan/tree.jsonl'));
+    writeFileSync(path.join(root, 'docs/ultraplan/tree.jsonl'), swap('root', {evidence: [{path: '.git'}]}).map(n => jcs(n) + '\n').join(''));
+    expect(() => generate(root)).toThrow(/evidence path \.git is not a file that git tracks in the repository/);
+  }
+  // A directory that is not a checkout, or that is not the top of one, is refused.
+  const bare = mkdtempSync(path.join(tmpdir(), 'ultraplan-nogit-'));
+  roots.push(bare);
+  expect(() => context(bare).isFile('x')).toThrow(/is not the top of a git checkout/);
+  expect(() => generate(path.join(main, 'docs'))).toThrow(/is not the top of a git checkout/);
 });
 
 test('a summary that looks like block syntax is text on the page', () => {
@@ -511,7 +601,7 @@ test('the evidence parsers read the real registry view and ADRs', () => {
 // section agrees (owner ruling 2026-11-25); each failure says which part fails.
 test('ADR evidence needs its header and its Status section to agree', () => {
   const root = fixture({nodes: swap('tool', {evidence: [{adr: '0007'}]})});
-  const put = s => writeFileSync(path.join(root, 'docs/decisions/0007-x.adoc'), s);
+  const put = s => { writeFileSync(path.join(root, 'docs/decisions/0007-x.adoc'), s); track(root); };
   put('= ADR\n\n=== Status\n\nAccepted\n');
   expect(() => generate(root)).toThrow(/node tool: ADR 0007 states no readable status in its header/);
   put('= ADR\n:status: ACCEPTED\n\n=== Status\n\nProposed.\n');

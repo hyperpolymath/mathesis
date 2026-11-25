@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 // SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
 import {test, expect} from 'bun:test';
-import {readFileSync} from 'node:fs';
-import {VIEWS, frontPage, checkLinks, htmlPath, findAsciidoctor, GITHUB} from '../../scripts/site/site.mjs';
+import {readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, existsSync, readdirSync, statSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
+import {VIEWS, frontPage, checkLinks, htmlPath, findAsciidoctor, build, GITHUB} from '../../scripts/site/site.mjs';
 
 const root = new URL('../../', import.meta.url).pathname;
 const read = f => readFileSync(root + f, 'utf8');
@@ -55,3 +57,86 @@ test('asciidoctor is found only in an absolute directory of PATH', () => {
   expect(findAsciidoctor({ASCIIDOCTOR: '/x/asciidoctor'})).toBe('/x/asciidoctor');
   expect(() => findAsciidoctor({PATH: 'relative/dir'})).toThrow(/not found/);
 });
+
+// A throwaway checkout holding every view, each a plain tracked file whose header
+// names its source, and a directory outside it. Removed when `body` returns.
+function withSite(body) {
+  const tmp = prefix => mkdtempSync(path.join(tmpdir(), prefix));
+  const fix = tmp('site-fix-'), outside = tmp('site-outside-'), outs = tmp('site-out-');
+  const git = (...args) => {
+    const r = Bun.spawnSync(['git', '-C', fix, '-c', 'init.defaultBranch=main', ...args]);
+    if (r.exitCode !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr}`);
+  };
+  try {
+    git('init', '-q');
+    for (const f of [...VIEWS.map(v => v.file), ...VIEWS.flatMap(v => v.assets ?? [])]) {
+      mkdirSync(path.dirname(path.join(fix, f)), {recursive: true});
+      const v = VIEWS.find(x => x.file === f);
+      writeFileSync(path.join(fix, f), v ? `// ${v.needs}\n= View\n` : '<svg xmlns="http://www.w3.org/2000/svg"/>\n');
+    }
+    git('add', '-A');
+    body({fix, outside, out: path.join(outs, 'site'), git});
+  } finally {
+    for (const d of [fix, outside, outs]) rmSync(d, {recursive: true, force: true});
+  }
+}
+const pathRe = p => p.replaceAll('.', '\\.');
+// Every file the build wrote, and whether any holds `s`.
+const holds = (dir, s) => existsSync(dir) && readdirSync(dir, {recursive: true})
+  .some(f => statSync(path.join(dir, f)).isFile() && readFileSync(path.join(dir, f), 'utf8').includes(s));
+
+// The site takes from the repository only files that git tracks, at their own
+// path. An asset or a view that is a link, even one git tracks, or one git does
+// not track, fails the build before anything is written or copied.
+test('the site copies nothing from outside the repository', () => withSite(({fix, outside, out, git}) => {
+  writeFileSync(path.join(outside, 'secret.svg'), '<svg>secret</svg>\n');
+  const [asset] = VIEWS.flatMap(v => v.assets ?? []);
+  rmSync(path.join(fix, asset));
+  symlinkSync(path.join(outside, 'secret.svg'), path.join(fix, asset));
+  git('add', '-A');
+  expect(() => build(fix, out)).toThrow(new RegExp(`^${pathRe(asset)} is not a file that git tracks in the repository$`));
+  expect(existsSync(out)).toBe(false);
+  // A plain asset that git does not track is refused the same way.
+  rmSync(path.join(fix, asset));
+  writeFileSync(path.join(fix, asset), '<svg/>\n');
+  git('rm', '-q', '--cached', '-f', asset);
+  expect(() => build(fix, out)).toThrow(new RegExp(`^${pathRe(asset)} is not a file that git tracks in the repository$`));
+  // So is a view that is a link into the repository.
+  git('add', '-A');
+  const [view] = VIEWS;
+  rmSync(path.join(fix, view.file));
+  symlinkSync(path.join(fix, VIEWS[1].file), path.join(fix, view.file));
+  git('add', '-A');
+  expect(() => build(fix, out)).toThrow(new RegExp(`^${pathRe(view.file)} is not a file that git tracks`));
+  expect(existsSync(out)).toBe(false);
+}));
+
+// A link in a view to a file of the repository that the site does not hold
+// becomes a GitHub link, but only when git tracks the file: an untracked one
+// would be a link to nothing on GitHub, so it fails the build.
+test('a view links on GitHub only to files git tracks', () => withSite(({fix, out, git}) => {
+  const [view] = VIEWS;
+  const up = path.posix.relative(path.posix.dirname(view.file), 'notes.adoc');
+  writeFileSync(path.join(fix, view.file), `// ${view.needs}\n= View\n\nlink:${up}[notes]\n`);
+  writeFileSync(path.join(fix, 'notes.adoc'), '= Notes\n');
+  git('add', view.file);
+  expect(() => build(fix, out)).toThrow(/broken relative link .*notes\.adoc \(not in the site, not in the repository\)/);
+  git('add', 'notes.adoc');
+  build(fix, `${out}-tracked`);
+  expect(readFileSync(path.join(`${out}-tracked`, htmlPath(view.file)), 'utf8')).toContain(`${GITHUB}/blob/main/notes.adoc`);
+}));
+
+// Asciidoctor reads no file but the page it renders: an include in a view, of a
+// file outside the repository, is not read into the site; it fails the build.
+test('an include in a view reads nothing into the site', () => withSite(({fix, outside, out, git}) => {
+  expect(build(fix, out).length).toBe(VIEWS.length + 1);
+  writeFileSync(path.join(outside, 'secret.txt'), 'SECRET-LINE\n');
+  const [view] = VIEWS;
+  writeFileSync(path.join(fix, view.file), `// ${view.needs}\n= View\n\ninclude::${path.join(outside, 'secret.txt')}[]\n`);
+  git('add', '-A');
+  const again = `${out}-again`;
+  expect(() => build(fix, again)).toThrow(/broken relative link .*secret\.txt/);
+  expect(holds(again, 'SECRET-LINE')).toBe(false);
+  expect(holds(again, 'secret.txt')).toBe(true); // a link to it, never its text
+  rmSync(again, {recursive: true, force: true});
+}));

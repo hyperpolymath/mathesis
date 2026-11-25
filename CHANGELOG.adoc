@@ -84,8 +84,12 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   derived and none typed.
 +
   The generator refuses:
-  ** a done node without evidence that holds: a file, a claim grade the
-     registry derives, or an accepted ADR. An ADR is accepted only when its
+  ** a done node without evidence that holds: a file that git tracks, a claim
+     grade the registry derives, or an accepted ADR. Every file the checks read
+     (evidence, refs, ADRs, the registry view and the plan's own sources) is
+     one git tracks, at its own path: no link along it, nothing untracked,
+     nothing in `.git`. `scripts/repo/files.mjs` reads them, so a clone and
+     a linked worktree read the same; An ADR is accepted only when its
      header states `:status: ACCEPTED` and its Status section agrees (owner
      ruling 2026-11-25), each read by `scripts/decisions/adr-status.mjs` so
      that it never finds a status Asciidoctor would not;
@@ -95,13 +99,26 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   ** a ref that does not point at one place: each names a passage that occurs
      exactly once in a file here, a path here, a file of another repository at
      a full commit, or an issue, and never a line number;
-  ** a text holding a line break. Every text is plain text (owner ruling
-     2026-11-25): the page writes each ASCII punctuation mark in it as a
+  ** a text the page could not show as written: one holding a control
+     character, a line or paragraph separator (U+2028, U+2029), a run of
+     spaces, or a space at its start or end. Every text is plain text (owner
+     ruling 2026-11-25): the page writes each ASCII punctuation mark in it as a
      character reference, so it shows exactly as written and forms no markup;
   ** any note from the private me advisor.
 +
   `just ultraplan` and `just ultraplan-check` run it, and `check-views` includes
-  the check. The site copies a view's pictures, so the tree's image works there.
+  the check. A line not in JCS form is named with the command that writes its
+  form; no error message echoes a record. The site copies a view's pictures,
+  so the tree's image works there.
+* **The site reads nothing from outside the repository.** `scripts/site/site.mjs`
+  reads each view, the front page's sources and each asset it copies only as a
+  file git tracks, at its own path, and fails the build otherwise. Asciidoctor
+  now runs in secure mode, so an `include::` in a view becomes a link, which
+  the link check refuses, instead of the included file's text: in safe mode,
+  with the base directory at `/`, a view could include any file on the
+  system. The output is otherwise byte-identical. A link to a repository file
+  becomes a GitHub link only when git tracks the file. `site-check` now runs
+  the site tests, so CI runs them; it did not before.
 
 * The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
   (2026-11-17), whose receipt describes `47de4a8`, the merge of

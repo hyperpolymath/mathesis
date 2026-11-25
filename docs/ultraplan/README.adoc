@@ -54,8 +54,14 @@ none; the page lists the frontier nodes the owner tagged, unranked.
 A typed status is held to account:
 
 * *Done* needs evidence that the generator checks against the repository. It
-accepts a file that exists, a claim whose grade the registry view derives at or
-above a stated grade, or a decision record whose status is Accepted. A done
+accepts a file that git tracks, a claim whose grade the registry view derives at
+or above a stated grade, or a decision record whose status is Accepted.
++
+Every file the checks read is one that git tracks, at its own path: no link
+along the path, nothing untracked, nothing in `.git`. That holds for evidence,
+refs, decision records, the registry view and the three sources here. So the
+evidence is what a reviewer reads in the commit, and a clone and a linked
+worktree read the same. `scripts/repo/files.mjs` reads them. A done
 node's needs must be done too.
 +
 A decision record counts only when it states its status twice, in agreement
@@ -80,7 +86,11 @@ shows as the mark itself and never reads as markup.
 cell or a link, form a span, or name an attribute, wherever it stands on the
 page.
 * A feed can carry the same strings unchanged, as plain text.
-* The generator refuses a line break or any other control character in a text.
+* The generator refuses a text the page could not show as written: one that
+holds a control character (a line break among them), a line or paragraph
+separator (U+2028 or U+2029, where a browser breaks the line), a run of two or
+more spaces (HTML shows a run as one), or a space at its start or end. A
+no-break space is shown as written, and is allowed.
 
 A text does not type a count that the data derives, such as a number of claims,
 repositories or theorems: the views carry those counts, and a typed one goes stale.
@@ -140,8 +150,9 @@ still counts.
 == Adding or changing a node
 
 . Add or edit the line in `tree.jsonl`, keeping its JCS form. Keys are sorted
-and there are no spaces; `bun scripts/ijson-jcs-cli.js` or the generator's error
-message gives the exact form. Its id is a lowercase slug that begins with a
+and there are no spaces between tokens. When a line is not in that form, the
+generator names it and the command that writes its form, such as
+`sed -n 23p docs/ultraplan/tree.jsonl | bun scripts/ijson-jcs-cli.js canon`. Its id is a lowercase slug that begins with a
 letter, because the id is also the node's anchor on the page.
 . Give it needs, so it sits in the right era. A node with no needs starts a new
 root.
@@ -157,8 +168,8 @@ these:
 repository. The passage must occur in the file exactly once. `just check`
 refuses the ref when the passage is reworded, moved away or repeated, so a ref
 never points nowhere unseen. A passage is one line of up to 160 characters.
-** `+{"path":"docs/x"}+`: a file or a directory of this repository, which must
-exist.
+** `+{"path":"docs/x"}+`: a file of this repository, or a directory that holds
+one, which git must track.
 ** `+{"at":"…","commit":"<full commit id>","path":"…","repo":"OWNER/REPO"}+`: a
 file of another repository at a commit. The commit fixes its content, so it
 cannot drift. It is not checked here.
@@ -168,22 +179,23 @@ cannot drift. It is not checked here.
 [[estate-panel]]
 == The estate panel
 
-The owner asked for a maths panel, "a sub panel of the gels thing". On
-2026-11-25 the owner made clear that two systems had been mixed up in that
-request. Both live in metadatastician:
+The owner asked for a maths panel, as a sub-panel of one of the estate's
+systems. On 2026-11-25 the owner made clear that two systems had been mixed up
+in that request, and named them. Both live in metadatastician:
 
-* *GELS* is the Git Estate Logistics System, in metadatastician/gels.
 * *MPSCI* is the Master Production and Scheduling Command Interface.
+* *GELO* is the Git Estate Logistics Office. It was called GELS, the Git Estate
+Logistics System, a name now retired.
 
-Earlier text here called GELS "the estate display"; that was the mix-up. Which
-system shows the maths panel and the owner's private panel, and which reads the
-feed, is open for the owner to settle.
+Earlier text here called that system GELS, and "the estate display"; that was
+the mix-up. Which system, MPSCI or GELO, shows the maths panel and the owner's
+private panel, and reads the feed, is open for the owner to settle.
 
 What was settled on 2026-11-24 still stands, whichever system it lands in:
 
 * Mathesis publishes a read-only I-JSON/JCS feed, which the estate shows as one
 panel type. The estate coordinator gave this answer while the panel was taken
-to be in GELS.
+to be in the system then called GELS.
 * The feed carries the tree's nodes, the advisors' picks (never the me
 advisor's), the grade census with its denominator, and the claim pins.
 * Open decisions go to the owner's decision desk, not this panel.
@@ -193,7 +205,7 @@ GitHub API for the head commit of main and reads the feed at that commit, so
 each read names its commit. No secret comes into this repository, and nothing
 here needs a new permission.
 
-A draft of the feed and panel contract was begun in metadatastician/gels
+A draft of the feed and panel contract was begun in MPSCI's repository
 (`docs/proposals/feed-panel-contract.adoc`). Its thread, the estate coordinator
 and the decision desk have been told of the clarification. Until the owner
 settles the host and the contract exists, nothing here writes a feed: a feed

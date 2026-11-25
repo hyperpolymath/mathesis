@@ -155,7 +155,8 @@ export function registryGrade(registryText, id) {
 // block delimiter there does not. A preprocessor directive could change which
 // lines count, so an ADR that holds one is not read: it fails closed, as an
 // unaccepted ADR.
-const DELIMITER = /^(?:\/{4,}|-{4,}|\.{4,}|\+{4,}|\*{4,}|={4,}|_{4,}|--|[|,:!]={3,})$/;
+// A delimiter is one of these characters four or more times, "--", or a table's "|===".
+const DELIMITER = /^(?:([/\-.+*=_])\1{3,}|--|[|,:!]={3,})$/;
 const PREPROCESSOR = /^(?:ifdef|ifndef|ifeval|endif|include)::/;
 export function adrAccepted(text) {
   const lines = text.split('\n').map(l => l.trimEnd());

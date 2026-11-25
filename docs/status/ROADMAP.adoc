@@ -489,3 +489,13 @@ scheduled census, a view of what each repository owes
    its Status section.
 ** Guix proof CI gets one estate-wide fix at source, queued as its own task
    (CI upkeep, on a cheaper model).
+* Owner rulings (2026-11-25), through the decision desk:
+** Mathesis hosts its own visual proof space: the maths panel and the
+   owner's private me panel live in Mathesis. MPSCI only links to it, with a
+   summary card or a link. GELO is not involved yet. The me panel's notes
+   still stay outside this public repository and every feed (ruling
+   2026-11-24). The `maths-panel` node is now open.
+** Agent pull requests are committed through the GitHub API, so each commit
+   carries GitHub's verified (web-flow) signature; the owner re-signs
+   nothing. The signature attests GitHub and the owner's account, not the
+   estate signing key (a doctrine 9 note).

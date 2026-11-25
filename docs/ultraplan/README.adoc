@@ -126,8 +126,9 @@ by leverage first, the contrarian would name what the council already ranks
 first. That keeps the road not taken in view.
 * The *me* advisor looks out for what could help the owner's own life. Its notes
 are kept privately, outside this public repository and out of every feed: in
-a private panel that the owner owns (owner ruling 2026-11-24; which system hosts
-it is open, see <<estate-panel>>). A node carries at most the
+a private panel that the owner owns (owner ruling 2026-11-24). Mathesis hosts
+that panel in its own visual proof space (owner ruling 2026-11-25, see
+<<estate-panel>>), and its notes still never enter this repository or a feed. A node carries at most the
 neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
 the key `me`. The me advisor names no public pick (owner ruling 2026-11-24): the
 owner chooses in that private panel, and the page lists, in id order and
@@ -191,17 +192,24 @@ in that request, and named them. Both live in metadatastician:
 Logistics System, a name now retired.
 
 Earlier text here called that system GELS, and "the estate display"; that was
-the mix-up. Which system, MPSCI or GELO, shows the maths panel and the owner's
-private panel, and reads the feed, is open for the owner to settle.
+the mix-up.
 
-What was settled on 2026-11-24 still stands, whichever system it lands in:
+The host is settled (owner ruling 2026-11-25, through the decision desk):
 
-* Mathesis publishes a read-only I-JSON/JCS feed, which the estate shows as one
-panel type. The estate coordinator gave this answer while the panel was taken
-to be in the system then called GELS.
-* The feed carries the tree's nodes, the advisors' picks (never the me
-advisor's), the grade census with its denominator, and the claim pins.
-* Open decisions go to the owner's decision desk, not this panel.
+* *Mathesis hosts its own visual proof space.* The maths panel and the owner's
+private me panel live in Mathesis. The me panel's notes still stay outside this
+public repository and out of every feed (ruling 2026-11-24): where they are
+kept is settled when the panel is built.
+* *MPSCI only links to it*, with a summary card or a link.
+* *GELO is not involved yet.*
+
+What was settled on 2026-11-24 still holds where a reader outside Mathesis needs
+the data, such as MPSCI's summary card:
+
+* Mathesis publishes a read-only I-JSON/JCS feed. It carries the tree's nodes,
+the advisors' picks (never the me advisor's), the grade census with its
+denominator, and the claim pins.
+* Open decisions go to the owner's decision desk, not the panel.
 * The reader pins by commit (owner ruling). Mathesis commits the feed as a
 generated view, which `just check` refuses when stale. The reader asks the
 GitHub API for the head commit of main and reads the feed at that commit, so
@@ -209,8 +217,7 @@ each read names its commit. No secret comes into this repository, and nothing
 here needs a new permission.
 
 A draft of the feed and panel contract was begun in MPSCI's repository
-(`docs/proposals/feed-panel-contract.adoc`). Its thread, the estate coordinator
-and the decision desk have been told of the clarification. Until the owner
-settles the host and the contract exists, nothing here writes a feed: a feed
-with no agreed reader would be unwired. The panel is a node in the tree
-(`maths-panel`), blocked on both.
+(`docs/proposals/feed-panel-contract.adoc`). With the host settled, that
+contract shrinks to what MPSCI's card reads. Nothing here writes a feed until
+the card has an agreed reader: a feed with no reader would be unwired. The proof
+space is a node in the tree (`maths-panel`), now open.

@@ -13,7 +13,7 @@ never typed. A node marked done carries evidence the generator checks: a file, a
 claim grade that the registry derives, or an accepted decision record. The value marks
 are judgements, written down so they can be argued with.
 
-Census of the tree: 12 done, 2 active (at most 3), 35 open, 3 blocked, 0 dropped, of 52 nodes. 12 can be started now.
+Census of the tree: 12 done, 2 active (at most 3), 36 open, 2 blocked, 0 dropped, of 52 nodes. 13 can be started now.
 
 toc::[]
 
@@ -39,6 +39,7 @@ counts the live nodes that depend on it, directly or through others.
 |xref:pinned-image[📦 Proof lanes in a pinned image] |engineering |M |1 |Run the three proof lanes in a container image pinned by digest&#44; the condition PROOF&#45;POLICY now sets for PWG&#45;1 &#40;standards&#35;1625&#41;&#46; The Guix shell alone does not qualify&#46;
 |xref:s2-monotone[📈 S&#45;2&#58; evaluation is monotone] |maths |S |1 |Positive evaluation of status is monotone&#46; It holds for each ordered resource algebra&#44; so it can be proved once against the kernel now&#44; whatever X&#45;PF1 decides &#40;R&#45;3&#41;&#46;
 |xref:doc-drift-fix[🧹 Mend the status documents] |engineering |S |0 |ROADMAP&#44; PROOF&#45;NEEDS&#44; README and the intend contract contradict the receipts &#40;PWG&#45;1 vs PWG&#45;2ii&#44; receipts called planned that exist&#44; stage states&#41;&#46; Make each agree with the derived facts&#46;
+|xref:maths-panel[🪟 Visual proof space] |ecosystem |M |0 |Mathesis hosts its own visual proof space &#40;owner ruling 2026&#45;11&#45;25&#41;&#58; the tech tree&#44; its frontier&#44; the grade census with its denominator&#44; and the claim pins&#46; The owner’s private me panel lives here too&#44; its notes kept outside this repository and every feed&#46; MPSCI links to it with a summary card&#46; Open decisions go to the owner’s decision desk&#46;
 |xref:paper-thy1[📄 Note&#58; feature reachability] |publications |M |0 |A short note on THY&#45;1&#58; why requesting every feature is a sound check for absence&#44; with the three&#45;prover receipt as artefact&#46; Its dependant is a real standards rule&#46;
 |xref:statistical-bridge[🎲 From oracle to theorem] |science |L |0 |S&#45;MN and S&#45;DM &#40;the multinomial logit closed form and the DM contrast limit&#41; are tested only&#44; against MetaManifold&#45;WebUI as oracle&#46; Prove them in Agda&#44; Rocq and Lean for admission &#40;Q&#45;2&#46;6&#41;&#46;
 |xref:teaching-cohort[📓 Cohort economics&#44; taught] |publications |M |0 |A worked tutorial&#58; a small business model where missing data stays missing&#44; with the proofs alongside and synthetic data only&#46;
@@ -120,7 +121,7 @@ same place; the contrarian keeps the road not taken in view.
 * xref:app-proofs[💧 APP&#45;1 to APP&#45;4&#58; missing stays missing] -> xref:forecast-13wk[📅 Thirteen&#45;week forecast], xref:s4-s5-verdict[🌦️ S&#45;4 and S&#45;5&#58; honest cash verdicts], xref:teaching-cohort[📓 Cohort economics&#44; taught]
 * xref:bridge-lock-pilot[🔗 Bridge lock pilot] -> xref:centre-computations[🎯 Centre computations], xref:echo-mirrors[🪞 Echo mirror records], xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-reuse[♻️ S&#45;1 by reuse of resource&#45;algebra]
 * xref:centre-computations[🎯 Centre computations] -> xref:concept-commons[🏛️ Concept commons], xref:corpus[🧪 Propose and dispose corpus]
-* xref:claims-registry[📒 Claims registry] -> xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough&#63; &#40;X&#45;PF1&#41;], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Maths panel for the estate], xref:paper-receipts[📰 Paper&#58; receipts&#44; not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed]
+* xref:claims-registry[📒 Claims registry] -> xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough&#63; &#40;X&#45;PF1&#41;], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Visual proof space], xref:paper-receipts[📰 Paper&#58; receipts&#44; not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed]
 * xref:proof-gate[🛡️ Proof gate in pinned Guix] -> xref:cohort-model[👥 Cohort model in Agda], xref:pinned-image[📦 Proof lanes in a pinned image], xref:receipts[🔏 Proof receipts], xref:thy1[🧭 THY&#45;1&#58; reachability is monotone]
 * xref:receipt-generator[🏭 Shared receipt generator] -> xref:ci-recorder[🤖 CI records its own runs], xref:paper-receipts[📰 Paper&#58; receipts&#44; not claims], xref:pwg1-regained[🥇 Back to PWG&#45;1], xref:receipts-campaign[📣 Receipts campaign], xref:superseded-manifests-option[🗄️ Keep superseded manifests &#40;option&#41;]
 * xref:receipts[🔏 Proof receipts] -> xref:paper-thy1[📄 Note&#58; feature reachability], xref:receipt-generator[🏭 Shared receipt generator], xref:s3-grade-function[🎚️ S&#45;3&#58; the grade is a function]
@@ -232,7 +233,7 @@ Pins each claim in its home repository and derives each grade from the home rece
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
 *Needs:* xref:census[🧾 Census of the estate] +
-*Enables:* xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough&#63; &#40;X&#45;PF1&#41;], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Maths panel for the estate], xref:paper-receipts[📰 Paper&#58; receipts&#44; not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed] +
+*Enables:* xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough&#63; &#40;X&#45;PF1&#41;], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Visual proof space], xref:paper-receipts[📰 Paper&#58; receipts&#44; not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed] +
 *Evidence:* ADR 0004 accepted; `docs&#47;atlas&#47;generated&#47;registry&#46;adoc` +
 *Value (judgement):* engineering ●●●, soundness ●●●, ecosystem ●●●
 
@@ -337,7 +338,7 @@ This tech tree&#58; data first&#44; with derived eras&#44; frontier&#44; forks&#
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
 *Needs:* xref:atlas-views[🗺️ Atlas views] +
-*Enables:* xref:maths-panel[🪟 Maths panel for the estate] +
+*Enables:* xref:maths-panel[🪟 Visual proof space] +
 *Evidence:* `docs&#47;ultraplan&#47;tree&#46;jsonl`; `scripts&#47;ultraplan&#47;ultraplan&#46;mjs` +
 *Value (judgement):* engineering ●, teaching ●
 
@@ -548,14 +549,13 @@ The full bridge record for two pilots&#44; a squeakwell ladder row and resource&
 * ∑ _Mathematician:_ Equivalence as identity&#44; made checkable&#46;
 
 [[maths-panel]]
-==== ⛔ 🪟 Maths panel for the estate
+==== 🌱 🪟 Visual proof space
 
-The tech tree as one panel type in the estate’s interface&#58; frontier&#44; grade census with its denominator&#44; and claim pins&#44; from a read&#45;only Mathesis feed pinned by commit&#46; Open decisions go to the owner’s decision desk&#44; not this panel&#46;
+Mathesis hosts its own visual proof space &#40;owner ruling 2026&#45;11&#45;25&#41;&#58; the tech tree&#44; its frontier&#44; the grade census with its denominator&#44; and the claim pins&#46; The owner’s private me panel lives here too&#44; its notes kept outside this repository and every feed&#46; MPSCI links to it with a summary card&#46; Open decisions go to the owner’s decision desk&#46;
 
-*Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked
+*Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* open
 
 *Needs:* xref:claims-registry[📒 Claims registry], xref:ultraplan[🌳 The ultraplan] +
-*Blocked by:* the owner’s choice of host &#40;owner clarification 2026&#45;11&#45;25&#41;&#58; MPSCI&#44; the Master Production and Scheduling Command Interface&#44; or GELO&#44; the Git Estate Logistics Office&#44; both in metadatastician&#59; then their feed and panel contract +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
 === ♾️ Era 4: Cantor

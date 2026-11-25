@@ -53,10 +53,20 @@ export function repoFiles(root) {
   };
   const isTracked = p => trackedSet().has(p);
   const holdsTracked = p => [...trackedSet()].some(t => t.startsWith(`${p}/`));
-  // What stands at the path itself, when no part of it is a link; else null.
-  const at = p => {
-    if (typeof p !== 'string' || p === '') return null;
+  // The full path of p when p is a relative path to something inside the
+  // checkout, below its top: "", ".", "..", an absolute path, or a path that
+  // climbs out is null.
+  const within = p => {
+    if (typeof p !== 'string' || p === '' || path.isAbsolute(p)) return null;
     const full = path.join(base, p);
+    const rel = path.relative(base, full);
+    return rel !== '' && rel !== '..' && !rel.startsWith(`..${path.sep}`) ? full : null;
+  };
+  // What stands at the path itself, inside the checkout, when no part of it is a
+  // link; else null.
+  const at = p => {
+    const full = within(p);
+    if (full === null) return null;
     try { return realpathSync(full) === full ? statSync(full) : null; } catch { return null; }
   };
   const isFile = p => isTracked(p) && at(p)?.isFile() === true;
@@ -79,8 +89,13 @@ export function repoFiles(root) {
     local: {
       isFile: localFile,
       isDir: p => at(p)?.isDirectory() === true,
-      // Nothing at all stands at the path, not even a link that leads nowhere.
-      isAbsent: p => { try { lstatSync(path.join(base, p)); return false; } catch { return true; } },
+      // Nothing at all stands at the path, not even a link that leads nowhere. A
+      // path outside the checkout is never absent: nothing may be made there.
+      isAbsent: p => {
+        const full = within(p);
+        if (full === null) return false;
+        try { lstatSync(full); return false; } catch { return true; }
+      },
       read: p => {
         if (!localFile(p)) throw new Error(`${p} is not a plain file inside the repository`);
         return readFileSync(path.join(base, p), 'utf8');

@@ -74,6 +74,9 @@ fourth, finish or park one first. This is the guard against starting everything.
 When every slot is taken, the page and the picture still show the frontier, and
 say that it is ready but cannot start.
 * *Blocked* must say what blocks it.
+* *Dropped* takes the nodes that need it along: a node still in play may not
+need a dropped node, since it could never start. So nothing below a dropped node
+is counted as unlocked.
 
 Each text (a name, a summary, a piece of counsel, a reason, a quote) is plain
 text on one line (owner ruling 2026-11-25). It carries no markup, and the page

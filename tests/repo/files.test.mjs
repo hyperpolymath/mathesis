@@ -90,6 +90,27 @@ test('no link along a path counts, even one git tracks that stays inside', () =>
   expect(files.local.isDir('linked')).toBe(false);
 });
 
+// Nothing outside the checkout is a local path: not "..", not an absolute path,
+// not a path that climbs out, though a plain file stands there.
+test('a local path never leads out of the checkout', () => {
+  const root = checkout();
+  const outside = temp('repo-files-out-');
+  writeFileSync(path.join(outside, 'secret.txt'), 'secret\n');
+  const files = repoFiles(root);
+  const climb = path.relative(root, path.join(outside, 'secret.txt'));
+  expect(climb.startsWith('..')).toBe(true);
+  for (const p of [climb, path.join(outside, 'secret.txt'), '../../etc/passwd', 'docs/../../x', '..', '.']) {
+    expect(files.local.isFile(p)).toBe(false);
+    expect(files.local.isDir(p)).toBe(false);
+    expect(files.local.isAbsent(p)).toBe(false);
+    expect(() => files.local.read(p)).toThrow(/is not a plain file inside the repository/);
+    expect(files.isFile(p)).toBe(false);
+  }
+  // A name that only begins with two dots is inside.
+  writeFileSync(path.join(root, '..notes'), 'n\n');
+  expect(files.local.read('..notes')).toBe('n\n');
+});
+
 test('local paths: plain files and directories inside, tracked or not', () => {
   const root = checkout();
   const files = repoFiles(root);

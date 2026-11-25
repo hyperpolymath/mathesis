@@ -237,6 +237,18 @@ test('the needs form a DAG over known nodes', () => {
   refuses({nodes: swap('theorem', {needs: ['root', 'root']})}, /needs names root twice/);
 });
 
+// A node still in play needs no dropped node: it could never start. Dropping a
+// node means dropping what needs it too, so nothing below a dropped node is ever
+// counted as unlocked.
+test('a node still in play needs no dropped node', () => {
+  refuses({nodes: swap('theorem', {status: 'dropped', owner_value: undefined})}, /node paper: needs theorem, which is dropped; drop this node too, or name another need/);
+  refuses({nodes: swap('theorem', {status: 'dropped', owner_value: undefined})}, /node panel: needs theorem, which is dropped/);
+  const dropped = BASE.map(n => (['theorem', 'paper', 'panel'].includes(n.id) ? strip({...n, status: 'dropped', owner_value: undefined}) : n));
+  const d = generate(fixture({nodes: dropped})).derived;
+  // root now unlocks only tool and cheap, the nodes still in play below it.
+  expect(d.leverage('root')).toBe(2);
+});
+
 test('rivals name each other back', () => {
   refuses({nodes: swap('paper', {rivals: ['cheap']})}, /rival cheap does not name paper back/);
   const both = BASE.map(n => n.id === 'paper' ? {...n, rivals: ['cheap']} : n.id === 'cheap' ? {...n, rivals: ['paper']} : n);

@@ -354,6 +354,11 @@ function checkNames(n, k, byId, fail) {
 function checkLinks(n, byId, fail) {
   checkNames(n, 'needs', byId, fail);
   checkNames(n, 'rivals', byId, fail);
+  // A node still in play needs no dropped node: it could never start, and every
+  // node below it would be counted as unlocked when it never can be.
+  if (n.status !== 'dropped') {
+    for (const t of list(n.needs)) if (byId.get(t)?.status === 'dropped') fail(`node ${n.id}: needs ${t}, which is dropped; drop this node too, or name another need`);
+  }
   for (const r of list(n.rivals)) if (byId.has(r) && !list(byId.get(r).rivals).includes(n.id)) fail(`node ${n.id}: rival ${r} does not name ${n.id} back`);
 }
 

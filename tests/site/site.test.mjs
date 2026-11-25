@@ -126,6 +126,27 @@ test('a view links on GitHub only to files git tracks', () => withSite(({fix, ou
   expect(readFileSync(path.join(`${out}-tracked`, htmlPath(view.file)), 'utf8')).toContain(`${GITHUB}/blob/main/notes.adoc`);
 }));
 
+// The site is built into a fresh tree. An output directory that holds anything,
+// a link where the build writes above all, or that is itself a link, is refused
+// before a byte is written, so nothing outside it can be overwritten.
+test('the site is built only into a fresh output directory', () => withSite(({fix, outside, out}) => {
+  const [asset] = VIEWS.flatMap(v => v.assets ?? []);
+  writeFileSync(path.join(outside, 'victim.txt'), 'ORIGINAL\n');
+  mkdirSync(path.dirname(path.join(out, asset)), {recursive: true});
+  symlinkSync(path.join(outside, 'victim.txt'), path.join(out, asset));
+  expect(() => build(fix, out)).toThrow(/is not a fresh output directory/);
+  expect(readFileSync(path.join(outside, 'victim.txt'), 'utf8')).toBe('ORIGINAL\n');
+  // A directory that is itself a link is refused, though empty.
+  const empty = path.join(outside, 'empty');
+  mkdirSync(empty);
+  symlinkSync(empty, `${out}-link`);
+  expect(() => build(fix, `${out}-link`)).toThrow(/is not a fresh output directory/);
+  // An empty directory, or a path that does not exist yet, is fresh.
+  mkdirSync(`${out}-empty`);
+  expect(build(fix, `${out}-empty`).length).toBe(VIEWS.length + 1);
+  expect(build(fix, `${out}-new`).length).toBe(VIEWS.length + 1);
+}));
+
 // Asciidoctor reads no file but the page it renders: an include in a view, of a
 // file outside the repository, is not read into the site; it fails the build.
 test('an include in a view reads nothing into the site', () => withSite(({fix, outside, out, git}) => {

@@ -75,11 +75,10 @@ function lineKinds(lines) {
 // then a title that could read "Status". The title is the rest of the line, taken
 // whole, so the pattern cannot backtrack and no character of the title escapes it.
 const HEADING = /^[=#]+[ \t]/;
+const titleMayBeStatus = title => /\{|&#?\w+;/.test(title) || /status/i.test(title.replace(/[^\p{L}]/gu, ''));
 const mayBeStatus = l => {
   const m = HEADING.exec(l);
-  if (m === null) return false;
-  const title = l.slice(m[0].length);
-  return /\{|&#?\w+;/.test(title) || /status/i.test(title.replace(/[^\p{L}]/gu, ''));
+  return m !== null && titleMayBeStatus(l.slice(m[0].length));
 };
 // Asciidoctor reads a line over an underline within one character of its
 // length as a two-line section title; two characters are allowed here.
@@ -168,12 +167,16 @@ export function adrStatus(text) {
 // Whether a record states no status at all, as far as can be shown: no line could
 // set "status" (an entry in any letter case, a {set:...} or {counter:...} that
 // names it, or a preprocessor directive that could bring either in), and no line
-// could be a heading titled Status. A record the readers refuse is not one of
+// could be a heading titled Status, in either form: "== Status", or "Status" over
+// an underline. A record the readers refuse is not one of
 // these: its status is there but cannot be read soundly, and that fails the check.
 // ({set:Status:X} sets "status"; a counter on another attribute does not.)
 const SETS_STATUS = /\{(?:set|counter2?):status(?=[:!}])/i;
 export function statesNoStatus(text) {
-  return !linesOf(text).some(l => STATUS_ENTRY.test(l) || SETS_STATUS.test(l) || PREPROCESSOR.test(l) || mayBeStatus(l));
+  const lines = linesOf(text);
+  const kinds = lineKinds(lines);
+  const underlined = i => overUnderline(lines, kinds, i) && titleMayBeStatus(lines[i]);
+  return !lines.some((l, i) => STATUS_ENTRY.test(l) || SETS_STATUS.test(l) || PREPROCESSOR.test(l) || mayBeStatus(l) || underlined(i));
 }
 export const adrAccepted = text => {
   const s = adrStatus(text);

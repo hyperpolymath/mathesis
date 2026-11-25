@@ -106,6 +106,17 @@ test('local paths: plain files and directories inside, tracked or not', () => {
   expect(files.local.isFile('dangling')).toBe(false);
 });
 
+// git prints the top of the checkout with a closing newline, which is cut; white
+// space that ends the directory's own name is part of the path and is kept.
+test('a checkout whose name ends in white space is read like any other', () => {
+  const root = path.join(temp('repo-files-ws-'), 'repo \t ');
+  mkdirSync(path.join(root, 'docs'), {recursive: true});
+  writeFileSync(path.join(root, 'docs/a.adoc'), 'a\n');
+  git(root, 'init', '-q');
+  git(root, 'add', '-A');
+  expect(repoFiles(root).read('docs/a.adoc')).toBe('a\n');
+});
+
 test('only the top of a git checkout is read, and a failing git fails loudly', () => {
   const bare = temp('repo-files-nogit-');
   expect(() => repoFiles(bare).isFile('x')).toThrow(/is not the top of a git checkout/);

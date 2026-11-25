@@ -30,11 +30,12 @@ export function findProgram(name, env = process.env) {
 }
 
 // The paths git tracks in the checkout at `base`, which must be the top of its
-// work tree, relative to it.
+// work tree, relative to it. Only git's closing newline is cut from the path it
+// prints: a directory name may itself end in white space.
 function trackedPaths(base) {
   const git = args => spawnSync(findProgram('git'), ['-C', base, ...args], {encoding: 'utf8', maxBuffer: 1 << 28});
   const top = git(['rev-parse', '--show-toplevel']);
-  if (top.error || top.status !== 0 || realpathSync(top.stdout.trim()) !== base) {
+  if (top.error || top.status !== 0 || realpathSync(top.stdout.replace(/\n$/, '')) !== base) {
     throw new Error(`${base} is not the top of a git checkout; the files read here are the files git tracks`);
   }
   const ls = git(['ls-files', '-z', '--full-name']);

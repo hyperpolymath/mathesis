@@ -14,11 +14,12 @@
 //   - A relative link to a file that is neither in the site nor in the
 //     repository fails. A relative link to a repository file that is not in
 //     the site becomes an absolute GitHub link at `main`.
+//   - It writes only into a fresh output directory: OUT is absent, or empty.
 //   - It reads from the repository only files that git tracks, at their own
 //     path (scripts/repo/files.mjs): each view, the front page's sources and
 //     each asset it copies. A view or an asset that is a link, or untracked,
 //     fails the build, so nothing from outside the repository enters the site.
-import {readFileSync, writeFileSync, mkdirSync, mkdtempSync, readdirSync, statSync} from 'node:fs';
+import {readFileSync, writeFileSync, mkdirSync, mkdtempSync, readdirSync, statSync, lstatSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
@@ -147,7 +148,16 @@ function asciidoctor(args) {
   if (r.status !== 0) throw new Error(`asciidoctor failed (status ${r.status})`);
 }
 
+// The site is built into a fresh tree: OUT is absent, or an empty directory that
+// is not itself a link. A stale or planted tree could hold a link where the build
+// writes, and the build (or Asciidoctor) would write through it, out of OUT.
+function freshOut(out) {
+  let st = null;
+  try { st = lstatSync(out); } catch { return; }
+  if (!st.isDirectory() || readdirSync(out).length) throw new Error(`${out} is not a fresh output directory: give a path that does not exist, or an empty directory`);
+}
 export function build(root, out) {
+  freshOut(out);
   const files = repoFiles(root);
   const unread = [...VIEWS.map(v => v.file), ...VIEWS.flatMap(v => v.assets ?? [])].filter(f => !files.isFile(f));
   if (unread.length) throw new Error(unread.map(f => `${f} is not a file that git tracks in the repository`).join('\n'));

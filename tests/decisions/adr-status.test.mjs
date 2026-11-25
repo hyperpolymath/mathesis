@@ -243,15 +243,20 @@ test('the check keeps every decision record in step, and reports one that states
     ['0016-set.adoc', '= P\n\nText {set:Status:ACCEPTED} here.\n'],
     // Nothing here names a status, but the included file could set one.
     ['0017-include-only.adoc', '= Q\n\ninclude::decision.adoc[]\n'],
+    // A two-line title, "Status" over an underline, is a Status heading too.
+    ['0018-underlined.adoc', '= R\n\nStatus\n------\n\nAccepted\n'],
+    // An underlined title that cannot read Status leaves the record unset.
+    ['0019-context.adoc', '= S\n\nContext\n-------\n\nNothing is decided.\n'],
     ['0015-plain-counter.adoc', '= O\n\nA {counter:n} count and the word status in prose.\n'],
   ]) put(f, body);
   const byFile = new Map(checkDecisions(root).map(r => [r.file, r]));
-  for (const f of ['0010-include.adoc', '0011-ifdef.adoc', '0012-quo.adoc', '0013-counter.adoc', '0014-entry.adoc', '0016-set.adoc', '0017-include-only.adoc'])
+  for (const f of ['0010-include.adoc', '0011-ifdef.adoc', '0012-quo.adoc', '0013-counter.adoc', '0014-entry.adoc', '0016-set.adoc', '0017-include-only.adoc', '0018-underlined.adoc'])
     expect(byFile.get(f)).toEqual({file: f, problem: unreadable});
   // A record that states nothing about status, in any form, is still listed as
   // unset, though it counts something else or says "status" in its prose.
   expect(byFile.get('0002-b.adoc')).toEqual({file: '0002-b.adoc', status: null});
   expect(byFile.get('0015-plain-counter.adoc')).toEqual({file: '0015-plain-counter.adoc', status: null});
+  expect(byFile.get('0019-context.adoc')).toEqual({file: '0019-context.adoc', status: null});
   // A decisions directory that is a link out of the repository is refused, and
   // nothing through it is read, though git tracks the link.
   const linked = mkdtempSync(path.join(tmpdir(), 'adr-linked-'));

@@ -130,8 +130,10 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   the link check refuses, instead of the included file's text: in safe mode,
   with the base directory at `/`, a view could include any file on the
   system. The output is otherwise byte-identical. A link to a repository file
-  becomes a GitHub link only when git tracks the file. `site-check` now runs
-  the site tests, so CI runs them; it did not before.
+  becomes a GitHub link only when git tracks the file. The build writes only
+  into a fresh output directory (absent, or empty and not a link), so a link
+  left in an old output tree cannot make it overwrite a file elsewhere.
+  `site-check` now runs the site tests, so CI runs them; it did not before.
 
 * The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
   (2026-11-17), whose receipt describes `47de4a8`, the merge of

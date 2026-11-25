@@ -10,6 +10,13 @@ Phase `incubating`, maturity `experimental` (the deed's `(status)` and
 truth". The stages are under <<stages>>; the rulings that steer them are
 under <<rulings>>.
 
+What comes next is drawn as a tech tree, the ultraplan
+(link:../ultraplan/generated/ultraplan.adoc[`docs/ultraplan/generated/ultraplan.adoc`],
+from the data in `docs/ultraplan/`). Its frontier is the work that is ready, to
+start when an active slot is free, and each advisor of the council, except the
+private me advisor, names a pick from it. This roadmap keeps the record of what happened; the tree says what each
+piece enables.
+
 === Proven lifecycle registration (2026-11-25)
 
 The Proven owner has retained production Idris lifecycle proof checks, negative
@@ -452,13 +459,56 @@ scheduled census, a view of what each repository owes
   the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
   requests; the laws of the integer instance proved in the second pull
   request.
-* Receipt generator (2026-11-23), through the selector: Mathesis adopts the
-  shared generator of standards (`scripts/proof-receipt.sh`) rather than its
-  own receipt-from-run script (PR 111, closed once this lands): a home script
-  of hooks and a run ledger, so that `--check` reproduces today's receipt; the
-  gate records each green run with `--run-row` and reads no log; the
-  standards pin moves to `745fc74` or later.
-* Superseded receipts (2026-11-24), through the selector: the receipt takes the
-  generator's shape, and standards is asked for an option that keeps the
-  inputs digest, manifest and axioms on receipts that are not current. The
-  option landed as standards#1705 (`84c2d1c`), and Mathesis turns it on.
+* Ultraplan (2026-11-24), through the selector:
+** The plan is a data-first tech tree. Views are generated from the data, and
+   `just check` checks them.
+** The advisors are the owner's six (mathematician, scientist, engineer,
+   economist, publisher, me) and four more (soundness auditor, estate
+   cartographer, teacher, contrarian).
+** The me advisor is private. Its notes stay outside this repository and every
+   feed, in a private panel the owner owns, and a node carries at most the
+   tag `owner_value`. It names no public pick: the page lists the tagged
+   frontier nodes unranked, and the owner chooses in that panel.
+** Off-tree trips are return tickets: each is grafted onto the tree or
+   archived with what it taught.
+** The maths panel waits on a feed and panel contract. The estate coordinator
+   has answered: a read-only feed, one panel type, and open decisions sent to
+   the owner's decision desk.
+** The feed's reader pins by commit (owner ruling 2026-11-24). Mathesis
+   commits the feed as a generated view, which `just check` refuses when
+   stale. The reader asks the GitHub API for the head commit of main, then
+   reads the feed at that commit, so each read names its commit. The fetch
+   logic and its rate limits belong to the reader. Mathesis needs no new
+   permission and holds no inbound secret.
+** These rulings were recorded while the panel was taken to be in GELS, a name
+   now retired. See the clarification of 2026-11-25 below.
+* Owner clarification (2026-11-25): two systems had been mixed up. The owner
+  named them the same day (relayed to this work by the estate hub session).
+  Both are in metadatastician:
+** MPSCI is the Master Production and Scheduling Command Interface.
+** GELO is the Git Estate Logistics Office. It was called GELS, the Git
+   Estate Logistics System; "GELS" is retired.
+** Earlier text here and in the ultraplan called that system GELS, and "the
+   estate display". Which system, MPSCI or GELO, shows the maths panel and the
+   owner's private panel, and reads the feed, is open for the owner. The
+   panel node is now `maths-panel`.
+** The feed-panel contract thread, the estate coordinator and the decision
+   desk were told of the clarification the same day.
+* Owner rulings (2026-11-25), through the selector:
+** Plan texts are plain text everywhere: in the data, on the page and in the
+   feed. The page writes each ASCII punctuation mark in a text as a character
+   reference, so the text shows as written and forms no markup.
+** An ADR's status becomes a header attribute, `:status:`, kept in step with
+   its Status section.
+** Guix proof CI gets one estate-wide fix at source, queued as its own task
+   (CI upkeep, on a cheaper model).
+* Owner rulings (2026-11-25), through the decision desk:
+** Mathesis hosts its own visual proof space: the maths panel and the
+   owner's private me panel live in Mathesis. MPSCI only links to it, with a
+   summary card or a link. GELO is not involved yet. The me panel's notes
+   still stay outside this public repository and every feed (ruling
+   2026-11-24). The `maths-panel` node is now open.
+** Agent pull requests are committed through the GitHub API, so each commit
+   carries GitHub's verified (web-flow) signature; the owner re-signs
+   nothing. The signature attests GitHub and the owner's account, not the
+   estate signing key (a doctrine 9 note).

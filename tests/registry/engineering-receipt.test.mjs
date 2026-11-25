@@ -58,6 +58,7 @@ test('arbitrary JSON fails registration; legacy deed refusal remains visible and
 
 for (const [name, mutate, message] of [
   ['wrong repository', r => {r.repository = 'o/other';}, /repo does not match/],
+  ['dot-segment repository', r => {r.repository = '../..';}, /invalid repository/],
   ['wrong claim', r => {r.claim = 'D-2';}, /claim does not match/],
   ['changed statement', r => {r.statement = 'A different assertion.';}, /statement does not match/],
   ['changed status document', r => {r.status_doc = 'OTHER.adoc';}, /status_doc does not match/],

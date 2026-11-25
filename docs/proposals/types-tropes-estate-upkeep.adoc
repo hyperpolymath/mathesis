@@ -1,0 +1,511 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+= Types and tropes against estate upkeep: findings so far
+:toc: preamble
+:toclevels: 2
+:sectnums:
+:icons: font
+
+Status: *findings, not ratified* (2026-11-25). This document reports a
+research run that is unfinished. It claims no proved result and builds
+nothing. Every idea in it carries one of three marks, defined in
+<<marks>>. No idea is marked as a working cure, because none has been built.
+
+The question was the owner's: can types and tropes, from Mathesis, from the
+estate's own type repositories, from the classical literature, or new ones,
+permanently remove the recurring frustrations of upkeep on the GitHub
+estate? The scope here is upkeep: CI gates, failing and missing checks,
+drift from templates and canon, merges, dependency bumps, and agent errors
+that land in those places.
+
+== Summary
+
+* The upkeep record is dominated by *copy fan-out*, not by individual
+  mistakes. In one count, 10,095 of 19,443 fix-worded commits carry a
+  subject repeated in 8 or more repositories. A fault written once into
+  a template or a sweep is then repaired hundreds of times.
+* The worst failures are *absences that read as success*. A workflow that
+  does not parse produces no run, no check and no log, not a red cross. In
+  one count, 521 repair commits in 281 repositories fixed workflows of this
+  kind, two of them 44 and 117 days after the break.
+* Six of the forty ideas were checked by independent verifiers before the
+  run stopped. Each pilot measurement was reproduced. Each idea was refuted
+  *as written* for the same two reasons. The engineering already exists
+  outside the estate, so the idea is "adopt", not "build". And the honest
+  effect is "detects earlier" or "shrinks", not "prevents".
+* The estate's maths still matters, in a different role from the one the
+  generators gave it. It supplies the *specification* that an adopted tool
+  must meet and the *argument* for why a gate is sound. It is not the
+  implementation. See <<principles>>.
+* The three recommendations are in <<recommendations>>.
+
+[[marks]]
+== What the marks mean
+
+[horizontal]
+*tested*:: A script or an existing test suite was run against the cloned
+estate, and a second agent reproduced the result independently. What was
+tested is the premise and the pilot measurement. The cure itself was not
+built in any case.
+*argued*:: The mechanism rests on a construct that its home repository
+records as proved, or on established literature. One agent ran a pilot
+measurement over the clones, and no second agent reproduced it.
+*open*:: The central claim is a new conjecture, stated but not proved. Pilot
+numbers may exist; they bear on the pain, not on the conjecture.
+
+A fact about another repository is that repository's own claim (for
+example "PROVED per its MANIFEST"). Mathesis did not recheck any proof for
+this document. Prover status follows `3-practice/PROOF-POLICY.adoc` in
+standards, and no Proof Witness Grade is asserted here.
+
+== How the run was done, and where it stopped
+
+* *Data.* 484 of the 530 repositories in hyperpolymath, metadatastician,
+  catachresis-colloquium and stuff-of-awe were cloned with history
+  (93,345 commits, 8,466 workflow files), six private theory repositories
+  among them added by hand at depth 50. The other 46 were not read.
+* *Understand.* 23 agents read eight theory clusters and mined commit
+  subjects, workflows, bumps, merges, agent incidents and forge issues.
+  Another four surveyed the external literature.
+* *Generate.* Six generators produced 83 candidates, one per ring (estate
+  maths, near the estate, classical, recent research, novel) plus one
+  generator that started from the costliest pains. A merge step reduced
+  these to 40.
+* *Verify.* Each candidate was to be attacked through two lenses:
+  grounding and soundness, then prior art and real effect. The model usage
+  limit stopped the run after 10 of the 80 verdicts (candidates 1 to 5 under
+  both lenses, 5 and 6 under one). The portfolio synthesis and the
+  completeness critic did not run. This document is the hand-written
+  substitute for both.
+* *Not durable.* The raw findings (about 1 MB of notes and probe scripts)
+  live in the session container, not in any repository.
+
+== The pain, measured
+
+These counts come from mining agents, with their denominators. They are
+upper bounds from commit-subject patterns unless stated otherwise; the six
+verified ideas reproduced the figures they cite.
+
+[cols="2,3,2",options="header"]
+|===
+|Class |Measure |Where it lands
+
+|Template and sweep fan-out
+|10,095 of 19,443 fix-worded commits carry a subject repeated in 8 or more
+repos. 47 shared workflow paths hold 7,423 files with 3,722 distinct
+contents. By blob identity, of 45,854 child files at shared template paths,
+14,711 equal template HEAD, 12,582 equal an older template version and
+18,561 equal no version.
+|rsr-template-repo, every minted repo
+
+|Silent green (absent, dead or unfailable gates)
+|845 commits in 304 repos say a gate never ran or could never fire. 521
+repairs in 281 repos fixed workflows that did not parse. 400 commits in
+224 repos fixed gates that could not fail. `\|\| true` occurs in 2,076
+workflows.
+|standards reusables, every repo's `.github/workflows`
+
+|Pins and the Actions lock
+|290 pin-repair commits in 184 repos in six waves. 533 `startup_failure` or
+"unbreak" commits in 266 repos. Of 329 locks, the estate's proved judge
+calls 160 inconsistent; the 38 distinct copies of `check-lock-sync.sh`
+disagree with it on 58 repos.
+|proven-cicd-and-workflows, rsr-template-repo, standards
+
+|CI cost
+|Median repo starts 22 job instances per push (p90 52). 5,947 of 6,960
+automatically triggered workflows have no path filter; 8% use a cache.
+Over 76,767 default-branch commits, 47,625 touch no code path.
+|standards reusables, rsr-template-repo
+
+|Overclaimed proof and status
+|276 honesty-correction commits in 122 repos; 335 vacuous- or fake-proof
+commits in 142 repos. 101 repos claim machine verification in a README or
+EXPLAINME; 8 carry a proof-receipt deed.
+|every repo with a PROOF-STATUS or README claim; Mathesis census
+
+|Merges
+|4,211 two-parent merges on default branches; 1,249 change a file on both
+sides (9,098 file instances), 48% of them in formats with a value grammar
+(workflow YAML, JSONL ledgers, locks, deeds).
+|hypatia, standards, rsr-template-repo, mathesis
+
+|Rulings not yet in force
+|740 agent-instruction files in 339 repos; 281 in 232 repos still tell
+agents to read a retired `.a2ml` descriptile.
+|standards, every CLAUDE.md, the arrival pack
+|===
+
+[[tested]]
+== The six verified ideas
+
+Each was refuted as written. Each has a corrected form the verifiers
+proposed, and that corrected form is what is marked here.
+
+=== Lock: one writer, one judge — *tested*
+
+* *Idea as written.* The proved Idris2 judge in proven-cicd-and-workflows
+  (`src/Proven/Lock`) becomes the only authority over `actions.lock`, and it
+  prevents fabricated and dangling pins.
+* *What was reproduced.* Judge run on 329 locks: 168 consistent, 160
+  inconsistent, 1 not run. The template script fails 209 of them. The two
+  deciders disagree on 58 repos.
+* *Why refuted.* The judge names none of the 16 unresolved standards pins
+  live on 2026-11-24: `RefOk` is a representation rule, not resolution.
+  GitHub's own `gh actions-lock --verify` (generally available 2026-10-28)
+  does the same checks, adds the reachability check the judge lacks, and
+  Dependabot now relocks in the same PR.
+* *Corrected form (ring 3, adopt).* `gh actions-lock` is the only writer
+  and `--verify` is the required check. Relock the roughly 160 inconsistent
+  locks once. Retire the 38 variants of `check-lock-sync.sh` and the six
+  hand-writers listed in `docs/proven/LOCK-PIN-CATALOGUE-2026-11-13.adoc`.
+  Keep the proved judge as a differential cross-check. Handle unresolved
+  standards pins with the ADR-003 ancestor check.
+* *Changes.* rsr-template-repo (`scripts/check-lock-sync.sh`, lock
+  workflows), proven-cicd-and-workflows (judge demoted to cross-check),
+  standards (`ADR-003`, pin scripts).
+
+=== No pass on absence — *tested*
+
+* *Idea as written.* One verdict kernel (`src/Assurance/Verdict.idr` in
+  proven-cicd-and-workflows), in which "did not run" is a constructor, so
+  absent, skipped and stale gates cannot pass.
+* *What was reproduced.* `tests/ci-gate.sh`: 646 passed, 0 failed.
+  `tests/pass-on-absence.sh`: 173 passed, 10 failed, all in one section that
+  needed a command missing from the container. 251 of 258 required
+  identities have a matching job.
+* *Why refuted.* The failure moves to two unproved adapters: the profile
+  that lists the expected checks, and the admission step. A check left out
+  of the profile still passes by omission. And the canon already holds the
+  successor design, `docs/estate-reconciliation/A3-estate-gate.adoc` in
+  standards (draft, law G3 "no pass on absence").
+* *Corrected form.* Finish and ratify A3. Derive the required set from
+  intent (A3's check table plus declared and detected capabilities), never
+  from observed green runs. Add a totality rule: every workflow file and
+  job at the head maps to exactly one observation or to a typed, dated
+  exemption. Then a workflow that does not parse is `NeverStarted` and
+  blocks. Prove the general membership lemma that ADR-001 lists as open.
+* *Changes.* standards (A3, reusable gate), proven-cicd-and-workflows
+  (`Assurance`), rsr-template-repo (per-repo profile).
+
+=== Workflows as values — *tested*
+
+* *Idea as written.* A workflow is a typed value with a two-constructor
+  `Job` type and a canonical printer, and no writer edits the text.
+* *What was reproduced.* 12,177 of 12,185 jobs fit the type; the 8 that do
+  not are live defects. A closed schema of about 40 keys admits 7,964 of
+  8,005 workflow files.
+* *Why refuted.* A documented historical defect is well typed, and
+  pre-repair files pass. The proposed round-trip law contradicts a
+  comment-preserving printer. The pieces exist: actionlint, the
+  `github-actions-models` crate and `yamlpatch`.
+* *Corrected form (ring 3, adopt).* actionlint plus a duplicate-key parse as
+  a required check, claiming "detects at merge" for parse-dead workflows
+  (about three quarters of those repairs) and for timeouts on reusable-call
+  jobs. Two cross-file checks the per-file type cannot express: lock
+  coverage, and caller-permission subsumption for reusable calls. Typed
+  writers remain aspirational.
+* *Changes.* rsr-template-repo (`workflow-linter.yml`, which has no parse
+  step and was itself destroyed in 22 repos), standards
+  (`scripts/check-workflow-duplicate-keys.sh`), kyq (later, as the writer).
+
+=== Template sync as a lens — *tested* (survived one lens)
+
+* *Idea as written.* The mint is a lens; PutGet and GetPut are gates; the
+  complement is an Echo residue; updates are three-way merges on values.
+* *What was reproduced.* The current / stale / diverged partition above.
+  By blob identity, 491 of 9,662 fan-out fix commits (5.1%) were pure
+  template-version propagation.
+* *Verdicts.* Grounding refuted the soundness claims (the transferred
+  theorems hide the real obligation). Reality accepted a reduced form:
+  Copier, cruft, Debian ucf and nf-core sync already do this; the design
+  should be adopted, not the Python tools.
+* *Corrected form.* Add the missing `upgrade` half to rsr-template-repo:
+  base = replay of the mint at the recorded pin, merged three ways with the
+  child and the new mint. Refresh the 12,582 exact-stale files with no
+  judgement needed. State and test the real safety rule: a path changes
+  only if the child still equals the old mint there.
+* *Changes.* rsr-template-repo (`replay-mint.sh`, `chain-mint.sh`,
+  `check-mint-drift.sh`, a new `upgrade` recipe), the 12 repos that record
+  `(mint-answers)`, then every future mint.
+
+=== Copy versus moment files — *tested*
+
+* *Idea as written.* From formal ontology: a licence text depends
+  generically on its pattern and must equal it; a proof file or status
+  statement depends specifically on its repo and must never equal the
+  template's, checked by blob id.
+* *What was reproduced.* Proof stubs: `Properties.agda` in 79 repos, 63
+  identical to the template stub. In 45 repos every proof-language file is
+  a template copy. `LICENSES/MPL-2.0.txt` has 4 contents across 440 repos.
+* *Why refuted.* The blob-id law misses the named cases (it catches 4 of 30
+  template PROOF-STATUS files and 5 of 13 template READMEs) and wrongly
+  flags correct identical files across siblings.
+* *Corrected form.* The moment rule is provenance, not inequality: a
+  moment file must be derived from the repo's own receipts, or be listed as
+  an open obligation. Detect it by comparing against the replayed mint;
+  keep blob identity only as a fallback for token-free stubs. Report licence
+  differences flag-only and never edit them.
+* *Changes.* rsr-template-repo (`check-mint-drift.sh`, mint stops copying
+  proof stubs and status text), Mathesis census (`scripts/census`).
+
+=== Checks keyed by what they read — *tested* (one lens)
+
+* *Idea as written.* A gate declares its read footprint; a sparse checkout
+  enforces it; a verdict receipt is keyed by the footprint's content; a
+  check runs only when its key is new.
+* *What was reproduced.* In 135 repos, 12,929 of 17,362 commits left a
+  given check's inputs unchanged.
+* *Why refuted.* A sparse checkout does not confine a job: it can still
+  read the network, the API and the rest of the history. The skip is then
+  unsound for exactly the gates that matter. `skip-duplicate-actions`
+  already does tree-keyed skips.
+* *Corrected form.* Only for pure checks: export the footprint with
+  `git archive` into a directory with no `.git`, run in a digest-pinned
+  container with no network and no secrets, and key the receipt by that.
+  Classify every gate first (pure, whole-tree, history, diff, API, effect);
+  never skip API or effect gates by receipt. The receipt form already exists
+  in PROOF-POLICY §8.5.
+* *Changes.* standards (reusable workflows, PROOF-POLICY receipts),
+  rsr-template-repo (`docs/practice/ci-cost-reduction.adoc`).
+
+== The other thirty-four ideas
+
+Numbers continue from the six ideas above (1 to 6). None was independently
+verified. The verifiers' pattern above suggests the
+claims of novelty and of "prevents" in this list are optimistic. The
+"changes" column names the repository or tool each would alter.
+
+[cols="1,6,1,4",options="header"]
+|===
+|# |Idea |Mark |Would change
+
+|7 |*Criterial inherence.* A receipt is evidence about a class of commits
+that share a check's inputs, not about one commit; reporting outside the
+class is a false bearer, re-running inside it a certified no-op. Pilot: 80
+commits in Mathesis fall into 4 input classes.
+|open |standards PROOF-POLICY §8.5 receipts; Mathesis `verification/receipts`
+
+|8 |*Blob-borne verdicts.* Checks that look at one file at a time are
+memoised by (gate, path class, blob id) across commits and repos. Pilot:
+1,137,864 workflow-file evaluations against 34,948 distinct blobs.
+|open |standards and rsr-template-repo `check-*.sh` (84 scripts)
+
+|9 |*Status as a derived meet.* Status is computed from the
+resource-algebra ledger (`eff`), never typed by hand; every "verified" word
+needs a receipt behind it.
+|argued |resource-algebra (reader), Mathesis claims registry, every
+PROOF-STATUS
+
+|10 |*Unlaunderable receipts.* A receipt is indexed by statement, scope,
+checker and replay; a change that touches its own gate cannot pass
+(epistemic-types `ApprovalSeal`).
+|argued |standards `proof-receipt.sh`, `deed_lint.js`; epistemic-types
+
+|11 |*Non-vacuity as a ledger obligation.* A row reaches `proven` only with an
+inhabited hypothesis and a refuted neighbour; eleven named vacuous proofs
+in the estate fail one or the other.
+|argued |Mathesis ledger and dossier check; hypatia, nextgen-typing ledgers
+
+|12 |*Claims as Trope IR.* Agent and status claims are written as
+trope-checker graphs; no observation or an unknown step fails at a named
+edge. One-run pilot in ai-skills: labelling cut asserted-only claims from
+24 to 2.
+|argued |trope-checker, ai-skills harness
+
+|13 |*Synecdoche-free "all".* A report's "all", "none" or "k of N" is typed
+by the read set the harness recorded, so part-for-whole cannot coerce.
+|open |session hooks (`.claude/settings.json`), echo-types `EchoFidelity`
+
+|14 |*Resolver-minted references.* A pin, path or cited lemma is a pair
+(name, resolution receipt) only the resolver writes. Pilot: of 19,565
+`uses:` refs, 15 name a blob and 1 names nothing.
+|argued |proven-cicd-and-workflows, hypatia, standards pin scripts
+
+|15 |*References as bound variables.* One binder per upstream; a linker
+stamps the literal SHA text. 239 repos pin one upstream at more than one
+commit.
+|argued |rsr-template-repo `check-workflow-edges.sh`, `canon-pin-check.sh`
+
+|16 |*Sweep completion from a measured zero.* A sweep is complete only when
+an independent count on default branches reaches zero (hvn-dehallucinator
+`EngineCore.guarantee`).
+|argued |hvn-dehallucinator, estate sweep scripts
+
+|17 |*Sweep as a typestate with a canary.* Fan-out is untypeable until a
+canary verdict is read back. Pilot: 29,840 of 33,368 sweep landings came
+within 24 hours of the first; there was never a soak.
+|argued |system-et (first ET-13 instance), sweep tooling
+
+|18 |*Closed-world pre-flight.* Every consumer is cloned locally, so the
+breaking set of a gate or template change is computed before merge.
+Measured: schema check 5 s, resolver 4 s, lock judge under 6 min.
+|argued |standards, rsr-template-repo `survey-template-damage.sh`
+
+|19 |*Resemblance towers.* Each file kind has a chain of normalisers; drift
+is the first level at which two files differ, an exact class with no
+similarity threshold. 8,005 workflows give 2,018 shape classes.
+|open |rsr-template-repo drift scripts, kyq
+
+|20 |*Capability-confined agent sessions.* Authority only narrows; a linear
+budget on how many repos a session may touch.
+|argued |polysafe-gitfixer, phronesis, the harness tool dispatcher
+
+|21 |*Rules compiled to reference monitors.* Each standing rule that is a
+safety property becomes a generated deny rule or hook (Schneider 2000).
+|argued |`.claude/settings.json` and hooks via rsr-template-repo arrival pack
+
+|22 |*Bump safety as call-site subsumption.* A bump is safe at a call site
+iff the new callee's interface and permission request fit what the site
+passes and grants. Pilot: 1,761 of 1,794 canon calls valid at their pin;
+376 would break at canon HEAD.
+|argued |standards `bump-action-pins.sh`, hypatia auto-merge policy
+
+|23 |*Proof-carrying bump certificate.* Resolves, closed, canary-started and
+seasoned, keyed by content address.
+|argued |hypatia `estate-pr-automerge.sh`, proven-cicd-and-workflows
+
+|24 |*Bump as typed revision.* Claims whose support avoids the bumped
+package survive by `survives-retraction`; only the rest re-run.
+|argued |residual-evidence-types, hypatia `Retraction.idr`, one Rust repo
+
+|25 |*Class-borne acceptance and sticky negative receipts for bumps.* One
+canary run accepts a bump class for every repo; a rollback blocks it
+everywhere.
+|open |hypatia auto-merge policy
+
+|26 |*Lawful keyed merge on values.* Per-field resolvers with proved laws,
+conflict as an in-format value, for JSONL ledgers, locks, deeds and KYAML.
+|argued |kyq (canonical form), git merge drivers in standards and Mathesis
+
+|27 |*Foundation-closed deltas.* Parts that exist only together (a `uses:`
+ref, its lock entry, its version comment) merge only as a unit.
+|open |proven-cicd-and-workflows lock judge, merge drivers
+
+|28 |*Footprint-typed work claims.* Sessions declare write and read sets;
+disjoint claims commute (choreographic-types `swap-proj`); overlapping ones
+take a lease; a diff outside its claim is refused.
+|argued |choreographic-types, januskey, boj-server coordination
+
+|29 |*Affine leases with compare-and-swap.* A lease cannot be copied, the
+coordinator owns expiry, writes are compare-and-swap.
+|argued |hypatia `KinGate.tla`, januskey
+
+|30 |*Licence class as a registry-held closed sum.* Findings are derived and
+flag-only, with no auto-edit constructor. Pilot: 29 of 471 repos name
+different licence families across carriers (a worklist, not a verdict).
+|argued |chora-registry, palimpsest-license `Warrant.agda`; flag-only
+
+|31 |*Sealed regions.* Licence files, gate workflows and generated
+instruction blocks carry anchor digests outside the agent's write set; only
+an owner reseals.
+|argued |epistemic-types `ApprovalSeal`, branch rulesets
+
+|32 |*One trope, many faces.* Each fact (licence, canon pin, ruling) has one
+holder and registered renderings; two faces that disagree are a
+contradiction, not drift.
+|open |standards `check-*-consistency.sh` family, chora deed
+
+|33 |*Rulings in force by projection.* Every instruction file and gate
+parameter is generated from one ruling register.
+|argued |standards ADR-011, STANDING-RULES, arrival pack generator
+
+|34 |*Migration with a two-sided fidelity account.* Legacy metadata is
+deleted only with a machine-checked account of every fact kept or dropped.
+|argued |echo-types `EchoFidelity`, autoformal-fidelity, deed migration
+
+|35 |*A gate has both fibres inhabited.* A required check carries a passing
+baseline and planted mutants it rejects. Pilot: 428 of 1,204 gate-script
+copies are named by no test.
+|argued |proven-tests-and-benches, rsr-template-repo `scripts/check-*.sh`
+
+|36 |*Finish Coaptation.* Facts indexed by subject, missing is blocking, a
+liveness obligation per gate.
+|argued |rsr-template-repo `.machine_readable/coaptation/core/Coaptation.idr`
+
+|37 |*Error tropes as a generative vocabulary.* Each recurring error is a
+generator, detectors and a cure; a kill matrix gives a minimal gate basis.
+|open |CHORA-SPEC `:kind trope`, proven-tests-and-benches
+
+|38 |*Certain repair.* An autofix applies only when every minimal repair
+agrees (consistent query answering for config).
+|open |kyq, hypatia `AllowlistRemediation.idr`
+
+|39 |*Commit kinds as verdict transitions.* "fix", "refactor", "revert" are
+computed from the change in gate verdicts, not written by the author.
+|open |proven-cicd-and-workflows verdict kernel, commit tooling
+
+|40 |*Separated evidence.* Witness count is the least number of shared
+assumptions whose failure removes all evidence; two legs on one run share
+one.
+|open |standards PROOF-POLICY §8, receipt deeds, invariant-path
+|===
+
+[[principles]]
+== What recurs: six principles
+
+The forty ideas use a small number of type and trope ideas. These are the
+part most likely to last.
+
+. *Absence is a value.* "Missing", "never started", "not run" are
+  constructors, and a pass needs every input to be a known pass. Mathesis
+  `Applied/Missing.agda`, the Assurance verdict kernel and standards
+  `ReportBack.idr` state the same law. The verifiers showed where it fails:
+  in the list of what is expected, which must come from intent.
+. *Evidence is a trope.* A receipt, a status or a verdict inheres in one
+  bearer (a commit, a set of inputs, a blob) and does not migrate except by
+  stated transport. Most overclaim incidents are evidence reported about the
+  wrong bearer.
+. *Copy versus moment.* Some files are copies of a pattern and must stay
+  equal to it; others are statements about this repository and must come
+  from its own receipts. The mint conflates the two.
+. *Values, not text.* Structured files are parsed, changed and printed;
+  line-oriented writers cause the "missing semicolon" class here.
+. *One writer, one judge.* Each fact has one tool that writes it and one
+  that checks it. 38 copies of a lock checker that disagree are the
+  counter-example.
+. *A gate decides both ways.* A check with no planted failure it rejects is
+  not known to be a check.
+
+Reading (the author's view): in each verified case the estate's maths
+supplied the specification and the soundness argument, and an existing tool
+supplied the mechanism. That division is the honest use of Mathesis here.
+
+[[recommendations]]
+== Recommendations
+
+. *Adopt the first-party Actions lock.* `gh actions-lock` as sole writer,
+  `--verify` as required check, one relock of about 160 inconsistent locks,
+  retire 38 checker variants; keep the proved judge as a cross-check.
+  Tested premise; days of work; changes rsr-template-repo, standards and
+  proven-cicd-and-workflows.
+. *Make absence block.* Ratify A3 with the required set derived from intent
+  and a totality rule over every workflow, and add actionlint with a
+  duplicate-key parse as a required check. Turns parse-dead and never-run
+  gates from silent green into blocked merges. Tested premise; weeks;
+  changes standards and rsr-template-repo.
+. *Give the template its update half.* An `upgrade` recipe in
+  rsr-template-repo that replays the mint and merges three ways, plus a
+  one-off refresh of the 12,582 exact-stale files. Tested premise; weeks;
+  changes rsr-template-repo and minted repos.
+
+== Decisions for the owner
+
+* Whether to accept GitHub's first-party lock tooling as the authority,
+  with the estate's proved judge demoted to a cross-check.
+* Which verdict function is normative where the Assurance kernel and A3 §7
+  differ (empty set, all-exempt set, unrun advisory checks).
+* Whether to resume the verification run (34 ideas unverified, the critic
+  and portfolio not run), and on which model and effort.
+* Whether the raw findings and probe scripts should be kept, and where.
+  They are not in any repository now.
+
+== Outside this repository
+
+* Recommendations 1 and 2 belong in standards (canon) and rsr-template-repo
+  (template); Mathesis only records them.
+* Ideas 9, 10, 11 and 40 bear on how Mathesis itself derives status, and are
+  candidates for its ledger once proposed there.
+* Ideas 7, 8, 13, 19, 25, 27, 32 and 37 to 40 are new theory. If pursued,
+  each needs a home repository and a pre-registered statement before any
+  claim is made.

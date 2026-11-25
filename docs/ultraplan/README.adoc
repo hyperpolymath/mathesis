@@ -91,7 +91,8 @@ page.
 * A feed can carry the same strings unchanged, as plain text.
 * The generator refuses a text the page could not show as written: one that
 holds a control character (a line break among them), a line or paragraph
-separator (U+2028 or U+2029, where a browser breaks the line), a run of two or
+separator (U+2028 or U+2029, where a browser breaks the line), a bidirectional
+formatting control (such as U+202E, which reorders what is shown), a run of two or
 more spaces (HTML shows a run as one), or a space at its start or end. A
 no-break space is shown as written, and is allowed.
 

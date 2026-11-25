@@ -156,4 +156,28 @@ test('a program is found only in an absolute directory of PATH', () => {
   // The same directory named relatively is passed over.
   expect(() => findProgram('prog', {PATH: path.relative(process.cwd(), bin)})).toThrow(/^prog not found in an absolute directory of PATH$/);
   expect(() => findProgram('prog', {})).toThrow(/not found/);
+  // As a shell does, it passes over a plain file without the execute bit and a
+  // directory by that name, and runs the next one that is a program.
+  const plain = temp('repo-files-plain-'), dir = temp('repo-files-dir-');
+  writeFileSync(path.join(plain, 'prog'), 'not a program\n');
+  chmodSync(path.join(plain, 'prog'), 0o644);
+  mkdirSync(path.join(dir, 'prog'));
+  expect(findProgram('prog', {PATH: [plain, dir, bin].join(path.delimiter)})).toBe(path.join(bin, 'prog'));
+  expect(() => findProgram('prog', {PATH: [plain, dir].join(path.delimiter)})).toThrow(/not found/);
+});
+
+// Repository text is decoded strictly: a malformed byte is an error, never a
+// silent U+FFFD, and a byte order mark is kept as a character.
+test('repository text is valid UTF-8, read exactly', () => {
+  const root = checkout();
+  writeFileSync(path.join(root, 'bad.txt'), Buffer.from([0x61, 0xff, 0x62, 0x0a]));
+  writeFileSync(path.join(root, 'bom.txt'), Buffer.from([0xef, 0xbb, 0xbf, 0x61, 0x0a]));
+  writeFileSync(path.join(root, 'ok.txt'), 'caf\u00e9 \u2203\n');
+  git(root, 'add', '-A');
+  const files = repoFiles(root);
+  expect(() => files.read('bad.txt')).toThrow(/^bad\.txt is not valid UTF-8$/);
+  expect(() => files.local.read('bad.txt')).toThrow(/^bad\.txt is not valid UTF-8$/);
+  expect(files.read('bom.txt')).toBe('\uFEFFa\n');
+  expect(files.read('ok.txt')).toBe('caf\u00e9 \u2203\n');
+  expect(files.bytes('bad.txt')).toEqual(Buffer.from([0x61, 0xff, 0x62, 0x0a]));
 });

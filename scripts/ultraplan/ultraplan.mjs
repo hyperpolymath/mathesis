@@ -99,11 +99,16 @@ export function wellFormed(v) {
 // - A control character: a line break among them would let a text start a line
 //   of the page, where AsciiDoc reads block syntax.
 // - A line or paragraph separator (U+2028, U+2029): a browser breaks the line there.
+// - A bidirectional formatting control (U+061C, U+200E, U+200F, U+202A to U+202E,
+//   U+2066 to U+2069): it reorders what is shown, so text could look other than
+//   it is.
 // - A run of two or more spaces, or a space at the start or end: HTML shows a run
 //   of spaces as one, and drops a space at the edge of a cell.
 const TEXT_FAULTS = [
   [/[\u0000-\u001f\u007f-\u009f]/, 'a control character'],
   [/[\u2028\u2029]/, 'a line or paragraph separator (U+2028 or U+2029)'],
+  // A bidirectional control reorders the text around it as it is shown.
+  [/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/, 'a bidirectional formatting control'],
   [/ {2}/, 'a run of spaces'],
   [/^ | $/, 'a space at the start or end of a text'],
 ];

@@ -16,15 +16,23 @@
 // The generated views are the one exception: a generator writes them before git
 // tracks them, so `local` reads and checks a path with the same link rule but
 // without asking git.
-import {readFileSync, realpathSync, statSync, lstatSync, existsSync} from 'node:fs';
+import {readFileSync, realpathSync, statSync, lstatSync, accessSync, constants} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 
 // Find a program in the absolute directories of PATH, and run it by that absolute
-// path, so no relative PATH entry (such as ".") can pick the program.
+// path, so no relative PATH entry (such as ".") can pick the program. As a shell
+// does, it passes over anything there by that name that is not a regular file
+// it may run (a directory, a plain file without the execute bit).
+const runnable = f => {
+  try {
+    accessSync(f, constants.X_OK);
+    return statSync(f).isFile();
+  } catch { return false; }
+};
 export function findProgram(name, env = process.env) {
   for (const d of (env.PATH || '').split(path.delimiter)) {
-    if (path.isAbsolute(d) && existsSync(path.join(d, name))) return path.join(d, name);
+    if (path.isAbsolute(d) && runnable(path.join(d, name))) return path.join(d, name);
   }
   throw new Error(`${name} not found in an absolute directory of PATH`);
 }
@@ -42,6 +50,14 @@ function trackedPaths(base) {
   if (ls.error || ls.status !== 0) throw new Error(`git ls-files failed in ${base}`);
   return new Set(ls.stdout.split('\0').filter(Boolean));
 }
+
+// Repository text is UTF-8, decoded strictly: a malformed byte is an error, never
+// a silent U+FFFD, so what a generator reads is exactly what is committed. A byte
+// order mark is kept as a character, so a check sees it.
+const UTF8 = new TextDecoder('utf-8', {fatal: true, ignoreBOM: true});
+const decode = (buf, p) => {
+  try { return UTF8.decode(buf); } catch { throw new Error(`${p} is not valid UTF-8`); }
+};
 
 export function repoFiles(root) {
   const base = realpathSync(root);
@@ -83,7 +99,7 @@ export function repoFiles(root) {
     // A file or a directory: a ref may name either.
     exists: p => isFile(p) || isDir(p),
     bytes,
-    read: p => bytes(p).toString('utf8'),
+    read: p => decode(bytes(p), p),
     // The tracked paths under a directory, in the order git lists them (sorted).
     under: dir => [...trackedSet()].filter(t => t.startsWith(`${dir}/`)),
     local: {
@@ -98,7 +114,7 @@ export function repoFiles(root) {
       },
       read: p => {
         if (!localFile(p)) throw new Error(`${p} is not a plain file inside the repository`);
-        return readFileSync(path.join(base, p), 'utf8');
+        return decode(readFileSync(path.join(base, p)), p);
       },
     },
   };

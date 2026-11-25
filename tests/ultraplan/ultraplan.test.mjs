@@ -334,6 +334,11 @@ test('closed schema, blocked reasons and canonical lines', () => {
   // U+2029, and HTML shows a run of spaces as one and drops a space at a cell's edge.
   const faulty = (extra, re) => refuses({raw: {nodes: [jcs({...BASE[0], ...extra}), ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, re);
   for (const sep of ['\u2028', '\u2029']) faulty({summary: `one${sep}two`}, /line 1 holds a line or paragraph separator \(U\+2028 or U\+2029\)/);
+  // A bidirectional control reorders what is shown, so text could look other than it is.
+  for (const c of ['\u061C', '\u200E', '\u200F', '\u202A', '\u202E', '\u2066', '\u2069'])
+    faulty({summary: `abc${c}def`}, /line 1 holds a bidirectional formatting control/);
+  // A malformed byte is refused, never read as U+FFFD.
+  refuses({raw: {nodes: Buffer.concat([Buffer.from(BASE.map(n => jcs(n)).join('\n').slice(0, 20)), Buffer.from([0xff]), Buffer.from(BASE.map(n => jcs(n)).join('\n').slice(20) + '\n')])}}, /docs\/ultraplan\/tree\.jsonl is not valid UTF-8/);
   faulty({summary: 'two  spaces'}, /line 1 holds a run of spaces; each text in the plan is one line of plain text, shown as written/);
   faulty({counsel: {maths: 'a   wide gap'}}, /line 1 holds a run of spaces/);
   faulty({refs: [{at: 'a  b', path: 'README.adoc'}]}, /line 1 holds a run of spaces/);

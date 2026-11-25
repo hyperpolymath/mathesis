@@ -95,7 +95,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
      grade the registry derives, or an accepted ADR. Every file the checks read
      (evidence, refs, ADRs, the registry view and the plan's own sources) is
      one git tracks, at its own path: no link along it, nothing untracked,
-     nothing in `.git`. `scripts/repo/files.mjs` reads them, so a clone and
+     nothing in `.git`, and valid UTF-8 (a malformed byte is an error, never
+     a silent U+FFFD). `scripts/repo/files.mjs` reads them, so a clone and
      a linked worktree read the same; An ADR is accepted only when its
      header states `:status: ACCEPTED` and its Status section agrees (owner
      ruling 2026-11-25), each read by `scripts/decisions/adr-status.mjs` so
@@ -114,7 +115,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
      exactly once in a file here, a path here, a file of another repository at
      a full commit, or an issue, and never a line number;
   ** a text the page could not show as written: one holding a control
-     character, a line or paragraph separator (U+2028, U+2029), a run of
+     character, a line or paragraph separator (U+2028, U+2029), a
+     bidirectional formatting control, a run of
      spaces, or a space at its start or end. Every text is plain text (owner
      ruling 2026-11-25): the page writes each ASCII punctuation mark in it as a
      character reference, so it shows exactly as written and forms no markup;

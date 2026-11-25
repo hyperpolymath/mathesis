@@ -27,11 +27,11 @@
 // The "me" advisor is private (owner ruling 2026-11-24): its notes are kept
 // outside this public repository, and a node carries at most the neutral tag
 // `owner_value: "high"`. Counsel under the key `me` is refused.
-import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, realpathSync} from 'node:fs';
+import {readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync, lstatSync, realpathSync} from 'node:fs';
 import path from 'node:path';
 import {parseJsonl} from '../atlas/census-atlas.mjs';
 import {jcs} from '../registry/theory-ledger.mjs';
-import {isClaimId} from '../registry/claims-registry.mjs';
+import {isClaimId, isDocPath} from '../registry/claims-registry.mjs';
 
 export const ROOT = path.resolve(import.meta.dir, '../..');
 export const DIR = 'docs/ultraplan';
@@ -248,11 +248,16 @@ export function adrAccepted(text) {
   return n > h && /^\**Accepted\b/.test(lines[n]) && !LIST_MARKER.test(lines[n]);
 }
 
+// A path in this repository, by the registry's own rule: letters, digits, "-", "_"
+// and "." in each part, "/" between parts, and no part "." or "..". Nothing in it
+// can end a code span on the page, and it cannot climb out of the repository.
+const isRepoPath = p => isStr(p, 300) && isDocPath(p);
+
 // One check for each kind of evidence; each returns an error or null.
 const EVIDENCE = {
   path(ev, ctx) {
     const p = ev.path;
-    if (!isStr(p, 300) || p.startsWith('/') || p.split('/').includes('..')) return `evidence path ${JSON.stringify(p)} is not a repository path`;
+    if (!isRepoPath(p)) return `evidence path ${JSON.stringify(p)} is not a repository path`;
     return ctx.isFile(p) ? null : `evidence path ${p} is not a file in the repository`;
   },
   claim(ev, ctx) {
@@ -293,11 +298,15 @@ const evidenceError = (ev, ctx) => { try { return checkEvidence(ev, ctx); } catc
 // A ref into another repository names a full commit, so its content cannot
 // drift; it is not checked here. An issue ref names a GitHub issue or pull request.
 const REF_FIELDS = ['path', 'at', 'repo', 'commit', 'issue'];
-const isRepoPath = p => isStr(p, 300) && p.split('/').every(s => /^[-\w.]+$/.test(s) && s !== '.' && s !== '..');
 // The page shows a quote verbatim in a literal code span, which a backtick, a
 // plus or a backslash could end early.
 const isQuote = s => isStr(s, 160) && !/[`+\\]/.test(s);
-const occurrences = (text, s) => text.split(s).length - 1;
+// How often s occurs in text, overlaps counted: "aaaa" occurs twice in "aaaaa".
+const occurrences = (text, s) => {
+  let k = 0;
+  for (let i = text.indexOf(s); i !== -1; i = text.indexOf(s, i + 1)) k++;
+  return k;
+};
 const REF = {
   issue: r => (Object.keys(r).length === 1 && typeof r.issue === 'string' && /^[\w.-]+\/[\w.-]+#[1-9]\d*$/.test(r.issue)
     ? null : `ref issue ${JSON.stringify(r.issue)} is not OWNER/REPO#N, alone`),
@@ -934,10 +943,16 @@ export function context(root = ROOT) {
     if (!real) throw new Error(`${p} is not a file in the repository`);
     return readFileSync(real, 'utf8');
   };
+  // What stands at a path itself, a link not followed, or null when nothing does.
+  const entry = p => { try { return lstatSync(path.join(root, p)); } catch { return null; } };
   return {
     isFile: p => inside(p) !== null,
     // A file or a directory: a ref may name either.
     exists: p => inside(p, s => s.isFile() || s.isDirectory()) !== null,
+    isDir: p => inside(p, s => s.isDirectory()) !== null,
+    // A regular file inside the repository that is not itself a link.
+    isPlainFile: p => entry(p)?.isFile() === true && inside(p) !== null,
+    isAbsent: p => entry(p) === null,
     read,
     // No registry view means no claim is listed; one that leads outside the repository is refused.
     registry: existsSync(path.join(root, registry)) ? read(registry) : '',
@@ -950,11 +965,29 @@ export function context(root = ROOT) {
 }
 
 export function generate(root = ROOT) {
-  const read = f => readSource(readFileSync(path.join(root, DIR, f), 'utf8'), `${DIR}/${f}`);
+  const ctx = context(root);
+  // The sources are read as evidence is: regular files inside the repository.
+  const read = f => readSource(ctx.read(`${DIR}/${f}`), `${DIR}/${f}`);
   const data = {advisors: read('advisors.jsonl'), nodes: read('tree.jsonl'), expeditions: read('expeditions.jsonl')};
-  const byId = validate(data, context(root));
+  const byId = validate(data, ctx);
   const d = derive(byId, data.advisors);
   return {[VIEW]: renderAdoc(byId, data.advisors, data.expeditions, d), [SVG]: renderSvg(byId, d), derived: d, byId};
+}
+
+// The views are plain files inside the repository, never links: a check would
+// read through a link, and a build would write through one, out of the repository.
+const VIEWS = [VIEW, SVG];
+export function staleViews(out, root = ROOT) {
+  const ctx = context(root);
+  return VIEWS.filter(f => !ctx.isPlainFile(f) || ctx.read(f) !== out[f]);
+}
+export function writeViews(out, root = ROOT) {
+  const ctx = context(root);
+  if (!ctx.isDir(DIR)) throw new Error(`${DIR} is not a directory in the repository`);
+  mkdirSync(path.join(root, DIR, 'generated'), {recursive: true});
+  const unsafe = VIEWS.filter(f => !ctx.isDir(path.dirname(f)) || !(ctx.isAbsent(f) || ctx.isPlainFile(f)));
+  if (unsafe.length) throw new Error(`not written: ${unsafe.join(', ')}; a view is a plain file inside the repository, not a link`);
+  for (const f of VIEWS) writeFileSync(path.join(root, f), out[f]);
 }
 
 if (import.meta.main) {
@@ -962,13 +995,11 @@ if (import.meta.main) {
   if (!['build', 'check'].includes(cmd)) { console.error('usage: ultraplan.mjs build|check'); process.exit(2); }
   let out;
   try { out = generate(); } catch (e) { console.error(`ultraplan: FAIL\n${e.message}`); process.exit(1); }
-  const files = [VIEW, SVG];
   if (cmd === 'build') {
-    mkdirSync(path.join(ROOT, DIR, 'generated'), {recursive: true});
-    for (const f of files) writeFileSync(path.join(ROOT, f), out[f]);
-    console.log(`WROTE ${files.join(' and ')} (${out.byId.size} nodes, ${out.derived.frontier.length} on the frontier)`);
+    try { writeViews(out); } catch (e) { console.error(`ultraplan: FAIL\n${e.message}`); process.exit(1); }
+    console.log(`WROTE ${VIEWS.join(' and ')} (${out.byId.size} nodes, ${out.derived.frontier.length} on the frontier)`);
   } else {
-    const stale = files.filter(f => !existsSync(path.join(ROOT, f)) || readFileSync(path.join(ROOT, f), 'utf8') !== out[f]);
+    const stale = staleViews(out);
     if (stale.length) { console.error(`ultraplan: FAIL\nstale: ${stale.join(', ')}; run: bun scripts/ultraplan/ultraplan.mjs build`); process.exit(1); }
     console.log(`PASS: the ultraplan views match the data (${out.byId.size} nodes, ${out.derived.frontier.length} on the frontier)`);
   }

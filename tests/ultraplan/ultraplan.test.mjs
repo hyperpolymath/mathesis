@@ -3,10 +3,10 @@
 //
 // The ultraplan generator: what it derives, and each thing it refuses.
 import {test, expect, afterAll} from 'bun:test';
-import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, symlinkSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync, symlinkSync, existsSync, readdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, ACTIVE_LIMIT, ROOT, VIEW, SVG, RULES}
+import {generate, validate, derive, readSource, registryGrade, adrAccepted, context, staleViews, writeViews, ACTIVE_LIMIT, ROOT, VIEW, SVG, RULES}
   from '../../scripts/ultraplan/ultraplan.mjs';
 import {jcs} from '../../scripts/registry/theory-ledger.mjs';
 
@@ -104,7 +104,8 @@ test('done needs evidence that holds', () => {
   refuses({nodes: swap('root', {evidence: []})}, /node root: done needs evidence/);
   refuses({nodes: swap('root', {evidence: [{path: 'NOPE.adoc'}]})}, /evidence path NOPE.adoc is not a file in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: '../etc/passwd'}]})}, /is not a repository path/);
-  refuses({nodes: swap('root', {evidence: [{path: '.'}]})}, /evidence path \. is not a file in the repository/);
+  refuses({nodes: swap('root', {evidence: [{path: '.'}]})}, /evidence path "." is not a repository path/);
+  refuses({nodes: swap('root', {evidence: [{path: 'docs'}]})}, /evidence path docs is not a file in the repository/);
   refuses({nodes: swap('root', {evidence: [{path: 'docs/decisions'}]})}, /evidence path docs\/decisions is not a file/);
   // A committed symlink to a file outside the repository is not evidence in it.
   const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-outside-'));
@@ -288,6 +289,88 @@ test('a ref points at one place, and each ref in this repository is checked', ()
   refused([{issue: 'o/r#1', path: 'README.adoc'}], /is not OWNER\/REPO#N, alone/);
   refused([{line: 92, path: 'README.adoc'}], /node paper: ref: unknown field "line"/);
   refused(['README.adoc:46'], /node paper: ref: must be an object/);
+});
+
+test('a quote counts every place it occurs, overlaps included', () => {
+  const root = fixture({nodes: swap('paper', {refs: [{at: 'aaaa', path: 'notes.adoc'}]})});
+  writeFileSync(path.join(root, 'notes.adoc'), 'aaaaa\n');
+  expect(() => generate(root)).toThrow(/ref notes\.adoc holds "aaaa" 2 times/);
+  writeFileSync(path.join(root, 'notes.adoc'), 'aaaa b\n');
+  expect(() => generate(root)).not.toThrow();
+});
+
+test('an evidence path follows the repository path rule, so it renders as written', () => {
+  for (const p of ['a`b.adoc', 'a b.adoc', 'docs/../README.adoc', './README.adoc', '/etc/passwd']) {
+    const root = fixture({nodes: swap('root', {evidence: [{path: p}]})});
+    if (!p.startsWith('/') && !p.includes('..')) writeFileSync(path.join(root, p), 'x\n');
+    expect(() => generate(root)).toThrow(/node root: evidence path .* is not a repository path/);
+  }
+});
+
+test('the sources are read only as regular files inside the repository', () => {
+  const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-out-'));
+  roots.push(outside);
+  writeFileSync(path.join(outside, 'tree.jsonl'), BASE.map(n => jcs(n) + '\n').join(''));
+  for (const [file, target] of [['expeditions.jsonl', '/dev/null'], ['tree.jsonl', path.join(outside, 'tree.jsonl')]]) {
+    const root = fixture();
+    rmSync(path.join(root, 'docs/ultraplan', file));
+    symlinkSync(target, path.join(root, 'docs/ultraplan', file));
+    expect(() => generate(root)).toThrow(new RegExp(`docs/ultraplan/${file.replace('.', '\\.')} is not a file in the repository`));
+  }
+});
+
+test('the views are plain files: a check never reads, nor a build writes, through a link', () => {
+  const root = fixture();
+  const out = generate(root);
+  expect(staleViews(out, root)).toEqual([VIEW, SVG]);
+  writeViews(out, root);
+  expect(staleViews(out, root)).toEqual([]);
+  // A view linked to a file outside, even one holding the right text, is stale,
+  // and a build refuses to write through the link.
+  const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-out-'));
+  roots.push(outside);
+  writeFileSync(path.join(outside, 'page.adoc'), out[VIEW]);
+  rmSync(path.join(root, VIEW));
+  symlinkSync(path.join(outside, 'page.adoc'), path.join(root, VIEW));
+  expect(staleViews(out, root)).toEqual([VIEW]);
+  writeFileSync(path.join(outside, 'page.adoc'), 'untouched\n');
+  expect(() => writeViews(out, root)).toThrow(/not written: docs\/ultraplan\/generated\/ultraplan\.adoc; a view is a plain file/);
+  expect(readFileSync(path.join(outside, 'page.adoc'), 'utf8')).toBe('untouched\n');
+  // A link that leads nowhere yet is refused too: writing would create its target.
+  rmSync(path.join(root, VIEW));
+  symlinkSync(path.join(outside, 'new.adoc'), path.join(root, VIEW));
+  expect(() => writeViews(out, root)).toThrow(/not written/);
+  expect(existsSync(path.join(outside, 'new.adoc'))).toBe(false);
+  // A link to a file inside the repository is refused too, and that file is
+  // neither read as the view nor written over.
+  rmSync(path.join(root, VIEW));
+  writeFileSync(path.join(root, 'copy.adoc'), out[VIEW]);
+  symlinkSync(path.join(root, 'copy.adoc'), path.join(root, VIEW));
+  expect(staleViews(out, root)).toEqual([VIEW]);
+  expect(() => writeViews(out, root)).toThrow(/not written/);
+  expect(readFileSync(path.join(root, 'copy.adoc'), 'utf8')).toBe(out[VIEW]);
+  // So is a generated directory that is a link out of the repository.
+  const dirRoot = fixture();
+  const away = mkdtempSync(path.join(tmpdir(), 'ultraplan-out-'));
+  roots.push(away);
+  symlinkSync(away, path.join(dirRoot, 'docs/ultraplan/generated'));
+  expect(() => writeViews(generate(dirRoot), dirRoot)).toThrow(/not written: docs\/ultraplan\/generated\/ultraplan\.adoc, docs\/ultraplan\/generated\/tree\.svg/);
+  expect(readdirSync(away)).toEqual([]);
+  // Views placed there, though plain files with the right text, are outside the
+  // repository, so the check counts them stale.
+  const dirOut = generate(dirRoot);
+  writeFileSync(path.join(away, 'ultraplan.adoc'), dirOut[VIEW]);
+  writeFileSync(path.join(away, 'tree.svg'), dirOut[SVG]);
+  expect(staleViews(dirOut, dirRoot)).toEqual([VIEW, SVG]);
+  // And a plan directory that leads out of the repository gets nothing made in it.
+  const planRoot = fixture();
+  const planOut = generate(planRoot);
+  const elsewhere = mkdtempSync(path.join(tmpdir(), 'ultraplan-out-'));
+  roots.push(elsewhere);
+  rmSync(path.join(planRoot, 'docs/ultraplan'), {recursive: true});
+  symlinkSync(elsewhere, path.join(planRoot, 'docs/ultraplan'));
+  expect(() => writeViews(planOut, planRoot)).toThrow(/docs\/ultraplan is not a directory in the repository/);
+  expect(readdirSync(elsewhere)).toEqual([]);
 });
 
 test('a ref cannot lead out of the repository', () => {

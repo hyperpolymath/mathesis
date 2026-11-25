@@ -103,7 +103,7 @@ export const CLAIM_NAME = /^[-\w.]+$/;
 // A status document is named by a relative path in its repository. The view puts
 // it in a link's target, so it uses the same characters, with "/" between its
 // parts, and no part is "." or "..": "[", "]", "|", "#" and white space cannot occur.
-const isDocPath = p => p.split('/').every(s => CLAIM_NAME.test(s) && s !== '.' && s !== '..');
+export const isDocPath = p => p.split('/').every(s => CLAIM_NAME.test(s) && s !== '.' && s !== '..');
 export function isClaimId(id) {
   if (typeof id !== 'string') return false;
   const i = id.indexOf('#');

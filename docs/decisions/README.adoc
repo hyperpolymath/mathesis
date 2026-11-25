@@ -1,3 +1,62 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 = decisions Unit
+
+== The status of a decision record
+
+Each decision record (`NNNN-title.adoc`) states its status twice, and the two
+must agree (owner ruling 2026-11-25):
+
+* once in its document header, as the attribute `:status:`, on a line of the
+header (the title line and the lines after it, up to the first blank line);
+* once in its prose, as the first word of its Status section.
+
+The header uses the words of the ADR template (`0001-template.adoc`, with
+REJECTED from `0000-template.adoc`), written exactly so: `PROPOSED`, `ACCEPTED`,
+`DEPRECATED`, `SUPERSEDED by NNNN` or `REJECTED`. The Status section may write
+the word in any case and add what it likes after it, such as "*Accepted
+(ratified by owner 2026-11-10).*".
+
+[source,asciidoc]
+----
+= Architecture Decision Record: 0004-claims-registry
+:status: ACCEPTED
+
+== 4. A theorem-level claims registry ...
+
+=== Status
+
+*Accepted (ratified by owner 2026-11-10).* ...
+----
+
+`just adr-check` (part of `just check-views`) runs
+`scripts/decisions/adr-status.mjs check`. It fails when a record's header and
+Status section disagree, when only one of them states a status, or when a
+record states a status the readers refuse to read (for example, beside a
+preprocessor directive or under a heading such as "Status quo"). It reads the
+records that git tracks here, each at its own path: when this directory, or a
+record, is a link, the check fails and reads nothing through it. A record that
+states no status at all (no `status` entry, no heading that could read Status,
+whether `== Status` or `Status` over an underline, no directive that could bring
+one in) is listed, for the owner to set; it does
+not count as accepted.
+
+Both are read conservatively, so the reader never finds a status Asciidoctor
+would not:
+
+* The header is the title line, after any blank lines and line comments, and
+the lines up to the first blank line. Each of those lines is a line comment or
+an attribute entry, and none ends in a continuation. Exactly one line in the
+whole record sets or unsets `status`, in any letter case (Asciidoctor reads
+`:Status:` as `:status:`), and it is in the header. A preprocessor
+directive, or an inline reference that changes an attribute (`{set:...}`,
+`{counter:...}` or `{counter2:...}`), anywhere leaves the header unread: a
+counter turns ACCEPTED into ACCEPTEE.
+* In the Status section, every line that could be a heading titled Status counts,
+inside a block or not. The section is read only when exactly one does, and that
+one is a plain section heading (`==` to `======`, then `Status`) whose first
+paragraph opens with the word, ending where no letter, number or combining mark
+of any script follows (so "Acceptedé" is not "Accepted").
+
+Only a record whose header says ACCEPTED, with a Status section that agrees, can
+stand as evidence in the ultraplan.

@@ -30,6 +30,7 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
+import {GITHUB_REPO} from '../repo/github.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex, HOME} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
@@ -94,6 +95,23 @@ export const CHECKER = {
 
 // ── Validation of the registry rows ──────────────────────────────────────────
 
+// A claim id is OWNER/REPO#CLAIM. The claim uses the characters of a repository
+// name, so every id survives the registry view, where it is a link's text inside
+// a table row: "]", "|", "#" and white space cannot occur in it. The registry's
+// rows obey this rule, and readers that cite a claim (the ultraplan) use it too.
+// A claim's repository is named by GitHub's own rule (scripts/repo/github.mjs).
+export const CLAIM_REPO = GITHUB_REPO;
+export const CLAIM_NAME = /^[-\w.]+$/;
+// A status document is named by a relative path in its repository. The view puts
+// it in a link's target, so it uses the same characters, with "/" between its
+// parts, and no part is "." or "..": "[", "]", "|", "#" and white space cannot occur.
+export const isDocPath = p => p.split('/').every(s => CLAIM_NAME.test(s) && s !== '.' && s !== '..');
+export function isClaimId(id) {
+  if (typeof id !== 'string') return false;
+  const i = id.indexOf('#');
+  return i > 0 && CLAIM_REPO.test(id.slice(0, i)) && CLAIM_NAME.test(id.slice(i + 1));
+}
+
 // Throw unless every row is well formed and its repository is public in the
 // census inventory (the registry never names a private repository).
 export function validate(rows, inventory) {
@@ -104,14 +122,14 @@ export function validate(rows, inventory) {
     const where = r && r.id ? r.id : JSON.stringify(r);
     if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
     closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
-    if (typeof r.repo !== 'string' || !/^[-\w.]+\/[-\w.]+$/.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
-    if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
+    if (typeof r.repo !== 'string' || !CLAIM_REPO.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
+    if (typeof r.claim !== 'string' || !CLAIM_NAME.test(r.claim)) throw new Error(`Missing or invalid claim id (letters, digits, "-", "_" and "." only): ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
     if (seen.has(r.id)) throw new Error(`Duplicate id: ${r.id}`);
     seen.add(r.id);
     if (!KINDS.has(r.kind)) throw new Error(`Unknown kind ${r.kind}: ${r.id}`);
     if (typeof r.statement !== 'string' || r.statement.length < 10) throw new Error(`Missing statement: ${r.id}`);
-    if (typeof r.status_doc !== 'string' || r.status_doc === '') throw new Error(`Missing status_doc: ${r.id}`);
+    if (typeof r.status_doc !== 'string' || !isDocPath(r.status_doc)) throw new Error(`Missing or invalid status_doc (a relative path of letters, digits, "-", "_", "." and "/"): ${r.id}`);
     if (typeof r.source_commit !== 'string' || !/^[0-9a-f]{40}$/.test(r.source_commit)) throw new Error(`source_commit must be 40 lowercase hex: ${r.id}`);
     if (r.kind === 'theorem') {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)

@@ -8,15 +8,22 @@
 //
 // It writes one generated front page, then renders that page and each view
 // with Asciidoctor into OUT, at the same paths as the views. It fails closed:
-//   - Asciidoctor runs with --failure-level=WARN, so any warning fails.
+//   - Asciidoctor runs with --failure-level=WARN, so any warning fails, and
+//     in secure mode, so it reads no file but the page it renders.
 //   - A view header that no longer names its source fails the build.
 //   - A relative link to a file that is neither in the site nor in the
 //     repository fails. A relative link to a repository file that is not in
 //     the site becomes an absolute GitHub link at `main`.
-import {readFileSync, writeFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, statSync} from 'node:fs';
+//   - It writes only into a fresh output directory: OUT is absent, or empty.
+//   - It reads from the repository only files that git tracks, at their own
+//     path (scripts/repo/files.mjs): each view, the front page's sources and
+//     each asset it copies. A view or an asset that is a link, or untracked,
+//     fails the build, so nothing from outside the repository enters the site.
+import {readFileSync, writeFileSync, mkdirSync, mkdtempSync, readdirSync, statSync, lstatSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import {repoFiles, findProgram} from '../repo/files.mjs';
 
 export const GITHUB = 'https://github.com/hyperpolymath/mathesis';
 
@@ -37,6 +44,9 @@ export const VIEWS = [
    how: 'Built by `scripts/registry/claims-registry.mjs` from `docs/theory/admissions.jsonl`, the claims and the receipt they pin.'},
   {file: 'applied-systems/finance/cohort-economics/generated/examples.adoc', needs: 'scripts/applied/cohort.mjs',
    how: 'Built by `scripts/applied/cohort.mjs` from the files in `applied-systems/finance/cohort-economics/examples/`.'},
+  {file: 'docs/ultraplan/generated/ultraplan.adoc', needs: 'scripts/ultraplan/ultraplan.mjs',
+   how: 'Built by `scripts/ultraplan/ultraplan.mjs` from `docs/ultraplan/tree.jsonl`, its advisors and its return tickets. Eras, frontier and picks are derived.',
+   assets: ['docs/ultraplan/generated/tree.svg']},
 ];
 
 export const htmlPath = adoc => adoc.replace(/\.adoc$/, '.html');
@@ -122,38 +132,59 @@ const walk = (root, dir = '') => readdirSync(path.join(root, dir)).flatMap(n => 
 // run it by its absolute path, so no relative PATH entry can pick the program.
 export function findAsciidoctor(env = process.env) {
   if (env.ASCIIDOCTOR) return env.ASCIIDOCTOR;
-  for (const d of (env.PATH || '').split(path.delimiter)) {
-    if (path.isAbsolute(d) && existsSync(path.join(d, 'asciidoctor'))) return path.join(d, 'asciidoctor');
-  }
-  throw new Error('asciidoctor not found in an absolute directory of PATH (set ASCIIDOCTOR to its path)');
+  try { return findProgram('asciidoctor', env); } catch (e) { throw new Error(`${e.message} (set ASCIIDOCTOR to its path)`); }
 }
 
+// Asciidoctor runs in secure mode, so it reads no file but the page it renders:
+// an include:: in a view becomes a link to its target (which the link check then
+// fails), never the target's text, wherever the target is. Safe mode would read it,
+// and with the base directory at "/" its jail is the whole file system. linkcss!
+// keeps the stylesheet embedded, as it was in safe mode; it is part of Asciidoctor,
+// not a file of the repository.
 function asciidoctor(args) {
-  const r = spawnSync(findAsciidoctor(), ['-S', 'safe', '-B', '/', '--failure-level=WARN', '-a', 'nofooter', '-a', 'webfonts!', ...args], {encoding: 'utf8'});
+  const r = spawnSync(findAsciidoctor(), ['-S', 'secure', '-a', 'linkcss!', '-B', '/', '--failure-level=WARN', '-a', 'nofooter', '-a', 'webfonts!', ...args], {encoding: 'utf8'});
   if (r.error) throw new Error(`asciidoctor not runnable: ${r.error.message}`);
   process.stderr.write(r.stderr || '');
   if (r.status !== 0) throw new Error(`asciidoctor failed (status ${r.status})`);
 }
 
+// The site is built into a fresh tree: OUT is absent, or an empty directory that
+// is not itself a link. A stale or planted tree could hold a link where the build
+// writes, and the build (or Asciidoctor) would write through it, out of OUT.
+function freshOut(out) {
+  let st = null;
+  try { st = lstatSync(out); } catch { return; }
+  if (!st.isDirectory() || readdirSync(out).length) throw new Error(`${out} is not a fresh output directory: give a path that does not exist, or an empty directory`);
+}
 export function build(root, out) {
-  const read = f => readFileSync(path.join(root, f), 'utf8');
+  freshOut(out);
+  const files = repoFiles(root);
+  const unread = [...VIEWS.map(v => v.file), ...VIEWS.flatMap(v => v.assets ?? [])].filter(f => !files.isFile(f));
+  if (unread.length) throw new Error(unread.map(f => `${f} is not a file that git tracks in the repository`).join('\n'));
+  const read = files.read;
   mkdirSync(out, {recursive: true});
   const stage = mkdtempSync(path.join(tmpdir(), 'mathesis-site-'));
   writeFileSync(path.join(stage, 'index.adoc'), frontPage(read));
   asciidoctor(['-D', out, path.join(stage, 'index.adoc')]);
   asciidoctor(['-R', root, '-D', out, ...VIEWS.map(v => path.join(root, v.file))]);
+  // A view's assets (its pictures) are copied to the same path in the site, so
+  // a relative image stays relative there and is checked like any link.
+  for (const a of VIEWS.flatMap(v => v.assets ?? [])) {
+    mkdirSync(path.dirname(path.join(out, a)), {recursive: true});
+    writeFileSync(path.join(out, a), files.bytes(a));
+  }
 
   const pages = walk(out).filter(f => f.endsWith('.html'));
-  const files = new Set(walk(out));
+  const built = new Set(walk(out));
   const ids = new Map();
   const idsOf = p => ids.get(p) ?? ids.set(p, new Set([...readFileSync(path.join(out, p), 'utf8').matchAll(/\bid="([^"]+)"/g)].map(m => m[1]))).get(p);
   const errors = [];
   for (const p of pages) {
-    const r = checkLinks(p, readFileSync(path.join(out, p), 'utf8'), x => files.has(x), x => existsSync(path.join(root, x)), idsOf);
+    const r = checkLinks(p, readFileSync(path.join(out, p), 'utf8'), x => built.has(x), x => files.exists(x.replace(/\/$/, '')), idsOf);
     writeFileSync(path.join(out, p), r.html);
     errors.push(...r.errors);
   }
-  for (const v of VIEWS) if (!files.has(htmlPath(v.file))) errors.push(`missing page ${htmlPath(v.file)}`);
+  for (const v of VIEWS) if (!built.has(htmlPath(v.file))) errors.push(`missing page ${htmlPath(v.file)}`);
   if (errors.length) throw new Error(errors.join('\n'));
   return pages;
 }

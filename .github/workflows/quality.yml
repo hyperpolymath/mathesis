@@ -64,6 +64,7 @@ jobs:
           tool_dir="$RUNNER_TEMP/editorconfig-checker"
           mkdir -p "$tool_dir"
           curl --fail --silent --show-error --location --retry 3 \
+            --proto '=https' --proto-redir '=https' --tlsv1.2 \
             --connect-timeout 15 --max-time 120 \
             https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v4.0.2/editorconfig-checker-linux-amd64.tar.gz \
             --output "$tool_dir/archive.tar.gz"

@@ -144,8 +144,8 @@ proposed, and that corrected form is what is marked here.
 
 === Lock: one writer, one judge — *tested*
 
-* *Idea as written.* The proved Idris2 judge in proven-cicd-and-workflows
-  (`src/Proven/Lock`) becomes the only authority over `actions.lock`, and it
+* *Idea as written.* The proved Idris2 judge
+  (`proven-cicd-and-workflows/src/Proven/Lock`) becomes the only authority over `actions.lock`, and it
   prevents fabricated and dangling pins.
 * *What was reproduced.* Judge run on 329 locks: 168 consistent, 160
   inconsistent, 1 not run. The template script fails 209 of them. The two
@@ -167,8 +167,8 @@ proposed, and that corrected form is what is marked here.
 
 === No pass on absence — *tested*
 
-* *Idea as written.* One verdict kernel (`src/Assurance/Verdict.idr` in
-  proven-cicd-and-workflows), in which "did not run" is a constructor, so
+* *Idea as written.* One verdict kernel
+  (`proven-cicd-and-workflows/src/Assurance/Verdict.idr`), in which "did not run" is a constructor, so
   absent, skipped and stale gates cannot pass.
 * *What was reproduced.* `tests/ci-gate.sh`: 646 passed, 0 failed.
   `tests/pass-on-absence.sh`: 173 passed, 10 failed, all in one section that

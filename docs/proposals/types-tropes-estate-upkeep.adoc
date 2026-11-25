@@ -28,8 +28,13 @@ that land in those places.
   that does not parse runs none of its jobs: GitHub records a failed run
   with no job and no job log, and a check named after one of its jobs is
   never reported at all. Unless that check is required, nothing blocks the
-  merge. In one count, 521 repair commits in 281 repositories fixed workflows of this
-  kind, two of them 44 and 117 days after the break.
+  merge. One commit-subject search counted 521 repair commits in 281
+  repositories for workflows of this kind, two of them 44 and 117 days
+  after the break. The figure did not reproduce: another session's
+  commit searches (2026-11-25) found 359 to 1,111 commits across 214 to
+  341 repositories, depending on the query. No count's precision has been
+  checked, and no census of the workflow files themselves has been run.
+  It counts repair commits, not broken files.
 * Six of the forty ideas were checked by independent verifiers before the
   run stopped. Each pilot measurement was reproduced, and each idea was
   refuted *as written*, though not for one reason. In five, the mechanism
@@ -106,8 +111,10 @@ contents. By blob identity, of 45,854 child files at shared template paths,
 |rsr-template-repo, every minted repo
 
 |Silent green (absent, dead or unfailable gates)
-|845 commits in 304 repos say a gate never ran or could never fire. 521
-repairs in 281 repos fixed workflows that did not parse. 400 commits in
+|845 commits in 304 repos say a gate never ran or could never fire. One
+subject-pattern search found 521 repair commits in 281 repos for workflows
+that did not parse; other queries give 359 to 1,111 commits in 214 to 341
+repos (not reproduced; precision unchecked; no file-level census). 400 commits in
 224 repos fixed gates that could not fail. `\|\| true` occurs in 2,076
 workflows.
 |standards reusables, every repo's `.github/workflows`

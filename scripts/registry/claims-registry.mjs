@@ -177,20 +177,26 @@ export function derive(row, read) {
 
 // ── Fetching receipts at their pinned commits ────────────────────────────────
 
-// Return the receipt text for a row, verified against its sha256.
-async function loadReceipt(row, receiptsDir) {
-  let text;
+// Hash the original bytes: replacement UTF-8 decoding is not injective.
+async function loadReceiptBytes(row, receiptsDir) {
+  let bytes;
   if (receiptsDir) {
-    text = await readFile(path.join(receiptsDir, `${row.repo.replace('/', '__')}@${row.source_commit}`, row.receipt.path), 'utf8');
+    bytes = await readFile(path.join(receiptsDir, `${row.repo.replace('/', '__')}@${row.source_commit}`, row.receipt.path));
   } else {
     const url = `https://raw.githubusercontent.com/${row.repo}/${row.source_commit}/${row.receipt.path}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`could not fetch ${url}: HTTP ${res.status}`);
-    text = await res.text();
+    bytes = new Uint8Array(await res.arrayBuffer());
   }
-  const digest = createHash('sha256').update(text).digest('hex');
+  const digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== row.receipt.sha256) throw new Error(`receipt digest mismatch for ${row.id}: pinned ${row.receipt.sha256}, got ${digest}`);
-  return text;
+  return bytes;
+}
+
+// Only receipts require text; evidence may contain arbitrary binary bytes.
+async function loadReceipt(row, receiptsDir) {
+  const bytes = await loadReceiptBytes(row, receiptsDir);
+  return new TextDecoder('utf-8', {fatal: true, ignoreBOM: true}).decode(bytes);
 }
 
 // ── The git checks of PROOF-POLICY §8.5.3 ────────────────────────────────────
@@ -281,7 +287,7 @@ async function readReceipt(text, row, readProofReceipt, receiptsDir) {
     // ADR 0006 is engineering-only; the theorem JSON prototype of ADR 0005
     // remains unwired. Invalid engineering receipts fail the build outright.
     const engineering = await readEngineeringReceipt(text,
-      ref => loadReceipt({...row, receipt: ref}, receiptsDir));
+      ref => loadReceiptBytes({...row, receipt: ref}, receiptsDir));
     return {engineering, text};
   }
   try {

@@ -87,12 +87,12 @@ jobs:
           cd "$source"
           sha256sum scripts/registry/*.mjs tests/registry/*.mjs docs/atlas/claims/*.jsonl > "$preview/inputs.sha256"
           bun scripts/registry/claims-registry.mjs build 2>&1 | tee "$preview/build.log"
-          bun scripts/registry/claims-registry.mjs check 2>&1 | tee "$preview/check.log"
-          bun test tests/registry/ 2>&1 | tee "$preview/tests.log"
-          sha256sum --check --quiet "$preview/inputs.sha256"
           cp docs/atlas/generated/registry.adoc "$preview/registry.adoc"
           cp docs/atlas/generated/bridges.adoc "$preview/bridges.adoc"
           cp docs/theory/generated/index.adoc "$preview/theory-index.adoc"
+          bun scripts/registry/claims-registry.mjs check 2>&1 | tee "$preview/check.log"
+          bun test tests/registry/ 2>&1 | tee "$preview/tests.log"
+          sha256sum --check --quiet "$preview/inputs.sha256"
       - name: Retain registry preview and regression evidence
         if: always()
         uses: actions/upload-artifact@v7.0.2

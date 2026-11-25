@@ -105,3 +105,61 @@ test('canonical form rejects duplicate keys, BOM, whitespace and invalid Unicode
   const r = fixture(); r.statement = '\uD800';
   expect(() => parseEngineeringReceipt(jcs(r))).toThrow(/invalid string/);
 });
+
+for (const transport of ['local', 'fetch']) {
+  async function withBytes(receiptBytes, evidenceBytes, action) {
+    if (transport === 'local') return withReceipt(receiptBytes, async (dir, root) => {
+      await writeFile(path.join(root, 'evidence/run.log'), evidenceBytes);
+      return action(dir);
+    });
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async url => {
+      const prefix = `https://raw.githubusercontent.com/o/r/${carrier}/`;
+      expect(String(url).startsWith(prefix)).toBe(true);
+      const file = String(url).slice(prefix.length);
+      if (file === 'engineering.json') return new Response(receiptBytes);
+      if (file === 'evidence/run.log') return new Response(evidenceBytes);
+      throw new Error(`unexpected fixture request: ${url}`);
+    };
+    try { return await action(null); }
+    finally { globalThis.fetch = originalFetch; }
+  }
+
+  const withEvidenceHash = bytes => {
+    const r = fixture();
+    for (const ref of [r.source_inputs, r.evidence_manifest, r.checks[0].evidence, r.controls[0].evidence])
+      ref.sha256 = digest(bytes);
+    return jcs(r);
+  };
+
+  test(`${transport}: binary evidence is verified without text decoding`, async () => {
+    const bytes = new Uint8Array([0xff, 0x00, 0x80]);
+    const text = withEvidenceHash(bytes);
+    await withBytes(text, bytes, async dir => {
+      const [d] = await deriveAll([rowFor(text)], dir, noTheoremReader);
+      expect(d.pwg).toBe('ungraded');
+      expect(d.evidence).toBe(implementation);
+    });
+  });
+
+  test(`${transport}: replacement-decoding collisions fail the raw digest`, async () => {
+    const text = withEvidenceHash(new Uint8Array([0xef, 0xbf, 0xbd]));
+    await withBytes(text, new Uint8Array([0xff]), async dir => {
+      await expect(deriveAll([rowFor(text)], dir, noTheoremReader)).rejects.toThrow(/digest mismatch/);
+    });
+  });
+
+  test(`${transport}: digest-matching invalid UTF-8 receipt is refused`, async () => {
+    const bytes = new Uint8Array([0xff]);
+    await withBytes(bytes, evidence, async dir => {
+      await expect(deriveAll([rowFor(bytes)], dir, noTheoremReader)).rejects.toThrow();
+    });
+  });
+
+  test(`${transport}: receipt BOM survives decoding and is refused by the canonical reader`, async () => {
+    const text = '\uFEFF' + jcs(fixture());
+    await withBytes(text, evidence, async dir => {
+      await expect(deriveAll([rowFor(text)], dir, noTheoremReader)).rejects.toThrow();
+    });
+  });
+}

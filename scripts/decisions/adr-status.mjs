@@ -165,6 +165,16 @@ export function adrStatus(text) {
   const header = headerStatus(text), section = sectionStatus(text);
   return {header, section, inStep: header !== null && header.split(' ')[0] === section};
 }
+// Whether a record states no status at all, as far as can be shown: no line could
+// set "status" (an entry in any letter case, a {set:...} or {counter:...} that
+// names it, or a preprocessor directive that could bring either in), and no line
+// could be a heading titled Status. A record the readers refuse is not one of
+// these: its status is there but cannot be read soundly, and that fails the check.
+// ({set:Status:X} sets "status"; a counter on another attribute does not.)
+const SETS_STATUS = /\{(?:set|counter2?):status(?=[:!}])/i;
+export function statesNoStatus(text) {
+  return !linesOf(text).some(l => STATUS_ENTRY.test(l) || SETS_STATUS.test(l) || PREPROCESSOR.test(l) || mayBeStatus(l));
+}
 export const adrAccepted = text => {
   const s = adrStatus(text);
   return s.inStep && s.header === 'ACCEPTED';
@@ -172,8 +182,9 @@ export const adrAccepted = text => {
 
 // ── The check ────────────────────────────────────────────────────────────────
 // Every decision record, NNNN-title.adoc with the boilerplate NNNN-template.adoc
-// set aside, states its status in both places and they agree; or it states it in
-// neither (a status the owner has yet to set), which is reported, not refused.
+// set aside, states its status in both places and they agree; or it states none
+// at all (a status the owner has yet to set), which is reported, not refused. A
+// record whose status the readers refuse to read is refused: it is not unset.
 // The records are the files git tracks in docs/decisions, read at their own path
 // (scripts/repo/files.mjs): a directory or a record that is a link leads out of
 // the repository, so it is refused, and never read.
@@ -185,9 +196,11 @@ export function checkDecisions(root = ROOT) {
   return records.map(f => {
     const p = `${DECISIONS}/${f}`;
     if (!files.isFile(p)) return {file: f, problem: 'is not a file that git tracks in the repository, at its own path'};
-    const s = adrStatus(files.read(p));
+    const text = files.read(p);
+    const s = adrStatus(text);
     if (s.inStep) return {file: f, status: s.header};
-    if (s.header === null && s.section === null) return {file: f, status: null};
+    if (statesNoStatus(text)) return {file: f, status: null};
+    if (s.header === null && s.section === null) return {file: f, problem: 'it states a status that cannot be read soundly (see docs/decisions/README.adoc)'};
     return {file: f, problem: `its header says ${s.header ?? 'nothing readable'} but its Status section says ${s.section ?? 'nothing readable'}`};
   });
 }

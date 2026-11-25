@@ -103,7 +103,9 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
      inline reference that changes an attribute (`{set:...}`, `{counter:...}`
      or `{counter2:...}`; a counter turns ACCEPTED into ACCEPTEE) has no
      readable header. `just adr-check` reads the records git tracks, each at
-     its own path, and fails when `docs/decisions` is a link;
+     its own path, and fails when `docs/decisions` is a link. A record whose
+     status the readers refuse fails the check; only a record that states no
+     status at all is listed as unset;
   ** a done node whose needs are not done;
   ** a cycle;
   ** more than three active nodes;

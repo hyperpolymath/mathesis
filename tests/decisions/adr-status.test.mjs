@@ -230,6 +230,28 @@ test('the check keeps every decision record in step, and reports one that states
   writeFileSync(path.join(dir, '0009-notes/x.adoc'), '= N\n:status: ACCEPTED\n\n=== Status\n\nProposed.\n');
   git(root, 'add', 'docs/decisions/0009-notes');
   expect(checkDecisions(root).map(r => r.file)).toEqual(['0001-a.adoc', '0002-b.adoc', '0004-c.adoc', '0005-d.adoc', '0006-e.adoc', '0007-link.adoc']);
+  // A record whose status the readers refuse is refused, not reported as unset:
+  // a directive, a mutating reference or a heading that could read Status beside
+  // an otherwise sound status makes it unreadable, never silently empty.
+  const unreadable = 'it states a status that cannot be read soundly (see docs/decisions/README.adoc)';
+  for (const [f, body] of [
+    ['0010-include.adoc', '= J\n:status: ACCEPTED\n\n=== Status\n\nAccepted\n\ninclude::more.adoc[]\n'],
+    ['0011-ifdef.adoc', '= K\n:status: ACCEPTED\n\nifdef::x[]\n\n=== Status\n\nAccepted\nendif::[]\n'],
+    ['0012-quo.adoc', '= L\n\n== Status quo\n\nNothing is decided.\n'],
+    ['0013-counter.adoc', '= M\n\nA {counter:status} count.\n'],
+    ['0014-entry.adoc', '= N\n\nBody.\n\n:Status: ACCEPTED\n'],
+    ['0016-set.adoc', '= P\n\nText {set:Status:ACCEPTED} here.\n'],
+    // Nothing here names a status, but the included file could set one.
+    ['0017-include-only.adoc', '= Q\n\ninclude::decision.adoc[]\n'],
+    ['0015-plain-counter.adoc', '= O\n\nA {counter:n} count and the word status in prose.\n'],
+  ]) put(f, body);
+  const byFile = new Map(checkDecisions(root).map(r => [r.file, r]));
+  for (const f of ['0010-include.adoc', '0011-ifdef.adoc', '0012-quo.adoc', '0013-counter.adoc', '0014-entry.adoc', '0016-set.adoc', '0017-include-only.adoc'])
+    expect(byFile.get(f)).toEqual({file: f, problem: unreadable});
+  // A record that states nothing about status, in any form, is still listed as
+  // unset, though it counts something else or says "status" in its prose.
+  expect(byFile.get('0002-b.adoc')).toEqual({file: '0002-b.adoc', status: null});
+  expect(byFile.get('0015-plain-counter.adoc')).toEqual({file: '0015-plain-counter.adoc', status: null});
   // A decisions directory that is a link out of the repository is refused, and
   // nothing through it is read, though git tracks the link.
   const linked = mkdtempSync(path.join(tmpdir(), 'adr-linked-'));

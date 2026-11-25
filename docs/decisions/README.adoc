@@ -31,10 +31,14 @@ the word in any case and add what it likes after it, such as "*Accepted
 
 `just adr-check` (part of `just check-views`) runs
 `scripts/decisions/adr-status.mjs check`. It fails when a record's header and
-Status section disagree, or when only one of them states a status. It reads the
+Status section disagree, when only one of them states a status, or when a
+record states a status the readers refuse to read (for example, beside a
+preprocessor directive or under a heading such as "Status quo"). It reads the
 records that git tracks here, each at its own path: when this directory, or a
 record, is a link, the check fails and reads nothing through it. A record that
-states neither is listed, for the owner to set; it does not count as accepted.
+states no status at all (no `status` entry, no heading that could read Status,
+no directive that could bring one in) is listed, for the owner to set; it does
+not count as accepted.
 
 Both are read conservatively, so the reader never finds a status Asciidoctor
 would not:

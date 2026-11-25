@@ -172,7 +172,10 @@ proposed, and that corrected form is what is marked here.
   upstream, cross-repository reusable-workflow calls need one estate
   check, which must stay required: reduce the 38 variants of
   `check-lock-sync.sh` to a single canon copy that checks only those
-  calls, and that each one resolves. Retire the step-level parts of the six
+  calls. Each must be pinned to a full 40-hex commit SHA, not a tag or
+  branch, because a lockfile does not pin `jobs.<id>.uses` and a moved or
+  compromised tag would run unreviewed code while the check stayed green.
+  Each SHA must also resolve. Retire the step-level parts of the six
   hand-writers listed in
   `proven-cicd-and-workflows/docs/proven/LOCK-PIN-CATALOGUE-2026-11-13.adoc`.
   Keep the proved judge as a differential cross-check. Handle unresolved
@@ -216,8 +219,13 @@ proposed, and that corrected form is what is marked here.
   comment-preserving printer. The pieces exist: actionlint, the
   `github-actions-models` crate and `yamlpatch`.
 * *Corrected form (ring 3, adopt).* actionlint plus a duplicate-key parse as
-  a required check, claiming "detects at merge" for parse-dead workflows
-  (about three quarters of those repairs) and for timeouts on reusable-call
+  a required check, claiming "detects at merge" for parse-dead workflows.
+  The workflow carrying it must start on every pull request and skip only
+  its work when no workflow file changed. Today `workflow-linter.yml` has
+  a `paths:` filter, and a required check whose workflow is skipped by a
+  path filter stays pending and blocks every unrelated pull request. The
+  claim covers parse-dead workflows
+  (about three quarters of those repairs) and timeouts on reusable-call
   jobs. Two cross-file checks the per-file type cannot express: lock
   coverage, and caller-permission subsumption for reusable calls. Typed
   writers remain aspirational.
@@ -238,9 +246,12 @@ proposed, and that corrected form is what is marked here.
   should be adopted, not the Python tools.
 * *Corrected form.* Add the missing `upgrade` half to rsr-template-repo:
   base = replay of the mint at the recorded pin, merged three ways with the
-  child and the new mint. State and test the real safety rule: a path
-  changes only if the child still equals the replayed mint at that repo's
-  *recorded* pin. The 12,582 stale files are an upper bound on what can be
+  child and the new mint. Classify paths first (see copy versus moment
+  files below). Equality-based refresh applies only to copy and pattern
+  paths. A moment file can equal the mint by coincidence, so it changes only
+  after validation against the repo's receipts. For copy paths, state and
+  test the real safety rule: a path changes only if the child still equals
+  the replayed mint at that repo's *recorded* pin. The 12,582 stale files are an upper bound on what can be
   refreshed automatically. A file can equal some older template version
   without equalling the one its repo was minted from. And only 27 repos
   record a usable `:template-commit` pin. Recount against each repo's own
@@ -286,8 +297,11 @@ proposed, and that corrected form is what is marked here.
   unsound for exactly the gates that matter. `skip-duplicate-actions`
   already does tree-keyed skips.
 * *Corrected form.* Only for pure checks: export the footprint with
-  `git archive` into a directory with no `.git`, run in a digest-pinned
-  container with no network and no secrets. Key the receipt by the
+  `git archive` into a directory with no `.git`. Run it in a digest-pinned
+  container with no network and no secrets, mounting only that directory,
+  read-only. It must not run as a container action or a job container,
+  because GitHub mounts the whole `GITHUB_WORKSPACE` into those and the
+  checker could read outside the footprint. Key the receipt by the
   exported footprint together with the checker: the gate definition and
   its pin, the action SHAs and the container digest. A receipt made by an
   older or defective checker must not satisfy a new one.
@@ -511,18 +525,21 @@ honest use of Mathesis here.
   one relock of about 160 inconsistent locks. The 38 checker variants
   collapse to one canon check, still required, for cross-repository
   reusable-workflow calls, which the first-party tool does not lock
-  (gh-actions-lock#179). The proved judge stays as a cross-check.
+  (gh-actions-lock#179). That check requires each call to be pinned to a
+  full commit SHA that resolves. The proved judge stays as a cross-check.
   Tested premise; days of work; changes rsr-template-repo, standards and
   proven-cicd-and-workflows.
 . *Make absence block.* Ratify A3 with the required set derived from intent
   and a totality rule over every workflow, and add actionlint with a
-  duplicate-key parse as a required check. Turns parse-dead and never-run
+  duplicate-key parse as a required check, in a workflow that starts on
+  every pull request (no `paths:` filter on a required check). Turns parse-dead and never-run
   gates from silent green into blocked merges. Tested premise; weeks;
   changes standards and rsr-template-repo.
 . *Give the template its update half.* An `upgrade` recipe in
   rsr-template-repo that replays the mint and merges three ways, plus a
-  refresh of the stale files that equal the replayed mint at their own
-  repo's recorded pin (at most 12,582; to be recounted). Tested premise; weeks;
+  refresh of copy-path files that equal the replayed mint at their own
+  repo's recorded pin (at most 12,582; to be recounted). Moment files are
+  changed only after validation against receipts. Tested premise; weeks;
   changes rsr-template-repo and minted repos.
 
 == Decisions for the owner

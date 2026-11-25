@@ -10,6 +10,26 @@ Phase `incubating`, maturity `experimental` (the deed's `(status)` and
 truth". The stages are under <<stages>>; the rulings that steer them are
 under <<rulings>>.
 
+=== Proven lifecycle registration (2026-11-25)
+
+The Proven owner has retained production Idris lifecycle proof checks, negative
+proof controls, actual Linux static/shared libraries, C/Rust consumer and
+concurrency tests, standalone unavailability and generated-result corruption
+controls. The home ledger is `docs/status/LIFECYCLE-PROOF-STATUS.adoc`, claim
+`ABI-LC-D1`. These are engineering proofs and an execution demonstration; no
+Agda/Rocq/Lean theory grade is assigned or implied.
+
+Six fixture-only engineering-receipt checks and fourteen existing claims-registry
+tests passed with the exact pinned reader. They registered no source or theorem.
+The demonstration row pins signed receipt carrier
+`d8dd1489e7a91efa309b1231f79ab6d9df4e10c2`, which binds signed implementation
+snapshot `e7a0aa8a46601df22f0853c28ec26424a3874321`. The public receipt SHA-256 is
+`65d00249d0d055f84d8bd34f7b8469f53f8ded66c46db49316f92b99b615bc6c`.
+Final canonical registry build/check passed against the published pin, as did all fourteen registry tests and six negative fixture controls. The generated view adds one ungraded demonstration; all 48 theorem entries, their grades, admissions and the append-only theory ledger are unchanged.
+Receipts remain in Proven; private bridge source is not vendored here.
+The broader ABI's missing exports, compiler/marshaling/ownership
+assumptions and Rust wrapper proof obligations remain open in the home ledger.
+
 === Applied Systems (2026-11-07)
 
 * Added the owner-requested `applied-systems/` area for reusable applications,

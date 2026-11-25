@@ -10,7 +10,7 @@ assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still
 owe their Rocq and Lean legs. Status of this slice: accepted in
 link:../../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.
 
-Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 48 theorems. 5 demonstrations and assumptions are listed and not graded.
+Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 48 theorems. 6 demonstrations and assumptions are listed and not graded.
 
 [cols="2,1,1,4,3",options="header"]
 |===
@@ -25,6 +25,8 @@ Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded
 |https://github.com/hyperpolymath/mathesis/blob/10f9f46ff7e1c8a0433164bc8bf6d8f30842fd4c/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#APP-4] at `10f9f46ff7e1`; the receipt describes `8c55804163fd` |theorem |`PWG-2ii` |Status never upgrades: the evidence status of an output is never stronger than the weakest status of the inputs that it depends on. (`Applied.Missing`: `Proofs.members-needs`, `Proofs.receipts-needs`, `Proofs.payments-needs`, `Proofs.closing-needs`, `Proofs.shortfall-needs`, `Proofs.cashOk-needs`, `Proofs.hours-needs`, `Proofs.capacityOk-needs`, `Proofs.gap-needs`) |the reader derives PWG-2ii from the legs and receipts at `8c55804163fd`
 
 |https://github.com/hyperpolymath/mathesis/blob/10f9f46ff7e1c8a0433164bc8bf6d8f30842fd4c/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#THY-1] at `10f9f46ff7e1`; the receipt describes `8c55804163fd` |theorem |`PWG-2ii` |In a dependency graph whose edges are guarded by features closed under Horn rules, and by an arbitrary per-target condition, a node unreachable with every feature requested is unreachable under any request, on each target (`Cargo.absent-under-all-features`). The general form is `Monotone.reach-mono`: reachability over a monotone family of edge sets is monotone. (`FeatureReachability`: `Cargo.absent-under-all-features`, `Monotone.reach-mono`) |the reader derives PWG-2ii from the legs and receipts at `8c55804163fd`
+
+|https://github.com/hyperpolymath/proven/blob/d8dd1489e7a91efa309b1231f79ab6d9df4e10c2/docs/status/LIFECYCLE-PROOF-STATUS.adoc[hyperpolymath/proven#ABI-LC-D1] at `d8dd1489e7a9` |demonstration |`ungraded` |The production Idris lifecycle policy reaches the Linux x86_64 static and shared libraries through the Zig/RefC bridge; actual C and Rust callers observe the specified initialization, shutdown and readiness behavior, and a corrupted generated lifecycle reply is rejected with readiness false. |demonstration, not a theorem (§8.1)
 
 |https://github.com/hyperpolymath/resource-algebra/blob/c31bf1a9ae9d186674c7ed79c6c9b018a1d59c2b/docs/status/PROOF-STATUS.adoc[hyperpolymath/resource-algebra#C-1] at `c31bf1a9ae9d`; the receipt describes `15fa113c7427` |theorem |`PWG-2i` |`ResourceAlgebra`: alternatives form an idempotent commutative monoid and sequencing a monoid. (`ResourceAlgebra.Core`: `ResourceAlgebra`, `IsAltMonoid.unitʳ`) |the reader derives PWG-2i from the legs and receipts at `15fa113c7427`
 

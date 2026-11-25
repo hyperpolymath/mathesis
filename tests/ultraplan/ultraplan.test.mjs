@@ -46,6 +46,10 @@ function fixture({advisors = ADVISORS, nodes = BASE, expeditions = [], registry 
   writeFileSync(path.join(root, 'docs/ultraplan/expeditions.jsonl'), raw.expeditions ?? jl(expeditions));
   return root;
 }
+// The page shows each text as written: every ASCII punctuation mark in it is a
+// numeric character reference (the rule, stated here apart from the generator).
+const PUNCTUATION = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
+const plainOnPage = t => [...t].map(c => (PUNCTUATION.includes(c) ? `&#${c.charCodeAt(0)};` : c)).join('');
 const refuses = (opts, re) => expect(() => generate(fixture(opts))).toThrow(re);
 // Replace fields of one node; a field set to undefined is removed.
 const strip = o => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
@@ -65,7 +69,7 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(d.picks.get('me')).toBe(null);                                // no public pick (owner ruling 2026-11-24)
   expect(d.ownerTagged.map(n => n.id)).toEqual(['theorem']);            // tagged owner_value, no notes
   expect(out[VIEW]).toContain('== Research now: the frontier');
-  expect(out[VIEW]).toContain('_Pick:_ xref:theorem[🔷 theorem]. The deep one.');
+  expect(out[VIEW]).toContain(`_Pick:_ xref:theorem[🔷 theorem]. ${plainOnPage('The deep one.')}`);
   expect(out[VIEW]).toContain('_No public pick:_ the owner chooses in a private panel of their own. Tagged on the frontier, in id order: xref:theorem[🔷 theorem].');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
@@ -81,9 +85,9 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
 
 test('a link to a node holds any name', () => {
   // `<<id,text>>` ends at ">>"; the xref macro's text ends at "]", turns into attributes at "=",
-  // and a table cell ends at "|". Those three are character references, so the link text is the name.
+  // and a table cell ends at "|". Every one is a character reference, so the link text is the name.
   const page = generate(fixture({nodes: swap('theorem', {name: 'a >> b = c ] d | e'})}))[VIEW];
-  expect(page).toContain('xref:theorem[🔷 a >> b &#61; c &#93; d &#124; e]');
+  expect(page).toContain('xref:theorem[🔷 a &#62;&#62; b &#61; c &#93; d &#124; e]');
   expect(page).not.toContain('<<theorem,');
 });
 
@@ -248,20 +252,15 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({raw: {nodes: [ckey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a control character/);
 });
 
-// Asciidoctor 2.0.26 reads a line that holds "::", ":::", "::::" or ";;" before a
-// blank or the end as a description-list term, wherever the marker sits, and a
-// prefix such as {empty} does not stop it. So no text in the plan may hold one.
-test('a description-list marker in any text is refused', () => {
-  const withRoot = extra => [jcs({...BASE[0], ...extra}), ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n';
-  for (const s of ['The lock:: and more', 'The lock;; and more', 'The lock::', ':: at the start', 'a ::: b', 'a:::: b'])
-    refuses({raw: {nodes: withRoot({summary: s})}}, /line 1 holds a description-list marker/);
-  refuses({raw: {nodes: withRoot({counsel: {maths: 'Deep;; really'}})}}, /line 1 holds a description-list marker/);
-  refuses({raw: {nodes: withRoot({refs: [{at: 'Fixture::', path: 'README.adoc'}]})}}, /line 1 holds a description-list marker/);
-  const mkey = jcs({...BASE[0], value: {maths: 1}}).replace('"maths":', '"m:: aths":');
-  refuses({raw: {nodes: [mkey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a description-list marker/);
-  // "::" with no blank after it marks nothing: a macro name or a URL stays text.
-  for (const s of ['image::x.svg[]', 'a::b', 'See https://example.org/a::b'])
-    expect(() => generate(fixture({nodes: swap('cheap', {summary: s})}))).not.toThrow();
+// Every text is plain (owner ruling 2026-11-25). A description-list marker, which
+// Asciidoctor 2.0.26 reads as a list term wherever it stands in a line, is
+// accepted like any other characters and shown as written.
+test('a text holding list or block syntax is shown as written', () => {
+  for (const s of ['The lock:: and more', 'The lock;; and more', 'The lock::', ':: at the start', 'a ::: b', 'NOTE: x', '{nbsp} and {empty}']) {
+    const page = generate(fixture({nodes: swap('cheap', {summary: s, counsel: {maths: s}, name: s.slice(0, 80)})}))[VIEW];
+    expect(page).toContain(plainOnPage(s));
+    for (const line of page.split('\n')) expect(line.includes(s)).toBe(false);
+  }
 });
 
 test('a ref points at one place, and each ref in this repository is checked', () => {
@@ -271,9 +270,15 @@ test('a ref points at one place, and each ref in this repository is checked', ()
   const shown = page([{path: 'README.adoc'}, {path: 'docs/decisions'}, {at: '= Fixture', path: 'README.adoc'},
     {issue: 'metadatastician/standards#1705'},
     {at: '== 5. Status vocabulary', commit: 'a'.repeat(40), path: '3-practice/PROOF-POLICY.adoc', repo: 'metadatastician/standards'}]);
-  expect(shown).toContain('*See:* `README.adoc`; `docs/decisions`; `README.adoc`, at `+= Fixture+`; '
-    + 'https://github.com/metadatastician/standards/issues/1705[metadatastician/standards#1705]; '
-    + `https://github.com/metadatastician/standards/blob/${'a'.repeat(40)}/3-practice/PROOF-POLICY.adoc[metadatastician/standards: 3-practice/PROOF-POLICY.adoc] at \`aaaaaaaaaaaa\`, at \`+== 5. Status vocabulary+\``);
+  const P = plainOnPage;
+  expect(shown).toContain(`*See:* \`${P('README.adoc')}\`; \`${P('docs/decisions')}\`; \`${P('README.adoc')}\`, at \`${P('= Fixture')}\`; `
+    + `https://github.com/metadatastician/standards/issues/1705[${P('metadatastician/standards#1705')}]; `
+    + `https://github.com/metadatastician/standards/blob/${'a'.repeat(40)}/3-practice/PROOF-POLICY.adoc[${P('metadatastician/standards: 3-practice/PROOF-POLICY.adoc')}] at \`aaaaaaaaaaaa\`, at \`${P('== 5. Status vocabulary')}\``);
+  // A quote may hold any characters of one line, a backtick, plus or backslash among them.
+  const odd = 'a `tick` + back\\slash';
+  const oddRoot = fixture({nodes: swap('paper', {refs: [{at: odd, path: 'notes.adoc'}]})});
+  writeFileSync(path.join(oddRoot, 'notes.adoc'), `${odd}\n`);
+  expect(generate(oddRoot)[VIEW]).toContain(`at \`${P(odd)}\``);
   // A quote that is gone, or that occurs more than once, names no one place.
   refused([{at: 'Gone', path: 'README.adoc'}], /node paper: ref README\.adoc holds "Gone" 0 times; a ref quotes a passage that occurs exactly once/);
   refused([{at: 'at', path: 'docs/decisions/0004-claims-registry.adoc'}], /holds "at" [2-9] times/);
@@ -281,7 +286,7 @@ test('a ref points at one place, and each ref in this repository is checked', ()
   refused([{path: 'missing.adoc'}], /node paper: ref path missing\.adoc is not in the repository/);
   refused([{at: 'x', path: 'docs/decisions'}], /ref path docs\/decisions is not a file in the repository/);
   for (const p of ['../outside', '/etc/passwd', 'a/./b', 'a b', '']) refused([{path: p}], /is not a repository path/);
-  for (const q of ['with `code`', 'a + b', 'back\\slash', ' padded', 'x'.repeat(161)]) refused([{at: q, path: 'README.adoc'}], /is not a short quote/);
+  for (const q of [' padded', 'x'.repeat(161), '']) refused([{at: q, path: 'README.adoc'}], /is not a short quote/);
   refused([{at: 'x', commit: '745fc74', path: 'a.adoc', repo: 'o/r'}], /ref commit "745fc74" is not a full commit id/);
   refused([{commit: 'a'.repeat(40), path: 'a.adoc', repo: 'nobody'}], /ref repo "nobody" is not OWNER\/REPO/);
   refused([{commit: 'a'.repeat(40), path: 'a.adoc'}], /ref repo undefined is not OWNER\/REPO/);
@@ -390,10 +395,10 @@ test('a summary that looks like block syntax is text on the page', () => {
   const bare = (lines, s) => lines.filter(l => l === s).length;
   for (const s of ['|===', 'image::missing.svg[]', '// a comment', 'include::x.adoc[]', '== heading', '* item']) {
     const page = generate(fixture({nodes: swap('cheap', {summary: s})}))[VIEW].split('\n');
-    expect(page).toContain(`{empty}${s}`);
+    expect(page).toContain(plainOnPage(s));
     expect(bare(page, s)).toBe(bare(base, s)); // the summary adds no line of its own syntax
   }
-  for (const n of BASE) expect(base).toContain(`{empty}${n.summary}`);
+  for (const n of BASE) expect(base).toContain(plainOnPage(n.summary));
 });
 
 // Every rule in the generator's rule tables has a witness: a change to the sound
@@ -480,7 +485,11 @@ test('ids are slugs and unique, and counsel comes from the council', () => {
 
 test('return tickets are grafted or archived honestly', () => {
   const x = {id: 'X-001', what: 'A trip', why: 'Because', size: 'S', date: '2026-11-24', status: 'out'};
-  expect(generate(fixture({expeditions: [x]}))[VIEW]).toContain('|X-001 |2026-11-24 |S |A trip |Because |🎒 out');
+  expect(generate(fixture({expeditions: [x]}))[VIEW]).toContain(`|${plainOnPage('X-001')} |${plainOnPage('2026-11-24')} |S |A trip |Because |🎒 out`);
+  // A ticket's texts sit in table cells, so a "|" in one would end its cell: each is escaped.
+  const odd = {...x, what: 'Try | this: *now*', why: 'Since [a] = b', status: 'archived', lesson: 'It taught | much'};
+  expect(generate(fixture({expeditions: [odd]}))[VIEW]).toContain(
+    `|${plainOnPage(odd.what)} |${plainOnPage(odd.why)} |📦 archived: ${plainOnPage(odd.lesson)}`);
   refuses({expeditions: [{...x, status: 'grafted', graft: 'ghost'}]}, /names the node it became/);
   refuses({expeditions: [{...x, status: 'archived'}]}, /records what it taught/);
   refuses({expeditions: [x, {...x}]}, /id is X-NNN and unique/);

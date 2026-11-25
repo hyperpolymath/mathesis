@@ -102,15 +102,9 @@ function oneLine(v) {
 }
 // A description-list marker ("::", ":::", "::::" or ";;", then a blank or the
 // end) makes Asciidoctor read the line that holds it as a list term, wherever
-// in the line it sits, so no prefix such as {empty} keeps it text. No text in
-// the plan may hold one.
+// in the line it sits. The ADR reader looks for one; the plan's own texts are
+// escaped on the page (text(), below), so they can hold one harmlessly.
 const LIST_MARKER = /(?::{2,4}|;;)(?:[ \t]|$)/;
-function noListMarker(v) {
-  if (typeof v === 'string') return !LIST_MARKER.test(v);
-  if (Array.isArray(v)) return v.every(noListMarker);
-  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !LIST_MARKER.test(k) && noListMarker(x));
-  return true;
-}
 
 export function readSource(text, name) {
   const rows = parseJsonl(text, name);
@@ -118,7 +112,6 @@ export function readSource(text, name) {
   rows.forEach((r, i) => {
     if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate or a Unicode noncharacter, which I-JSON refuses`);
     if (!oneLine(r)) throw new Error(`${name}: line ${i + 1} holds a control character; each text in the plan is one line`);
-    if (!noListMarker(r)) throw new Error(`${name}: line ${i + 1} holds a description-list marker (:: or ;; before a blank or the end), which would make its line of the page a list term`);
     if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
   });
   return rows;
@@ -298,9 +291,9 @@ const evidenceError = (ev, ctx) => { try { return checkEvidence(ev, ctx); } catc
 // A ref into another repository names a full commit, so its content cannot
 // drift; it is not checked here. An issue ref names a GitHub issue or pull request.
 const REF_FIELDS = ['path', 'at', 'repo', 'commit', 'issue'];
-// The page shows a quote verbatim in a literal code span, which a backtick, a
-// plus or a backslash could end early.
-const isQuote = s => isStr(s, 160) && !/[`+\\]/.test(s);
+// A quote is plain text like any other, escaped on the page, so any one line of
+// up to 160 characters can be quoted.
+const isQuote = s => isStr(s, 160);
 // How often s occurs in text, overlaps counted: "aaaa" occurs twice in "aaaaa".
 const occurrences = (text, s) => {
   let k = 0;
@@ -332,7 +325,7 @@ export function checkRef(r, ctx) {
   const kind = refKind(r);
   if (kind === 'issue') return REF.issue(r);
   if (!isRepoPath(r.path)) return `ref path ${JSON.stringify(r.path)} is not a repository path`;
-  if (r.at !== undefined && !isQuote(r.at)) return `ref at ${JSON.stringify(r.at)} is not a short quote without a backtick, plus or backslash`;
+  if (r.at !== undefined && !isQuote(r.at)) return `ref at ${JSON.stringify(r.at)} is not a short quote (one line of up to 160 characters, no blank at either end)`;
   return REF[kind](r, ctx);
 }
 const refError = (r, ctx) => { try { return checkRef(r, ctx); } catch (e) { return e.message; } };
@@ -583,19 +576,19 @@ export function derive(byId, advisors) {
 
 // ── Rendering: AsciiDoc ──────────────────────────────────────────────────────
 // The page is a list of sections; each section is a list of lines.
-const cell = s => String(s).replaceAll('|', String.raw`\|`);
-// A text that starts a line of the page (a node's summary) is read by AsciiDoc as
-// block syntax if it looks like some: "|===" opens a table, "image::x[]" places an
-// image, "//" makes a comment. "{empty}" (an attribute that is empty) in front makes
-// the line a plain paragraph, whatever follows, and adds nothing to the text.
-const lineStart = s => `{empty}${s}`;
+//
+// Every text in the plan is plain text (owner ruling 2026-11-25), and the page
+// shows it exactly as written. AsciiDoc builds all its markup from ASCII
+// punctuation, so text() writes each such character as a numeric character
+// reference, which Asciidoctor shows as that character and never reads as
+// markup. A text can then open no block, start no list or description list,
+// end no table cell or link, form no span and name no attribute, wherever it
+// stands: at the start of a line, in a table, in a heading or in a link's text.
+// Letters, digits, blanks and every character beyond ASCII pass unchanged.
+const text = s => String(s).replace(/[\x21-\x2f\x3a-\x40\x5b-\x60\x7b-\x7e]/g, c => `&#${c.charCodeAt(0)};`);
 const nameOf = (byId, id) => `${byId.get(id).glyph} ${byId.get(id).name}`;
-// A link to a node, as the xref macro. Its text may hold anything but a few
-// characters, written as character references so they mean the same everywhere,
-// in a table or not: "|" (a table cell's end), "]" (the macro's end) and "="
-// (which makes the text an attribute list). "<<id,text>>" cannot hold ">>".
-const linkText = s => String(s).replaceAll('|', '&#124;').replaceAll(']', '&#93;').replaceAll('=', '&#61;');
-const xref = (byId, id) => `xref:${id}[${linkText(nameOf(byId, id))}]`;
+// A link to a node, as the xref macro, with its text escaped like any other.
+const xref = (byId, id) => `xref:${id}[${text(nameOf(byId, id))}]`;
 const xrefs = (byId, ids, sep = ', ') => ids.map(t => xref(byId, t)).join(sep);
 const orNone = (items, none) => (items.length ? items : [none]);
 const trackKey = t => `${TRACK_GLYPH[t]} ${t}`;
@@ -631,7 +624,7 @@ function introLines(byId, d) {
   ];
 }
 
-const beyondNote = n => (n.where ? ` _(${cell(n.where)})_` : '');
+const beyondNote = n => (n.where ? ` _(${text(n.where)})_` : '');
 const startable = d => (d.slots > 0 ? `${d.frontier.length} can be started now.` : `${d.frontier.length} are ready, but all ${ACTIVE_LIMIT} active slots are full.`);
 const slotsFull = `*All ${ACTIVE_LIMIT} active slots are full.* These nodes are ready, but none can start until an active node is finished or parked.`;
 function frontierLines(byId, d) {
@@ -651,7 +644,7 @@ function frontierLines(byId, d) {
     '[cols="3,1,1,1,5",options="header"]',
     '|===',
     '|Node |Track |Size |Unlocks |Summary',
-    ...rows.map(n => `|${xref(byId, n.id)} |${n.track} |${n.size} |${d.leverage(n.id)} |${cell(n.summary)}${beyondNote(n)}`),
+    ...rows.map(n => `|${xref(byId, n.id)} |${n.track} |${n.size} |${d.leverage(n.id)} |${text(n.summary)}${beyondNote(n)}`),
     '|===',
     '',
   ];
@@ -660,7 +653,7 @@ function frontierLines(byId, d) {
 function pickLine(byId, a, p) {
   if (!p) return '_Pick:_ nothing on the frontier answers this advisor yet.';
   const note = p.counsel?.[a.id];
-  return `_Pick:_ ${xref(byId, p.id)}${note ? '. ' + note : '.'}`;
+  return `_Pick:_ ${xref(byId, p.id)}${note ? '. ' + text(note) : '.'}`;
 }
 // The me advisor's line: its choice is made privately, so the page shows only what the
 // owner tagged, unranked.
@@ -676,7 +669,7 @@ function councilLines(byId, advisors, d) {
     'except the me advisor. It is private: its notes and its choice stay outside this',
     'repository, and the page lists, unranked, the frontier nodes the owner has tagged.',
     '',
-    ...advisors.flatMap(a => [`=== ${a.glyph} ${a.name}`, '', `_Asks:_ ${a.asks}`, '', a.private ? privateLine(byId, d) : pickLine(byId, a, d.picks.get(a.id)), '']),
+    ...advisors.flatMap(a => [`=== ${text(a.glyph)} ${text(a.name)}`, '', `_Asks:_ ${text(a.asks)}`, '', a.private ? privateLine(byId, d) : pickLine(byId, a, d.picks.get(a.id)), '']),
   ];
 }
 
@@ -701,46 +694,46 @@ function forkLines(byId, d) {
 }
 
 function evidenceText(ev) {
-  if (ev.path) return `\`${ev.path}\``;
-  if (ev.claim) return `${ev.claim} at ${ev.min_pwg ?? 'PWG-3'} or above`;
+  if (ev.path) return `\`${text(ev.path)}\``;
+  if (ev.claim) return `${text(ev.claim)} at ${ev.min_pwg ?? 'PWG-3'} or above`;
   return `ADR ${ev.adr} accepted`;
 }
 // A quote is shown verbatim, as a literal code span.
 function refText(r) {
   if (r.issue) {
     const [repo, number] = r.issue.split('#');
-    return `https://github.com/${repo}/issues/${number}[${r.issue}]`;
+    return `https://github.com/${repo}/issues/${number}[${text(r.issue)}]`;
   }
-  const at = r.at === undefined ? '' : `, at \`+${r.at}+\``;
-  if (r.repo) return `https://github.com/${r.repo}/blob/${r.commit}/${r.path}[${r.repo}: ${r.path}] at \`${r.commit.slice(0, 12)}\`${at}`;
-  return `\`${r.path}\`${at}`;
+  const at = r.at === undefined ? '' : `, at \`${text(r.at)}\``;
+  if (r.repo) return `https://github.com/${r.repo}/blob/${r.commit}/${r.path}[${text(r.repo + ': ' + r.path)}] at \`${r.commit.slice(0, 12)}\`${at}`;
+  return `\`${text(r.path)}\`${at}`;
 }
 // Every mark the data holds is shown, a 0 as an open circle: a 0 is a judgement too.
 const marks = value => VALUE_KEYS.filter(k => Object.hasOwn(value, k)).map(k => `${k} ${'●'.repeat(value[k]) || '○'}`).join(', ');
 
 function nodeLines(byId, advisors, d, n) {
   const facts = [`*Track:* ${trackKey(n.track)}`, `*Kind:* ${n.kind}`, `*Size:* ${n.size}`, `*Status:* ${n.status}`];
-  if (n.where) facts.push(`*Beyond this repository:* ${n.where}`);
+  if (n.where) facts.push(`*Beyond this repository:* ${text(n.where)}`);
   const enables = d.children.get(n.id);
   // Each fact the node has, one a line, joined by hard line breaks.
   const details = [
     [list(n.needs).length, () => `*Needs:* ${xrefs(byId, n.needs)}`],
     [enables.length, () => `*Enables:* ${xrefs(byId, enables)}`],
     [list(n.rivals).length, () => `*Rivals:* ${xrefs(byId, n.rivals)}`],
-    [n.status === 'blocked', () => `*Blocked by:* ${n.blocked_by}`],
+    [n.status === 'blocked', () => `*Blocked by:* ${text(n.blocked_by)}`],
     [list(n.evidence).length, () => `*Evidence:* ${n.evidence.map(evidenceText).join('; ')}`],
     [n.value && Object.keys(n.value).length, () => `*Value (judgement):* ${marks(n.value)}`],
     [list(n.refs).length, () => `*See:* ${n.refs.map(refText).join('; ')}`],
   ].filter(([has]) => has).map(([, text]) => text());
-  const counsel = Object.entries(n.counsel ?? {}).map(([id, text]) => {
+  const counsel = Object.entries(n.counsel ?? {}).map(([id, words]) => {
     const adv = advisors.find(x => x.id === id);
-    return `* ${adv.glyph} _${adv.name}:_ ${text}`;
+    return `* ${text(adv.glyph)} _${text(adv.name)}:_ ${text(words)}`;
   });
   return [
     `[[${n.id}]]`,
-    `==== ${STATUS_GLYPH[n.status]} ${n.glyph} ${n.name}`,
+    `==== ${STATUS_GLYPH[n.status]} ${text(n.glyph)} ${text(n.name)}`,
     '',
-    lineStart(n.summary),
+    text(n.summary),
     '',
     facts.join(' · '),
     '',
@@ -766,7 +759,7 @@ function eraLines(byId, advisors, d) {
 function outcomeText(byId, x) {
   if (x.status === 'out') return '🎒 out';
   if (x.status === 'grafted') return `🌿 grafted as ${xref(byId, x.graft)}`;
-  return `📦 archived: ${cell(x.lesson)}`;
+  return `📦 archived: ${text(x.lesson)}`;
 }
 function ticketLines(byId, expeditions) {
   const head = [
@@ -782,7 +775,7 @@ function ticketLines(byId, expeditions) {
     '[cols="1,1,1,3,3,3",options="header"]',
     '|===',
     '|Card |Date |Size |What |Why |Outcome',
-    ...expeditions.map(x => `|${x.id} |${x.date} |${x.size} |${cell(x.what)} |${cell(x.why)} |${outcomeText(byId, x)}`),
+    ...expeditions.map(x => `|${text(x.id)} |${text(x.date)} |${x.size} |${text(x.what)} |${text(x.why)} |${outcomeText(byId, x)}`),
     '|===',
     '',
   ];
@@ -796,7 +789,7 @@ function beyondLines(byId) {
     'Nodes whose work lands in another repository. They are listed here so they can be',
     'carried to that repository, not done here.',
     '',
-    ...orNone(beyond.map(n => `* ${n.where}: ${xref(byId, n.id)} (${n.status})`), 'None.'),
+    ...orNone(beyond.map(n => `* ${text(n.where)}: ${xref(byId, n.id)} (${n.status})`), 'None.'),
     '',
   ];
 }

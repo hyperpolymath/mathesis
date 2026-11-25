@@ -95,8 +95,9 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   ** a ref that does not point at one place: each names a passage that occurs
      exactly once in a file here, a path here, a file of another repository at
      a full commit, or an issue, and never a line number;
-  ** a text holding a line break or a description-list marker, either of which
-     would make block syntax on the page;
+  ** a text holding a line break. Every text is plain text (owner ruling
+     2026-11-25): the page writes each ASCII punctuation mark in it as a
+     character reference, so it shows exactly as written and forms no markup;
   ** any note from the private me advisor.
 +
   `just ultraplan` and `just ultraplan-check` run it, and `check-views` includes

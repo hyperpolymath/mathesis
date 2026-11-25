@@ -478,3 +478,11 @@ scheduled census, a view of what each repository owes
    reads the feed, is open for the owner. The panel node is now `maths-panel`.
 ** The gels feed-panel contract thread, the estate coordinator and the
    decision desk were told the same day.
+* Owner rulings (2026-11-25), through the selector:
+** Plan texts are plain text everywhere: in the data, on the page and in the
+   feed. The page writes each ASCII punctuation mark in a text as a character
+   reference, so the text shows as written and forms no markup.
+** An ADR's status becomes a header attribute, `:status:`, kept in step with
+   its Status section.
+** Guix proof CI gets one estate-wide fix at source, queued as its own task
+   (CI upkeep, on a cheaper model).

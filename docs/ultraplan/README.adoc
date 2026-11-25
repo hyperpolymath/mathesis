@@ -70,18 +70,19 @@ When every slot is taken, the page and the picture still show the frontier, and
 say that it is ready but cannot start.
 * *Blocked* must say what blocks it.
 
-Each text (a name, a summary, a piece of counsel, a reason) is one line of
-AsciiDoc inline markup. A code span, bold text or an attribute reference such as
-`+{nbsp}+` renders as it would in any AsciiDoc paragraph. Block syntax cannot
-occur:
+Each text (a name, a summary, a piece of counsel, a reason, a quote) is plain
+text on one line (owner ruling 2026-11-25). It carries no markup, and the page
+shows it exactly as written:
 
-* The generator refuses a line break or any other control character.
-* It refuses a description-list marker: `+::+`, `+:::+`, `+::::+` or `+;;+`
-followed by a blank or the end of the text. Asciidoctor reads a line holding
-one as a list term wherever the marker stands, so no prefix keeps it text. A
-`+::+` with no blank after it, as in a URL, is not a marker.
-* It writes a summary, the one text that starts a line of the page, after
-`+{empty}+`.
+* AsciiDoc builds all its markup from ASCII punctuation. The generator writes
+each such mark in a text as a numeric character reference, which Asciidoctor
+shows as the mark itself and never reads as markup.
+* So no text can open a block, start a list or a description list, end a table
+cell or a link, form a span, or name an attribute, wherever it stands on the
+page.
+* A feed can carry the same strings unchanged, as plain text.
+* The generator refuses a line break or any other control character in a text.
+
 A text does not type a count that the data derives, such as a number of claims,
 repositories or theorems: the views carry those counts, and a typed one goes stale.
 
@@ -156,7 +157,7 @@ these:
 ** `+{"at":"a passage","path":"docs/x.adoc"}+`: a passage of a file in this
 repository. The passage must occur in the file exactly once. `just check`
 refuses the ref when the passage is reworded, moved away or repeated, so a ref
-never points nowhere unseen. A passage holds no backtick, plus or backslash.
+never points nowhere unseen. A passage is one line of up to 160 characters.
 ** `+{"path":"docs/x"}+`: a file or a directory of this repository, which must
 exist.
 ** `+{"at":"…","commit":"<full commit id>","path":"…","repo":"OWNER/REPO"}+`: a

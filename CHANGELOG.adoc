@@ -15,8 +15,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   with a pattern like `[-\w.]+/[-\w.]+`, which accepts dot segments. A
   github.com link made from such a name resolves, in a browser, to some other
   page. All of them now use one rule, GitHub's own, in `scripts/repo/github.mjs`:
-  a login, then a repository name that is not dots alone. Every name in the
-  current data passes it.
+  a login (single hyphens only, none at either end), then a repository name
+  that is not dots alone. Every name in the current data passes it.
 * **A `CI/gate` publisher may not filter `workflow_run` by branch.**
   GitHub applies `branches` and `branches-ignore` to the triggering run's
   branch, so a filtered publisher never posts the status on a PR head and the

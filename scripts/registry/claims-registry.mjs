@@ -93,13 +93,16 @@ export const CHECKER = {
 
 // ── Validation of the registry rows ──────────────────────────────────────────
 
-// A claim id is OWNER/REPO#CLAIM: a repository name, then a non-empty claim. The
-// registry's rows obey it, and readers that cite a claim (the ultraplan) use it too.
+// A claim id is OWNER/REPO#CLAIM. The claim uses the characters of a repository
+// name, so every id survives the registry view, where it is a link's text inside
+// a table row: "]", "|", "#" and white space cannot occur in it. The registry's
+// rows obey this rule, and readers that cite a claim (the ultraplan) use it too.
 export const CLAIM_REPO = /^[-\w.]+\/[-\w.]+$/;
+export const CLAIM_NAME = /^[-\w.]+$/;
 export function isClaimId(id) {
   if (typeof id !== 'string') return false;
   const i = id.indexOf('#');
-  return i > 0 && CLAIM_REPO.test(id.slice(0, i)) && id.length > i + 1;
+  return i > 0 && CLAIM_REPO.test(id.slice(0, i)) && CLAIM_NAME.test(id.slice(i + 1));
 }
 
 // Throw unless every row is well formed and its repository is public in the
@@ -113,7 +116,7 @@ export function validate(rows, inventory) {
     if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
     closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
     if (typeof r.repo !== 'string' || !CLAIM_REPO.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
-    if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
+    if (typeof r.claim !== 'string' || !CLAIM_NAME.test(r.claim)) throw new Error(`Missing or invalid claim id (letters, digits, "-", "_" and "." only): ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
     if (seen.has(r.id)) throw new Error(`Duplicate id: ${r.id}`);
     seen.add(r.id);

@@ -158,11 +158,12 @@ test('a claim is evidence only at the grade the registry derives', () => {
   // An id mentioned inside another row's statement does not list that claim.
   const mention = '|https://x/blob/c/P.adoc[o/r#T-1] at `c` |theorem |`PWG-2ii` |Builds on [o/r#GHOST-1] |why\n';
   refuses({nodes: swap('root', {evidence: [{claim: 'o/r#GHOST-1'}]}), registry: mention}, /does not list o\/r#GHOST-1/);
-  // Any id the registry accepts can be cited: OWNER/REPO#CLAIM with a non-empty claim (its rule, shared).
+  // Any id the registry accepts can be cited, and only those: its rule is shared.
   const odd = '|https://x/blob/c/P.adoc[o/r#N-7.1] at `c` |theorem |`PWG-2i` |s |w\n|https://x/blob/c/P.adoc[o/r#THY-1-A] at `c` |theorem |`PWG-3` |s |w\n';
   expect(() => generate(fixture({nodes: swap('root', {evidence: [{claim: 'o/r#N-7.1'}, {claim: 'o/r#THY-1-A'}]}), registry: odd}))).not.toThrow();
   refuses({nodes: swap('root', {evidence: [{claim: 'o/r#'}]}), registry: odd}, /evidence claim "o\/r#" is not OWNER\/REPO#ID/);
   refuses({nodes: swap('root', {evidence: [{claim: 'or#N-1'}]}), registry: odd}, /evidence claim "or#N-1" is not OWNER\/REPO#ID/);
+  refuses({nodes: swap('root', {evidence: [{claim: 'o/r#A]B'}]}), registry: odd}, /evidence claim "o\/r#A\]B" is not OWNER\/REPO#ID/);
 });
 
 test('a done or active node cannot rest on an unfinished need', () => {

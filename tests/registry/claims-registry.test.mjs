@@ -63,6 +63,11 @@ test('validation fails closed', () => {
   expect(() => validate([{...theorem, kind: 'machine-verified'}], inv)).toThrow(/Unknown kind/);
   expect(() => validate([{...theorem, agda: null}], inv)).toThrow(/Agda module/);
   expect(() => validate([{...theorem, id: 'o/r#X'}], inv)).toThrow(/repo#claim/);
+  // A claim must survive the view, where its id is a link's text in a table row.
+  for (const claim of ['A]B', 'A|B', 'A#B', 'A B', ''])
+    expect(() => validate([{...theorem, id: `o/r#${claim}`, claim}], inv)).toThrow(/invalid claim id/);
+  for (const claim of ['N-7.1', 'THY-1-A', 'C-4a'])
+    expect(validate([{...theorem, id: `o/r#${claim}`, claim}], inv)).toHaveLength(1);
   expect(() => validate([theorem], [{full_name: 'o/r', visibility: 'private'}])).toThrow(/Nonpublic/);
   expect(() => validate([{...theorem, receipt: {path: 'x', sha256: 'nope'}}], inv)).toThrow(/sha256/);
   const home = {...theorem, id: 'hyperpolymath/mathesis#T-1', repo: 'hyperpolymath/mathesis', shelf: 'theory'};

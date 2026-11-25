@@ -17,6 +17,39 @@ start when an active slot is free, and each advisor of the council, except the
 private me advisor, names a pick from it. This roadmap keeps the record of what happened; the tree says what each
 piece enables.
 
+=== Proven lifecycle registration (2026-11-25)
+
+The Proven owner has retained production Idris lifecycle proof checks, negative
+proof controls, actual Linux static/shared libraries, C/Rust consumer and
+concurrency tests, standalone unavailability and generated-result corruption
+controls. The home ledger is `docs/status/LIFECYCLE-PROOF-STATUS.adoc`, claim
+`ABI-LC-D1`. These are engineering proofs and an execution demonstration; no
+Agda/Rocq/Lean theory grade is assigned or implied.
+
+The demonstration row pins signed receipt carrier
+`4ac09e36c6b710099b4ceadb26066a83d949dd8f`, which binds implementation
+`8da3131d19ef2304c9a5fccc3a8f31fcfa492d7c`. The canonical engineering receipt
+SHA-256 is `653e399024a61d3d990cc31f1e25f052ffbe9ce26b5c84d51f9c80b642992643`.
+
+Review exposed that the old non-theorem shortcut discarded JSON-parser refusal.
+The earlier six external fixtures did not establish semantic binding. ADR 0006
+adds a closed engineering profile and validates identity, declared implementation
+binding, successful checks, rejecting controls and retained evidence digests.
+Invalid engineering JSON stops registration; legacy deed refusals stay ungraded
+and are now visible. No theorem JSON grading prototype is enabled.
+
+Hosted run 45576263195 passed the real canonical build/check and all 97 registry
+tests, including 21 engineering regression cases. The unchanged-checkout gate
+then correctly refused the stale committed view. This update imports only the
+canon-generated registry from that retained preview. All 48 theorem entries and
+their grades, the bridges, admissions and append-only theory ledger are unchanged.
+The updated view displays the existing Secret Types and Lintel deed refusals on their ungraded
+demonstrations and the distinct implementation/carrier binding for Proven.
+
+Receipts remain in Proven. The integrated lifecycle adapter uses the public pinned Idris2 SDK; no private bridge source is required or vendored here.
+The broader ABI's missing exports, compiler/marshaling/ownership
+assumptions and Rust wrapper proof obligations remain open in the home ledger.
+
 === Applied Systems (2026-11-07)
 
 * Added the owner-requested `applied-systems/` area for reusable applications,

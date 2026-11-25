@@ -42,7 +42,8 @@ would not:
 * The header is the title line, after any blank lines and line comments, and
 the lines up to the first blank line. Each of those lines is a line comment or
 an attribute entry, and none ends in a continuation. Exactly one line in the
-whole record sets or unsets `status`, and it is in the header. A preprocessor
+whole record sets or unsets `status`, in any letter case (Asciidoctor reads
+`:Status:` as `:status:`), and it is in the header. A preprocessor
 directive, or an inline reference that changes an attribute (`{set:...}`,
 `{counter:...}` or `{counter2:...}`), anywhere leaves the header unread: a
 counter turns ACCEPTED into ACCEPTEE.

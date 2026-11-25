@@ -151,6 +151,12 @@ test('nothing but the one header entry can set or unset the status', () => {
   // A second entry, an unset, an inline set or a conditional anywhere.
   for (const body of [':status: PROPOSED\n', ':status!:\n', ':!status:\n', 'Text {set:status:PROPOSED} here.\n', 'ifdef::x[]\n:status: PROPOSED\nendif::[]\n'])
     expect(headerStatus(doc(':status: ACCEPTED', body))).toBe(null);
+  // Asciidoctor lowercases an entry's name: ":Status: PROPOSED" sets "status"
+  // (probed with 2.0.26), so an entry in any letter case counts.
+  for (const body of [':Status: PROPOSED\n', ':STATUS: PROPOSED\n', ':Status!:\n', ':!Status:\n', ':sTaTuS: REJECTED\n'])
+    expect(headerStatus(doc(':status: ACCEPTED', body))).toBe(null);
+  // The one header entry is written exactly as the template writes it.
+  expect(headerStatus(doc(':Status: ACCEPTED'))).toBe(null);
   // A counter changes the attribute it names (Asciidoctor 2.0.26 turns ACCEPTED
   // into ACCEPTEE), so any inline reference that changes an attribute, whichever
   // it names and in whatever case, leaves the header unread.

@@ -124,7 +124,8 @@ export function sectionStatus(text) {
 //   or a comment block, could change what the header holds, so it is refused.
 // - Exactly one line in the whole file sets or unsets "status", and it is in
 //   the header. Nothing later can change it: no ":status:", ":status!:" or
-//   ":!status:", and no inline reference that changes an attribute
+//   ":!status:", in any letter case (Asciidoctor lowercases an entry's name,
+//   so ":Status: PROPOSED" sets "status"), and no inline reference that changes an attribute
 //   ("{set:...}", "{counter:...}" or "{counter2:...}"; a counter turns
 //   ACCEPTED into ACCEPTEE). Any such reference, to any attribute, leaves the
 //   header unread.
@@ -133,7 +134,7 @@ export function sectionStatus(text) {
 const ENTRY = /^:!?[\w-]+!?:(?: |$)/;
 // An inline reference that changes an attribute where it stands.
 const MUTATES = /\{(?:set|counter2?):/i;
-const STATUS_ENTRY = /^:!?status!?:/;
+const STATUS_ENTRY = /^:!?status!?:/i;
 const STATUS_VALUE = /^:status: (PROPOSED|ACCEPTED|DEPRECATED|SUPERSEDED(?: by \d{4})?|REJECTED)$/;
 function headerRange(lines) {
   let t = 0;

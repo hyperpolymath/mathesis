@@ -44,9 +44,14 @@ function trackedPaths(base) {
 
 export function repoFiles(root) {
   const base = realpathSync(root);
+  // git is asked once, when a check first needs the answer.
   let tracked = null;
-  const isTracked = p => (tracked ??= trackedPaths(base)).has(p);
-  const holdsTracked = p => { tracked ??= trackedPaths(base); return [...tracked].some(t => t.startsWith(`${p}/`)); };
+  const trackedSet = () => {
+    if (tracked === null) tracked = trackedPaths(base);
+    return tracked;
+  };
+  const isTracked = p => trackedSet().has(p);
+  const holdsTracked = p => [...trackedSet()].some(t => t.startsWith(`${p}/`));
   // What stands at the path itself, when no part of it is a link; else null.
   const at = p => {
     if (typeof p !== 'string' || p === '') return null;
@@ -69,7 +74,7 @@ export function repoFiles(root) {
     bytes,
     read: p => bytes(p).toString('utf8'),
     // The tracked paths under a directory, in the order git lists them (sorted).
-    under: dir => { tracked ??= trackedPaths(base); return [...tracked].filter(t => t.startsWith(`${dir}/`)); },
+    under: dir => [...trackedSet()].filter(t => t.startsWith(`${dir}/`)),
     local: {
       isFile: localFile,
       isDir: p => at(p)?.isDirectory() === true,

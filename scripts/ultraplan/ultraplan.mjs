@@ -107,11 +107,15 @@ const TEXT_FAULTS = [
   [/ {2}/, 'a run of spaces'],
   [/^ | $/, 'a space at the start or end of a text'],
 ];
+// The values a record holds directly: a list's items, or an object's keys and values.
+const partsOf = v => {
+  if (Array.isArray(v)) return v;
+  return v !== null && typeof v === 'object' ? Object.entries(v).flat() : [];
+};
 // The first fault of any string in a record, or null.
 function textFault(v) {
   if (typeof v === 'string') return TEXT_FAULTS.find(([re]) => re.test(v))?.[1] ?? null;
-  const parts = Array.isArray(v) ? v : (v !== null && typeof v === 'object' ? Object.entries(v).flat() : []);
-  for (const x of parts) {
+  for (const x of partsOf(v)) {
     const fault = textFault(x);
     if (fault) return fault;
   }

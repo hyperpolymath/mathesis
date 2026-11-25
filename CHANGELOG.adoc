@@ -85,10 +85,18 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 +
   The generator refuses:
   ** a done node without evidence that holds: a file, a claim grade the
-     registry derives, or an accepted ADR;
+     registry derives, or an accepted ADR. The ADR reader over-counts: every
+     line that could be a Status heading counts, inside a block or not, and
+     the ADR is read only when exactly one does, a plain section whose first
+     paragraph begins "Accepted";
   ** a done node whose needs are not done;
   ** a cycle;
   ** more than three active nodes;
+  ** a ref that does not point at one place: each names a passage that occurs
+     exactly once in a file here, a path here, a file of another repository at
+     a full commit, or an issue, and never a line number;
+  ** a text holding a line break or a description-list marker, either of which
+     would make block syntax on the page;
   ** any note from the private me advisor.
 +
   `just ultraplan` and `just ultraplan-check` run it, and `check-views` includes

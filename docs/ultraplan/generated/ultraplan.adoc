@@ -222,7 +222,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:census[🧾 Census of the estate] +
 *Enables:* xref:whats-owed[📋 What is owed] +
 *Value (judgement):* engineering ●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-re-anchoring.adoc:1075
+*See:* `docs/proposals/mathesis-re-anchoring.adoc`, at `+WO 5.3 Schedule the census+`
 
 [[claims-registry]]
 ==== ✅ 📒 Claims registry
@@ -246,7 +246,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:proof-gate[🛡️ Proof gate in pinned Guix] +
 *Enables:* xref:pwg1-regained[🥇 Back to PWG-1] +
 *Value (judgement):* engineering ●●, soundness ●●● +
-*See:* docs/status/PROOF-STATUS.adoc:33
+*See:* `docs/status/PROOF-STATUS.adoc`, at `+standards#1625 (2026-11-17)+`
 
 * 🔍 _Soundness auditor:_ The only road back to PWG-1 for THY-1 and APP-1 to APP-4.
 
@@ -274,7 +274,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:claims-registry[📒 Claims registry] +
 *Enables:* xref:token-order[⚖️ Settle the order of status tokens] +
 *Value (judgement):* maths ●●●, science ●●, soundness ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:390; docs/proposals/mathesis-research-programme.adoc:458
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+=== What experiment X-PF1 can change+`; `docs/proposals/mathesis-research-programme.adoc`, at `+the list covers the proof-route ABI, the registry and+`
 
 * ∑ _Mathematician:_ The deepest open question on the board; it decides what S-1 even says.
 * 🔬 _Scientist:_ Pre-register what result means A, B or C before computing.
@@ -300,7 +300,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:claims-registry[📒 Claims registry] +
 *Value (judgement):* teaching ●, soundness ●●● +
-*See:* docs/status/ROADMAP.adoc:30; docs/status/PROOF-NEEDS.adoc:27; README.adoc:46; .machine_readable/contractiles/intend
+*See:* `docs/status/ROADMAP.adoc`, at `+=== First theory theorem (2026-11-09)+`; `docs/status/PROOF-NEEDS.adoc`, at `+Discharged: the receipt derives+`; `README.adoc`, at `+The token-lattice theorems of the theory shelf, receipts for the cohort model+`; `.machine_readable/contractiles/intend`
 
 * 🃏 _Contrarian:_ Cheapest node on the board, and the auditor's favourite.
 * 🔍 _Soundness auditor:_ Every one of these is a claim with no receipt behind it; mend before adding.
@@ -363,7 +363,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:thy1[🧭 THY-1: reachability is monotone] +
 *Enables:* xref:dedukti-transport[🚂 Transport through Dedukti] +
 *Value (judgement):* engineering ●, ecosystem ●● +
-*See:* docs/status/ROADMAP.adoc:92; docs/proposals/mathesis-research-programme.adoc:693
+*See:* `docs/status/ROADMAP.adoc`, at `+Next action: the owner files both reports+`; `docs/proposals/mathesis-research-programme.adoc`, at `+File the THY-1 reproducer with the translator's authors+`
 
 * 🪙 _Economist:_ A few hours of filing could unblock a whole route for everyone.
 
@@ -377,7 +377,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:census-workflow[⏰ Census on a schedule], xref:claims-registry[📒 Claims registry] +
 *Enables:* xref:concept-commons[🏛️ Concept commons] +
 *Value (judgement):* engineering ●, soundness ●●, ecosystem ●●● +
-*See:* docs/proposals/mathesis-re-anchoring.adoc:1079
+*See:* `docs/proposals/mathesis-re-anchoring.adoc`, at `+WO 5.4 Report what is owed+`
 
 === 🌌 Era 3: Kepler
 
@@ -391,7 +391,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
 *Enables:* xref:januskey-slice[🗝️ Theorem to code: januskey] +
 *Value (judgement):* maths ●, teaching ●●, soundness ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:291; docs/proposals/mathesis-research-programme.adoc:1017
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Describe the method of the previous section as one checklist+`; `docs/proposals/mathesis-research-programme.adoc`, at `+R-5 The dossier.+`
 
 [[s2-monotone]]
 ==== 🌱 📈 S-2: evaluation is monotone
@@ -403,7 +403,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
 *Enables:* xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
 *Value (judgement):* maths ●●, soundness ● +
-*See:* docs/proposals/mathesis-research-programme.adoc:368
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+S-2 (positive evaluation is monotone)+`
 
 * 🃏 _Contrarian:_ The one theorem of the line that does not wait for the order: start it early.
 
@@ -417,7 +417,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
 *Enables:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* maths ●●, economics ●●●, teaching ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:792; docs/proposals/mathesis-research-programme.adoc:824
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+S-4 (a sound cash verdict)+`; `docs/proposals/mathesis-research-programme.adoc`, at `+Write one synthetic 13-week forecast as records+`
 
 * 🪙 _Economist:_ A forecast that can say undecided is worth more than one that guesses.
 * 🍎 _Teacher:_ Three-valued logic with money attached: an easy story to teach.
@@ -432,7 +432,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:chain-question[🧩 Is a chain enough? (X-PF1)] +
 *Enables:* xref:centre-computations[🎯 Centre computations], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra], xref:s1-token-algebra[🔢 S-1: tokens form a dioid], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Value (judgement):* maths ●●, soundness ●●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:335; docs/atlas/generated/registry.adoc:39; metadatastician/standards 3-practice/PROOF-POLICY.adoc:348 (at 745fc74)
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+R-1 The order of the tokens.+`; `docs/atlas/generated/registry.adoc`, at `+[hyperpolymath/resource-algebra#E-1]+`; https://github.com/metadatastician/standards/blob/745fc744158047a675eeb92464167c9961d66c4b/3-practice/PROOF-POLICY.adoc[metadatastician/standards: 3-practice/PROOF-POLICY.adoc] at `745fc7441580`, at `+== 5. Status vocabulary+`
 
 * 🗺️ _Estate cartographer:_ The canon order is the owner’s ruling in standards, and resource-algebra E-1 may need re-proving; carry both.
 * ∑ _Mathematician:_ Two careful readings disagree; that is a sign the two tokens are incomparable, which is outcome C.
@@ -448,7 +448,7 @@ same place; the contrarian keeps the road not taken in view.
 *Rivals:* xref:bridge-by-construction[🏗 Bridges by construction] +
 *Blocked by:* Agda2Dedukti fails on a parameterised record in Set1 and rejects --cubical-compatible; Lambdapi raw_lean and raw_coq drop rewrite rules. A transport row stays a re-proof until a fixed release passes the round trip. +
 *Value (judgement):* maths ●, engineering ●●, soundness ●● +
-*See:* docs/status/ROADMAP.adoc:92
+*See:* `docs/status/ROADMAP.adoc`, at `+PROOF-POLICY §2 puts Dedukti transport first and a re-proof by hand second.+`
 
 * 🃏 _Contrarian:_ Policy puts this route first, yet every re-proof so far went the other way.
 
@@ -474,7 +474,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:theory-shelf[📚 Theory shelf and ledger] +
 *Value (judgement):* maths ●●, science ●●●, publications ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:641
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Q-2.6 Can a statistical oracle become theory?+`
 
 * 🔬 _Scientist:_ Takes a statistical result that is only tested and makes it a theorem.
 
@@ -488,7 +488,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] +
 *Enables:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* engineering ●, economics ●●●, teaching ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:824; applied-systems/finance/liquidity/README.adoc
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Write one synthetic 13-week forecast as records+`; `applied-systems/finance/liquidity/README.adoc`
 
 * 🪙 _Economist:_ The first output a business reader would recognise.
 
@@ -515,7 +515,7 @@ same place; the contrarian keeps the road not taken in view.
 *Enables:* xref:talk-atlas[🎤 Talk: an atlas of an estate] +
 *Blocked by:* the owner’s go-ahead to deploy (WO 4.3): deploying is outward-facing, so the hold that ended on 2026-11-24 is followed by a fresh owner question, through the decision desk +
 *Value (judgement):* publications ●●●, teaching ●●, ecosystem ●● +
-*See:* docs/status/ROADMAP.adoc:262; docs/proposals/mathesis-re-anchoring.adoc:1058
+*See:* `docs/status/ROADMAP.adoc`, at `+WO 4.3, publish the atlas+`; `docs/proposals/mathesis-re-anchoring.adoc`, at `+WO 4.3 Publish the atlas+`
 
 * 📜 _Publisher:_ Everything else here is invisible until this happens.
 * 🔍 _Soundness auditor:_ Publish only views whose checks are green, or the site states what the receipts do not.
@@ -542,7 +542,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:bridge-candidates[🌉 Bridge candidates] +
 *Enables:* xref:centre-computations[🎯 Centre computations], xref:echo-mirrors[🪞 Echo mirror records], xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] +
 *Value (judgement):* maths ●●, science ●, ecosystem ●●● +
-*See:* docs/proposals/mathesis-re-anchoring.adoc:803; docs/proposals/mathesis-re-anchoring.adoc:1071
+*See:* `docs/proposals/mathesis-re-anchoring.adoc`, at `+=== The lock+`; `docs/proposals/mathesis-re-anchoring.adoc`, at `+WO 5.2 Pilot the bridge lock+`
 
 * 🗺️ _Estate cartographer:_ The first real convergence between repositories; everything cross-repo waits on it.
 * ∑ _Mathematician:_ Equivalence as identity, made checkable.
@@ -570,7 +570,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot], xref:token-order[⚖️ Settle the order of status tokens] +
 *Enables:* xref:concept-commons[🏛️ Concept commons], xref:corpus[🧪 Propose and dispose corpus] +
 *Value (judgement):* maths ●●●, science ●● +
-*See:* docs/proposals/mathesis-re-anchoring.adoc:786
+*See:* `docs/proposals/mathesis-re-anchoring.adoc`, at `+=== What the centre computes+`
 
 [[s1-token-algebra]]
 ==== 🌱 🔢 S-1: tokens form a dioid
@@ -583,7 +583,7 @@ same place; the contrarian keeps the road not taken in view.
 *Enables:* xref:bridge-by-construction[🏗 Bridges by construction], xref:idris-token-laws[🧬 Generated Idris2 token laws], xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
 *Rivals:* xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] +
 *Value (judgement):* maths ●●●, publications ●●, soundness ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:346; docs/proposals/mathesis-research-programme.adoc:544
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+S-1 (the tokens are a bottleneck grade)+`; `docs/proposals/mathesis-research-programme.adoc`, at `+Prove S-1 in Agda against+`
 
 * 🃏 _Contrarian:_ resource-algebra already pins E-1 to E-3; proving it again here may be duplication.
 * ∑ _Mathematician:_ A real algebra of evidence; the centre of the research programme.
@@ -598,7 +598,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:receipts[🔏 Proof receipts], xref:token-order[⚖️ Settle the order of status tokens] +
 *Enables:* xref:corpus[🧪 Propose and dispose corpus], xref:paper-receipts[📰 Paper: receipts, not claims], xref:paper-status-algebra[📘 Paper: an algebra of proof status] +
 *Value (judgement):* maths ●●, engineering ●●, soundness ●●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:378; docs/proposals/mathesis-research-programme.adoc:550
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+S-3 (the grade is a function of the receipt)+`; `docs/proposals/mathesis-research-programme.adoc`, at `+Run the table of S-3 against the canon reader+`
 
 * 🔍 _Soundness auditor:_ Turns the reader from trusted code into a checked one.
 
@@ -622,7 +622,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:dossier[🗂️ Theorem dossier] +
 *Value (judgement):* maths ●, engineering ●●●, soundness ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:743; docs/proposals/mathesis-research-programme.adoc:755
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Q-3.1 Can the composite status be computed?+`; `docs/proposals/mathesis-research-programme.adoc`, at `+as the first vertical slice (ruling R-4)+`
 
 [[pwg1-regained]]
 ==== 🌱 🥇 Back to PWG-1
@@ -643,7 +643,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
 *Value (judgement):* engineering ●, soundness ●●, ecosystem ● +
-*See:* metadatastician/standards#1705, merged at 84c2d1c; hyperpolymath/mathesis#122 turns it on: RECEIPT_KEEP_LINEAGE_DETAIL=1 in scripts/grade-receipt.sh, alike for --write and --check
+*See:* https://github.com/metadatastician/standards/issues/1705[metadatastician/standards#1705]; https://github.com/hyperpolymath/mathesis/issues/122[hyperpolymath/mathesis#122]
 
 * 🃏 _Contrarian:_ The ledger already holds every digest; check the option earns its keep.
 * 🔍 _Soundness auditor:_ Lineage you can re-check without git archaeology.
@@ -658,7 +658,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot] +
 *Enables:* xref:bridge-by-construction[🏗 Bridges by construction] +
 *Value (judgement):* maths ●, science ●●●, publications ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:609; docs/proposals/mathesis-research-programme.adoc:679
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Q-2.1 What must a statement comparison record?+`; `docs/proposals/mathesis-research-programme.adoc`, at `+Write the five existing comparisons as bridge records+`
 
 * 📜 _Publisher:_ Nobody has this list; it is citable on its own.
 * 🔬 _Scientist:_ Each entry should come with a counterexample that shows it.
@@ -693,7 +693,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:bridge-lock-pilot[🔗 Bridge lock pilot] +
 *Value (judgement):* maths ●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:695
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Write one bridge record for each of the six Echo mirrors+`
 
 [[receipts-campaign]]
 ==== 🌱 📣 Receipts campaign
@@ -705,7 +705,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:receipt-generator[🏭 Shared receipt generator] +
 *Enables:* xref:estate-pwg2ii[🏔️ PWG-2ii across the estate] +
 *Value (judgement):* soundness ●●, ecosystem ●●● +
-*See:* docs/status/ROADMAP.adoc:330; docs/proposals/mathesis-re-anchoring.adoc:1065
+*See:* `docs/status/ROADMAP.adoc`, at `+(re-anchoring plan WO 5.1)+`; `docs/proposals/mathesis-re-anchoring.adoc`, at `+WO 5.1 Bring receipts to the home repositories+`
 
 * 🗺️ _Estate cartographer:_ The registry is only as current as the home receipts.
 
@@ -733,7 +733,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:centre-computations[🎯 Centre computations], xref:whats-owed[📋 What is owed] +
 *Value (judgement):* maths ●●, teaching ●●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-re-anchoring.adoc:441; docs/proposals/estate-mathematical-architecture.adoc:158
+*See:* `docs/proposals/mathesis-re-anchoring.adoc`, at `+M4. Concept commons+`; `docs/proposals/estate-mathematical-architecture.adoc`, at `+4. Navigation Views+`
 
 [[bridge-by-construction]]
 ==== 🌱 🏗 Bridges by construction
@@ -746,7 +746,7 @@ same place; the contrarian keeps the road not taken in view.
 *Enables:* xref:corpus[🧪 Propose and dispose corpus] +
 *Rivals:* xref:dedukti-transport[🚂 Transport through Dedukti] +
 *Value (judgement):* maths ●●, engineering ●●●, publications ● +
-*See:* docs/proposals/mathesis-research-programme.adoc:620; docs/proposals/mathesis-research-programme.adoc:690
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Q-2.3 Can a bridge hold by construction?+`; `docs/proposals/mathesis-research-programme.adoc`, at `+Generate the three forms of S-1 from one source+`
 
 * ⚙️ _Engineer:_ Removes the hand-copying of statements that every re-proof does today.
 
@@ -759,7 +759,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:s1-token-algebra[🔢 S-1: tokens form a dioid] +
 *Value (judgement):* maths ●, engineering ●●, ecosystem ●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:760
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Generate the Idris2 statement of the token laws from the source of+`
 
 [[value-of-information]]
 ==== 🌱 🔭 Value of information
@@ -770,7 +770,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:liquidity-shelf[💶 Liquidity shelf] +
 *Value (judgement):* maths ●●, science ●●, economics ●●● +
-*See:* applied-systems/decision-science/README.adoc
+*See:* `applied-systems/decision-science/README.adoc`
 
 [[paper-receipts]]
 ==== 🌱 📰 Paper: receipts, not claims
@@ -804,7 +804,7 @@ same place; the contrarian keeps the road not taken in view.
 *Needs:* xref:bridge-by-construction[🏗 Bridges by construction], xref:centre-computations[🎯 Centre computations], xref:s3-grade-function[🎚️ S-3: the grade is a function] +
 *Enables:* xref:estate-pwg2ii[🏔️ PWG-2ii across the estate] +
 *Value (judgement):* maths ●●, engineering ●●, science ●●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:891
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Define the corpus as a view over bridge records and receipts+`
 
 === 🚀 Era 7: Frontier beyond
 
@@ -817,7 +817,7 @@ same place; the contrarian keeps the road not taken in view.
 
 *Needs:* xref:corpus[🧪 Propose and dispose corpus], xref:receipts-campaign[📣 Receipts campaign], xref:ci-recorder[🤖 CI records its own runs] +
 *Value (judgement):* maths ●●, science ●, soundness ●●●, ecosystem ●●● +
-*See:* docs/proposals/mathesis-research-programme.adoc:883; docs/proposals/mathesis-research-programme.adoc:903
+*See:* `docs/proposals/mathesis-research-programme.adoc`, at `+Q-H.3 What does a recheck leg cost?+`; `docs/proposals/mathesis-research-programme.adoc`, at `+A measured cost for a recheck leg, and with it a+`
 
 == Return tickets
 

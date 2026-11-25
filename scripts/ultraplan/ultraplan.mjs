@@ -100,6 +100,17 @@ function oneLine(v) {
   if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !hasControl(k) && oneLine(x));
   return true;
 }
+// A description-list marker ("::", ":::", "::::" or ";;", then a blank or the
+// end) makes Asciidoctor read the line that holds it as a list term, wherever
+// in the line it sits, so no prefix such as {empty} keeps it text. No text in
+// the plan may hold one.
+const LIST_MARKER = /(?::{2,4}|;;)(?:[ \t]|$)/;
+function noListMarker(v) {
+  if (typeof v === 'string') return !LIST_MARKER.test(v);
+  if (Array.isArray(v)) return v.every(noListMarker);
+  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !LIST_MARKER.test(k) && noListMarker(x));
+  return true;
+}
 
 export function readSource(text, name) {
   const rows = parseJsonl(text, name);
@@ -107,6 +118,7 @@ export function readSource(text, name) {
   rows.forEach((r, i) => {
     if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate or a Unicode noncharacter, which I-JSON refuses`);
     if (!oneLine(r)) throw new Error(`${name}: line ${i + 1} holds a control character; each text in the plan is one line`);
+    if (!noListMarker(r)) throw new Error(`${name}: line ${i + 1} holds a description-list marker (:: or ;; before a blank or the end), which would make its line of the page a list term`);
     if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
   });
   return rows;
@@ -148,53 +160,88 @@ export function registryGrade(registryText, id) {
   return null;
 }
 
-// Whether an ADR's Status section opens with "Accepted", read as AsciiDoc reads
-// it. It must never say yes where Asciidoctor finds no such section; where the
-// two could differ, it says no (fails closed).
-// - A heading inside a delimited block (a comment, a listing, an example) is
-//   not a section of the ADR.
-// - A Status heading is a section heading, "==" or deeper: "= Status" is the
-//   document's title.
-// - A heading starts a section only after a blank line, with no block attribute
-//   line or block title waiting above it, across blank lines and comments:
-//   "[discrete]" makes it a floating title.
-// - The ADR must have exactly one Status section, and its first line of text,
-//   after any comments, must say "Accepted".
+// Whether an ADR's Status section opens with "Accepted", as AsciiDoc reads it.
+// It must never say yes where Asciidoctor finds no such section. So it does not
+// try to mirror every way Asciidoctor reads a heading: it over-counts, and it
+// accepts one plain shape only (it fails closed).
+// - Every line that could be a heading titled Status counts, inside a block or
+//   not: "=" or "#" markers and a blank, then a title that holds the letters
+//   "status" in any case, or a reference that could spell them. An ADR with a
+//   count other than one is not read.
+// - That one line is "==" to "======", one space and "Status"; it is outside any
+//   delimited block; and it follows a blank line, with nothing above it, across
+//   blank lines and comments, that attaches it to what came before: a block
+//   attribute line, a block title, a list continuation or a description-list term.
+// - The first line after it, past blank lines and comments, is text that begins
+//   "Accepted": not indented, and holding no description-list marker.
+// - No text line stands over an underline ("-", "=", "~", "^" or "+" repeated)
+//   of about its length: Asciidoctor reads such a pair as a section title.
 // - A preprocessor directive could change which lines count, so an ADR that
 //   holds one is not read.
 // A delimiter is one of these characters four or more times, "--", or a table's "|===".
+// It closes on the same line again.
 const DELIMITER = /^(?:([/\-.+*=_])\1{3,}|--|[|,:!]={3,})$/;
+// A Markdown fence, which Asciidoctor reads too: three backticks open it, with
+// any language after them but never a fourth backtick, and only a line of
+// exactly three backticks closes it. "````" and "~~~" delimit nothing.
+const FENCE = /^```(?!`)/;
+const opener = l => {
+  if (DELIMITER.test(l)) return l;
+  return FENCE.test(l) ? '```' : null;
+};
 const PREPROCESSOR = /^(?:ifdef|ifndef|ifeval|endif|include)::/;
+// "//" begins a line comment, but "///" begins text.
+const COMMENT = /^\/\/(?!\/)/;
 // What each line is: inside a delimited block or one of its delimiters
 // ('block'), part of a comment, which AsciiDoc drops ('comment'), or text.
 const kindOf = (l, block) => {
   if (block) return block.startsWith('//') ? 'comment' : 'block';
-  return l.startsWith('//') ? 'comment' : 'text';
+  return COMMENT.test(l) ? 'comment' : 'text';
 };
 function lineKinds(lines) {
   let open = null;
   return lines.map(l => {
-    const block = open ?? (DELIMITER.test(l) ? l : null);
+    const block = open ?? opener(l);
     const closes = open !== null && l === open;
     open = closes ? null : block;
     return kindOf(l, block);
   });
 }
+// A heading in any form AsciiDoc or Markdown gives one, whose title could read "Status".
+const HEADING = /^[=#]+[ \t]+(.*)$/;
+const mayBeStatus = l => {
+  const m = HEADING.exec(l);
+  return m !== null && (/\{|&#?\w+;/.test(m[1]) || /status/i.test(m[1].replace(/[^\p{L}]/gu, '')));
+};
+// Asciidoctor reads a line over an underline within one character of its
+// length as a two-line section title; two characters are allowed here.
+const UNDERLINE = /^([-=~^+])\1+$/;
+const width = s => [...s].length;
+const overUnderline = (lines, kinds, i) => kinds[i] === 'text' && lines[i] !== '' && UNDERLINE.test(lines[i + 1] ?? '')
+  && Math.abs(width(lines[i + 1]) - width(lines[i])) <= 2;
+// What, standing above a heading across blank lines and comments, attaches the
+// heading to it: a block attribute line, a block title, a list continuation or
+// a description-list term.
+const ATTACHES = /^(?:\[.*\]|\.[^.\s].*|\+)$|(?::{2,4}|;;)(?:[ \t]|$)/;
 function startsSection(lines, kinds, i) {
   if (i > 0 && lines[i - 1] !== '') return false;
   let j = i - 1;
   while (j >= 0 && (lines[j] === '' || kinds[j] === 'comment')) j--;
-  return j < 0 || !/^(?:\[.*\]|\.[^.\s].*)$/.test(lines[j]);
+  return j < 0 || !ATTACHES.test(lines[j]);
 }
 export function adrAccepted(text) {
   const lines = text.split('\n').map(l => l.trimEnd());
   if (lines.some(l => PREPROCESSOR.test(l))) return false;
   const kinds = lineKinds(lines);
-  const heads = lines.flatMap((l, i) =>
-    kinds[i] === 'text' && /^==+ Status$/.test(l) && startsSection(lines, kinds, i) ? [i] : []);
+  if (lines.some((_, i) => overUnderline(lines, kinds, i))) return false;
+  const heads = lines.flatMap((l, i) => (mayBeStatus(l) ? [i] : []));
   if (heads.length !== 1) return false;
-  const next = lines.find((l, i) => i > heads[0] && l !== '' && kinds[i] !== 'comment');
-  return /^\**Accepted\b/.test(next?.trim() ?? '');
+  const [h] = heads;
+  if (kinds[h] !== 'text' || !/^={2,6} Status$/.test(lines[h]) || !startsSection(lines, kinds, h)) return false;
+  // The heading is text, so the line after it is text too, unless it opens a
+  // block, and no delimiter that opens one begins "Accepted".
+  const n = lines.findIndex((l, i) => i > h && l !== '' && kinds[i] !== 'comment');
+  return n > h && /^\**Accepted\b/.test(lines[n]) && !LIST_MARKER.test(lines[n]);
 }
 
 // One check for each kind of evidence; each returns an error or null.
@@ -233,6 +280,49 @@ export function checkEvidence(ev, ctx) {
   return EVIDENCE[kinds[0]](ev, ctx);
 }
 const evidenceError = (ev, ctx) => { try { return checkEvidence(ev, ctx); } catch (e) { return e.message; } };
+
+// ── References ───────────────────────────────────────────────────────────────
+// A ref points at one place, and no ref types a line number, which goes stale
+// with the next edit. A ref into this repository is checked: its path exists,
+// and its quote ("at") occurs in the file exactly once, so a ref whose passage
+// was reworded, moved away or repeated is refused, never left pointing nowhere.
+// A ref into another repository names a full commit, so its content cannot
+// drift; it is not checked here. An issue ref names a GitHub issue or pull request.
+const REF_FIELDS = ['path', 'at', 'repo', 'commit', 'issue'];
+const isRepoPath = p => isStr(p, 300) && p.split('/').every(s => /^[-\w.]+$/.test(s) && s !== '.' && s !== '..');
+// The page shows a quote verbatim in a literal code span, which a backtick, a
+// plus or a backslash could end early.
+const isQuote = s => isStr(s, 160) && !/[`+\\]/.test(s);
+const occurrences = (text, s) => text.split(s).length - 1;
+const REF = {
+  issue: r => (Object.keys(r).length === 1 && typeof r.issue === 'string' && /^[\w.-]+\/[\w.-]+#[1-9]\d*$/.test(r.issue)
+    ? null : `ref issue ${JSON.stringify(r.issue)} is not OWNER/REPO#N, alone`),
+  pinned(r) {
+    if (typeof r.repo !== 'string' || !/^[\w.-]+\/[\w.-]+$/.test(r.repo)) return `ref repo ${JSON.stringify(r.repo)} is not OWNER/REPO`;
+    return typeof r.commit === 'string' && /^[0-9a-f]{40}$/.test(r.commit) ? null : `ref commit ${JSON.stringify(r.commit)} is not a full commit id`;
+  },
+  here(r, ctx) {
+    if (r.at === undefined) return ctx.exists(r.path) ? null : `ref path ${r.path} is not in the repository`;
+    if (!ctx.isFile(r.path)) return `ref path ${r.path} is not a file in the repository`;
+    const k = occurrences(ctx.read(r.path), r.at);
+    return k === 1 ? null : `ref ${r.path} holds ${JSON.stringify(r.at)} ${k} times; a ref quotes a passage that occurs exactly once`;
+  },
+};
+const refKind = r => {
+  if (r.issue !== undefined) return 'issue';
+  return r.repo !== undefined || r.commit !== undefined ? 'pinned' : 'here';
+};
+
+// Check one ref; return an error or null.
+export function checkRef(r, ctx) {
+  closed(r, REF_FIELDS, 'ref');
+  const kind = refKind(r);
+  if (kind === 'issue') return REF.issue(r);
+  if (!isRepoPath(r.path)) return `ref path ${JSON.stringify(r.path)} is not a repository path`;
+  if (r.at !== undefined && !isQuote(r.at)) return `ref at ${JSON.stringify(r.at)} is not a short quote without a backtick, plus or backslash`;
+  return REF[kind](r, ctx);
+}
+const refError = (r, ctx) => { try { return checkRef(r, ctx); } catch (e) { return e.message; } };
 
 // ── Validation: the council ──────────────────────────────────────────────────
 const ADVISOR_FIELDS = ['id', 'name', 'glyph', 'asks', 'reads', 'private'];
@@ -277,7 +367,6 @@ const NODE_RULES = [
   [n => n.owner_value === undefined || n.owner_value === 'high', 'owner_value is "high" or absent'],
   [n => n.status !== 'blocked' || isStr(n.blocked_by), 'a blocked node says what blocks it (blocked_by)'],
   [n => n.status === 'blocked' || n.blocked_by === undefined, 'blocked_by belongs to a blocked node only'],
-  [n => list(n.refs).every(r => isStr(r, 300)), 'each ref is a short text'],
 ];
 
 function checkValue(n, where, fail) {
@@ -347,6 +436,14 @@ function checkStarted(n, byId, ctx, fail) {
   for (const t of list(n.needs)) if (byId.get(t)?.status !== 'done') fail(`${where}: ${n.status}, but its need ${t} is not done`);
 }
 
+// Every ref of every node holds, whatever the node's status.
+function checkRefs(n, ctx, fail) {
+  for (const r of list(n.refs)) {
+    const e = refError(r, ctx);
+    if (e) fail(`node ${n.id}: ${e}`);
+  }
+}
+
 // The needs form a DAG.
 function checkAcyclic(byId, fail) {
   const state = new Map();
@@ -399,7 +496,7 @@ export function validate({advisors, nodes, expeditions}, ctx) {
   const fail = m => errors.push(m);
   const advisorIds = checkAdvisors(advisors, fail);
   const byId = checkNodes(nodes, advisorIds, fail);
-  for (const n of byId.values()) { checkLinks(n, byId, fail); checkStarted(n, byId, ctx, fail); }
+  for (const n of byId.values()) { checkLinks(n, byId, fail); checkStarted(n, byId, ctx, fail); checkRefs(n, ctx, fail); }
   checkAcyclic(byId, fail);
   checkActiveLimit(byId, fail);
   checkExpeditions(expeditions, byId, fail);
@@ -595,6 +692,16 @@ function evidenceText(ev) {
   if (ev.claim) return `${ev.claim} at ${ev.min_pwg ?? 'PWG-3'} or above`;
   return `ADR ${ev.adr} accepted`;
 }
+// A quote is shown verbatim, as a literal code span.
+function refText(r) {
+  if (r.issue) {
+    const [repo, number] = r.issue.split('#');
+    return `https://github.com/${repo}/issues/${number}[${r.issue}]`;
+  }
+  const at = r.at === undefined ? '' : `, at \`+${r.at}+\``;
+  if (r.repo) return `https://github.com/${r.repo}/blob/${r.commit}/${r.path}[${r.repo}: ${r.path}] at \`${r.commit.slice(0, 12)}\`${at}`;
+  return `\`${r.path}\`${at}`;
+}
 // Every mark the data holds is shown, a 0 as an open circle: a 0 is a judgement too.
 const marks = value => VALUE_KEYS.filter(k => Object.hasOwn(value, k)).map(k => `${k} ${'●'.repeat(value[k]) || '○'}`).join(', ');
 
@@ -610,7 +717,7 @@ function nodeLines(byId, advisors, d, n) {
     [n.status === 'blocked', () => `*Blocked by:* ${n.blocked_by}`],
     [list(n.evidence).length, () => `*Evidence:* ${n.evidence.map(evidenceText).join('; ')}`],
     [n.value && Object.keys(n.value).length, () => `*Value (judgement):* ${marks(n.value)}`],
-    [list(n.refs).length, () => `*See:* ${n.refs.join('; ')}`],
+    [list(n.refs).length, () => `*See:* ${n.refs.map(refText).join('; ')}`],
   ].filter(([has]) => has).map(([, text]) => text());
   const counsel = Object.entries(n.counsel ?? {}).map(([id, text]) => {
     const adv = advisors.find(x => x.id === id);
@@ -810,12 +917,12 @@ export function renderSvg(byId, d) {
 export function context(root = ROOT) {
   const decisions = path.join(root, 'docs/decisions');
   const registry = 'docs/atlas/generated/registry.adoc';
-  // The real path of a regular file inside the repository (symlinks resolved), or null.
-  // Every file the evidence checks read goes through it.
-  const inside = p => {
+  // The real path inside the repository (symlinks resolved) of a regular file, or
+  // of what `kind` accepts, or null. Every path the checks read goes through it.
+  const inside = (p, kind = s => s.isFile()) => {
     try {
       const base = realpathSync(root), real = realpathSync(path.join(root, p));
-      return real.startsWith(base + path.sep) && statSync(real).isFile() ? real : null;
+      return real.startsWith(base + path.sep) && kind(statSync(real)) ? real : null;
     } catch { return null; }
   };
   const read = p => {
@@ -825,6 +932,8 @@ export function context(root = ROOT) {
   };
   return {
     isFile: p => inside(p) !== null,
+    // A file or a directory: a ref may name either.
+    exists: p => inside(p, s => s.isFile() || s.isDirectory()) !== null,
     read,
     // No registry view means no claim is listed; one that leads outside the repository is refused.
     registry: existsSync(path.join(root, registry)) ? read(registry) : '',

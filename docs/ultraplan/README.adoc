@@ -57,6 +57,13 @@ A typed status is held to account:
 accepts a file that exists, a claim whose grade the registry view derives at or
 above a stated grade, or a decision record whose status is Accepted. A done
 node's needs must be done too.
++
+The decision record is read conservatively, so the reader never finds an
+Accepted that Asciidoctor would not. Every line that could be a heading titled
+Status counts, inside a block or not. The record is read only when exactly one
+does, and that one is a plain section heading (`==` to `======`, then `Status`)
+whose first paragraph begins "Accepted". Anything it cannot read plainly, such
+as a preprocessor directive or an underlined title, is refused.
 * *Active* is limited: at most three nodes may be active at once. To start a
 fourth, finish or park one first. This is the guard against starting everything.
 When every slot is taken, the page and the picture still show the frontier, and
@@ -66,8 +73,15 @@ say that it is ready but cannot start.
 Each text (a name, a summary, a piece of counsel, a reason) is one line of
 AsciiDoc inline markup. A code span, bold text or an attribute reference such as
 `+{nbsp}+` renders as it would in any AsciiDoc paragraph. Block syntax cannot
-occur: the generator refuses a line break or any other control character, and it
-writes a summary, the one text that starts a line of the page, after `+{empty}+`.
+occur:
+
+* The generator refuses a line break or any other control character.
+* It refuses a description-list marker: `+::+`, `+:::+`, `+::::+` or `+;;+`
+followed by a blank or the end of the text. Asciidoctor reads a line holding
+one as a list term wherever the marker stands, so no prefix keeps it text. A
+`+::+` with no blank after it, as in a URL, is not a marker.
+* It writes a summary, the one text that starts a line of the page, after
+`+{empty}+`.
 A text does not type a count that the data derives, such as a number of claims,
 repositories or theorems: the views carry those counts, and a typed one goes stale.
 
@@ -135,6 +149,19 @@ root.
 . If the work lands in another repository, set `"where":"estate:OWNER/REPO"` or
 `"upstream:OWNER/REPO"`. The page lists those nodes so they can be carried
 there.
+. Point at its sources in `refs`, by what they say and never by line number: a
+line number goes stale with the next edit, and nothing notices. A ref is one of
+these:
+** `+{"at":"a passage","path":"docs/x.adoc"}+`: a passage of a file in this
+repository. The passage must occur in the file exactly once. `just check`
+refuses the ref when the passage is reworded, moved away or repeated, so a ref
+never points nowhere unseen. A passage holds no backtick, plus or backslash.
+** `+{"path":"docs/x"}+`: a file or a directory of this repository, which must
+exist.
+** `+{"at":"…","commit":"<full commit id>","path":"…","repo":"OWNER/REPO"}+`: a
+file of another repository at a commit. The commit fixes its content, so it
+cannot drift. It is not checked here.
+** `+{"issue":"OWNER/REPO#N"}+`: a GitHub issue or pull request.
 . Run `just ultraplan`, then `just check`.
 
 == GELS

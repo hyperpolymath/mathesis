@@ -247,6 +247,61 @@ test('closed schema, blocked reasons and canonical lines', () => {
   refuses({raw: {nodes: [ckey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a control character/);
 });
 
+// Asciidoctor 2.0.26 reads a line that holds "::", ":::", "::::" or ";;" before a
+// blank or the end as a description-list term, wherever the marker sits, and a
+// prefix such as {empty} does not stop it. So no text in the plan may hold one.
+test('a description-list marker in any text is refused', () => {
+  const withRoot = extra => [jcs({...BASE[0], ...extra}), ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n';
+  for (const s of ['The lock:: and more', 'The lock;; and more', 'The lock::', ':: at the start', 'a ::: b', 'a:::: b'])
+    refuses({raw: {nodes: withRoot({summary: s})}}, /line 1 holds a description-list marker/);
+  refuses({raw: {nodes: withRoot({counsel: {maths: 'Deep;; really'}})}}, /line 1 holds a description-list marker/);
+  refuses({raw: {nodes: withRoot({refs: [{at: 'Fixture::', path: 'README.adoc'}]})}}, /line 1 holds a description-list marker/);
+  const mkey = jcs({...BASE[0], value: {maths: 1}}).replace('"maths":', '"m:: aths":');
+  refuses({raw: {nodes: [mkey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a description-list marker/);
+  // "::" with no blank after it marks nothing: a macro name or a URL stays text.
+  for (const s of ['image::x.svg[]', 'a::b', 'See https://example.org/a::b'])
+    expect(() => generate(fixture({nodes: swap('cheap', {summary: s})}))).not.toThrow();
+});
+
+test('a ref points at one place, and each ref in this repository is checked', () => {
+  const page = refs => generate(fixture({nodes: swap('paper', {refs})}))[VIEW];
+  const refused = (refs, re) => refuses({nodes: swap('paper', {refs})}, re);
+  // A file or a directory, and a quote that occurs in its file exactly once.
+  const shown = page([{path: 'README.adoc'}, {path: 'docs/decisions'}, {at: '= Fixture', path: 'README.adoc'},
+    {issue: 'metadatastician/standards#1705'},
+    {at: '== 5. Status vocabulary', commit: 'a'.repeat(40), path: '3-practice/PROOF-POLICY.adoc', repo: 'metadatastician/standards'}]);
+  expect(shown).toContain('*See:* `README.adoc`; `docs/decisions`; `README.adoc`, at `+= Fixture+`; '
+    + 'https://github.com/metadatastician/standards/issues/1705[metadatastician/standards#1705]; '
+    + `https://github.com/metadatastician/standards/blob/${'a'.repeat(40)}/3-practice/PROOF-POLICY.adoc[metadatastician/standards: 3-practice/PROOF-POLICY.adoc] at \`aaaaaaaaaaaa\`, at \`+== 5. Status vocabulary+\``);
+  // A quote that is gone, or that occurs more than once, names no one place.
+  refused([{at: 'Gone', path: 'README.adoc'}], /node paper: ref README\.adoc holds "Gone" 0 times; a ref quotes a passage that occurs exactly once/);
+  refused([{at: 'at', path: 'docs/decisions/0004-claims-registry.adoc'}], /holds "at" [2-9] times/);
+  // Each part is checked: the path, what it names, the quote, the commit and the issue.
+  refused([{path: 'missing.adoc'}], /node paper: ref path missing\.adoc is not in the repository/);
+  refused([{at: 'x', path: 'docs/decisions'}], /ref path docs\/decisions is not a file in the repository/);
+  for (const p of ['../outside', '/etc/passwd', 'a/./b', 'a b', '']) refused([{path: p}], /is not a repository path/);
+  for (const q of ['with `code`', 'a + b', 'back\\slash', ' padded', 'x'.repeat(161)]) refused([{at: q, path: 'README.adoc'}], /is not a short quote/);
+  refused([{at: 'x', commit: '745fc74', path: 'a.adoc', repo: 'o/r'}], /ref commit "745fc74" is not a full commit id/);
+  refused([{commit: 'a'.repeat(40), path: 'a.adoc', repo: 'nobody'}], /ref repo "nobody" is not OWNER\/REPO/);
+  refused([{commit: 'a'.repeat(40), path: 'a.adoc'}], /ref repo undefined is not OWNER\/REPO/);
+  refused([{issue: 'standards#1705'}], /ref issue "standards#1705" is not OWNER\/REPO#N, alone/);
+  refused([{issue: 'o/r#1', path: 'README.adoc'}], /is not OWNER\/REPO#N, alone/);
+  refused([{line: 92, path: 'README.adoc'}], /node paper: ref: unknown field "line"/);
+  refused(['README.adoc:46'], /node paper: ref: must be an object/);
+});
+
+test('a ref cannot lead out of the repository', () => {
+  const outside = mkdtempSync(path.join(tmpdir(), 'ultraplan-out-'));
+  roots.push(outside);
+  writeFileSync(path.join(outside, 'secret.adoc'), 'only once\n');
+  const root = fixture({nodes: swap('paper', {refs: [{at: 'only once', path: 'link.adoc'}]})});
+  symlinkSync(path.join(outside, 'secret.adoc'), path.join(root, 'link.adoc'));
+  expect(() => generate(root)).toThrow(/ref path link\.adoc is not a file in the repository/);
+  const dirRoot = fixture({nodes: swap('paper', {refs: [{path: 'away'}]})});
+  symlinkSync(outside, path.join(dirRoot, 'away'));
+  expect(() => generate(dirRoot)).toThrow(/ref path away is not in the repository/);
+});
+
 test('a summary that looks like block syntax is text on the page', () => {
   const base = generate(fixture())[VIEW].split('\n');
   const bare = (lines, s) => lines.filter(l => l === s).length;
@@ -277,7 +332,6 @@ test('every rule has a witness', () => {
     N('paper', {summary: undefined}), N('paper', {needs: 'theorem'}), N('paper', {rivals: {}}),
     N('root', {evidence: 'README.adoc'}), N('paper', {refs: 'see'}), N('paper', {where: ['estate:o/r']}),
     N('paper', {owner_value: 'low'}), N('paper', {status: 'blocked'}), N('paper', {blocked_by: 'the owner'}),
-    N('paper', {refs: ['']}),
     T({what: ''}), T({why: undefined}), T({size: 'toString'}), T({date: '2026-02-30'}), T({status: 'lost'}),
     T({status: 'grafted', graft: 'ghost'}), T({graft: 'paper'}), T({status: 'archived'}), T({lesson: 'It taught.'}),
   ];
@@ -365,7 +419,9 @@ test('the evidence parsers read the real registry view and ADRs', () => {
 test('an ADR is accepted only by its own one Status section', () => {
   const adr = body => `= ADR\n\n${body}\n`;
   expect(adrAccepted(adr('=== Status\n\n*Accepted (ratified).*'))).toBe(true);
-  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n----\n=== Status\nProposed\n----'))).toBe(true);
+  // A heading that could read Status counts even inside a block, so this ADR is
+  // not read. Asciidoctor finds one Status section here; the reader fails closed.
+  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n----\n=== Status\nProposed\n----'))).toBe(false);
   expect(adrAccepted(adr('----\nan example\n----\n\n=== Status\n\nAccepted'))).toBe(true);
   expect(adrAccepted(adr('=== Status'))).toBe(false);
   expect(adrAccepted(adr('=== Status\n\nProposed.'))).toBe(false);
@@ -396,6 +452,60 @@ test('an ADR is accepted only by its own one Status section', () => {
   // Asciidoctor reads a section here, but the reader says no: it fails closed on
   // any attribute line or block title above a Status heading.
   for (const above of ['[[status]]\n', '.A title\n']) expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
+});
+
+// Each case below was checked against Asciidoctor 2.0.26. Where the comment says
+// the reader fails closed, Asciidoctor would accept and the reader refuses.
+test('a Markdown fence hides what it holds, as Asciidoctor reads it', () => {
+  const adr = body => `= ADR\n\n${body}\n`;
+  // A heading inside a fence is not a section, blank lines around it or not.
+  expect(adrAccepted(adr('```\n\n=== Status\n\nAccepted\n```'))).toBe(false);
+  expect(adrAccepted(adr('```\n=== Status\nAccepted\n```'))).toBe(false);
+  // A fence opens with a language after it, and only three bare backticks close it.
+  expect(adrAccepted(adr('```ruby\ncode\n```\n\n=== Status\n\nAccepted'))).toBe(true);
+  expect(adrAccepted(adr('```ruby\ncode\n```ruby\n\n=== Status\n\nAccepted'))).toBe(false);
+  expect(adrAccepted(adr('``` ruby\ncode\n``` ruby\n\n=== Status\n\nAccepted'))).toBe(false);
+  // "````" and "~~~" delimit nothing, so a later "```" opens a fence that hides the rest.
+  expect(adrAccepted(adr('````\ncode\n````\n\n=== Status\n\nAccepted'))).toBe(true);
+  for (const lead of ['````', '~~~', '`` `']) expect(adrAccepted(adr(`${lead}\ncode\n\`\`\`\n\n=== Status\n\nAccepted`))).toBe(false);
+});
+
+test('a second heading that could read Status leaves the ADR unread', () => {
+  const adr = body => `= ADR\n\n=== Status\n\nAccepted\n\n${body}\n\nProposed.\n`;
+  expect(adrAccepted(adr('=== Context'))).toBe(true);
+  // Each is a second section titled Status to Asciidoctor: a later level-0 title,
+  // Markdown and symmetric markers, extra blanks, an underlined title, a title that
+  // a substitution spells, an attribute line above, and a heading straight after a block.
+  for (const second of ['= Status', '## Status', '### Status', '== Status ==', '==  Status', '==\tStatus',
+    'Status\n------', 'Status\n~~~~~~', ':s: Status\n\n== {s}', '== +Status+', '== pass:[Status]',
+    '== Stat{empty}us', '== ((Status))', '[#sid]\n== Status', '[appendix]\n== Status', '----\ncode\n----\n== Status'])
+    expect(adrAccepted(adr(second))).toBe(false);
+  // Seven markers make no heading, so the line cannot be the Status section.
+  expect(adrAccepted('= ADR\n\n======= Status\n\nAccepted\n')).toBe(false);
+  for (const level of ['==', '===', '======']) expect(adrAccepted(`= ADR\n\n${level} Status\n\nAccepted\n`)).toBe(true);
+});
+
+test('the Status section opens with a paragraph that says Accepted', () => {
+  const adr = body => `= ADR\n\n${body}\n`;
+  // To Asciidoctor none of these opens with such a paragraph: a literal (indented)
+  // line, a description-list term, an underlined title, and "///", which is text.
+  for (const opening of [' Accepted', 'Accepted:: yes', 'Accepted::', 'Accepted;; yes', 'Accepted\n--------', '/// x\nAccepted', '///\nAccepted'])
+    expect(adrAccepted(adr(`=== Status\n\n${opening}`))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n\n// a comment\nAccepted'))).toBe(true);
+  // A heading inside a comment block is no section, though text follows the block.
+  expect(adrAccepted(adr('////\n\n=== Status\n////\nAccepted'))).toBe(false);
+  // A heading below a list continuation, or below a term with nothing after it,
+  // belongs to the list. Below a term with a description the reader fails closed.
+  for (const above of ['* item\n+\n\n', 'term::\n\n', 'term:: words\n\n'])
+    expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
+  expect(adrAccepted(adr('* item\n\n=== Status\n\nAccepted'))).toBe(true);
+  // A short line over a delimiter of about its length is a two-line title, so no
+  // block opens there; the reader does not read such an ADR.
+  expect(adrAccepted(adr('foo\n----\n=== Status\nProposed\n----\n\n=== Status\n\nAccepted'))).toBe(false);
+  // A line far from the delimiter's length leaves it a delimiter, and inside a
+  // block no title is read at all, whatever the lengths.
+  expect(adrAccepted(adr('A much longer paragraph line\n----\ncode\n----\n\n=== Status\n\nAccepted'))).toBe(true);
+  expect(adrAccepted(adr('----\nfoo\n----\n\n=== Status\n\nAccepted'))).toBe(true);
 });
 
 test('the committed views match the committed data', () => {

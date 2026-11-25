@@ -453,5 +453,8 @@ Proven run45587964955. The producer independently matched448source inputs and
 both artifact hashes. Broader refinement, filesystem confinement and Rust
 Creusot/Pearlite/Verus obligations stay open; no theorem grade changes.
 
-The canonical receipt reader and generated view must validate this new pin.
-That new-row validation is pending hosted CI, not inferred from earlier tests.
+Hosted run45589370028 passed canonical build/check and105registry tests
+(293 assertions) with the new pin:55claims,3bridges,1admission,6ledger entries.
+All14preview inputs matched; only the new demonstration row and its count
+changed. All48theorem rows/grades, bridge and theory views remain unchanged.
+The canonical generated registry is committed; final-head gates remain pending.

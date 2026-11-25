@@ -439,3 +439,19 @@ scheduled census, a view of what each repository owes
   the source of generated Agda; proofs in Agda, Rocq and Lean; three pull
   requests; the laws of the integer instance proved in the second pull
   request.
+
+== Proven path byte demonstration (2026-11-25)
+
+Register ABI-PATH-D1 as ungraded engineering evidence from signed Proven carrier
+2baf09e9ed4610fc35fc1b4be340710a48abe776, describing implementation
+72dfc18ef5ed3815915b1141a4fa1a8330064d8c.
+Production wire/FSM and parent-in-context proofs, two forged-proof refusals and
+4,413 runtime oracle assertions passed. Actual native static/shared C callers
+passed the same85,077 cases per linkage; Rust calls, old-baseline failure,
+generated-code mutation and unavailable-backend controls passed in hosted
+Proven run45587964955. The producer independently matched448source inputs and
+both artifact hashes. Broader refinement, filesystem confinement and Rust
+Creusot/Pearlite/Verus obligations stay open; no theorem grade changes.
+
+The canonical receipt reader and generated view must validate this new pin.
+That new-row validation is pending hosted CI, not inferred from earlier tests.

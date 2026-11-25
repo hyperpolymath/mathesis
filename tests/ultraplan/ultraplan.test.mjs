@@ -238,6 +238,24 @@ test('closed schema, blocked reasons and canonical lines', () => {
   }
   const key = jcs({...BASE[0], value: {maths: 1}}).replace('"maths":', '"m\uFFFEaths":');
   refuses({raw: {nodes: [key, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a lone surrogate or a Unicode noncharacter/);
+  // Each text is one line: a line break would let a text start a line of the page.
+  for (const cc of ['\n', '\r', '\t', '\u0000', '\u007f', '\u0085']) {
+    const line = jcs({...BASE[0], summary: `x${cc}|===`});
+    refuses({raw: {nodes: [line, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a control character; each text in the plan is one line/);
+  }
+  const ckey = jcs({...BASE[0], value: {maths: 1}}).replace('"maths":', '"m\\naths":');
+  refuses({raw: {nodes: [ckey, ...BASE.slice(1).map(n => jcs(n))].join('\n') + '\n'}}, /line 1 holds a control character/);
+});
+
+test('a summary that looks like block syntax is text on the page', () => {
+  const base = generate(fixture())[VIEW].split('\n');
+  const bare = (lines, s) => lines.filter(l => l === s).length;
+  for (const s of ['|===', 'image::missing.svg[]', '// a comment', 'include::x.adoc[]', '== heading', '* item']) {
+    const page = generate(fixture({nodes: swap('cheap', {summary: s})}))[VIEW].split('\n');
+    expect(page).toContain(`{empty}${s}`);
+    expect(bare(page, s)).toBe(bare(base, s)); // the summary adds no line of its own syntax
+  }
+  for (const n of BASE) expect(base).toContain(`{empty}${n.summary}`);
 });
 
 // Every rule in the generator's rule tables has a witness: a change to the sound
@@ -339,6 +357,27 @@ test('the evidence parsers read the real registry view and ADRs', () => {
   expect(registryGrade(ctx.registry, 'hyperpolymath/mathesis#THY-1')).toMatch(/^PWG-/);
   expect(adrAccepted(ctx.read(ctx.adrFiles('0004')[0]))).toBe(true);
   expect(adrAccepted(ctx.read(ctx.adrFiles('0005')[0]))).toBe(false);
+  for (const n of ['0001', '0002', '0003']) expect(adrAccepted(ctx.read(ctx.adrFiles(n)[0]))).toBe(true);
+});
+
+// The status is the ADR's own text, as AsciiDoc reads it. Each of these was
+// accepted when the first "Status" heading anywhere in the file was taken.
+test('an ADR is accepted only by its own one Status section', () => {
+  const adr = body => `= ADR\n\n${body}\n`;
+  expect(adrAccepted(adr('=== Status\n\n*Accepted (ratified).*'))).toBe(true);
+  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n----\n=== Status\nProposed\n----'))).toBe(true);
+  expect(adrAccepted(adr('----\nan example\n----\n\n=== Status\n\nAccepted'))).toBe(true);
+  expect(adrAccepted(adr('=== Status'))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('////\n=== Status\nAccepted\n////\n\n=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('----\n=== Status\nAccepted\n----\n\n=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('....\n=== Status\nAccepted\n....\n\n=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('ifdef::never[]\n=== Status\nAccepted\nendif::[]\n\n=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n\nAccepted\n\n=== Status\n\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n// Accepted\nProposed.'))).toBe(false);
+  expect(adrAccepted(adr('=== Status\n----\nAccepted\n----'))).toBe(false);
+  expect(adrAccepted(adr('include::status.adoc[]\n\n=== Status\n\nAccepted'))).toBe(false);
+  expect(adrAccepted(adr('// === Status\n// Accepted'))).toBe(false);
 });
 
 test('the committed views match the committed data', () => {

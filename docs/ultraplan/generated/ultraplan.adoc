@@ -155,7 +155,7 @@ same place; the contrarian keeps the road not taken in view.
 [[census]]
 ==== ✅ 🧾 Census of the estate
 
-The proof census of 465 public repositories: 249 rows of proof files, holes and axioms, each at a pinned commit and time.
+{empty}The proof census of 465 public repositories: 249 rows of proof files, holes and axioms, each at a pinned commit and time.
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* L · *Status:* done
 
@@ -166,7 +166,7 @@ The proof census of 465 public repositories: 249 rows of proof files, holes and 
 [[proof-gate]]
 ==== ✅ 🛡️ Proof gate in pinned Guix
 
-Agda 2.7.0.1, Rocq 8.18.0 and Lean 4.29.0 check every gated module on every commit, with an axiom audit over theorems and definitions and planted controls that must fail.
+{empty}Agda 2.7.0.1, Rocq 8.18.0 and Lean 4.29.0 check every gated module on every commit, with an axiom audit over theorems and definitions and planted controls that must fail.
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* L · *Status:* done
 
@@ -179,7 +179,7 @@ Agda 2.7.0.1, Rocq 8.18.0 and Lean 4.29.0 check every gated module on every comm
 [[cohort-model]]
 ==== ✅ 👥 Cohort model in Agda
 
-The cohort-economics model of the applied shelf, with three number modes and synthetic examples generated into Agda from JSON Lines.
+{empty}The cohort-economics model of the applied shelf, with three number modes and synthetic examples generated into Agda from JSON Lines.
 
 *Track:* ∑ maths · *Kind:* method · *Size:* M · *Status:* done
 
@@ -191,7 +191,7 @@ The cohort-economics model of the applied shelf, with three number modes and syn
 [[thy1]]
 ==== ✅ 🧭 THY-1: reachability is monotone
 
-In a dependency graph with feature-guarded edges, a node unreachable with every feature requested is unreachable under any request. Proved in Agda, re-proved in Rocq and Lean.
+{empty}In a dependency graph with feature-guarded edges, a node unreachable with every feature requested is unreachable under any request. Proved in Agda, re-proved in Rocq and Lean.
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* done
 
@@ -203,7 +203,7 @@ In a dependency graph with feature-guarded edges, a node unreachable with every 
 [[atlas-views]]
 ==== ✅ 🗺️ Atlas views
 
-The catalogue and the A to Z and organisation views, generated from the census rows and checked for staleness by `just check-views`.
+{empty}The catalogue and the A to Z and organisation views, generated from the census rows and checked for staleness by `just check-views`.
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* M · *Status:* done
 
@@ -215,7 +215,7 @@ The catalogue and the A to Z and organisation views, generated from the census r
 [[census-workflow]]
 ==== 🌱 ⏰ Census on a schedule
 
-A scheduled census workflow as the one writer of the census rows (WO 5.3), so refreshes stop arriving by hand and unrecorded.
+{empty}A scheduled census workflow as the one writer of the census rows (WO 5.3), so refreshes stop arriving by hand and unrecorded.
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open
 
@@ -227,7 +227,7 @@ A scheduled census workflow as the one writer of the census rows (WO 5.3), so re
 [[claims-registry]]
 ==== ✅ 📒 Claims registry
 
-Pins 53 claims in their home repositories and derives each grade from the home receipt with the pinned canon reader. No grade is typed.
+{empty}Pins 53 claims in their home repositories and derives each grade from the home receipt with the pinned canon reader. No grade is typed.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
@@ -239,7 +239,7 @@ Pins 53 claims in their home repositories and derives each grade from the home r
 [[pinned-image]]
 ==== 🌱 📦 Proof lanes in a pinned image
 
-Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
+{empty}Run the three proof lanes in a container image pinned by digest, the condition PROOF-POLICY now sets for PWG-1 (standards#1625). The Guix shell alone does not qualify.
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open
 
@@ -255,7 +255,7 @@ Run the three proof lanes in a container image pinned by digest, the condition P
 [[app-proofs]]
 ==== ✅ 💧 APP-1 to APP-4: missing stays missing
 
-Missing inputs propagate and never read as zero; the cash identity; the least funding gap; status never upgrades. Each proved in Agda, Rocq and Lean.
+{empty}Missing inputs propagate and never read as zero; the cash identity; the least funding gap; status never upgrades. Each proved in Agda, Rocq and Lean.
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* done
 
@@ -267,7 +267,7 @@ Missing inputs propagate and never read as zero; the cash identity; the least fu
 [[chain-question]]
 ==== 🔨 🧩 Is a chain enough? (X-PF1)
 
-Experiment X-PF1, pre-registered: list each rule, gate and report in the estate that reads a status token (at least the proof-route ABI, the registry and ledger rule 3) and ask whether its result changes between the two members of a fibre. Outcome A, B or C (or D: two tokens the wrong way round) decides the order.
+{empty}Experiment X-PF1, pre-registered: list each rule, gate and report in the estate that reads a status token (at least the proof-route ABI, the registry and ledger rule 3) and ask whether its result changes between the two members of a fibre. Outcome A, B or C (or D: two tokens the wrong way round) decides the order.
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* active
 
@@ -282,7 +282,7 @@ Experiment X-PF1, pre-registered: list each rule, gate and report in the estate 
 [[theory-shelf]]
 ==== ✅ 📚 Theory shelf and ledger
 
-The admission rule for theory no single system owns, with an append-only ledger of every grade and receipt change. One theorem admitted so far.
+{empty}The admission rule for theory no single system owns, with an append-only ledger of every grade and receipt change. One theorem admitted so far.
 
 *Track:* ∑ maths · *Kind:* data · *Size:* S · *Status:* done
 
@@ -294,7 +294,7 @@ The admission rule for theory no single system owns, with an append-only ledger 
 [[doc-drift-fix]]
 ==== 🌱 🧹 Mend the status documents
 
-ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
+{empty}ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PWG-1 vs PWG-2ii, receipts called planned that exist, stage states). Make each agree with the derived facts.
 
 *Track:* ⚙ engineering · *Kind:* decision · *Size:* S · *Status:* open
 
@@ -308,7 +308,7 @@ ROADMAP, PROOF-NEEDS, README and the intend contract contradict the receipts (PW
 [[receipts]]
 ==== ✅ 🔏 Proof receipts
 
-The PROOF-POLICY 8.5.1 receipt of Mathesis: per-leg run, commit, checker, inputs manifest and axioms, checked by the shared git checker and read by the canon reader.
+{empty}The PROOF-POLICY 8.5.1 receipt of Mathesis: per-leg run, commit, checker, inputs manifest and axioms, checked by the shared git checker and read by the canon reader.
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* M · *Status:* done
 
@@ -320,7 +320,7 @@ The PROOF-POLICY 8.5.1 receipt of Mathesis: per-leg run, commit, checker, inputs
 [[site-build]]
 ==== ✅ 🏗️ Atlas site (build)
 
-Renders every generated view with Asciidoctor and fails on any warning or broken link. It builds; it does not deploy.
+{empty}Renders every generated view with Asciidoctor and fails on any warning or broken link. It builds; it does not deploy.
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
@@ -332,7 +332,7 @@ Renders every generated view with Asciidoctor and fails on any warning or broken
 [[ultraplan]]
 ==== ✅ 🌳 The ultraplan
 
-This tech tree: data first, with derived eras, frontier, forks, confluences and advisor picks, and a done that must show evidence.
+{empty}This tech tree: data first, with derived eras, frontier, forks, confluences and advisor picks, and a done that must show evidence.
 
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
@@ -344,7 +344,7 @@ This tech tree: data first, with derived eras, frontier, forks, confluences and 
 [[bridge-candidates]]
 ==== ✅ 🌉 Bridge candidates
 
-Three unassessed candidate links between theorems in different repositories and provers (tropical MaxPlus, resource-algebra M-2, squeakwell). Candidates, not evidence.
+{empty}Three unassessed candidate links between theorems in different repositories and provers (tropical MaxPlus, resource-algebra M-2, squeakwell). Candidates, not evidence.
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* S · *Status:* done
 
@@ -356,7 +356,7 @@ Three unassessed candidate links between theorems in different repositories and 
 [[file-transport-bugs]]
 ==== 🌱 🐛 File the transport reproducers
 
-File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act.
+{empty}File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option gaps, and Lambdapi dropping rules. Filing is the owner's act.
 
 *Track:* 🗺 ecosystem · *Kind:* decision · *Size:* S · *Status:* open · *Beyond this repository:* upstream:Deducteam/agda2dedukti
 
@@ -370,7 +370,7 @@ File the THY-1 reproducers upstream (E-2.4): the Agda2Dedukti crash and option g
 [[whats-owed]]
 ==== 🌱 📋 What is owed
 
-A view of the standards requirements master list beside the census and the registry (WO 5.4): what each repository owes, and what it has.
+{empty}A view of the standards requirements master list beside the census and the registry (WO 5.4): what each repository owes, and what it has.
 
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* open
 
@@ -384,7 +384,7 @@ A view of the standards requirements master list beside the census and the regis
 [[dossier]]
 ==== 🌱 🗂️ Theorem dossier
 
-The eight-item dossier for each theorem (Line 0), scored first on THY-1, five januskey theorems and two each of secret-types and lintel (E-0). Its home (here or standards, R-5) is still open.
+{empty}The eight-item dossier for each theorem (Line 0), scored first on THY-1, five januskey theorems and two each of secret-types and lintel (E-0). Its home (here or standards, R-5) is still open.
 
 *Track:* ∑ maths · *Kind:* method · *Size:* S · *Status:* open
 
@@ -396,7 +396,7 @@ The eight-item dossier for each theorem (Line 0), scored first on THY-1, five ja
 [[s2-monotone]]
 ==== 🌱 📈 S-2: evaluation is monotone
 
-Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
+{empty}Positive evaluation of status is monotone. It holds for each ordered resource algebra, so it can be proved once against the kernel now, whatever X-PF1 decides (R-3).
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* S · *Status:* open
 
@@ -410,7 +410,7 @@ Positive evaluation of status is monotone. It holds for each ordered resource al
 [[s4-s5-verdict]]
 ==== 🌱 🌦️ S-4 and S-5: honest cash verdicts
 
-A sound three-valued cash verdict over intervals, where missing means unbounded (S-4), and more uncertainty never strengthens a verdict (S-5). Reuses residual-evidence-types at a pin; pass is PWG-3 (E-4.2).
+{empty}A sound three-valued cash verdict over intervals, where missing means unbounded (S-4), and more uncertainty never strengthens a verdict (S-5). Reuses residual-evidence-types at a pin; pass is PWG-3 (E-4.2).
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
 
@@ -425,7 +425,7 @@ A sound three-valued cash verdict over intervals, where missing means unbounded 
 [[token-order]]
 ==== 🌱 ⚖️ Settle the order of status tokens
 
-Record the order X-PF1 decides, in Mathesis (R-1, provisional) and in the canon. Evidence it must answer: R-1 reads PROOF-POLICY section 5 as open < argued < tested-only, resource-algebra E-1 (PWG-2i) proves open < tested-only < argued, and section 5 itself lists the tokens without stating an order.
+{empty}Record the order X-PF1 decides, in Mathesis (R-1, provisional) and in the canon. Evidence it must answer: R-1 reads PROOF-POLICY section 5 as open < argued < tested-only, resource-algebra E-1 (PWG-2i) proves open < tested-only < argued, and section 5 itself lists the tokens without stating an order.
 
 *Track:* ∑ maths · *Kind:* decision · *Size:* S · *Status:* open
 
@@ -440,7 +440,7 @@ Record the order X-PF1 decides, in Mathesis (R-1, provisional) and in the canon.
 [[dedukti-transport]]
 ==== ⛔ 🚂 Transport through Dedukti
 
-Check an Agda proof in Rocq and Lean by translating it through Dedukti and Lambdapi instead of re-proving it, the route PROOF-POLICY section 2 puts first.
+{empty}Check an Agda proof in Rocq and Lean by translating it through Dedukti and Lambdapi instead of re-proving it, the route PROOF-POLICY section 2 puts first.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* blocked · *Beyond this repository:* upstream:Deducteam/lambdapi
 
@@ -455,7 +455,7 @@ Check an Agda proof in Rocq and Lean by translating it through Dedukti and Lambd
 [[receipt-generator]]
 ==== 🔨 🏭 Shared receipt generator
 
-Adopt the standards generator: the receipt is generated from a run ledger, and the gate lists each green run's ledger rows. Pull request 122.
+{empty}Adopt the standards generator: the receipt is generated from a run ledger, and the gate lists each green run's ledger rows. Pull request 122.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* M · *Status:* active
 
@@ -468,7 +468,7 @@ Adopt the standards generator: the receipt is generated from a run ledger, and t
 [[statistical-bridge]]
 ==== 🌱 🎲 From oracle to theorem
 
-S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are tested only, against MetaManifold-WebUI as oracle. Prove them in Agda, Rocq and Lean for admission (Q-2.6).
+{empty}S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are tested only, against MetaManifold-WebUI as oracle. Prove them in Agda, Rocq and Lean for admission (Q-2.6).
 
 *Track:* 🔬 science · *Kind:* theorem · *Size:* L · *Status:* open
 
@@ -481,7 +481,7 @@ S-MN and S-DM (the multinomial logit closed form and the DM contrast limit) are 
 [[forecast-13wk]]
 ==== 🌱 📅 Thirteen-week forecast
 
-A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the first worked decision of the applied shelf.
+{empty}A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the first worked decision of the applied shelf.
 
 *Track:* 🪙 economics · *Kind:* method · *Size:* M · *Status:* open
 
@@ -495,7 +495,7 @@ A synthetic thirteen-week cash forecast on the proved cohort model (E-4.1), the 
 [[paper-thy1]]
 ==== 🌱 📄 Note: feature reachability
 
-A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
+{empty}A short note on THY-1: why requesting every feature is a sound check for absence, with the three-prover receipt as artefact. Its dependant is a real standards rule.
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* M · *Status:* open
 
@@ -507,7 +507,7 @@ A short note on THY-1: why requesting every feature is a sound check for absence
 [[publish-atlas]]
 ==== ⛔ 🌐 Publish the atlas
 
-Deploy the built site (WO 4.3), once the owner says go. Publication is outward-facing, so it is gated on the owner, not on any node.
+{empty}Deploy the built site (WO 4.3), once the owner says go. Publication is outward-facing, so it is gated on the owner, not on any node.
 
 *Track:* 📜 publications · *Kind:* view · *Size:* S · *Status:* blocked
 
@@ -523,7 +523,7 @@ Deploy the built site (WO 4.3), once the owner says go. Publication is outward-f
 [[teaching-cohort]]
 ==== 🌱 📓 Cohort economics, taught
 
-A worked tutorial: a small business model where missing data stays missing, with the proofs alongside and synthetic data only.
+{empty}A worked tutorial: a small business model where missing data stays missing, with the proofs alongside and synthetic data only.
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* M · *Status:* open
 
@@ -535,7 +535,7 @@ A worked tutorial: a small business model where missing data stays missing, with
 [[bridge-lock-pilot]]
 ==== 🌱 🔗 Bridge lock pilot
 
-The full bridge record for two pilots, a squeakwell ladder row and resource-algebra to tropical-types (WO 5.2, ruling D-7 a): what is claimed equal, by which map, checked how.
+{empty}The full bridge record for two pilots, a squeakwell ladder row and resource-algebra to tropical-types (WO 5.2, ruling D-7 a): what is claimed equal, by which map, checked how.
 
 *Track:* 🗺 ecosystem · *Kind:* method · *Size:* M · *Status:* open
 
@@ -550,7 +550,7 @@ The full bridge record for two pilots, a squeakwell ladder row and resource-alge
 [[gels-maths-panel]]
 ==== ⛔ 🪟 Maths panel in GELS
 
-The tech tree as one panel type in GELS, beside the work-queue lanes and the Plan tab: frontier, grade census with its denominator, and claim pins, from a Mathesis feed whose fields the feed owns. Open decisions go to the owner’s decision desk, not this panel.
+{empty}The tech tree as one panel type in GELS, beside the work-queue lanes and the Plan tab: frontier, grade census with its denominator, and claim pins, from a Mathesis feed whose fields the feed owns. Open decisions go to the owner’s decision desk, not this panel.
 
 *Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked · *Beyond this repository:* estate:metadatastician/gels
 
@@ -563,7 +563,7 @@ The tech tree as one panel type in GELS, beside the work-queue lanes and the Pla
 [[centre-computations]]
 ==== 🌱 🎯 Centre computations
 
-Over locked bridges: classes under a criterion, their order, contradictions, and the five different absences (RA 786-801).
+{empty}Over locked bridges: classes under a criterion, their order, contradictions, and the five different absences (RA 786-801).
 
 *Track:* ∑ maths · *Kind:* method · *Size:* L · *Status:* open
 
@@ -575,7 +575,7 @@ Over locked bridges: classes under a criterion, their order, contradictions, and
 [[s1-token-algebra]]
 ==== 🌱 🔢 S-1: tokens form a dioid
 
-The status tokens form a ResourceAlgebra and dioid with an annihilating zero, with an injective strict morphism into MinMax. Agda against resource-algebra at a pin, re-proved in Rocq and Lean (E-1.1).
+{empty}The status tokens form a ResourceAlgebra and dioid with an annihilating zero, with an injective strict morphism into MinMax. Agda against resource-algebra at a pin, re-proved in Rocq and Lean (E-1.1).
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* L · *Status:* open
 
@@ -591,7 +591,7 @@ The status tokens form a ResourceAlgebra and dioid with an annihilating zero, wi
 [[s3-grade-function]]
 ==== 🌱 🎚️ S-3: the grade is a function
 
-The Proof Witness Grade is a total monotone function of the receipt, and the canon reader agrees with it on every case, shown by exhaustion as in residual-evidence-types (E-1.3).
+{empty}The Proof Witness Grade is a total monotone function of the receipt, and the canon reader agrees with it on every case, shown by exhaustion as in residual-evidence-types (E-1.3).
 
 *Track:* ∑ maths · *Kind:* theorem · *Size:* M · *Status:* open
 
@@ -605,7 +605,7 @@ The Proof Witness Grade is a total monotone function of the receipt, and the can
 [[ci-recorder]]
 ==== 🌱 🤖 CI records its own runs
 
-A trusted publisher that writes each green run's ledger rows to the repository, so no human copies rows. The piece standards PR 1675 leaves open.
+{empty}A trusted publisher that writes each green run's ledger rows to the repository, so no human copies rows. The piece standards PR 1675 leaves open.
 
 *Track:* ⚙ engineering · *Kind:* infrastructure · *Size:* M · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
@@ -616,7 +616,7 @@ A trusted publisher that writes each green run's ledger rows to the repository, 
 [[januskey-slice]]
 ==== 🌱 🗝️ Theorem to code: januskey
 
-Follow one theorem into running code (E-3.1): the januskey slice T-1, with T-10 open and G-2 assumed, and a composite status for the whole (Q-3.1).
+{empty}Follow one theorem into running code (E-3.1): the januskey slice T-1, with T-10 open and G-2 assumed, and a composite status for the whole (Q-3.1).
 
 *Track:* ⚙ engineering · *Kind:* method · *Size:* L · *Status:* open · *Beyond this repository:* estate:hyperpolymath/januskey
 
@@ -627,7 +627,7 @@ Follow one theorem into running code (E-3.1): the januskey slice T-1, with T-10 
 [[pwg1-regained]]
 ==== 🌱 🥇 Back to PWG-1
 
-THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the pinned image.
+{empty}THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the pinned image.
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* S · *Status:* open
 
@@ -637,7 +637,7 @@ THY-1 and APP-1 to APP-4 derive PWG-1 again, from receipts whose rows name the p
 [[superseded-manifests-option]]
 ==== 🌱 🗄️ Keep superseded manifests (option)
 
-A generator option that keeps the inputs digest, manifest and axioms on superseded receipts (owner ruling 2026-11-24). It landed in standards as #1705, and hyperpolymath/mathesis#122 turns it on; it is done when that pull request merges.
+{empty}A generator option that keeps the inputs digest, manifest and axioms on superseded receipts (owner ruling 2026-11-24). It landed in standards as #1705, and hyperpolymath/mathesis#122 turns it on; it is done when that pull request merges.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* S · *Status:* open
 
@@ -651,7 +651,7 @@ A generator option that keeps the inputs digest, manifest and axioms on supersed
 [[encoding-differences]]
 ==== 🌱 🔤 Closed list of encoding differences
 
-A closed, tested list of the ways the same statement differs between Agda, Rocq and Lean (Q-2.1), built from the existing comparisons as bridge records (E-2.1).
+{empty}A closed, tested list of the ways the same statement differs between Agda, Rocq and Lean (Q-2.1), built from the existing comparisons as bridge records (E-2.1).
 
 *Track:* 🔬 science · *Kind:* data · *Size:* M · *Status:* open
 
@@ -666,7 +666,7 @@ A closed, tested list of the ways the same statement differs between Agda, Rocq 
 [[liquidity-shelf]]
 ==== 🌱 💶 Liquidity shelf
 
-The liquidity part of the applied shelf: a forecast whose every verdict carries its proof status, from synthetic data only.
+{empty}The liquidity part of the applied shelf: a forecast whose every verdict carries its proof status, from synthetic data only.
 
 *Track:* 🪙 economics · *Kind:* view · *Size:* M · *Status:* open
 
@@ -677,7 +677,7 @@ The liquidity part of the applied shelf: a forecast whose every verdict carries 
 [[talk-atlas]]
 ==== 🌱 🎤 Talk: an atlas of an estate
 
-A talk on mapping the mathematics of hundreds of repositories, with every status traced to a receipt.
+{empty}A talk on mapping the mathematics of hundreds of repositories, with every status traced to a receipt.
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* S · *Status:* open
 
@@ -687,7 +687,7 @@ A talk on mapping the mathematics of hundreds of repositories, with every status
 [[echo-mirrors]]
 ==== 🌱 🪞 Echo mirror records
 
-Bridge records for the six languages that mirror echo-types (E-2.5), with the graded-comonad disagreement kept as an open question.
+{empty}Bridge records for the six languages that mirror echo-types (E-2.5), with the graded-comonad disagreement kept as an open question.
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* M · *Status:* open · *Beyond this repository:* estate:hyperpolymath/echo-types
 
@@ -698,7 +698,7 @@ Bridge records for the six languages that mirror echo-types (E-2.5), with the gr
 [[receipts-campaign]]
 ==== 🌱 📣 Receipts campaign
 
-Home repositories re-record their receipts (WO 5.1): secret-types and lintel for the reader they fail, resource-algebra for its Lean leg. Takes 12 ungraded theorems towards a grade.
+{empty}Home repositories re-record their receipts (WO 5.1): secret-types and lintel for the reader they fail, resource-algebra for its Lean leg. Takes 12 ungraded theorems towards a grade.
 
 *Track:* 🗺 ecosystem · *Kind:* method · *Size:* L · *Status:* open · *Beyond this repository:* estate:hyperpolymath/secret-types
 
@@ -712,7 +712,7 @@ Home repositories re-record their receipts (WO 5.1): secret-types and lintel for
 [[s1-reuse]]
 ==== 🌱 ♻️ S-1 by reuse of resource-algebra
 
-Prove only the morphism here, and take the dioid laws from resource-algebra's E-1 to E-3 (already PWG-2i) through a locked bridge, instead of proving them again.
+{empty}Prove only the morphism here, and take the dioid laws from resource-algebra's E-1 to E-3 (already PWG-2i) through a locked bridge, instead of proving them again.
 
 *Track:* 🗺 ecosystem · *Kind:* theorem · *Size:* M · *Status:* open · *Beyond this repository:* estate:hyperpolymath/resource-algebra
 
@@ -727,7 +727,7 @@ Prove only the morphism here, and take the dioid laws from resource-algebra's E-
 [[concept-commons]]
 ==== 🌱 🏛️ Concept commons
 
-The horizon of the atlas (M4): a commons of the estate's concepts, navigable by A to Z, subject (MSC2020), project and provenance.
+{empty}The horizon of the atlas (M4): a commons of the estate's concepts, navigable by A to Z, subject (MSC2020), project and provenance.
 
 *Track:* ∑ maths · *Kind:* view · *Size:* XL · *Status:* open
 
@@ -738,7 +738,7 @@ The horizon of the atlas (M4): a commons of the estate's concepts, navigable by 
 [[bridge-by-construction]]
 ==== 🌱 🏗 Bridges by construction
 
-Generate the Agda, Rocq and Lean forms of a statement from one source (Q-2.3, E-2.3), so a re-proof starts from a statement known to match.
+{empty}Generate the Agda, Rocq and Lean forms of a statement from one source (Q-2.3, E-2.3), so a re-proof starts from a statement known to match.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* open
 
@@ -753,7 +753,7 @@ Generate the Agda, Rocq and Lean forms of a statement from one source (Q-2.3, E-
 [[idris-token-laws]]
 ==== 🌱 🧬 Generated Idris2 token laws
 
-Generate the Idris2 token laws of the proof-route Token module from S-1 (E-3.2), so the engineering side cites the theorem instead of restating it.
+{empty}Generate the Idris2 token laws of the proof-route Token module from S-1 (E-3.2), so the engineering side cites the theorem instead of restating it.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* M · *Status:* open · *Beyond this repository:* estate:metadatastician/standards
 
@@ -764,7 +764,7 @@ Generate the Idris2 token laws of the proof-route Token module from S-1 (E-3.2),
 [[value-of-information]]
 ==== 🌱 🔭 Value of information
 
-Decision science on the shelf: what a missing input is worth to know, computed from the three-valued verdicts. No optimiser (decision-science README).
+{empty}Decision science on the shelf: what a missing input is worth to know, computed from the three-valued verdicts. No optimiser (decision-science README).
 
 *Track:* 🪙 economics · *Kind:* method · *Size:* L · *Status:* open
 
@@ -775,7 +775,7 @@ Decision science on the shelf: what a missing input is worth to know, computed f
 [[paper-receipts]]
 ==== 🌱 📰 Paper: receipts, not claims
 
-A methods paper: proof status derived from machine receipts, graded by witness count, never typed, with the registry as a working instance across an estate.
+{empty}A methods paper: proof status derived from machine receipts, graded by witness count, never typed, with the registry as a working instance across an estate.
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* L · *Status:* open
 
@@ -785,7 +785,7 @@ A methods paper: proof status derived from machine receipts, graded by witness c
 [[paper-status-algebra]]
 ==== 🌱 📘 Paper: an algebra of proof status
 
-S-1 to S-3 written up: proof status as a dioid, its monotone evaluation, and the grade as a checked function of the receipt.
+{empty}S-1 to S-3 written up: proof status as a dioid, its monotone evaluation, and the grade as a checked function of the receipt.
 
 *Track:* 📜 publications · *Kind:* paper · *Size:* L · *Status:* open
 
@@ -797,7 +797,7 @@ S-1 to S-3 written up: proof status as a dioid, its monotone evaluation, and the
 [[corpus]]
 ==== 🌱 🧪 Propose and dispose corpus
 
-A corpus as a view over bridges and receipts (E-H.1), and 20 ungraded Agda theorems given model-proposed Rocq and Lean legs, kept BRIDGE-PENDING until checked (E-H.2).
+{empty}A corpus as a view over bridges and receipts (E-H.1), and 20 ungraded Agda theorems given model-proposed Rocq and Lean legs, kept BRIDGE-PENDING until checked (E-H.2).
 
 *Track:* 🔬 science · *Kind:* method · *Size:* XL · *Status:* open
 
@@ -811,7 +811,7 @@ A corpus as a view over bridges and receipts (E-H.1), and 20 ungraded Agda theor
 [[estate-pwg2ii]]
 ==== 🌱 🏔️ PWG-2ii across the estate
 
-The long horizon (Q-H.3): the 900 and more ungraded theorems of the estate each carry two checked recheck legs. The question is whether that takes months or years.
+{empty}The long horizon (Q-H.3): the 900 and more ungraded theorems of the estate each carry two checked recheck legs. The question is whether that takes months or years.
 
 *Track:* 🗺 ecosystem · *Kind:* data · *Size:* XL · *Status:* open
 

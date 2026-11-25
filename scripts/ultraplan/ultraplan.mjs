@@ -90,11 +90,23 @@ export function wellFormed(v) {
   return true;
 }
 
+// Each text in the plan is one line: a control character (a line break among
+// them) would let a text start a line of the page, where AsciiDoc reads block
+// syntax. This is the plan's own rule, stricter than I-JSON.
+const hasControl = s => /[\u0000-\u001f\u007f-\u009f]/.test(s);
+function oneLine(v) {
+  if (typeof v === 'string') return !hasControl(v);
+  if (Array.isArray(v)) return v.every(oneLine);
+  if (v !== null && typeof v === 'object') return Object.entries(v).every(([k, x]) => !hasControl(k) && oneLine(x));
+  return true;
+}
+
 export function readSource(text, name) {
   const rows = parseJsonl(text, name);
   const lines = text === '' ? [] : text.slice(0, -1).split('\n');
   rows.forEach((r, i) => {
     if (!wellFormed(r)) throw new Error(`${name}: line ${i + 1} holds a lone surrogate or a Unicode noncharacter, which I-JSON refuses`);
+    if (!oneLine(r)) throw new Error(`${name}: line ${i + 1} holds a control character; each text in the plan is one line`);
     if (jcs(r) !== lines[i]) throw new Error(`${name}: line ${i + 1} is not in JCS form (RFC 8785); write it as ${jcs(r)}`);
   });
   return rows;
@@ -136,13 +148,28 @@ export function registryGrade(registryText, id) {
   return null;
 }
 
-// Whether an ADR's Status section opens with "Accepted".
+// Whether an ADR's Status section opens with "Accepted", read as AsciiDoc reads
+// it. A heading inside a delimited block (a comment, a listing, an example) is
+// not a section of the ADR. The ADR must have exactly one Status section, and
+// the first line after its heading must say "Accepted": a comment line or a
+// block delimiter there does not. A preprocessor directive could change which
+// lines count, so an ADR that holds one is not read: it fails closed, as an
+// unaccepted ADR.
+const DELIMITER = /^(?:\/{4,}|-{4,}|\.{4,}|\+{4,}|\*{4,}|={4,}|_{4,}|--|[|,:!]={3,})$/;
+const PREPROCESSOR = /^(?:ifdef|ifndef|ifeval|endif|include)::/;
 export function adrAccepted(text) {
-  const lines = text.split('\n');
-  const i = lines.findIndex(l => /^=+ Status\s*$/.test(l));
-  if (i < 0) return false;
-  const first = lines.slice(i + 1).find(l => l.trim() !== '');
-  return !!first && /^\**Accepted\b/.test(first.trim());
+  const lines = text.split('\n').map(l => l.trimEnd());
+  if (lines.some(l => PREPROCESSOR.test(l))) return false;
+  const heads = [];
+  let open = null;
+  lines.forEach((l, i) => {
+    if (open) open = l === open ? null : open;
+    else if (DELIMITER.test(l)) open = l;
+    else if (/^=+ Status$/.test(l)) heads.push(i);
+  });
+  if (heads.length !== 1) return false;
+  const next = lines.find((l, i) => i > heads[0] && l.trim() !== '');
+  return /^\**Accepted\b/.test(next?.trim() ?? '');
 }
 
 // One check for each kind of evidence; each returns an error or null.
@@ -422,6 +449,11 @@ export function derive(byId, advisors) {
 // ── Rendering: AsciiDoc ──────────────────────────────────────────────────────
 // The page is a list of sections; each section is a list of lines.
 const cell = s => String(s).replaceAll('|', String.raw`\|`);
+// A text that starts a line of the page (a node's summary) is read by AsciiDoc as
+// block syntax if it looks like some: "|===" opens a table, "image::x[]" places an
+// image, "//" makes a comment. "{empty}" (an attribute that is empty) in front makes
+// the line a plain paragraph, whatever follows, and adds nothing to the text.
+const lineStart = s => `{empty}${s}`;
 const nameOf = (byId, id) => `${byId.get(id).glyph} ${byId.get(id).name}`;
 // A link to a node, as the xref macro. Its text may hold anything but a few
 // characters, written as character references so they mean the same everywhere,
@@ -563,7 +595,7 @@ function nodeLines(byId, advisors, d, n) {
     `[[${n.id}]]`,
     `==== ${STATUS_GLYPH[n.status]} ${n.glyph} ${n.name}`,
     '',
-    n.summary,
+    lineStart(n.summary),
     '',
     facts.join(' · '),
     '',

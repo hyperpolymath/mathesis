@@ -24,15 +24,22 @@ that land in those places.
   mistakes. In one count, 10,095 of 19,443 fix-worded commits carry a
   subject repeated in 8 or more repositories. A fault written once into
   a template or a sweep is then repaired hundreds of times.
-* The worst failures are *absences that read as success*. A workflow that
-  does not parse produces no run, no check and no log, not a red cross. In
-  one count, 521 repair commits in 281 repositories fixed workflows of this
+* The worst failures are *absences that read as success*. A workflow file
+  that does not parse runs none of its jobs: GitHub records a failed run
+  with no job and no job log, and a check named after one of its jobs is
+  never reported at all. Unless that check is required, nothing blocks the
+  merge. In one count, 521 repair commits in 281 repositories fixed workflows of this
   kind, two of them 44 and 117 days after the break.
 * Six of the forty ideas were checked by independent verifiers before the
-  run stopped. Each pilot measurement was reproduced. Each idea was refuted
-  *as written* for the same two reasons. The engineering already exists
-  outside the estate, so the idea is "adopt", not "build". And the honest
-  effect is "detects earlier" or "shrinks", not "prevents".
+  run stopped. Each pilot measurement was reproduced, and each idea was
+  refuted *as written*, though not for one reason. In five, the mechanism
+  already exists as a working tool or a canon design, inside or outside the
+  estate, so the move is "adopt", not "build". In all six the stated
+  invariant fell short: the failure moved to an unproved adapter, an
+  unchecked boundary or a person, or a cited law did not cover the real
+  obligation. Most claimed "prevents" where the
+  honest effect is "detects earlier" or "shrinks". The reasons for each are
+  in <<tested>>.
 * The estate's maths still matters, in a different role from the one the
   generators gave it. It supplies the *specification* that an adopted tool
   must meet and the *argument* for why a gate is sound. It is not the
@@ -73,8 +80,8 @@ standards, and no Proof Witness Grade is asserted here.
   these to 40.
 * *Verify.* Each candidate was to be attacked through two lenses:
   grounding and soundness, then prior art and real effect. The model usage
-  limit stopped the run after 10 of the 80 verdicts (candidates 1 to 5 under
-  both lenses, 5 and 6 under one). The portfolio synthesis and the
+  limit stopped the run after 10 of the 80 verdicts: ideas 1 to 4 under both
+  lenses, ideas 5 and 6 under the grounding lens only. The portfolio synthesis and the
   completeness critic did not run. This document is the hand-written
   substitute for both.
 * *Not durable.* The raw findings (about 1 MB of notes and probe scripts)
@@ -154,11 +161,20 @@ proposed, and that corrected form is what is marked here.
   live on 2026-11-24: `RefOk` is a representation rule, not resolution.
   GitHub's own `gh actions-lock --verify` (generally available 2026-10-28)
   does the same checks, adds the reachability check the judge lacks, and
-  Dependabot now relocks in the same PR.
-* *Corrected form (ring 3, adopt).* `gh actions-lock` is the only writer
-  and `--verify` is the required check. Relock the roughly 160 inconsistent
-  locks once. Retire the 38 variants of `check-lock-sync.sh` and the six
-  hand-writers listed in `docs/proven/LOCK-PIN-CATALOGUE-2026-11-13.adoc`.
+  Dependabot now relocks in the same PR. It has one gap that matters
+  here: it does not lock reusable workflows called at `jobs.<id>.uses`
+  from another repository (gh-actions-lock#179). The estate's canon
+  pins are exactly such calls, and mathesis already edits those lock entries
+  by hand for this reason (CHANGELOG.adoc).
+* *Corrected form (ring 3, adopt, with one estate check kept).*
+  `gh actions-lock` writes and `--verify` checks every step-level action.
+  Relock the roughly 160 inconsistent locks once. Until #179 is fixed
+  upstream, cross-repository reusable-workflow calls need one estate
+  check, which must stay required: reduce the 38 variants of
+  `check-lock-sync.sh` to a single canon copy that checks only those
+  calls, and that each one resolves. Retire the step-level parts of the six
+  hand-writers listed in
+  `proven-cicd-and-workflows/docs/proven/LOCK-PIN-CATALOGUE-2026-11-13.adoc`.
   Keep the proved judge as a differential cross-check. Handle unresolved
   standards pins with the ADR-003 ancestor check.
 * *Changes.* rsr-template-repo (`scripts/check-lock-sync.sh`, lock
@@ -222,14 +238,19 @@ proposed, and that corrected form is what is marked here.
   should be adopted, not the Python tools.
 * *Corrected form.* Add the missing `upgrade` half to rsr-template-repo:
   base = replay of the mint at the recorded pin, merged three ways with the
-  child and the new mint. Refresh the 12,582 exact-stale files with no
-  judgement needed. State and test the real safety rule: a path changes
-  only if the child still equals the old mint there.
+  child and the new mint. State and test the real safety rule: a path
+  changes only if the child still equals the replayed mint at that repo's
+  *recorded* pin. The 12,582 stale files are an upper bound on what can be
+  refreshed automatically. A file can equal some older template version
+  without equalling the one its repo was minted from. And only 27 repos
+  record a usable `:template-commit` pin. Recount against each repo's own
+  pin before any refresh. Report the files that fail the check and leave
+  them for a person.
 * *Changes.* rsr-template-repo (`replay-mint.sh`, `chain-mint.sh`,
   `check-mint-drift.sh`, a new `upgrade` recipe), the 12 repos that record
   `(mint-answers)`, then every future mint.
 
-=== Copy versus moment files — *tested*
+=== Copy versus moment files — *tested* (grounding lens only)
 
 * *Idea as written.* From formal ontology: a licence text depends
   generically on its pattern and must equal it; a proof file or status
@@ -243,13 +264,17 @@ proposed, and that corrected form is what is marked here.
   flags correct identical files across siblings.
 * *Corrected form.* The moment rule is provenance, not inequality: a
   moment file must be derived from the repo's own receipts, or be listed as
-  an open obligation. Detect it by comparing against the replayed mint;
-  keep blob identity only as a fallback for token-free stubs. Report licence
+  an open obligation. The check must regenerate the file from those
+  receipts, or validate it against them. Being different from the mint
+  proves nothing, because changing one byte of a copied PROOF-STATUS makes
+  it differ. A comparison with the replayed mint, or blob identity for
+  token-free stubs, is only a cheap first pass that finds the unedited
+  copies. Report licence
   differences flag-only and never edit them.
 * *Changes.* rsr-template-repo (`check-mint-drift.sh`, mint stops copying
   proof stubs and status text), Mathesis census (`scripts/census`).
 
-=== Checks keyed by what they read — *tested* (one lens)
+=== Checks keyed by what they read — *tested* (grounding lens only)
 
 * *Idea as written.* A gate declares its read footprint; a sparse checkout
   enforces it; a verdict receipt is keyed by the footprint's content; a
@@ -474,9 +499,12 @@ supplied the mechanism. That division is the honest use of Mathesis here.
 [[recommendations]]
 == Recommendations
 
-. *Adopt the first-party Actions lock.* `gh actions-lock` as sole writer,
-  `--verify` as required check, one relock of about 160 inconsistent locks,
-  retire 38 checker variants; keep the proved judge as a cross-check.
+. *Adopt the first-party Actions lock, keeping one estate check.*
+  `gh actions-lock` writes and `--verify` checks step-level actions, after
+  one relock of about 160 inconsistent locks. The 38 checker variants
+  collapse to one canon check, still required, for cross-repository
+  reusable-workflow calls, which the first-party tool does not lock
+  (gh-actions-lock#179). The proved judge stays as a cross-check.
   Tested premise; days of work; changes rsr-template-repo, standards and
   proven-cicd-and-workflows.
 . *Make absence block.* Ratify A3 with the required set derived from intent
@@ -486,13 +514,15 @@ supplied the mechanism. That division is the honest use of Mathesis here.
   changes standards and rsr-template-repo.
 . *Give the template its update half.* An `upgrade` recipe in
   rsr-template-repo that replays the mint and merges three ways, plus a
-  one-off refresh of the 12,582 exact-stale files. Tested premise; weeks;
+  refresh of the stale files that equal the replayed mint at their own
+  repo's recorded pin (at most 12,582; to be recounted). Tested premise; weeks;
   changes rsr-template-repo and minted repos.
 
 == Decisions for the owner
 
-* Whether to accept GitHub's first-party lock tooling as the authority,
-  with the estate's proved judge demoted to a cross-check.
+* Whether to accept GitHub's first-party lock tooling as the authority for
+  step-level actions, with one estate check kept for reusable-workflow
+  calls and the proved judge demoted to a cross-check.
 * Which verdict function is normative where the Assurance kernel and A3 §7
   differ (empty set, all-exempt set, unrun advisory checks).
 * Whether to resume the verification run (34 ideas unverified, the critic

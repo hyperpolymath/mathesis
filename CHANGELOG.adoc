@@ -129,7 +129,8 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   control. `just receipt-record ROWS` records a run. The Proof Policy Gate writes
   the ledger rows of each green run on main to its job summary, from a report
   that `scripts/check-proofs.sh` writes when `PROOF_REPORT_DIR` is set; no log
-  is read. The current receipts and grades are unchanged. Superseded receipts
+  is read, and a run that fails, a missing prover included, leaves no report.
+  The current receipts and grades are unchanged. Superseded receipts
   keep their run's inputs digest and axioms, and the inputs manifest where it
   can be rebuilt (`RECEIPT_KEEP_LINEAGE_DETAIL=1`, standards#1705). The canon
   reader, the git checker and the generator are pinned at standards `84c2d1c`

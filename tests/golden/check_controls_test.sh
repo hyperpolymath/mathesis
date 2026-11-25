@@ -50,4 +50,22 @@ sed -i 's/{"evidence_status":"missing","id":"closing","kind":"expected","period"
 (cd "$d" && just --quiet applied-build >/dev/null)
 expect_fail "missing read as zero" "$d" check-proofs "Applied/Example/Approximate.agda FAIL"
 
+# A receipt report outlives no failed run: a report left by an earlier passing
+# run is removed when a later run fails, even when it fails at once because its
+# prover is not on PATH. The PATH holds only the tools the script needs before
+# its toolchain check, so no prover is on it.
+bin=$t/report-bin; reports=$t/reports
+mkdir -p "$bin" "$reports"
+for tool in bash dirname mkdir rm; do ln -s "$(type -P "$tool")" "$bin/$tool"; done
+for prover in agda coq lean4 idris2; do
+  printf 'an earlier PASS report\n' >"$reports/$prover"
+  if PATH=$bin PROOF_REPORT_DIR=$reports "$bin/bash" "$root/scripts/check-proofs.sh" "$prover" >/dev/null 2>&1; then
+    echo "FAIL: stale report: check-proofs.sh $prover passed with no prover on PATH"; fail=1
+  elif [ -e "$reports/$prover" ]; then
+    echo "FAIL: stale report: a failed $prover run left the earlier report"; fail=1
+  else
+    echo "PASS: stale report: a failed $prover run removes the earlier report"
+  fi
+done
+
 exit "$fail"

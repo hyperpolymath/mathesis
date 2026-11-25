@@ -271,6 +271,23 @@ LEAN
 
 echo "=== $PROVER proof check ==="
 
+# --- the receipt report: what a ledger row of this run records -----------------
+# With PROOF_REPORT_DIR set, a run that passes writes $PROOF_REPORT_DIR/$PROVER,
+# three lines that scripts/grade-receipt.sh --run-row takes as they are (the
+# Proof Policy Gate does, on main; PROOF-POLICY §8.5.1):
+#   1. the checker, "<command> <version>", from the version line printed below;
+#   2. the axioms the run reported: "none", since a run passes only when every
+#      gated module's audit found none;
+#   3. what the run reported: the result, then each gated module and the
+#      summary of its audit (AUDIT_SUMMARY), in MANIFEST order.
+# The file is removed here, before anything can fail (the toolchain check
+# included), so a run that fails leaves none behind: a report exists only for
+# a run that passed. Nothing is read back from the log.
+if [ -n "${PROOF_REPORT_DIR:-}" ]; then
+  mkdir -p "$PROOF_REPORT_DIR"
+  rm -f -- "${PROOF_REPORT_DIR:?}/${PROVER:?}"
+fi
+
 # --- toolchain: absent means FAIL, never skip ---------------------------------
 if ! command -v "$CMD" >/dev/null 2>&1; then
   {
@@ -285,22 +302,6 @@ if ! command -v "$CMD" >/dev/null 2>&1; then
 fi
 TOOL_VERSION="$("$CMD" --version 2>/dev/null | head -1 || true)"
 printf '%s\n' "$TOOL_VERSION"
-
-# --- the receipt report: what a ledger row of this run records -----------------
-# With PROOF_REPORT_DIR set, a run that passes writes $PROOF_REPORT_DIR/$PROVER,
-# three lines that scripts/grade-receipt.sh --run-row takes as they are (the
-# Proof Policy Gate does, on main; PROOF-POLICY §8.5.1):
-#   1. the checker, "<command> <version>", from the version line above;
-#   2. the axioms the run reported: "none", since a run passes only when every
-#      gated module's audit found none;
-#   3. what the run reported: the result, then each gated module and the
-#      summary of its audit (AUDIT_SUMMARY), in MANIFEST order.
-# The file is removed first, so a run that fails leaves none behind: a report
-# exists only for a run that passed. Nothing is read back from the log.
-if [ -n "${PROOF_REPORT_DIR:-}" ]; then
-  mkdir -p "$PROOF_REPORT_DIR"
-  rm -f -- "${PROOF_REPORT_DIR:?}/${PROVER:?}"
-fi
 
 # --- Agda: a data directory it can write ---------------------------------------
 # Agda keeps the interfaces of its own primitive modules (Agda.Primitive and the

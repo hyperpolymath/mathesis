@@ -155,7 +155,7 @@ same place; the contrarian keeps the road not taken in view.
 [[census]]
 ==== ✅ 🧾 Census of the estate
 
-{empty}The proof census of 465 public repositories: 249 rows of proof files, holes and axioms, each at a pinned commit and time.
+{empty}The proof census of the public repositories: a row for each proof file, with its holes and axioms, at a pinned commit and time.
 
 *Track:* ⚙ engineering · *Kind:* data · *Size:* L · *Status:* done
 
@@ -227,7 +227,7 @@ same place; the contrarian keeps the road not taken in view.
 [[claims-registry]]
 ==== ✅ 📒 Claims registry
 
-{empty}Pins 53 claims in their home repositories and derives each grade from the home receipt with the pinned canon reader. No grade is typed.
+{empty}Pins each claim in its home repository and derives each grade from the home receipt with the pinned canon reader. No grade is typed.
 
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
@@ -698,7 +698,7 @@ same place; the contrarian keeps the road not taken in view.
 [[receipts-campaign]]
 ==== 🌱 📣 Receipts campaign
 
-{empty}Home repositories re-record their receipts (WO 5.1): secret-types and lintel for the reader they fail, resource-algebra for its Lean leg. Takes 12 ungraded theorems towards a grade.
+{empty}Home repositories re-record their receipts (WO 5.1): secret-types and lintel for the reader they fail, resource-algebra for its Lean leg. Takes the ungraded theorems towards a grade.
 
 *Track:* 🗺 ecosystem · *Kind:* method · *Size:* L · *Status:* open · *Beyond this repository:* estate:hyperpolymath/secret-types
 

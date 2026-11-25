@@ -153,6 +153,8 @@ export function registryGrade(registryText, id) {
 // two could differ, it says no (fails closed).
 // - A heading inside a delimited block (a comment, a listing, an example) is
 //   not a section of the ADR.
+// - A Status heading is a section heading, "==" or deeper: "= Status" is the
+//   document's title.
 // - A heading starts a section only after a blank line, with no block attribute
 //   line or block title waiting above it, across blank lines and comments:
 //   "[discrete]" makes it a floating title.
@@ -189,7 +191,7 @@ export function adrAccepted(text) {
   if (lines.some(l => PREPROCESSOR.test(l))) return false;
   const kinds = lineKinds(lines);
   const heads = lines.flatMap((l, i) =>
-    kinds[i] === 'text' && /^=+ Status$/.test(l) && startsSection(lines, kinds, i) ? [i] : []);
+    kinds[i] === 'text' && /^==+ Status$/.test(l) && startsSection(lines, kinds, i) ? [i] : []);
   if (heads.length !== 1) return false;
   const next = lines.find((l, i) => i > heads[0] && l !== '' && kinds[i] !== 'comment');
   return /^\**Accepted\b/.test(next?.trim() ?? '');

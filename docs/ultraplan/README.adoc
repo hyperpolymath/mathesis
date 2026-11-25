@@ -68,6 +68,8 @@ AsciiDoc inline markup. A code span, bold text or an attribute reference such as
 `+{nbsp}+` renders as it would in any AsciiDoc paragraph. Block syntax cannot
 occur: the generator refuses a line break or any other control character, and it
 writes a summary, the one text that starts a line of the page, after `+{empty}+`.
+A text does not type a count that the data derives, such as a number of claims,
+repositories or theorems: the views carry those counts, and a typed one goes stale.
 
 The value marks (0 to 3 on maths, science, engineering, economics, publications,
 teaching, soundness and ecosystem) are judgements, not measurements. They are

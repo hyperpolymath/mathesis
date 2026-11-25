@@ -384,6 +384,11 @@ test('an ADR is accepted only by its own one Status section', () => {
   for (const above of ['[discrete]\n', '[float]\n', '[discrete]\n\n', '[discrete]\n////\nx\n////\n\n', '[discrete]\n// note\n\n', 'Some text.\n'])
     expect(adrAccepted(adr(`${above}=== Status\n\nAccepted`))).toBe(false);
   expect(adrAccepted(adr('=== Status\n// a comment\nAccepted'))).toBe(true);
+  // "= Status" is the document's title, not a section (Asciidoctor agrees), also
+  // after leading comments, which may come before a document header.
+  expect(adrAccepted('= Status\n\nAccepted\n')).toBe(false);
+  expect(adrAccepted('// note\n////\nx\n////\n\n= Status\n\nAccepted\n')).toBe(false);
+  expect(adrAccepted('== Status\n\nAccepted\n')).toBe(true);
   // A heading inside a block is not a section even with a blank line above it.
   for (const block of ['----\nexample\n\n=== Status\n\nAccepted\n----', '////\nold\n\n=== Status\n\nAccepted\n////', '====\n\n=== Status\n\nAccepted\n===='])
     expect(adrAccepted(adr(block))).toBe(false);

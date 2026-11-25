@@ -55,7 +55,8 @@ counter turns ACCEPTED into ACCEPTEE.
 * In the Status section, every line that could be a heading titled Status counts,
 inside a block or not. The section is read only when exactly one does, and that
 one is a plain section heading (`==` to `======`, then `Status`) whose first
-paragraph opens with the word.
+paragraph opens with the word, ending where no letter, number or combining mark
+of any script follows (so "Acceptedé" is not "Accepted").
 
 Only a record whose header says ACCEPTED, with a Status section that agrees, can
 stand as evidence in the ultraplan.

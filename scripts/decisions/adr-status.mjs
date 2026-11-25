@@ -97,6 +97,11 @@ function startsSection(lines, kinds, i) {
   return j < 0 || !ATTACHES.test(lines[j]);
 }
 const linesOf = text => text.split('\n').map(l => l.trimEnd());
+// The opening word of the Status section: ASCII letters after any "*", ending
+// where no letter, number, combining mark or "_" of any script follows, so
+// "Acceptedé" or "Accepted" with a combining accent is not the word "Accepted".
+// (\b alone knows only ASCII word characters.)
+const OPENING_WORD = /^\**([A-Za-z]+)(?![\p{L}\p{N}\p{M}_])/u;
 export function sectionStatus(text) {
   const lines = linesOf(text);
   if (lines.some(l => PREPROCESSOR.test(l))) return null;
@@ -109,7 +114,7 @@ export function sectionStatus(text) {
   // The heading is text, so the line after it is text too, unless it opens a
   // block, and no delimiter that opens one begins with a letter.
   const n = lines.findIndex((l, i) => i > h && l !== '' && kinds[i] !== 'comment');
-  const word = n > h && !LIST_MARKER.test(lines[n]) ? /^\**([A-Za-z]+)\b/.exec(lines[n]) : null;
+  const word = n > h && !LIST_MARKER.test(lines[n]) ? OPENING_WORD.exec(lines[n]) : null;
   return word ? word[1].toUpperCase() : null;
 }
 

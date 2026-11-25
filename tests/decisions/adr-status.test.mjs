@@ -116,6 +116,17 @@ test('the Status section opens with a paragraph that says Accepted', () => {
   expect(sectionAccepted(adr('----\nfoo\n----\n\n=== Status\n\nAccepted'))).toBe(true);
 });
 
+// The opening word ends where no letter, number, mark or "_" of any script
+// follows: "Acceptedé" is not "Accepted", though \b would say it is.
+test('the opening word of the Status section ends at a Unicode word boundary', () => {
+  const doc = w => `= A\n:status: ACCEPTED\n\n=== Status\n\n${w} by the owner.\n`;
+  for (const w of ['Accepted\u00e9', 'Accepted\u03b2', 'Accepted\u0301', 'Accepted\u0663', 'Accepted_x', 'Accepted2']) {
+    expect(sectionStatus(doc(w))).toBe(null);
+    expect(adrAccepted(doc(w))).toBe(false);
+  }
+  for (const w of ['Accepted', '*Accepted*', 'Accepted.', 'Accepted\u2014', 'Accepted (ratified)']) expect(sectionStatus(doc(w))).toBe('ACCEPTED');
+});
+
 test('the Status section names its opening word, whatever the status', () => {
   const adr = body => `= ADR\n\n=== Status\n\n${body}\n`;
   for (const [opening, word] of [['Accepted', 'ACCEPTED'], ['*Proposed. Not yet.*', 'PROPOSED'], ['Superseded by 0007.', 'SUPERSEDED'], ['Deprecated', 'DEPRECATED']])

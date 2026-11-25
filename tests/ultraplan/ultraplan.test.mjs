@@ -66,7 +66,7 @@ test('derives eras, the frontier, forks, confluences and each advisor\'s pick', 
   expect(d.ownerTagged.map(n => n.id)).toEqual(['theorem']);            // tagged owner_value, no notes
   expect(out[VIEW]).toContain('== Research now: the frontier');
   expect(out[VIEW]).toContain('_Pick:_ xref:theorem[🔷 theorem]. The deep one.');
-  expect(out[VIEW]).toContain('_No public pick:_ the owner chooses in a private GELS panel. Tagged on the frontier, in id order: xref:theorem[🔷 theorem].');
+  expect(out[VIEW]).toContain('_No public pick:_ the owner chooses in a private panel of their own. Tagged on the frontier, in id order: xref:theorem[🔷 theorem].');
   expect(out[SVG].startsWith('<svg xmlns="http://www.w3.org/2000/svg"')).toBe(true);
   expect(out[SVG]).toContain('<!-- SPDX-License-Identifier: CC-BY-SA-4.0 -->');
   // Three eras are narrower than the legend; the canvas still holds the legend.
@@ -442,7 +442,7 @@ test('the me advisor names no public pick, and lists the owner\'s tags unranked'
   expect(out.derived.ownerTagged.map(n => n.id)).toEqual(['cheap', 'theorem']);
   expect(out[VIEW]).toContain('Tagged on the frontier, in id order: xref:cheap[🔷 cheap], xref:theorem[🔷 theorem].');
   const none = generate(fixture({nodes: swap('theorem', {owner_value: undefined})}))[VIEW];
-  expect(none).toContain('_No public pick:_ the owner chooses in a private GELS panel. Nothing tagged is on the frontier.');
+  expect(none).toContain('_No public pick:_ the owner chooses in a private panel of their own. Nothing tagged is on the frontier.');
 });
 
 test('when every active slot is taken, the frontier is ready but cannot start', () => {

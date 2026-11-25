@@ -113,10 +113,11 @@ nothing.
 unlocks the most. That keeps the road not taken in view.
 * The *me* advisor looks out for what could help the owner's own life. Its notes
 are kept privately, outside this public repository and out of every feed: in
-a private panel of GELS that the owner owns (owner ruling 2026-11-24). A node carries at most the
+a private panel that the owner owns (owner ruling 2026-11-24; which system hosts
+it is open, see <<estate-panel>>). A node carries at most the
 neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
 the key `me`. The me advisor names no public pick (owner ruling 2026-11-24): the
-owner chooses in the private GELS panel, and the page lists, in id order and
+owner chooses in that private panel, and the page lists, in id order and
 unranked, the frontier nodes the owner tagged.
 
 == Wandering: return tickets
@@ -164,25 +165,37 @@ cannot drift. It is not checked here.
 ** `+{"issue":"OWNER/REPO#N"}+`: a GitHub issue or pull request.
 . Run `just ultraplan`, then `just check`.
 
-== GELS
+[[estate-panel]]
+== The estate panel
 
-The owner asked for a maths panel in GELS, the estate display. The estate
-coordinator answered on 2026-11-24:
+The owner asked for a maths panel, "a sub panel of the gels thing". On
+2026-11-25 the owner made clear that two systems had been mixed up in that
+request. Both live in metadatastician:
 
-* Mathesis publishes a read-only I-JSON/JCS feed, and GELS renders it as one
-panel type beside the work-queue lanes and the Plan tab.
+* *GELS* is the Git Estate Logistics System, in metadatastician/gels.
+* *MPSCI* is the Master Production and Scheduling Command Interface.
+
+Earlier text here called GELS "the estate display"; that was the mix-up. Which
+system shows the maths panel and the owner's private panel, and which reads the
+feed, is open for the owner to settle.
+
+What was settled on 2026-11-24 still stands, whichever system it lands in:
+
+* Mathesis publishes a read-only I-JSON/JCS feed, which the estate shows as one
+panel type. The estate coordinator gave this answer while the panel was taken
+to be in GELS.
 * The feed carries the tree's nodes, the advisors' picks (never the me
 advisor's), the grade census with its denominator, and the claim pins.
 * Open decisions go to the owner's decision desk, not this panel.
-
-The owner ruled on 2026-11-24 that GELS pins by commit. Mathesis commits the
-feed as a generated view, which `just check` refuses when stale. GELS asks the
+* The reader pins by commit (owner ruling). Mathesis commits the feed as a
+generated view, which `just check` refuses when stale. The reader asks the
 GitHub API for the head commit of main and reads the feed at that commit, so
 each read names its commit. No secret comes into this repository, and nothing
 here needs a new permission.
 
-The GELS thread is drafting the feed and panel contract
-(`docs/proposals/feed-panel-contract.adoc` in metadatastician/gels). Until it
-exists, nothing here writes a feed: a feed with no agreed reader would be
-unwired. The panel is a node in the tree (`gels-maths-panel`), blocked on that
-contract.
+A draft of the feed and panel contract was begun in metadatastician/gels
+(`docs/proposals/feed-panel-contract.adoc`). Its thread, the estate coordinator
+and the decision desk have been told of the clarification. Until the owner
+settles the host and the contract exists, nothing here writes a feed: a feed
+with no agreed reader would be unwired. The panel is a node in the tree
+(`maths-panel`), blocked on both.

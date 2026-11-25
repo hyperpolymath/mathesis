@@ -531,7 +531,7 @@ function pickFor(a, frontier, total, leverage) {
   const byKey = k => (x, y) => (y.value?.[k] ?? 0) - (x.value?.[k] ?? 0) || council(x, y);
   if (a.id === 'contrarian') return first(frontier, (x, y) => total(x) - total(y) || leverage(y.id) - leverage(x.id) || cmp(x.id, y.id));
   // The me advisor names no public pick (owner ruling 2026-11-24): the owner chooses in a
-  // private GELS panel, and the page lists the tagged frontier unranked (ownerTagged).
+  // private panel the owner owns, and the page lists the tagged frontier unranked (ownerTagged).
   if (a.private) return null;
   if (a.reads) return first(frontier.filter(n => (n.value?.[a.reads] ?? 0) > 0), byKey(a.reads));
   return null;
@@ -666,7 +666,7 @@ function pickLine(byId, a, p) {
 // owner tagged, unranked.
 function privateLine(byId, d) {
   const tagged = d.ownerTagged.length ? `Tagged on the frontier, in id order: ${xrefs(byId, d.ownerTagged.map(n => n.id))}.` : 'Nothing tagged is on the frontier.';
-  return `_No public pick:_ the owner chooses in a private GELS panel. ${tagged}`;
+  return `_No public pick:_ the owner chooses in a private panel of their own. ${tagged}`;
 }
 function councilLines(byId, advisors, d) {
   return [

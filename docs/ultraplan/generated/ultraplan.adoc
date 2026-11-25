@@ -108,7 +108,7 @@ _Pick:_ xref:file-transport-bugs[🐛 File the transport reproducers].
 
 _Asks:_ Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.
 
-_No public pick:_ the owner chooses in a private GELS panel. Tagged on the frontier, in id order: xref:forecast-13wk[📅 Thirteen-week forecast], xref:paper-thy1[📄 Note: feature reachability], xref:teaching-cohort[📓 Cohort economics, taught].
+_No public pick:_ the owner chooses in a private panel of their own. Tagged on the frontier, in id order: xref:forecast-13wk[📅 Thirteen-week forecast], xref:paper-thy1[📄 Note: feature reachability], xref:teaching-cohort[📓 Cohort economics, taught].
 
 == Forks and confluences
 
@@ -120,7 +120,7 @@ same place; the contrarian keeps the road not taken in view.
 * xref:app-proofs[💧 APP-1 to APP-4: missing stays missing] -> xref:forecast-13wk[📅 Thirteen-week forecast], xref:s4-s5-verdict[🌦️ S-4 and S-5: honest cash verdicts], xref:teaching-cohort[📓 Cohort economics, taught]
 * xref:bridge-lock-pilot[🔗 Bridge lock pilot] -> xref:centre-computations[🎯 Centre computations], xref:echo-mirrors[🪞 Echo mirror records], xref:encoding-differences[🔤 Closed list of encoding differences], xref:s1-reuse[♻️ S-1 by reuse of resource-algebra]
 * xref:centre-computations[🎯 Centre computations] -> xref:concept-commons[🏛️ Concept commons], xref:corpus[🧪 Propose and dispose corpus]
-* xref:claims-registry[📒 Claims registry] -> xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:gels-maths-panel[🪟 Maths panel in GELS], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed]
+* xref:claims-registry[📒 Claims registry] -> xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Maths panel for the estate], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed]
 * xref:proof-gate[🛡️ Proof gate in pinned Guix] -> xref:cohort-model[👥 Cohort model in Agda], xref:pinned-image[📦 Proof lanes in a pinned image], xref:receipts[🔏 Proof receipts], xref:thy1[🧭 THY-1: reachability is monotone]
 * xref:receipt-generator[🏭 Shared receipt generator] -> xref:ci-recorder[🤖 CI records its own runs], xref:paper-receipts[📰 Paper: receipts, not claims], xref:pwg1-regained[🥇 Back to PWG-1], xref:receipts-campaign[📣 Receipts campaign], xref:superseded-manifests-option[🗄️ Keep superseded manifests (option)]
 * xref:receipts[🔏 Proof receipts] -> xref:paper-thy1[📄 Note: feature reachability], xref:receipt-generator[🏭 Shared receipt generator], xref:s3-grade-function[🎚️ S-3: the grade is a function]
@@ -232,7 +232,7 @@ same place; the contrarian keeps the road not taken in view.
 *Track:* ⚙ engineering · *Kind:* tool · *Size:* L · *Status:* done
 
 *Needs:* xref:census[🧾 Census of the estate] +
-*Enables:* xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:gels-maths-panel[🪟 Maths panel in GELS], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed] +
+*Enables:* xref:bridge-candidates[🌉 Bridge candidates], xref:chain-question[🧩 Is a chain enough? (X-PF1)], xref:doc-drift-fix[🧹 Mend the status documents], xref:maths-panel[🪟 Maths panel for the estate], xref:paper-receipts[📰 Paper: receipts, not claims], xref:receipts[🔏 Proof receipts], xref:theory-shelf[📚 Theory shelf and ledger], xref:whats-owed[📋 What is owed] +
 *Evidence:* ADR 0004 accepted; `docs/atlas/generated/registry.adoc` +
 *Value (judgement):* engineering ●●●, soundness ●●●, ecosystem ●●●
 
@@ -337,7 +337,7 @@ same place; the contrarian keeps the road not taken in view.
 *Track:* ⚙ engineering · *Kind:* view · *Size:* S · *Status:* done
 
 *Needs:* xref:atlas-views[🗺️ Atlas views] +
-*Enables:* xref:gels-maths-panel[🪟 Maths panel in GELS] +
+*Enables:* xref:maths-panel[🪟 Maths panel for the estate] +
 *Evidence:* `docs/ultraplan/tree.jsonl`; `scripts/ultraplan/ultraplan.mjs` +
 *Value (judgement):* engineering ●, teaching ●
 
@@ -547,15 +547,15 @@ same place; the contrarian keeps the road not taken in view.
 * 🗺️ _Estate cartographer:_ The first real convergence between repositories; everything cross-repo waits on it.
 * ∑ _Mathematician:_ Equivalence as identity, made checkable.
 
-[[gels-maths-panel]]
-==== ⛔ 🪟 Maths panel in GELS
+[[maths-panel]]
+==== ⛔ 🪟 Maths panel for the estate
 
-{empty}The tech tree as one panel type in GELS, beside the work-queue lanes and the Plan tab: frontier, grade census with its denominator, and claim pins, from a Mathesis feed whose fields the feed owns. Open decisions go to the owner’s decision desk, not this panel.
+{empty}The tech tree as one panel type in the estate’s interface: frontier, grade census with its denominator, and claim pins, from a read-only Mathesis feed pinned by commit. Open decisions go to the owner’s decision desk, not this panel.
 
-*Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked · *Beyond this repository:* estate:metadatastician/gels
+*Track:* 🗺 ecosystem · *Kind:* view · *Size:* M · *Status:* blocked
 
 *Needs:* xref:claims-registry[📒 Claims registry], xref:ultraplan[🌳 The ultraplan] +
-*Blocked by:* the GELS feed and panel contract (docs/proposals/feed-panel-contract.adoc in metadatastician/gels), which the GELS thread is drafting (estate coordinator, 2026-11-24); Mathesis then commits a read-only I-JSON/JCS feed, and GELS reads it pinned by commit (owner ruling 2026-11-24) and renders it +
+*Blocked by:* the owner’s choice of host (owner clarification 2026-11-25): GELS, the Git Estate Logistics System, and MPSCI, the Master Production and Scheduling Command Interface, are separate systems in metadatastician, and which of them shows the panel and reads the feed is open; then their feed and panel contract +
 *Value (judgement):* engineering ●●, teaching ●, ecosystem ●●
 
 === ♾️ Era 4: Cantor
@@ -835,7 +835,6 @@ carried to that repository, not done here.
 * estate:hyperpolymath/januskey: xref:januskey-slice[🗝️ Theorem to code: januskey] (open)
 * estate:hyperpolymath/resource-algebra: xref:s1-reuse[♻️ S-1 by reuse of resource-algebra] (open)
 * estate:hyperpolymath/secret-types: xref:receipts-campaign[📣 Receipts campaign] (open)
-* estate:metadatastician/gels: xref:gels-maths-panel[🪟 Maths panel in GELS] (blocked)
 * estate:metadatastician/standards: xref:ci-recorder[🤖 CI records its own runs] (open)
 * estate:metadatastician/standards: xref:idris-token-laws[🧬 Generated Idris2 token laws] (open)
 * upstream:Deducteam/agda2dedukti: xref:file-transport-bugs[🐛 File the transport reproducers] (open)

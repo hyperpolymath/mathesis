@@ -10,6 +10,13 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Fixed
 
+* **A repository named `../..` is no longer accepted.** The census, the claims
+  registry, engineering receipts and the ultraplan each checked `OWNER/REPO`
+  with a pattern like `[-\w.]+/[-\w.]+`, which accepts dot segments. A
+  github.com link made from such a name resolves, in a browser, to some other
+  page. All of them now use one rule, GitHub's own, in `scripts/repo/github.mjs`:
+  a login (single hyphens only, none at either end), then a repository name
+  that is not dots alone. Every name in the current data passes it.
 * **A `CI/gate` publisher may not filter `workflow_run` by branch.**
   GitHub applies `branches` and `branches-ignore` to the triggering run's
   branch, so a filtered publisher never posts the status on a PR head and the
@@ -71,6 +78,65 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
   CI job to run a full mint, with a negative control beside each check.
 
 ==== Added
+
+* **The ultraplan: a tech tree of Mathesis, data first.** `docs/ultraplan/`
+  holds three JCS JSON Lines files:
+  ** `tree.jsonl`, the nodes, whose needs are the edges;
+  ** `advisors.jsonl`, the council;
+  ** `expeditions.jsonl`, the return tickets.
++
+  `scripts/ultraplan/ultraplan.mjs` generates `generated/ultraplan.adoc` and a
+  picture, `generated/tree.svg`. They show the eras, the frontier, the forks,
+  the confluences and each advisor's pick (the private me advisor names none), all
+  derived and none typed.
++
+  The generator refuses:
+  ** a done node without evidence that holds: a file that git tracks, a claim
+     grade the registry derives, or an accepted ADR. Every file the checks read
+     (evidence, refs, ADRs, the registry view and the plan's own sources) is
+     one git tracks, at its own path: no link along it, nothing untracked,
+     nothing in `.git`, and valid UTF-8 (a malformed byte is an error, never
+     a silent U+FFFD). `scripts/repo/files.mjs` reads them, so a clone and
+     a linked worktree read the same; An ADR is accepted only when its
+     header states `:status: ACCEPTED` and its Status section agrees (owner
+     ruling 2026-11-25), each read by `scripts/decisions/adr-status.mjs` so
+     that it never finds a status Asciidoctor would not. A record holding an
+     inline reference that changes an attribute (`{set:...}`, `{counter:...}`
+     or `{counter2:...}`; a counter turns ACCEPTED into ACCEPTEE) has no
+     readable header. `just adr-check` reads the records git tracks, each at
+     its own path, and fails when `docs/decisions` is a link. A record whose
+     status the readers refuse fails the check; only a record that states no
+     status at all is listed as unset;
+  ** a done node whose needs are not done, and a node still in play that needs
+     a dropped node (it could never start);
+  ** a cycle;
+  ** more than three active nodes;
+  ** a ref that does not point at one place: each names a passage that occurs
+     exactly once in a file here, a path here, a file of another repository at
+     a full commit, or an issue, and never a line number;
+  ** a text the page could not show as written: one holding a control
+     character, a line or paragraph separator (U+2028, U+2029), a
+     bidirectional formatting control, a run of
+     spaces, or a space at its start or end. Every text is plain text (owner
+     ruling 2026-11-25): the page writes each ASCII punctuation mark in it as a
+     character reference, so it shows exactly as written and forms no markup;
+  ** any note from the private me advisor.
++
+  `just ultraplan` and `just ultraplan-check` run it, and `check-views` includes
+  the check. A line not in JCS form is named with the command that writes its
+  form; no error message echoes a record. The site copies a view's pictures,
+  so the tree's image works there.
+* **The site reads nothing from outside the repository.** `scripts/site/site.mjs`
+  reads each view, the front page's sources and each asset it copies only as a
+  file git tracks, at its own path, and fails the build otherwise. Asciidoctor
+  now runs in secure mode, so an `include::` in a view becomes a link, which
+  the link check refuses, instead of the included file's text: in safe mode,
+  with the base directory at `/`, a view could include any file on the
+  system. The output is otherwise byte-identical. A link to a repository file
+  becomes a GitHub link only when git tracks the file. The build writes only
+  into a fresh output directory (absent, or empty and not a link), so a link
+  left in an old output tree cannot make it overwrite a file elsewhere.
+  `site-check` now runs the site tests, so CI runs them; it did not before.
 
 * The 27 `hyperpolymath/resource-algebra` claims move their pin to `a17ffb6`
   (2026-11-17), whose receipt describes `47de4a8`, the merge of

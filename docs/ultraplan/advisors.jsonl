@@ -1,0 +1,10 @@
+{"asks":"Is it true, is it new, and does it join two things that were apart?","glyph":"∑","id":"maths","name":"Mathematician","reads":"maths"}
+{"asks":"What would we measure, and what result would change our mind?","glyph":"🔬","id":"science","name":"Scientist","reads":"science"}
+{"asks":"Does it run in the gate, fail loudly, and stay cheap to keep?","glyph":"⚙️","id":"engineering","name":"Engineer","reads":"engineering"}
+{"asks":"What does it cost, what does it return, and who would fund or use it?","glyph":"🪙","id":"economics","name":"Economist","reads":"economics"}
+{"asks":"Is there a paper, a talk or a citable artefact here?","glyph":"📜","id":"publications","name":"Publisher","reads":"publications"}
+{"asks":"Is every done backed by a receipt, and where is the hole?","glyph":"🔍","id":"soundness","name":"Soundness auditor","reads":"soundness"}
+{"asks":"Does another repository already have this, or need it? Converge rather than rebuild.","glyph":"🗺️","id":"cartographer","name":"Estate cartographer","reads":"ecosystem"}
+{"asks":"Could a newcomer learn something true and useful from it?","glyph":"🍎","id":"teacher","name":"Teacher","reads":"teaching"}
+{"asks":"What if we took the other road? Which cheap node is everyone overlooking?","glyph":"🃏","id":"contrarian","name":"Contrarian"}
+{"asks":"Does it help the owner’s own life and work? Its notes are kept privately, outside this repository.","glyph":"🫶","id":"me","name":"Me","private":true}

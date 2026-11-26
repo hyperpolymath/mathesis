@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {isClaimId, validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
+import {isClaimId, validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER, GENERATOR} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));

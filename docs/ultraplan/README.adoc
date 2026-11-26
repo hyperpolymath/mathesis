@@ -1,0 +1,227 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell (hyperpolymath)
+= The ultraplan: how to read and grow the tech tree
+:toc: preamble
+
+The ultraplan is the plan of Mathesis drawn as a tech tree, like a civilisation
+game. Each node is a capability: a theorem, a tool, a view, a paper or a decision.
+A node's *needs* are the nodes it builds on. Read the other way, each node
+*enables* the nodes that need it. The generated page,
+link:generated/ultraplan.adoc[`generated/ultraplan.adoc`], and its picture,
+`generated/tree.svg`, show the whole tree. They are rebuilt from the data here by
+`just ultraplan`, and `just check` refuses them when they are stale.
+
+The plan is data first (owner ruling 2026-11-24). The three files in this
+directory are its whole source. Each holds I-JSON, one record a line in JCS form,
+so a diff shows only real change.
+
+[cols="1,3",options="header"]
+|===
+|File |What it holds
+
+|`tree.jsonl`
+|The nodes. Each names its needs, so the edges live in the data.
+
+|`advisors.jsonl`
+|The council: who reads the tree, the one question each asks, and which value
+mark each reads.
+
+|`expeditions.jsonl`
+|Return tickets: trips off the tree, each grafted on as a node or archived with
+what it taught.
+|===
+
+== What is typed and what is derived
+
+Typed by hand:
+
+* each node's name, track, kind, size, summary and needs;
+* its status;
+* its value marks;
+* the counsel advisors give on it.
+
+Derived by `scripts/ultraplan/ultraplan.mjs`, and never typed:
+
+* *Era*: the length of the longest chain of needs below a node.
+* *Frontier*: the open nodes whose needs are all done. They are ready, and one can
+start today whenever an active slot is free.
+* *Unlocks*: how many live nodes depend on a node, directly or through others.
+* *Forks*: nodes that enable two or more tracks, where work spreads.
+* *Confluences*: nodes that need two or more tracks, where work joins.
+* *Each advisor's pick*: one node from the frontier. The private me advisor names
+none; the page lists the frontier nodes the owner tagged, unranked.
+
+A typed status is held to account:
+
+* *Done* needs evidence that the generator checks against the repository. It
+accepts a file that git tracks, a claim whose grade the registry view derives at
+or above a stated grade, or a decision record whose status is Accepted.
++
+Every file the checks read is one that git tracks, at its own path: no link
+along the path, nothing untracked, nothing in `.git`. That holds for evidence,
+refs, decision records, the registry view and the three sources here. So the
+evidence is what a reviewer reads in the commit, and a clone and a linked
+worktree read the same. `scripts/repo/files.mjs` reads them. A done
+node's needs must be done too.
++
+A decision record counts only when it states its status twice, in agreement
+(owner ruling 2026-11-25). Its header must hold `:status: ACCEPTED`, and its
+Status section must open with the same word. `scripts/decisions/adr-status.mjs`
+reads both conservatively, so it never finds a status that Asciidoctor would
+not; `docs/decisions/README.adoc` sets out the rules.
+* *Active* is limited: at most three nodes may be active at once. To start a
+fourth, finish or park one first. This is the guard against starting everything.
+When every slot is taken, the page and the picture still show the frontier, and
+say that it is ready but cannot start.
+* *Blocked* must say what blocks it.
+* *Dropped* takes the nodes that need it along: a node still in play may not
+need a dropped node, since it could never start. So nothing below a dropped node
+is counted as unlocked.
+
+Each text (a name, a summary, a piece of counsel, a reason, a quote) is plain
+text on one line (owner ruling 2026-11-25). It carries no markup, and the page
+shows it exactly as written:
+
+* AsciiDoc builds all its markup from ASCII punctuation. The generator writes
+each such mark in a text as a numeric character reference, which Asciidoctor
+shows as the mark itself and never reads as markup.
+* So no text can open a block, start a list or a description list, end a table
+cell or a link, form a span, or name an attribute, wherever it stands on the
+page.
+* A feed can carry the same strings unchanged, as plain text.
+* The generator refuses a text the page could not show as written: one that
+holds a control character (a line break among them), a line or paragraph
+separator (U+2028 or U+2029, where a browser breaks the line), a bidirectional
+formatting control (such as U+202E, which reorders what is shown), a run of two or
+more spaces (HTML shows a run as one), or a space at its start or end. A
+no-break space is shown as written, and is allowed.
+
+A text does not type a count that the data derives, such as a number of claims,
+repositories or theorems: the views carry those counts, and a typed one goes stale.
+
+The value marks (0 to 3 on maths, science, engineering, economics, publications,
+teaching, soundness and ecosystem) are judgements, not measurements. They are
+written down so they can be argued with. The page labels them as judgements.
+
+== The council
+
+The council is the data in `advisors.jsonl`, and the generated page lists it. On
+2026-11-24 the owner set it to:
+
+* the six the owner named (mathematician, scientist, engineer, economist,
+publisher, and "me");
+* four more (soundness auditor, estate cartographer, teacher and contrarian).
+
+The generator requires only the me advisor, because the page's privacy claim
+rests on it. Who else sits on the council is the owner's to change in the data.
+
+Each asks one question of every node. Each names one pick from the frontier,
+except the me advisor:
+
+* An advisor that reads a value mark ranks the frontier nodes it marks above
+zero: by the mark, then by how much the node unlocks, then by value for effort
+(its marks summed, over its size). A node it marks zero is
+not one it would pick, so when no node is marked above zero the advisor names
+nothing.
+* The contrarian asks which node everyone is overlooking. It names the frontier
+node the council rates lowest (its value marks summed), and among nodes rated
+equally low, the one that unlocks the most. Leverage only breaks the tie: ranked
+by leverage first, the contrarian would name what the council already ranks
+first. That keeps the road not taken in view.
+* The *me* advisor looks out for what could help the owner's own life. Its notes
+are kept privately, outside this public repository and out of every feed: in
+a private panel that the owner owns (owner ruling 2026-11-24). Mathesis hosts
+that panel in its own visual proof space (owner ruling 2026-11-25, see
+<<estate-panel>>), and its notes still never enter this repository or a feed. A node carries at most the
+neutral tag `"owner_value":"high"`, and the generator refuses any counsel under
+the key `me`. The me advisor names no public pick (owner ruling 2026-11-24): the
+owner chooses in that private panel, and the page lists, in id order and
+unranked, the frontier nodes the owner tagged.
+
+== Wandering: return tickets
+
+Going off the tree is allowed, and expected. Before a trip, add a card to
+`expeditions.jsonl`:
+
+[source,json]
+----
+{"date":"2026-11-24","id":"X-001","size":"S","status":"out","what":"Try a tropical semiring model of proof cost","why":"It might give the economist a real cost measure"}
+----
+
+On return, change the card:
+
+* *grafted*: the trip found something the tree should hold. Add the node, and set
+`"graft":"<node id>"`.
+* *archived*: it did not belong. Set `"lesson"` to what it taught, so the trip
+still counts.
+
+== Adding or changing a node
+
+. Add or edit the line in `tree.jsonl`, keeping its JCS form. Keys are sorted
+and there are no spaces between tokens. When a line is not in that form, the
+generator names it and the command that writes its form, such as
+`sed -n 23p docs/ultraplan/tree.jsonl | bun scripts/ijson-jcs-cli.js canon`. Its id is a lowercase slug that begins with a
+letter, because the id is also the node's anchor on the page.
+. Give it needs, so it sits in the right era. A node with no needs starts a new
+root.
+. If it is another route to a node that already exists, name each in the other's
+`rivals`.
+. If the work lands in another repository, set `"where":"estate:OWNER/REPO"` or
+`"upstream:OWNER/REPO"`. The page lists those nodes so they can be carried
+there.
+. Point at its sources in `refs`, by what they say and never by line number: a
+line number goes stale with the next edit, and nothing notices. A ref is one of
+these:
+** `+{"at":"a passage","path":"docs/x.adoc"}+`: a passage of a file in this
+repository. The passage must occur in the file exactly once. `just check`
+refuses the ref when the passage is reworded, moved away or repeated, so a ref
+never points nowhere unseen. A passage is one line of up to 160 characters.
+** `+{"path":"docs/x"}+`: a file of this repository, or a directory that holds
+one, which git must track.
+** `+{"at":"…","commit":"<full commit id>","path":"…","repo":"OWNER/REPO"}+`: a
+file of another repository at a commit. The commit fixes its content, so it
+cannot drift. It is not checked here.
+** `+{"issue":"OWNER/REPO#N"}+`: a GitHub issue or pull request.
+. Run `just ultraplan`, then `just check`.
+
+[[estate-panel]]
+== The estate panel
+
+The owner asked for a maths panel, as a sub-panel of one of the estate's
+systems. On 2026-11-25 the owner made clear that two systems had been mixed up
+in that request, and named them. Both live in metadatastician:
+
+* *MPSCI* is the Master Production and Scheduling Command Interface.
+* *GELO* is the Git Estate Logistics Office. It was called GELS, the Git Estate
+Logistics System, a name now retired.
+
+Earlier text here called that system GELS, and "the estate display"; that was
+the mix-up.
+
+The host is settled (owner ruling 2026-11-25, through the decision desk):
+
+* *Mathesis hosts its own visual proof space.* The maths panel and the owner's
+private me panel live in Mathesis. The me panel's notes still stay outside this
+public repository and out of every feed (ruling 2026-11-24): where they are
+kept is settled when the panel is built.
+* *MPSCI only links to it*, with a summary card or a link.
+* *GELO is not involved yet.*
+
+What was settled on 2026-11-24 still holds where a reader outside Mathesis needs
+the data, such as MPSCI's summary card:
+
+* Mathesis publishes a read-only I-JSON/JCS feed. It carries the tree's nodes,
+the advisors' picks (never the me advisor's), the grade census with its
+denominator, and the claim pins.
+* Open decisions go to the owner's decision desk, not the panel.
+* The reader pins by commit (owner ruling). Mathesis commits the feed as a
+generated view, which `just check` refuses when stale. The reader asks the
+GitHub API for the head commit of main and reads the feed at that commit, so
+each read names its commit. No secret comes into this repository, and nothing
+here needs a new permission.
+
+A draft of the feed and panel contract was begun in MPSCI's repository
+(`docs/proposals/feed-panel-contract.adoc`). With the host settled, that
+contract shrinks to what MPSCI's card reads. Nothing here writes a feed until
+the card has an agreed reader: a feed with no reader would be unwired. The proof
+space is a node in the tree (`maths-panel`), now open.

@@ -180,7 +180,7 @@
 == M
 
 * `hyperpolymath/maa-framework` — engineering; 8 own proof files, 11 detected declarations; provers: agda 3, spark 3, other 2
-* `hyperpolymath/marches` — theory; 17 own proof files, 198 detected declarations; provers: lean 17
+* `hyperpolymath/marches` — theory; 27 own proof files, 244 detected declarations; provers: agda 10, lean 17
 * `metadatastician/marid` — engineering; 1 own proof files, 0 detected declarations; provers: idris2 1
 * `hyperpolymath/mathesis` — theory; 6 own proof files, 51 detected declarations; provers: agda 2, lean 3, rocq 1
 * `catachresis-colloquium/megadog` — theory; 3 own proof files, 25 detected declarations; provers: lean 3

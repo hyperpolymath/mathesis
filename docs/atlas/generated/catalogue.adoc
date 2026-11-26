@@ -65,7 +65,7 @@ than one.
 
 |https://github.com/hyperpolymath/tropical-types[hyperpolymath/tropical-types] |29 |0 |lean 20, isabelle 9 |564 |4 |0 |0 |0 |`PROOF-STATUS.adoc`
 
-|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |25 |3 |agda 8, lean 17 |233 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
+|https://github.com/hyperpolymath/marches[hyperpolymath/marches] |27 |4 |agda 10, lean 17 |244 |0 |0 |0 |0 |`PROOF-STATUS.adoc`
 
 |https://github.com/hyperpolymath/my-lang[hyperpolymath/my-lang] |25 |0 |rocq 16, idris2 9 |617 |0 |26 |0 |0 |`docs/proof-debt.md`
 

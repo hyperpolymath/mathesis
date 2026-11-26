@@ -139,7 +139,7 @@
 * `hyperpolymath/lol` — engineering; 18 own proof files, 314 detected declarations; provers: agda 3, idris2 15
 * `hyperpolymath/lustreiser` — engineering; 9 own proof files, 141 detected declarations; provers: idris2 9
 * `hyperpolymath/maa-framework` — engineering; 8 own proof files, 11 detected declarations; provers: agda 3, spark 3, other 2
-* `hyperpolymath/marches` — theory; 25 own proof files, 233 detected declarations; provers: agda 8, lean 17
+* `hyperpolymath/marches` — theory; 27 own proof files, 244 detected declarations; provers: agda 10, lean 17
 * `hyperpolymath/mathesis` — theory; 6 own proof files, 51 detected declarations; provers: agda 2, lean 3, rocq 1
 * `hyperpolymath/MetaManifold-WebUI` — theory; 13 own proof files, 107 detected declarations; provers: agda 13
 * `hyperpolymath/my-lang` — theory; 25 own proof files, 617 detected declarations; provers: rocq 16, idris2 9

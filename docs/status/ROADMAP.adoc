@@ -300,7 +300,8 @@ One pull request that changes census rows is open at a time (atlas README,
   then done. Next: receipts for APP-1 to APP-4, from a CI run on the merged
   commit, then WO 4.3 (needs a ruling).
 * WO 4.3, publish the atlas (owner rulings 2026-11-12; deploy ruled 2026-11-25
-  by selector in the hub thread): site built in CI, deployed to GitHub Pages.
+  by selector in the hub thread): site built in CI; deploy to GitHub Pages is
+  pending until the first successful run after merge.
 ** `just site OUT` writes one generated front page, then renders it and the
    seven generated views with Asciidoctor (pinned Guix shell,
    `ruby-asciidoctor`). `just check` builds the site into a temp dir, so the
@@ -314,8 +315,8 @@ One pull request that changes census rows is open at a time (atlas README,
    `id-token: write` for the deploy job only; one `pages` concurrency group.
    It runs on push to main and on dispatch. `actions.lock` is updated to match.
 ** Owner step, not done by this change: Settings, Pages, Source set to GitHub
-   Actions. Until then the deploy job fails; the build job still proves the
-   site builds. Merge is the owner's.
+   Actions. Until then `configure-pages` fails in the build job and the deploy
+   job is skipped; the site build step before it still runs. Merge is the owner's.
 * Open item for the owner (ruling 2026-11-12): none of the JSON Lines data
   files declares a licence; JSON has no comment syntax. The owner will write
   one `REUSE.toml` rule at the root that covers all of them (doctrine 6: a

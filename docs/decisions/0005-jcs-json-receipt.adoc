@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: CC-BY-SA-4.0
 // Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 = Architecture Decision Record: 0005-jcs-json-receipt
+:status: PROPOSED
 
 == 5. The claims registry also reads a proof receipt written as canonical JCS I-JSON
 

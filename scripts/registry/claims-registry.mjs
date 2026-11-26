@@ -30,9 +30,11 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {readJsonl} from '../atlas/census-atlas.mjs';
+import {GITHUB_REPO} from '../repo/github.mjs';
 import {validateBridges, renderBridges} from './bridges.mjs';
 import {validateAdmissions, renderTheoryIndex, HOME} from './theory.mjs';
 import {validateLedger, snapshot, pending, checkAppendOnly, jcs} from './theory-ledger.mjs';
+import {readEngineeringReceipt, deriveEngineering} from './engineering-receipt.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const claimsFile = path.join(root, 'docs/atlas/claims/claims.jsonl');
@@ -93,6 +95,23 @@ export const CHECKER = {
 
 // ── Validation of the registry rows ──────────────────────────────────────────
 
+// A claim id is OWNER/REPO#CLAIM. The claim uses the characters of a repository
+// name, so every id survives the registry view, where it is a link's text inside
+// a table row: "]", "|", "#" and white space cannot occur in it. The registry's
+// rows obey this rule, and readers that cite a claim (the ultraplan) use it too.
+// A claim's repository is named by GitHub's own rule (scripts/repo/github.mjs).
+export const CLAIM_REPO = GITHUB_REPO;
+export const CLAIM_NAME = /^[-\w.]+$/;
+// A status document is named by a relative path in its repository. The view puts
+// it in a link's target, so it uses the same characters, with "/" between its
+// parts, and no part is "." or "..": "[", "]", "|", "#" and white space cannot occur.
+export const isDocPath = p => p.split('/').every(s => CLAIM_NAME.test(s) && s !== '.' && s !== '..');
+export function isClaimId(id) {
+  if (typeof id !== 'string') return false;
+  const i = id.indexOf('#');
+  return i > 0 && CLAIM_REPO.test(id.slice(0, i)) && CLAIM_NAME.test(id.slice(i + 1));
+}
+
 // Throw unless every row is well formed and its repository is public in the
 // census inventory (the registry never names a private repository).
 export function validate(rows, inventory) {
@@ -103,14 +122,14 @@ export function validate(rows, inventory) {
     const where = r && r.id ? r.id : JSON.stringify(r);
     if (r === null || typeof r !== 'object' || Array.isArray(r)) throw new Error(`A claim record is an object: ${where}`);
     closed(r, FIELDS, 'Unknown field (a record holds no grade, token, leg or flag):', where);
-    if (typeof r.repo !== 'string' || !/^[-\w.]+\/[-\w.]+$/.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
-    if (typeof r.claim !== 'string' || r.claim === '') throw new Error(`Missing claim id: ${where}`);
+    if (typeof r.repo !== 'string' || !CLAIM_REPO.test(r.repo)) throw new Error(`Invalid repo: ${where}`);
+    if (typeof r.claim !== 'string' || !CLAIM_NAME.test(r.claim)) throw new Error(`Missing or invalid claim id (letters, digits, "-", "_" and "." only): ${where}`);
     if (r.id !== `${r.repo}#${r.claim}`) throw new Error(`id must be repo#claim: ${where}`);
     if (seen.has(r.id)) throw new Error(`Duplicate id: ${r.id}`);
     seen.add(r.id);
     if (!KINDS.has(r.kind)) throw new Error(`Unknown kind ${r.kind}: ${r.id}`);
     if (typeof r.statement !== 'string' || r.statement.length < 10) throw new Error(`Missing statement: ${r.id}`);
-    if (typeof r.status_doc !== 'string' || r.status_doc === '') throw new Error(`Missing status_doc: ${r.id}`);
+    if (typeof r.status_doc !== 'string' || !isDocPath(r.status_doc)) throw new Error(`Missing or invalid status_doc (a relative path of letters, digits, "-", "_", "." and "/"): ${r.id}`);
     if (typeof r.source_commit !== 'string' || !/^[0-9a-f]{40}$/.test(r.source_commit)) throw new Error(`source_commit must be 40 lowercase hex: ${r.id}`);
     if (r.kind === 'theorem') {
       if (!r.agda || typeof r.agda.module !== 'string' || !Array.isArray(r.agda.names) || r.agda.names.length === 0)
@@ -155,6 +174,10 @@ export async function loadReader(standardsDir = process.env.MATHESIS_STANDARDS) 
 // why the grade is not higher, and `evidence` is the commit that the receipt
 // describes (its :source-commit), which can differ from the commit that holds it.
 export function derive(row, read) {
+  if (read?.engineering) return deriveEngineering(row, read.engineering);
+  if (row.kind !== 'theorem' && read?.refusal)
+    return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`,
+      `the canon reader refuses the receipt: ${read.refusal}`]};
   if (row.kind !== 'theorem') return {pwg: 'ungraded', reasons: [`${row.kind}, not a theorem (§8.1)`]};
   if (read === null) return {pwg: 'ungraded', reasons: ['no machine receipt in the home repository']};
   if (read.refusal) return {pwg: 'ungraded', reasons: [`the canon reader refuses the receipt: ${read.refusal}`]};
@@ -172,20 +195,26 @@ export function derive(row, read) {
 
 // ── Fetching receipts at their pinned commits ────────────────────────────────
 
-// Return the receipt text for a row, verified against its sha256.
-async function loadReceipt(row, receiptsDir) {
-  let text;
+// Hash the original bytes: replacement UTF-8 decoding is not injective.
+async function loadReceiptBytes(row, receiptsDir) {
+  let bytes;
   if (receiptsDir) {
-    text = await readFile(path.join(receiptsDir, `${row.repo.replace('/', '__')}@${row.source_commit}`, row.receipt.path), 'utf8');
+    bytes = await readFile(path.join(receiptsDir, `${row.repo.replace('/', '__')}@${row.source_commit}`, row.receipt.path));
   } else {
     const url = `https://raw.githubusercontent.com/${row.repo}/${row.source_commit}/${row.receipt.path}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`could not fetch ${url}: HTTP ${res.status}`);
-    text = await res.text();
+    bytes = new Uint8Array(await res.arrayBuffer());
   }
-  const digest = createHash('sha256').update(text).digest('hex');
+  const digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== row.receipt.sha256) throw new Error(`receipt digest mismatch for ${row.id}: pinned ${row.receipt.sha256}, got ${digest}`);
-  return text;
+  return bytes;
+}
+
+// Only receipts require text; evidence may contain arbitrary binary bytes.
+async function loadReceipt(row, receiptsDir) {
+  const bytes = await loadReceiptBytes(row, receiptsDir);
+  return new TextDecoder('utf-8', {fatal: true, ignoreBOM: true}).decode(bytes);
 }
 
 // ── The git checks of PROOF-POLICY §8.5.3 ────────────────────────────────────
@@ -271,7 +300,14 @@ export async function gitChecker(standardsDir = process.env.MATHESIS_STANDARDS) 
 }
 
 // The reader's record of one receipt text: {record, text} or {refusal}.
-function readReceipt(text, row, readProofReceipt) {
+async function readReceipt(text, row, readProofReceipt, receiptsDir) {
+  if (row.receipt.path.endsWith('.json')) {
+    // ADR 0006 is engineering-only; the theorem JSON prototype of ADR 0005
+    // remains unwired. Invalid engineering receipts fail the build outright.
+    const engineering = await readEngineeringReceipt(text,
+      ref => loadReceiptBytes({...row, receipt: ref}, receiptsDir));
+    return {engineering, text};
+  }
   try {
     return {record: readProofReceipt(text, path.basename(row.receipt.path)), text};
   } catch (e) {
@@ -292,7 +328,7 @@ const receiptKey = row =>
 export async function deriveAll(rows, receiptsDir, readProofReceipt, gitCheck = null) {
   const once = list => [...new Map(list.map(row => [receiptKey(row), row]))];
   const reads = new Map(await Promise.all(once(rows.filter(receiptKey)).map(async ([key, row]) =>
-    [key, readReceipt(await loadReceipt(row, receiptsDir), row, readProofReceipt)])));
+    [key, await readReceipt(await loadReceipt(row, receiptsDir), row, readProofReceipt, receiptsDir)])));
   const derived = rows.map(row => ({row, ...derive(row, reads.get(receiptKey(row)) ?? null)}));
   const graded = derived.filter(d => d.pwg === 'PWG-1').map(d => d.row);
   const checks = new Map(await Promise.all(once(graded).map(async ([key, row]) =>

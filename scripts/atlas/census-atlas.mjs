@@ -3,6 +3,7 @@
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {isGitHubRepo} from '../repo/github.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const censusDir=path.join(root,'docs/atlas/census');
 const rowsFile=path.join(censusDir,'rows.jsonl');
@@ -38,7 +39,7 @@ export function validate(rows){
   if(!Array.isArray(rows))throw new Error('Census rows must be an array');
   const seen=new Set();
   for(const r of rows){
-    if(typeof r.repo!=='string'||!/^[-\w.]+\/[-\w.]+$/.test(r.repo)||seen.has(r.repo))throw new Error('Invalid or duplicate repo');
+    if(!isGitHubRepo(r.repo)||seen.has(r.repo))throw new Error('Invalid or duplicate repo');
     if(!validClass.has(r.class))throw new Error('Unknown census class '+r.repo);
     for(const name of ['own_files','declarations','holes','axioms','fixture_files','unsafe','policy'])
       if(!Number.isSafeInteger(r[name])||r[name]<0)throw new Error('Invalid census counts '+r.repo+': '+name);

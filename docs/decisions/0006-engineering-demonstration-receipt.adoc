@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: CC-BY-SA-4.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= 0006: Validate engineering demonstration receipts
+
+== Scope and decision
+
+Implemented for the owner's requested Proven evidence registration. This adds
+a separate, ungraded engineering profile; it does not accept or wire the proposed
+theorem JSON reader in ADR 0005 and introduces no PWG grading rule.
+
+A demonstration may pin a canonical JCS engineering receipt. Its closed schema
+requires an exact repository, claim, statement and home status document; a full
+implementation commit; pinned source and evidence manifests; nonempty successful
+checks and rejecting negative controls, each naming its checker, invocation and
+hashed evidence; and explicit trusted-base and open-obligation lists.
+The registry fetches each referenced evidence file at the same pinned carrier
+and checks its digest. Unknown fields (including asserted grades), duplicate JSON
+keys, malformed source commits, unsafe paths, failed/unexecuted checks, missing
+controls, identity mismatches and theorem promotion stop registration.
+
+Receipt carrier and implementation commit may differ. The generated view shows
+both. This verifies the declared binding and retained evidence integrity; it does
+not rerun commands, establish the truth of logs, verify source-manifest correspondence
+against every implementation blob, or certify compiler/FFI behavior. Those remain
+producer evidence and explicit trust obligations. No theorem grade is assigned.
+
+== Regression found during Proven integration
+
+Previously the JSON was sent to the praxis-deed reader, which refused it. The
+non-theorem early return discarded that refusal and still rendered the row.
+Malformed engineering JSON now stops registration. Engineering JSON has an
+explicit reader and positive/negative end-to-end registry tests; matching a
+digest alone can no longer register arbitrary JSON as engineering evidence.
+
+Legacy praxis-deed refusals retain the existing ungraded catalogue behavior
+used for theorem rows, with the refusal now visible for demonstrations too.
+The pinned Secret Types deed, for example, asserts a grade that the newer canon
+reader refuses; its demonstration rows stay ungraded and expose that refusal.
+This change neither upgrades that evidence nor rewrites its home receipt.

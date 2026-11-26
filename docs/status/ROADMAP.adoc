@@ -10,6 +10,46 @@ Phase `incubating`, maturity `experimental` (the deed's `(status)` and
 truth". The stages are under <<stages>>; the rulings that steer them are
 under <<rulings>>.
 
+What comes next is drawn as a tech tree, the ultraplan
+(link:../ultraplan/generated/ultraplan.adoc[`docs/ultraplan/generated/ultraplan.adoc`],
+from the data in `docs/ultraplan/`). Its frontier is the work that is ready, to
+start when an active slot is free, and each advisor of the council, except the
+private me advisor, names a pick from it. This roadmap keeps the record of what happened; the tree says what each
+piece enables.
+
+=== Proven lifecycle registration (2026-11-25)
+
+The Proven owner has retained production Idris lifecycle proof checks, negative
+proof controls, actual Linux static/shared libraries, C/Rust consumer and
+concurrency tests, standalone unavailability and generated-result corruption
+controls. The home ledger is `docs/status/LIFECYCLE-PROOF-STATUS.adoc`, claim
+`ABI-LC-D1`. These are engineering proofs and an execution demonstration; no
+Agda/Rocq/Lean theory grade is assigned or implied.
+
+The demonstration row pins signed receipt carrier
+`4ac09e36c6b710099b4ceadb26066a83d949dd8f`, which binds implementation
+`8da3131d19ef2304c9a5fccc3a8f31fcfa492d7c`. The canonical engineering receipt
+SHA-256 is `653e399024a61d3d990cc31f1e25f052ffbe9ce26b5c84d51f9c80b642992643`.
+
+Review exposed that the old non-theorem shortcut discarded JSON-parser refusal.
+The earlier six external fixtures did not establish semantic binding. ADR 0006
+adds a closed engineering profile and validates identity, declared implementation
+binding, successful checks, rejecting controls and retained evidence digests.
+Invalid engineering JSON stops registration; legacy deed refusals stay ungraded
+and are now visible. No theorem JSON grading prototype is enabled.
+
+Hosted run 45576263195 passed the real canonical build/check and all 97 registry
+tests, including 21 engineering regression cases. The unchanged-checkout gate
+then correctly refused the stale committed view. This update imports only the
+canon-generated registry from that retained preview. All 48 theorem entries and
+their grades, the bridges, admissions and append-only theory ledger are unchanged.
+The updated view displays the existing Secret Types and Lintel deed refusals on their ungraded
+demonstrations and the distinct implementation/carrier binding for Proven.
+
+Receipts remain in Proven. The integrated lifecycle adapter uses the public pinned Idris2 SDK; no private bridge source is required or vendored here.
+The broader ABI's missing exports, compiler/marshaling/ownership
+assumptions and Rust wrapper proof obligations remain open in the home ledger.
+
 === Applied Systems (2026-11-07)
 
 * Added the owner-requested `applied-systems/` area for reusable applications,
@@ -416,3 +456,56 @@ digest, manifest or axioms. Git keeps them at the receipt's earlier commit.
 log reading, manifest, supersession) to the shared §8.5.1 receipt generator
 in `metadatastician/standards`, which the owner ruled on 2026-11-16 should
 come first. Mathesis then keeps only its lane names and pins that generator.
+* Ultraplan (2026-11-24), through the selector:
+** The plan is a data-first tech tree. Views are generated from the data, and
+   `just check` checks them.
+** The advisors are the owner's six (mathematician, scientist, engineer,
+   economist, publisher, me) and four more (soundness auditor, estate
+   cartographer, teacher, contrarian).
+** The me advisor is private. Its notes stay outside this repository and every
+   feed, in a private panel the owner owns, and a node carries at most the
+   tag `owner_value`. It names no public pick: the page lists the tagged
+   frontier nodes unranked, and the owner chooses in that panel.
+** Off-tree trips are return tickets: each is grafted onto the tree or
+   archived with what it taught.
+** The maths panel waits on a feed and panel contract. The estate coordinator
+   has answered: a read-only feed, one panel type, and open decisions sent to
+   the owner's decision desk.
+** The feed's reader pins by commit (owner ruling 2026-11-24). Mathesis
+   commits the feed as a generated view, which `just check` refuses when
+   stale. The reader asks the GitHub API for the head commit of main, then
+   reads the feed at that commit, so each read names its commit. The fetch
+   logic and its rate limits belong to the reader. Mathesis needs no new
+   permission and holds no inbound secret.
+** These rulings were recorded while the panel was taken to be in GELS, a name
+   now retired. See the clarification of 2026-11-25 below.
+* Owner clarification (2026-11-25): two systems had been mixed up. The owner
+  named them the same day (relayed to this work by the estate hub session).
+  Both are in metadatastician:
+** MPSCI is the Master Production and Scheduling Command Interface.
+** GELO is the Git Estate Logistics Office. It was called GELS, the Git
+   Estate Logistics System; "GELS" is retired.
+** Earlier text here and in the ultraplan called that system GELS, and "the
+   estate display". Which system, MPSCI or GELO, shows the maths panel and the
+   owner's private panel, and reads the feed, is open for the owner. The
+   panel node is now `maths-panel`.
+** The feed-panel contract thread, the estate coordinator and the decision
+   desk were told of the clarification the same day.
+* Owner rulings (2026-11-25), through the selector:
+** Plan texts are plain text everywhere: in the data, on the page and in the
+   feed. The page writes each ASCII punctuation mark in a text as a character
+   reference, so the text shows as written and forms no markup.
+** An ADR's status becomes a header attribute, `:status:`, kept in step with
+   its Status section.
+** Guix proof CI gets one estate-wide fix at source, queued as its own task
+   (CI upkeep, on a cheaper model).
+* Owner rulings (2026-11-25), through the decision desk:
+** Mathesis hosts its own visual proof space: the maths panel and the
+   owner's private me panel live in Mathesis. MPSCI only links to it, with a
+   summary card or a link. GELO is not involved yet. The me panel's notes
+   still stay outside this public repository and every feed (ruling
+   2026-11-24). The `maths-panel` node is now open.
+** Agent pull requests are committed through the GitHub API, so each commit
+   carries GitHub's verified (web-flow) signature; the owner re-signs
+   nothing. The signature attests GitHub and the owner's account, not the
+   estate signing key (a doctrine 9 note).

@@ -78,9 +78,9 @@ const closed = (object, allowed, label, where) => {
 // that is not this file is refused, so a grade never comes from an unpinned rule.
 export const READER = {
   repository: 'metadatastician/standards',
-  commit: '940a27af1e25a73a2d55daa78d0763e6749fd935',
+  commit: '84c2d1c1b040c9d7b8924532fa77e71e63d72c66',
   path: '1-formats/deed/tools/deed_lint.js',
-  sha256: '29278b46654bdee70e8e1ff4a7ff8cb810e04b618c9ca1520a6979d6c4c91f18',
+  sha256: 'bd276e4046066926bdfb65f474271e2ddba57467cc237e9e7ec56c894577b04d',
 };
 
 // The git checks of PROOF-POLICY §8.5.3, from the same standards commit as the
@@ -91,6 +91,14 @@ export const CHECKER = {
   sha256: 'f2375747238464535d1b4a61f658f07cb2f8504c69bfb1812311c79429a4e23e',
   digest: 'scripts/proof-inputs-sha256.sh',
   digestSha256: 'dfc6dde01a3a79df638eebe4cad0eae584d8f17280077e149174c0667e9508f4',
+};
+
+// The shared receipt generator (PROOF-POLICY §8.5.1), from the same standards
+// commit: scripts/grade-receipt.sh sources it to write and check the receipt
+// of Mathesis. One commit pins all four files, as the generator requires.
+export const GENERATOR = {
+  path: 'scripts/proof-receipt.sh',
+  sha256: 'f56edf5eb5c78f510f65877a7f24c1fe099b4f60873d2804427fef6a52fd6f65',
 };
 
 // ── Validation of the registry rows ──────────────────────────────────────────
@@ -249,7 +257,8 @@ const run = (cmd, args) => {
 
 // The path of the pinned checker, after the digest checks of both pinned
 // scripts and of the canon reader that the checker runs, in the standards
-// checkout. The `receipt` home gate runs the checker without loadReader().
+// checkout. scripts/grade-receipt.sh (through the `standards` command) checks them
+// before it sources the generator, which runs the checker itself.
 export async function checkerScript(standardsDir = process.env.MATHESIS_STANDARDS) {
   const pinned = async (rel, sha) => {
     const file = path.resolve(standardsDir, rel);
@@ -259,6 +268,7 @@ export async function checkerScript(standardsDir = process.env.MATHESIS_STANDARD
   };
   await pinned(READER.path, READER.sha256);
   await pinned(CHECKER.digest, CHECKER.digestSha256);
+  await pinned(GENERATOR.path, GENERATOR.sha256);
   return pinned(CHECKER.path, CHECKER.sha256);
 }
 
@@ -385,15 +395,15 @@ export function render(derived) {
 
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
-  if (cmd === 'receipt') {
-    // The home gate (§8.5.3): the git checks on the receipt of Mathesis itself,
-    // against this clone. origin/main needs its history (CI fetches it).
-    const receipt = path.join(root, 'verification/receipts/theory_praxis.deed');
-    const r = spawnSync(findTool('bash'), [await checkerScript(), '--branch', 'origin/main', receipt, root], {stdio: 'inherit'});
-    process.exit(r.status ?? 2);
+  if (cmd === 'standards') {
+    // For scripts/grade-receipt.sh: check the four pinned files of the
+    // standards checkout, then print its path (the generator's RECEIPT_STD).
+    await checkerScript();
+    console.log(path.resolve(process.env.MATHESIS_STANDARDS));
+    return;
   }
   if (!['build', 'check', 'ledger'].includes(cmd)) {
-    console.error('usage: claims-registry.mjs build|check|ledger|receipt [--receipts-dir DIR] [--note TEXT]');
+    console.error('usage: claims-registry.mjs build|check|ledger|standards [--receipts-dir DIR] [--note TEXT]');
     process.exit(2);
   }
   const i = args.indexOf('--receipts-dir');

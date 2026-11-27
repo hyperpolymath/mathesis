@@ -186,6 +186,23 @@ https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 ==== Changed
 
+* **The receipt of Mathesis is generated from a run ledger.** Mathesis adopts
+  the shared generator of standards (`scripts/proof-receipt.sh`, PROOF-POLICY
+  §8.5.1) through `scripts/grade-receipt.sh`, a file of hooks, and
+  `verification/receipts/theory_runs.ledger`, one row a run and prover.
+  `just receipt-check` now regenerates the receipt and refuses a difference,
+  then runs the git checks of §8.5.3 and the pinned reader with a negative
+  control. `just receipt-record ROWS` records a run. The Proof Policy Gate writes
+  the ledger rows of each green run on main to its job summary, from a report
+  that `scripts/check-proofs.sh` writes when `PROOF_REPORT_DIR` is set; no log
+  is read, and a run that fails, a missing prover included, leaves no report.
+  The current receipts and grades are unchanged. Superseded receipts
+  keep their run's inputs digest and axioms, and the inputs manifest where it
+  can be rebuilt (`RECEIPT_KEEP_LINEAGE_DETAIL=1`, standards#1705). The canon
+  reader, the git checker and the generator are pinned at standards `84c2d1c`
+  (was `940a27af`); `claims-registry.mjs receipt` is removed, and
+  `claims-registry.mjs standards` checks the four pinned files for the home
+  script.
 * `CI/gate` now also starts on `pull_request`, and a tamper guard is added.
   `.github/workflows/ci-gate.yml` is rewritten from the suite's
   `templates/ci-gate-caller.yml`: a same-repository `gate-pr` job on

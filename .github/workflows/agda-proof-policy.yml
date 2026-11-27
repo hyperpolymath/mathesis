@@ -80,21 +80,21 @@ jobs:
         if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
-            bash scripts/check-proofs.sh agda
+            PROOF_REPORT_DIR="$RUNNER_TEMP/proof-report" bash scripts/check-proofs.sh agda
             bash tests/proofs/gate_controls_test.sh agda'
 
       - name: Rocq lane (gate, then planted controls)
         if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
-            bash scripts/check-proofs.sh coq
+            PROOF_REPORT_DIR="$RUNNER_TEMP/proof-report" bash scripts/check-proofs.sh coq
             bash tests/proofs/gate_controls_test.sh coq'
 
       - name: Lean lane (gate, then planted controls)
         if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: |
           guix time-machine -C build/channels.scm -- shell -m build/manifest.scm -- sh -euc '
-            bash scripts/check-proofs.sh lean4
+            PROOF_REPORT_DIR="$RUNNER_TEMP/proof-report" bash scripts/check-proofs.sh lean4
             bash tests/proofs/gate_controls_test.sh lean4'
 
       # The golden path (re-anchoring plan WO 2.5): `just check` runs the view
@@ -125,8 +125,8 @@ jobs:
           git init -q "$r"
           git -C "$r" remote add origin https://github.com/metadatastician/standards.git
           git -C "$r" config core.sparseCheckout true
-          printf '1-formats/deed/tools/\nscripts/check-proof-receipt.sh\nscripts/proof-inputs-sha256.sh\n' > "$r/.git/info/sparse-checkout"
-          git -C "$r" fetch -q --depth 1 origin 940a27af1e25a73a2d55daa78d0763e6749fd935
+          printf '1-formats/deed/tools/\nscripts/check-proof-receipt.sh\nscripts/proof-inputs-sha256.sh\nscripts/proof-receipt.sh\n' > "$r/.git/info/sparse-checkout"
+          git -C "$r" fetch -q --depth 1 origin 84c2d1c1b040c9d7b8924532fa77e71e63d72c66
           git -C "$r" checkout -q FETCH_HEAD
 
       - name: Golden path (just check), then its controls
@@ -142,3 +142,50 @@ jobs:
             bun --version
             just check
             bash tests/golden/check_controls_test.sh'
+
+      # The ledger rows of this run (PROOF-POLICY §8.5.1; standards
+      # scripts/proof-receipt.sh, which scripts/grade-receipt.sh sources). On
+      # main only: a receipt names a commit on the default branch (§8.5.3). Each
+      # lane's gate wrote its own report above (check-proofs.sh,
+      # PROOF_REPORT_DIR), and only a run that passed writes one; nothing is read
+      # back from the log. --emit-run checks the rows with the ledger and reads
+      # the receipt they give with the pinned reader and its negative control.
+      # The rows go to the job summary. `bash scripts/grade-receipt.sh --record
+      # ROWS` adds them to the ledger and rewrites the receipt, in a pull request
+      # that --check and review accept: CI does not write to the repository.
+      - name: Ledger rows of this run (main only)
+        if: ${{ success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        env:
+          MATHESIS_STANDARDS: ${{ runner.temp }}/receipt-reader
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/proof-report"
+          # The one channel pin, read with the Scheme comments removed, so an old
+          # pin quoted in a comment is never taken for the active one.
+          guix="$(sed 's/;.*//' build/channels.scm | grep -oE '\(commit "[0-9a-f]{40}"\)' | grep -oE '[0-9a-f]{40}' || true)"
+          if [ -z "$guix" ] || [ "$(grep -c . <<<"$guix")" -ne 1 ]; then
+            echo "::error::build/channels.scm must pin exactly one 40-hex Guix commit outside its comments"; exit 1
+          fi
+          run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT"
+          rows="$RUNNER_TEMP/ledger-rows"
+          : > "$rows"
+          for lane in agda:agda coq:rocq lean4:lean; do
+            gate="${lane%%:*}"; prover="${lane#*:}"; f="$report/$gate"
+            if [ ! -f "$f" ] || [ "$(wc -l < "$f")" -ne 3 ]; then
+              echo "::error::the $gate gate wrote no receipt report"; exit 1
+            fi
+            [ "$(sed -n 2p "$f")" = none ] || { echo "::error::the $gate gate reported axioms: $(sed -n 2p "$f")"; exit 1; }
+            bash scripts/grade-receipt.sh --run-row "$prover" --run "$run" --commit "$GITHUB_SHA" \
+              --checker "$(sed -n 1p "$f") (Guix ${guix:0:7})" --reported "$(sed -n 3p "$f")" --axioms none >> "$rows"
+          done
+          bash scripts/grade-receipt.sh --emit-run "$rows" --out "$RUNNER_TEMP/receipt/theory_praxis.deed"
+          {
+            echo "### Ledger rows of this run"
+            echo
+            echo "Record them in a pull request: put these lines in a file ROWS, then run"
+            echo "\`bash scripts/grade-receipt.sh --record ROWS\`."
+            echo
+            echo '```'
+            cat "$rows"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

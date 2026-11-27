@@ -9,7 +9,7 @@ import {readFileSync, mkdtempSync, mkdirSync, writeFileSync, copyFileSync} from 
 import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
-import {isClaimId, validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER} from '../../scripts/registry/claims-registry.mjs';
+import {isClaimId, validate, loadReader, derive, deriveAll, withGitCheck, findTool, gitChecker, checkerScript, render, READER, CHECKER, GENERATOR} from '../../scripts/registry/claims-registry.mjs';
 import {parseJsonl} from '../../scripts/atlas/census-atlas.mjs';
 
 const rows = parseJsonl(readFileSync(new URL('../../docs/atlas/claims/claims.jsonl', import.meta.url), 'utf8'));
@@ -217,12 +217,17 @@ test('a git check that cannot run gives a failed result, not a crash', async () 
   }
 });
 
-test('the checker runs only beside the pinned canon reader', async () => {
+test('the checker runs only beside the pinned canon reader and generator', async () => {
   const std = mkdtempSync(path.join(tmpdir(), 'mathesis-std-'));
-  for (const rel of [READER.path, CHECKER.path, CHECKER.digest]) {
+  for (const rel of [READER.path, CHECKER.path, CHECKER.digest, GENERATOR.path]) {
     mkdirSync(path.dirname(path.join(std, rel)), {recursive: true});
     copyFileSync(path.join(process.env.MATHESIS_STANDARDS, rel), path.join(std, rel));
   }
+  expect(await checkerScript(std)).toBe(path.resolve(std, CHECKER.path));
+  // scripts/grade-receipt.sh sources the generator, so a changed one is refused too.
+  writeFileSync(path.join(std, GENERATOR.path), '# changed\n', {flag: 'a'});
+  await expect(checkerScript(std)).rejects.toThrow(/proof-receipt\.sh is not the pinned file/);
+  copyFileSync(path.join(process.env.MATHESIS_STANDARDS, GENERATOR.path), path.join(std, GENERATOR.path));
   expect(await checkerScript(std)).toBe(path.resolve(std, CHECKER.path));
   writeFileSync(path.join(std, READER.path), '// changed\n', {flag: 'a'});
   await expect(checkerScript(std)).rejects.toThrow(/is not the pinned file/);

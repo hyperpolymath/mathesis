@@ -772,13 +772,22 @@ registry-check:
     bun scripts/registry/theory-ledger.mjs verify
     bun test tests/registry/
 
-# The git checks of PROOF-POLICY §8.5.3 on the receipt of Mathesis: its
-# :source-commit is on origin/main, each current receipt's inputs manifest holds
-# at its commit, and each echo's witness holds. The shared checker of the pinned
-# standards commit runs them (MATHESIS_STANDARDS, as above). Needs origin/main
-# with its history.
+# The receipt of Mathesis (PROOF-POLICY §8.5.1) against its run ledger: the
+# shared generator of the pinned standards commit (scripts/grade-receipt.sh)
+# regenerates it from verification/receipts/theory_runs.ledger and the tree and
+# refuses any difference, runs the git checks of §8.5.3 (the :source-commit is
+# on origin/main, each current receipt's inputs manifest holds at its commit),
+# and reads it with the pinned reader and a negative control
+# (MATHESIS_STANDARDS, as above). Needs origin/main with its history.
 receipt-check:
-    bun scripts/registry/claims-registry.mjs receipt
+    bash scripts/grade-receipt.sh --check
+
+# Record a green Proof Policy Gate run on main: ROWS is a file holding the
+# ledger rows that the run's job summary lists ("Ledger rows of this run").
+# The generator checks them with the ledger, appends them, and rewrites the
+# receipt; commit both in a pull request, which receipt-check then holds.
+receipt-record rows:
+    bash scripts/grade-receipt.sh --record {{ quote(rows) }}
 
 # Append each change of the theory shelf to docs/theory/ledger.jsonl, the only
 # way the ledger changes (needs MATHESIS_STANDARDS, as above). A note tells the

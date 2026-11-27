@@ -5,7 +5,7 @@
 
 Each row is a claim in its home repository at a pinned commit. The grade is
 *derived* here from that repository's receipt by the canon reader of
-PROOF-POLICY §8.5.1 (`metadatastician/standards` at `940a27af1e25`), never
+PROOF-POLICY §8.5.1 (`metadatastician/standards` at `84c2d1c1b040`), never
 assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still
 owe their Rocq and Lean legs. Status of this slice: accepted in
 link:../../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.

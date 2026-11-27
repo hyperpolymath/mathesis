@@ -140,8 +140,9 @@ check_one() {
 # each gated module: the SHA-256 of the file and the axioms reported.
 audit_one() {
   # $1 source-root, $2 module; sets LAST_OUT on failure; returns 0 iff clean.
-  # On success AUDIT_NOTE holds the axiom report that a receipt records (PWG-1).
-  AUDIT_NOTE=""
+  # On success AUDIT_NOTE holds the axiom report that a receipt records (PWG-1),
+  # and AUDIT_SUMMARY the same report without the list of names it covers.
+  AUDIT_NOTE=""; AUDIT_SUMMARY=""
   local root="$1" rel="$2" dir out rc base copy names expect got
   dir="$(mktemp -d)"
   case "$PROVER" in
@@ -161,7 +162,8 @@ audit_one() {
         done
       [ -s "$dir/own" ] || { LAST_OUT="axiom audit: no first-party module in the import cone"; rm -rf "$dir"; return 1; }
       set +e; mapfile -t own <"$dir/own"; out="$(bash "$ROOT/scripts/scan-postulates.sh" "${own[@]}" 2>&1)"; rc=$?; set -e
-      AUDIT_NOTE="postulates: none in the ${#own[@]} first-party module(s) of the import cone: $(sed -n 's/.*label="\([^"]*\)".*/\1/p' "$dir/cone.dot" | LC_ALL=C sort -u | tr '\n' ' ')"
+      AUDIT_SUMMARY="postulates: none in the ${#own[@]} first-party module(s) of the import cone"
+      AUDIT_NOTE="$AUDIT_SUMMARY: $(sed -n 's/.*label="\([^"]*\)".*/\1/p' "$dir/cone.dot" | LC_ALL=C sort -u | tr '\n' ' ')"
       ;;
     coq)
       if ! command -v coqchk >/dev/null 2>&1; then
@@ -217,7 +219,8 @@ audit_one() {
         grep -qxF "* Theory: Set is predicative" <<<"$summary" || kernel_ok=0
       fi
       if [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ] && [ "$kernel_ok" -eq 1 ]; then rc=0
-        AUDIT_NOTE="coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity in the library or its import cone; Print Assumptions: closed under the global context for $expect declaration(s): $(tr '\n' ' ' <<<"$names")"
+        AUDIT_SUMMARY="coqchk -o: no axiom, type-in-type, unsafe (co)fixpoint or assumed positivity in the library or its import cone; Print Assumptions: closed under the global context for $expect declaration(s)"
+        AUDIT_NOTE="$AUDIT_SUMMARY: $(tr '\n' ' ' <<<"$names")"
       elif [ "$rc" -eq 0 ] && [ "$got" -eq "$expect" ]; then rc=1
         out="axiom audit: the kernel checker (coqchk -o) reports an assumption, or did not run (exit $chk_rc)"$'\n'"${summary:-$chk}"
       else rc=1; out="axiom audit: $got of $expect declaration(s) closed under the global context"$'\n'"$out"; fi
@@ -257,7 +260,7 @@ LEAN
       elif [ $((thms + defs)) -eq 0 ]; then
         rc=1; out="axiom audit: no theorem or definition declared, so nothing was audited"
       fi
-      [ "$rc" -eq 0 ] && AUDIT_NOTE="axioms: none for $thms theorem(s) and $defs definition(s) with a source range"
+      [ "$rc" -eq 0 ] && AUDIT_NOTE="axioms: none for $thms theorem(s) and $defs definition(s) with a source range" && AUDIT_SUMMARY="$AUDIT_NOTE"
       ;;
     *) rc=0; out="" ;;
   esac
@@ -267,6 +270,23 @@ LEAN
 }
 
 echo "=== $PROVER proof check ==="
+
+# --- the receipt report: what a ledger row of this run records -----------------
+# With PROOF_REPORT_DIR set, a run that passes writes $PROOF_REPORT_DIR/$PROVER,
+# three lines that scripts/grade-receipt.sh --run-row takes as they are (the
+# Proof Policy Gate does, on main; PROOF-POLICY §8.5.1):
+#   1. the checker, "<command> <version>", from the version line printed below;
+#   2. the axioms the run reported: "none", since a run passes only when every
+#      gated module's audit found none;
+#   3. what the run reported: the result, then each gated module and the
+#      summary of its audit (AUDIT_SUMMARY), in MANIFEST order.
+# The file is removed here, before anything can fail (the toolchain check
+# included), so a run that fails leaves none behind: a report exists only for
+# a run that passed. Nothing is read back from the log.
+if [ -n "${PROOF_REPORT_DIR:-}" ]; then
+  mkdir -p "$PROOF_REPORT_DIR"
+  rm -f -- "${PROOF_REPORT_DIR:?}/${PROVER:?}"
+fi
 
 # --- toolchain: absent means FAIL, never skip ---------------------------------
 if ! command -v "$CMD" >/dev/null 2>&1; then
@@ -280,7 +300,8 @@ if ! command -v "$CMD" >/dev/null 2>&1; then
   } >&2
   exit 1
 fi
-"$CMD" --version 2>/dev/null | head -1 || true
+TOOL_VERSION="$("$CMD" --version 2>/dev/null | head -1 || true)"
+printf '%s\n' "$TOOL_VERSION"
 
 # --- Agda: a data directory it can write ---------------------------------------
 # Agda keeps the interfaces of its own primitive modules (Agda.Primitive and the
@@ -314,6 +335,7 @@ if [ ! -f "$MANIFEST_FILE" ]; then
 fi
 
 fails=0
+reported=""
 unexpected_pass=0
 listed_tmp="$(mktemp)"
 trap 'rm -f "$listed_tmp"' EXIT
@@ -334,6 +356,7 @@ while IFS='|' read -r root rel status note; do
       # The receipt fields of PWG-1: a digest of the input and the axioms reported.
       echo "        sha256 $(sha256sum "$ROOT/$root/$rel" | cut -d' ' -f1)"
       echo "        $AUDIT_NOTE"
+      reported+="; $rel: $AUDIT_SUMMARY"
     else
       echo "PASS -- UNEXPECTED (quarantined module now compiles)"
       echo "        Promote '$rel' to 'gated' in $MANIFEST_FILE and update docs/status/ROADMAP.adoc."
@@ -381,3 +404,10 @@ if [ "$fails" -gt 0 ] || [ "$unexpected_pass" -gt 0 ]; then
   exit 1
 fi
 echo "RESULT: PASS -- gated modules compile; quarantined modules still fail as recorded"
+if [ -n "${PROOF_REPORT_DIR:-}" ]; then
+  version="$(grep -oE '[0-9]+(\.[0-9]+)+' <<<"$TOOL_VERSION" | head -1 || true)"
+  [ -n "$version" ] || { echo "FAIL: no version in '$TOOL_VERSION', so the receipt report cannot name the checker" >&2; exit 1; }
+  [ -n "$reported" ] || { echo "FAIL: no gated module passed, so there is nothing for a receipt to record" >&2; exit 1; }
+  printf '%s %s\nnone\ncheck-proofs.sh %s: RESULT: PASS%s\n' "$CMD" "$version" "$PROVER" "$reported" >"$PROOF_REPORT_DIR/$PROVER"
+  echo "receipt report: $PROOF_REPORT_DIR/$PROVER"
+fi

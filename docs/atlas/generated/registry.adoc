@@ -10,7 +10,7 @@ assigned (§8.5). A grade is not a discharge (§8.4): `PWG-3` theorems still
 owe their Rocq and Lean legs. Status of this slice: accepted in
 link:../../decisions/0004-claims-registry.adoc[ADR 0004], ratified by the owner.
 
-Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 48 theorems. 6 demonstrations and assumptions are listed and not graded.
+Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded`, of 48 theorems. 7 demonstrations and assumptions are listed and not graded.
 
 [cols="2,1,1,4,3",options="header"]
 |===
@@ -27,6 +27,8 @@ Census: 0 at `PWG-1`, 5 at `PWG-2ii`, 31 at `PWG-2i`, 0 at `PWG-3`, 12 `ungraded
 |https://github.com/hyperpolymath/mathesis/blob/10f9f46ff7e1c8a0433164bc8bf6d8f30842fd4c/docs/status/PROOF-STATUS.adoc[hyperpolymath/mathesis#THY-1] at `10f9f46ff7e1`; the receipt describes `8c55804163fd` |theorem |`PWG-2ii` |In a dependency graph whose edges are guarded by features closed under Horn rules, and by an arbitrary per-target condition, a node unreachable with every feature requested is unreachable under any request, on each target (`Cargo.absent-under-all-features`). The general form is `Monotone.reach-mono`: reachability over a monotone family of edge sets is monotone. (`FeatureReachability`: `Cargo.absent-under-all-features`, `Monotone.reach-mono`) |the reader derives PWG-2ii from the legs and receipts at `8c55804163fd`
 
 |https://github.com/hyperpolymath/proven/blob/4ac09e36c6b710099b4ceadb26066a83d949dd8f/docs/status/LIFECYCLE-PROOF-STATUS.adoc[hyperpolymath/proven#ABI-LC-D1] at `4ac09e36c6b7`; the receipt describes `8da3131d19ef` |demonstration |`ungraded` |The production Idris lifecycle policy reaches the Linux x86_64 static and shared libraries through the Zig/RefC bridge; actual C and Rust callers observe the specified initialization, shutdown and readiness behavior, and a corrupted generated lifecycle reply is rejected with readiness false. |demonstration, not a theorem (§8.1); engineering identity, declared source binding and evidence digests checked; execution and source correspondence not re-proved
+
+|https://github.com/hyperpolymath/proven/blob/2baf09e9ed4610fc35fc1b4be340710a48abe776/docs/status/PATH-PROOF-STATUS.adoc[hyperpolymath/proven#ABI-PATH-D1] at `2baf09e9ed46`; the receipt describes `72dfc18ef5ed` |demonstration |`ungraded` |The production Idris raw-byte path policy refines its typed state machine and detects complete parent components in arbitrary classified contexts; actual Linux x86_64 static/shared C and Rust callers observe slash, backslash and NUL boundary behavior, and unavailable or malformed backend replies are refused. |demonstration, not a theorem (§8.1); engineering identity, declared source binding and evidence digests checked; execution and source correspondence not re-proved
 
 |https://github.com/hyperpolymath/resource-algebra/blob/c31bf1a9ae9d186674c7ed79c6c9b018a1d59c2b/docs/status/PROOF-STATUS.adoc[hyperpolymath/resource-algebra#C-1] at `c31bf1a9ae9d`; the receipt describes `15fa113c7427` |theorem |`PWG-2i` |`ResourceAlgebra`: alternatives form an idempotent commutative monoid and sequencing a monoid. (`ResourceAlgebra.Core`: `ResourceAlgebra`, `IsAltMonoid.unitʳ`) |the reader derives PWG-2i from the legs and receipts at `15fa113c7427`
 

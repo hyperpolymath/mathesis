@@ -57,8 +57,23 @@ jobs:
       - name: Check for large files
         run: |
           find . -type f -size +1M -not -path "./.git/*" | head -10 || echo "No large files"
+      - name: Download verified EditorConfig Checker 4.0.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool_dir="$RUNNER_TEMP/editorconfig-checker"
+          mkdir -p "$tool_dir"
+          curl --fail --silent --show-error --location --retry 3 \
+            --proto '=https' --proto-redir '=https' --tlsv1.2 \
+            --connect-timeout 15 --max-time 120 \
+            https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v4.0.2/editorconfig-checker-linux-amd64.tar.gz \
+            --output "$tool_dir/archive.tar.gz"
+          echo "44efaef3ed14c6ab52eb87481d78e5e5c204796dccf26e2f4598a61ba17f8003  $tool_dir/archive.tar.gz" | sha256sum --check --strict
+          tar --extract --gzip --file "$tool_dir/archive.tar.gz" \
+            --directory "$tool_dir" --no-same-owner editorconfig-checker
+          chmod +x "$tool_dir/editorconfig-checker"
       - name: EditorConfig check
-        uses: editorconfig-checker/action-editorconfig-checker@51f63319f592f97930c73d9c46184d20bd206393 # v3.0.0
+        run: '"$RUNNER_TEMP/editorconfig-checker/editorconfig-checker"'
         continue-on-error: true
   docs:
     runs-on: ubuntu-24.04
